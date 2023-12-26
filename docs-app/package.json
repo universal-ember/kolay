@@ -82,6 +82,9 @@
   "ember": {
     "edition": "octane"
   },
+  "volta": {
+    "extends": "../package.json"
+  },
   "dependencies": {
     "ember-route-template": "^1.0.3",
     "kolay": "workspace:^"
