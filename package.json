@@ -5,10 +5,10 @@
   "description": "",
   "exports": {
     "./build": {
-      "import": "./plugins/index.js"
+      "import": "./src/plugins/index.js"
     },
     "./build/legacy": {
-      "default": "./plugins/legacy/index.cjs"
+      "default": "./src/plugins/legacy/index.cjs"
     }
   },
   "files": [
@@ -18,6 +18,8 @@
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:prettier:fix",
     "lint:js": "eslint .",
+    "lint:package": "publint",
+    "lint:published-types": "attw --pack",
     "lint:prettier": "prettier . --check",
     "lint:js:fix": "eslint . --fix",
     "lint:prettier:fix": "prettier . --write",
@@ -40,12 +42,14 @@
     "unplugin": "^1.6.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.13.5",
     "@nullvoxpopuli/eslint-configs": "^3.2.2",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
     "@typescript-eslint/parser": "^6.16.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "prettier": "^3.1.1",
+    "publint": "^0.2.7",
     "typescript": "^5.3.3"
   }
 }
