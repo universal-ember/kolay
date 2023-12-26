@@ -4,12 +4,13 @@ import { createUnplugin } from 'unplugin';
  *
  */
 export const createManifest = createUnplugin((options) => {
-  let { src, dest, name, include, exclude } = options ?? {};
+  let { src, dest, name, include, exclude, onlyDirectories } = options ?? {};
 
   dest ??= src;
   name ??= 'manifest.json';
   include ??= '**/*';
   exclude ??= [];
+  onlyDirectories ??= false;
 
   return {
     name: 'create-manifest',
@@ -20,6 +21,7 @@ export const createManifest = createUnplugin((options) => {
       let paths = globbySync(include, {
         cwd: path.join(process.cwd(), src),
         expandDirectories: true,
+        onlyDirectories,
       });
 
       paths = paths.filter((path) => !exclude.some((pattern) => path.match(pattern)));
