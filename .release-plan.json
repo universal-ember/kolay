@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "0.0.1",
-      "newVersion": "0.0.2",
+      "oldVersion": "0.0.2",
+      "newVersion": "0.0.3",
       "constraints": [
         {
           "impact": "patch",
@@ -17,5 +17,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2023-12-26)\n\nkolay 0.0.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#6](https://github.com/universal-ember/kolay/pull/6) Need to support directory-only manifests for convention based docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `kolay`\n  * [#8](https://github.com/universal-ember/kolay/pull/8) Pin tool versions ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#5](https://github.com/universal-ember/kolay/pull/5) Add docs-app for this repo to use itself for its own docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#4](https://github.com/universal-ember/kolay/pull/4) Setup release plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2023-12-26)\n\nkolay 0.0.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#6](https://github.com/universal-ember/kolay/pull/6) Need to support directory-only manifests for convention based docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `kolay`\n  * [#7](https://github.com/universal-ember/kolay/pull/7) Prepare Release ([@github-actions[bot]](https://github.com/apps/github-actions))\n  * [#8](https://github.com/universal-ember/kolay/pull/8) Pin tool versions ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#5](https://github.com/universal-ember/kolay/pull/5) Add docs-app for this repo to use itself for its own docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#4](https://github.com/universal-ember/kolay/pull/4) Setup release plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n- [@github-actions[bot]](https://github.com/apps/github-actions)\n"
 }
