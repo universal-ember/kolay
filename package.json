@@ -4,12 +4,21 @@
   "type": "module",
   "description": "",
   "exports": {
-    "./build": "./plugins/index.js"
+    "./build": {
+      "import": "./plugins/index.js"
+    },
+    "./build/legacy": {
+      "default": "./plugins/legacy/index.cjs"
+    }
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "globby": "^14.0.0",
+    "unplugin": "^1.6.0"
+  }
 }

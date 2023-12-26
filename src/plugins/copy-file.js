@@ -1,4 +1,4 @@
-const { createUnplugin } = require("unplugin");
+import { createUnplugin } from "unplugin";
 
 /**
  *
