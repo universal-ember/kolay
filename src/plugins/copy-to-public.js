@@ -1,14 +1,15 @@
-import fs from "node:fs";
-import path from "node:path";
-import { globbySync } from "globby";
-import { createUnplugin } from "unplugin";
+import fs from 'node:fs';
+import path from 'node:path';
+
+import { globbySync } from 'globby';
+import { createUnplugin } from 'unplugin';
 
 export const copyToPublic = createUnplugin((options) => {
-  let name = "copy-files-to-public";
+  let name = 'copy-files-to-public';
   let { src, include, dest } = options ?? {};
 
   dest ??= src;
-  include ??= "**/*";
+  include ??= '**/*';
 
   return {
     name,
@@ -22,11 +23,11 @@ export const copyToPublic = createUnplugin((options) => {
           this.addWatchFile(source);
 
           await this.emitFile({
-            type: "asset",
+            type: 'asset',
             fileName: path.join(dest, file),
             source: fs.readFileSync(source).toString(),
           });
-        }),
+        })
       );
     },
     // watchChange(id) {

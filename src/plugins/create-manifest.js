@@ -1,5 +1,4 @@
-import { createUnplugin } from "unplugin";
-import { globbySync } from "globby";
+import { createUnplugin } from 'unplugin';
 
 /**
  *
@@ -8,27 +7,25 @@ export const createManifest = createUnplugin((options) => {
   let { src, dest, name, include, exclude } = options ?? {};
 
   dest ??= src;
-  name ??= "manifest.json";
-  include ??= "**/*";
+  name ??= 'manifest.json';
+  include ??= '**/*';
   exclude ??= [];
 
   return {
-    name: "create-manifest",
+    name: 'create-manifest',
     async buildStart() {
-      const path = await import("node:path");
-      const { globbySync } = await import("globby");
+      const path = await import('node:path');
+      const { globbySync } = await import('globby');
 
       let paths = globbySync(include, {
         cwd: path.join(process.cwd(), src),
         expandDirectories: true,
       });
 
-      paths = paths.filter(
-        (path) => !exclude.some((pattern) => path.match(pattern)),
-      );
+      paths = paths.filter((path) => !exclude.some((pattern) => path.match(pattern)));
 
       await this.emitFile({
-        type: "asset",
+        type: 'asset',
         fileName: path.join(dest, name),
         source: JSON.stringify(reshape(paths)),
       });
@@ -79,22 +76,22 @@ function parse(paths) {
   let result = {};
 
   for (let path of paths) {
-    if (!path.includes("/")) {
+    if (!path.includes('/')) {
       result[path] ||= [];
       continue;
     }
 
-    let [group, name] = path.split("/");
+    let [group, name] = path.split('/');
 
     if (!group) continue;
     if (!name) continue;
 
-    let groupName = group.replaceAll(/[\d-]/g, "");
-    let tutorialName = name.replaceAll(/[\d-]/g, "");
+    let groupName = group.replaceAll(/[\d-]/g, '');
+    let tutorialName = name.replaceAll(/[\d-]/g, '');
 
     result[group] ||= [];
     result[group].push({ path: `/${path}`, name, groupName, tutorialName });
-    result[group].sort(betterSort("name"));
+    result[group].sort(betterSort('name'));
   }
 
   // Objects' keys in JS are sorted as they are created.
@@ -125,12 +122,12 @@ function betterSort(property) {
     let aFull = property ? a[property] : a;
     let bFull = property ? b[property] : b;
 
-    let [aNumStr, ...aRest] = aFull.split("-");
-    let [bNumStr, ...bRest] = bFull.split("-");
+    let [aNumStr, ...aRest] = aFull.split('-');
+    let [bNumStr, ...bRest] = bFull.split('-');
 
     // Throw things starting with x at the end
-    if (aNumStr === "x") return 1;
-    if (bNumStr === "x") return 1;
+    if (aNumStr === 'x') return 1;
+    if (bNumStr === 'x') return 1;
 
     let aNum = Number(aNumStr);
     let bNum = Number(bNumStr);
@@ -138,8 +135,8 @@ function betterSort(property) {
     if (aNum < bNum) return -1;
     if (aNum > bNum) return 1;
 
-    let aName = aRest.join("-");
-    let bName = bRest.join("-");
+    let aName = aRest.join('-');
+    let bName = bRest.join('-');
 
     return aName.localeCompare(bName);
   };
