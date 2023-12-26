@@ -1,8 +1,24 @@
 {
   "name": "kolay",
   "version": "0.0.1",
-  "type": "module",
   "description": "",
+  "keywords": [
+    "documentation",
+    "docs",
+    "docgen",
+    "generator",
+    "build",
+    "plugin",
+    "plugins",
+    "ember"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:universal-ember/kolay.git"
+  },
+  "license": "MIT",
+  "author": "NullVoxPopuli",
+  "type": "module",
   "exports": {
     "./build": {
       "import": "./src/plugins/index.js"
@@ -18,25 +34,13 @@
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:prettier:fix",
     "lint:js": "eslint .",
-    "lint:package": "publint",
-    "lint:published-types": "attw --pack",
-    "lint:prettier": "prettier . --check",
     "lint:js:fix": "eslint . --fix",
+    "lint:package": "publint",
+    "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
+    "lint:published-types": "attw --pack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "documentation",
-    "docs",
-    "docgen",
-    "generator",
-    "build",
-    "plugin",
-    "plugins",
-    "ember"
-  ],
-  "author": "NullVoxPopuli",
-  "license": "MIT",
   "dependencies": {
     "globby": "^14.0.0",
     "unplugin": "^1.6.0"
@@ -50,6 +54,7 @@
     "eslint": "^8.56.0",
     "prettier": "^3.1.1",
     "publint": "^0.2.7",
+    "release-plan": "^0.6.0",
     "typescript": "^5.3.3"
   }
 }
