@@ -1,0 +1,48 @@
+name: CI
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+##############################################################
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # cancel-in-progress: true
+
+permissions:
+  contents: read
+
+##############################################################
+
+jobs:
+
+##############################################################
+
+  install_dependencies:
+    name: Setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wyvox/setup-pnpm-action@v3
+      - run:  echo ${{ github.event.number }} > ./pr-number.txt
+
+##############################################################
+
+  lints:
+    name: "Lints"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [install_dependencies]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wyvox/setup-pnpm-action@v3
+      - run: pnpm lint
+
+##############################################################
+
+

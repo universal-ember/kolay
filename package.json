@@ -12,6 +12,10 @@
     }
   },
   "scripts": {
+    "lint:js": "eslint .",
+    "lint:prettier": "prettier . --check",
+    "lint:js:fix": "eslint . --fix",
+    "lint:prettier:fix": "prettier . --write",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,5 +24,11 @@
   "dependencies": {
     "globby": "^14.0.0",
     "unplugin": "^1.6.0"
+  },
+  "devDependencies": {
+    "@nullvoxpopuli/eslint-configs": "^3.2.2",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   }
 }
