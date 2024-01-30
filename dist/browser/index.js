@@ -5,20 +5,31 @@ import { precompileTemplate } from '@ember/template-compilation';
 import { setComponentTemplate } from '@ember/component';
 import templateOnly from '@ember/component/template-only';
 
-const originalLog = console.log;
-const LEVELS = ['log', 'warn', 'error', 'debug', 'info'];
+const original = {
+  log: console.log,
+  warn: console.warn,
+  error: console.error,
+  debug: console.debug,
+  info: console.info
+};
+const LEVELS = Object.keys(original);
 class Logs extends Component {
   logs = new TrackedArray();
   constructor(...args1) {
     super(...args1);
-    registerDestructor(this, () => console.log = originalLog);
+    registerDestructor(this, () => LEVELS.forEach(level1 => console[level1] = original[level1]));
     for (let level1 of LEVELS) {
-      console[level1] = (...messageParts1) => this.logs.push({
-        level: level1,
-        message: messageParts1.join(' '),
-        timestamp: new Date()
-      });
-      originalLog[level1](...messageParts);
+      console[level1] = (...messageParts1) => {
+        // If our thing fails, we want the normal
+        // log to still happen, just in case.
+        // Makes debugging easier
+        original[level1](...messageParts1);
+        this.logs.push({
+          level: level1,
+          message: messageParts1.join(' '),
+          timestamp: new Date()
+        });
+      };
     }
   }
   static {
@@ -51,9 +62,8 @@ let formatter = new Intl.DateTimeFormat('en-GB', {
   fractionalSecondDigits: 2
 });
 const format = date1 => formatter.format(date1);
-const LogList = setComponentTemplate(precompileTemplate("\n  <div class=\"kolay__log-list__scroll\">\n    {{#each logs as |logEntry|}}\n      <div class=\"kolay__log-list__level {{logEntry.level}}\">\n        <span class=\"kolay__log-list__time\">{{format logEntry.timestamp}}</span>\n        <span>{{logEntry.message}}</span>\n      </div>\n      {{(scrollToBottom)}}\n    {{/each}}  \n  </div>\n\n  <style>\n    .kolay__log-list__scroll {\n      position: relative;\n      overflow: auto;\n      max-height: 10rem;\n\n      .kolay__log-list__level {\n        display: flex;\n        gap: 0.5rem;\n      }\n\n      .kolay__log-list__time {\n        border-right: 1px solid;\n        padding-right: 0.5rem;\n      }\n    }\n  </style>\n", {
+const LogList = setComponentTemplate(precompileTemplate("\n  <div class=\"kolay__log-list__scroll\">\n    {{#each @logs as |logEntry|}}\n      <div class=\"kolay__log-list__level {{logEntry.level}}\">\n        <span class=\"kolay__log-list__time\">{{format logEntry.timestamp}}</span>\n        <span>{{logEntry.message}}</span>\n      </div>\n      {{(scrollToBottom)}}\n    {{/each}}  \n  </div>\n\n  <style>\n    .kolay__log-list__scroll {\n      position: relative;\n      overflow: auto;\n      max-height: 10rem;\n\n      .kolay__log-list__level {\n        display: flex;\n        gap: 0.5rem;\n      }\n\n      .kolay__log-list__time {\n        border-right: 1px solid;\n        padding-right: 0.5rem;\n      }\n    }\n  </style>\n", {
   scope: () => ({
-    logs,
     format,
     scrollToBottom
   }),

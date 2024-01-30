@@ -24,6 +24,9 @@
     ".": {
       "default": "./dist/browser/index.js"
     },
+    "./addon-main.cjs": {
+      "require": "./addon-main.cjs"
+    },
     "./build": {
       "import": "./src/plugins/index.js"
     },
@@ -31,10 +34,18 @@
       "default": "./src/plugins/legacy/index.cjs"
     }
   },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs"
+  },
   "files": [
+    "dist",
     "src"
   ],
   "scripts": {
+    "prepack": "pnpm build",
+    "build": "rollup -c",
     "fix": "pnpm lint:fix && pnpm --filter docs-app lint:fix",
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:prettier:fix",
@@ -47,8 +58,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@embroider/addon-shim": "^1.8.7",
     "decorator-transforms": "^1.1.0",
     "globby": "^14.0.0",
+    "tracked-built-ins": "^3.3.0",
     "unplugin": "^1.6.0"
   },
   "devDependencies": {

@@ -15,11 +15,16 @@ module.exports = function (defaults) {
     staticHelpers: true,
     staticModifiers: true,
     staticComponents: true,
-    staticEmberSource: true,
+    // staticEmberSource: true,
     skipBabel: [
       {
         package: 'qunit',
       },
     ],
+    packagerOptions: {
+      webpack: {
+        devtool: 'source-map',
+      },
+    },
   });
 };

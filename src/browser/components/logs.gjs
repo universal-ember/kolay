@@ -2,8 +2,15 @@ import Component from '@glimmer/component';
 import { TrackedArray } from 'tracked-built-ins';
 import { registerDestructor } from '@ember/destroyable';
 
-const originalLog = console.log;
-const LEVELS = ['log', 'warn', 'error', 'debug', 'info'];
+const originalConsole = console;
+const original = {
+  log: console.log,
+  warn: console.warn,
+  error: console.error,
+  debug: console.debug,
+  info: console.info,
+}
+const LEVELS = Object.keys(original);
 
 export class Logs extends Component {
   logs = new TrackedArray();
@@ -11,17 +18,23 @@ export class Logs extends Component {
   constructor(...args) {
     super(...args);
 
-    registerDestructor(this, () => console.log = originalLog);
+    registerDestructor(this, () => LEVELS.forEach(level => console[level] = original[level]));
 
     for (let level of LEVELS) {
-      console[level] = 
-        (...messageParts) => this.logs.push({ 
+      console[level] = (...messageParts) => {
+        // If our thing fails, we want the normal
+        // log to still happen, just in case.
+        // Makes debugging easier
+        original[level](...messageParts);
+
+        this.logs.push({ 
           level, 
           message: messageParts.join(' '),
           timestamp: new Date(),
         });
 
-      originalLog[level](...messageParts);
+      };
+
     }
   }
 
@@ -67,7 +80,7 @@ const format = (date) => formatter.format(date);
 
 const LogList = <template>
   <div class="kolay__log-list__scroll">
-    {{#each logs as |logEntry|}}
+    {{#each @logs as |logEntry|}}
       <div class="kolay__log-list__level {{logEntry.level}}">
         <span class="kolay__log-list__time">{{format logEntry.timestamp}}</span>
         <span>{{logEntry.message}}</span>
