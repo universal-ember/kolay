@@ -73,6 +73,7 @@
     "@typescript-eslint/parser": "^6.16.0",
     "babel-plugin-ember-template-compilation": "^2.2.1",
     "concurrently": "^8.2.2",
+    "ember-hbs-minifier": "^1.2.0",
     "eslint": "^8.56.0",
     "prettier": "^3.1.1",
     "publint": "^0.2.7",

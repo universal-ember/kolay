@@ -33,7 +33,7 @@ class Logs extends Component {
     }
   }
   static {
-    setComponentTemplate(precompileTemplate("\n    <div class=\"kolay__in-viewport__logs\">\n      <LogList @logs={{this.logs}} />\n    </div>\n    <style>\n      .kolay__in-viewport__logs {\n        position: fixed;\n        bottom: 0;\n        left: 0;\n        right: 0;\n        padding: 0.5rem;\n        border: 1px solid gray;\n      }\n    </style>\n  ", {
+    setComponentTemplate(precompileTemplate("<div class=\"kolay__in-viewport__logs\"><LogList @logs={{this.logs}} /></div> <style> .kolay__in-viewport__logs {\n        position: fixed;\n        bottom: 0;\n        left: 0;\n        right: 0;\n        padding: 0.5rem;\n        border: 1px solid gray;\n      } </style>", {
       scope: () => ({
         LogList
       }),
@@ -62,7 +62,7 @@ let formatter = new Intl.DateTimeFormat('en-GB', {
   fractionalSecondDigits: 2
 });
 const format = date1 => formatter.format(date1);
-const LogList = setComponentTemplate(precompileTemplate("\n  <div class=\"kolay__log-list__scroll\">\n    {{#each @logs as |logEntry|}}\n      <div class=\"kolay__log-list__level {{logEntry.level}}\">\n        <span class=\"kolay__log-list__time\">{{format logEntry.timestamp}}</span>\n        <span>{{logEntry.message}}</span>\n      </div>\n      {{(scrollToBottom)}}\n    {{/each}}  \n  </div>\n\n  <style>\n    .kolay__log-list__scroll {\n      position: relative;\n      overflow: auto;\n      max-height: 10rem;\n\n      .kolay__log-list__level {\n        display: flex;\n        gap: 0.5rem;\n      }\n\n      .kolay__log-list__time {\n        border-right: 1px solid;\n        padding-right: 0.5rem;\n      }\n    }\n  </style>\n", {
+const LogList = setComponentTemplate(precompileTemplate("<div class=\"kolay__log-list__scroll\">{{#each @logs as |logEntry|}}<div class=\"kolay__log-list__level {{logEntry.level}}\"><span class=\"kolay__log-list__time\">{{format logEntry.timestamp}}</span> <span>{{logEntry.message}}</span></div> {{(scrollToBottom)}}{{/each}}</div> <style> .kolay__log-list__scroll {\n      position: relative;\n      overflow: auto;\n      max-height: 10rem;\n\n      .kolay__log-list__level {\n        display: flex;\n        gap: 0.5rem;\n      }\n\n      .kolay__log-list__time {\n        border-right: 1px solid;\n        padding-right: 0.5rem;\n      }\n    } </style>", {
   scope: () => ({
     format,
     scrollToBottom
