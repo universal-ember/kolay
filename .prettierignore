@@ -2,3 +2,4 @@ node_modules/
 *.yaml
 *.md
 docs-app/
+dist/
