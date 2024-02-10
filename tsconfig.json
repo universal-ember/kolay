@@ -1,0 +1,5 @@
+{
+  "extends": ["@tsconfig/strictest", "@tsconfig/node20"],
+  "include": ["src"],
+  "exclude": ["docs-app"]
+}
