@@ -48,8 +48,19 @@ jobs:
       - run: pnpm -w --filter ${{ matrix.project }} lint
   ##############################################################
 
-  tests:
-    name: "Tests"
+  node_tests:
+    name: "Node Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [install_dependencies]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wyvox/action-setup-pnpm@v3
+      - run: pnpm test
+
+  browser_tests:
+    name: "Browser Tests"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [install_dependencies]
