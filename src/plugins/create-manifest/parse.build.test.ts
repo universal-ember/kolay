@@ -1,4 +1,4 @@
-import { describe, expect,test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import { build } from './parse.js';
 
@@ -26,12 +26,11 @@ describe('build', () => {
     `);
   });
 
-
   test('multiple shallow paths', () => {
     let result = build([
-      { mdPath: 'top/nested.md' }, 
-      { mdPath: 'top/nested-sibling.md' }, 
-      { mdPath: 'top-2/other.md' }
+      { mdPath: 'top/nested.md' },
+      { mdPath: 'top/nested-sibling.md' },
+      { mdPath: 'top-2/other.md' },
     ]);
 
     expect(result).toMatchInlineSnapshot(`
@@ -91,13 +90,15 @@ describe('build', () => {
           },
         ],
       }
-    `)
+    `);
   });
 
   test('a deep path with an index.md', () => {
-    let result = build([{
-      mdPath: 'top/deep/another/index.md'
-    }]);
+    let result = build([
+      {
+        mdPath: 'top/deep/another/index.md',
+      },
+    ]);
 
     expect(result).toMatchInlineSnapshot(`
       {
@@ -126,26 +127,24 @@ describe('build', () => {
           },
         ],
       }
-    `)
-  });
-  
-  describe('validation', () => {
-  test('cannot have named and index at the same time', () => {
-    expect(() => {
-      build([
-        { mdPath: 'top/deep/another/index.md' }, 
-        { mdPath: 'top/deep/another.md' }
-      ]);
-    }).toThrowError('Cannot have a group that matches the name of an individual page. Please move top/deep/another.md into the "another" folder. If you want this to be the first page, rename the file to top/deep/another/index.md');
+    `);
   });
 
-  test('cannot have index and named at the same time', () => {
-    expect(() => {
-      build([
-        { mdPath: 'top/deep/another.md' },
-        { mdPath: 'top/deep/another/index.md' }, 
-      ]);
-    }).toThrowError('Cannot have a group that matches the name of an individual page. Please move another.md into the "/top/deep/another" folder. If you want this to be the first page, rename the file to top/deep/another/index.md');
-  });
+  describe('validation', () => {
+    test('cannot have named and index at the same time', () => {
+      expect(() => {
+        build([{ mdPath: 'top/deep/another/index.md' }, { mdPath: 'top/deep/another.md' }]);
+      }).toThrowError(
+        'Cannot have a group that matches the name of an individual page. Please move top/deep/another.md into the "another" folder. If you want this to be the first page, rename the file to top/deep/another/index.md'
+      );
+    });
+
+    test('cannot have index and named at the same time', () => {
+      expect(() => {
+        build([{ mdPath: 'top/deep/another.md' }, { mdPath: 'top/deep/another/index.md' }]);
+      }).toThrowError(
+        'Cannot have a group that matches the name of an individual page. Please move another.md into the "/top/deep/another" folder. If you want this to be the first page, rename the file to top/deep/another/index.md'
+      );
+    });
   });
 });

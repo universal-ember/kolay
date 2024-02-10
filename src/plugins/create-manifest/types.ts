@@ -8,7 +8,7 @@ export interface Page {
 export interface Collection {
   name: string;
   firstPath: string;
-  pages: (Page | Collection)[]; 
+  pages: (Page | Collection)[];
 }
 
-export type GatheredDocs = Array<{ mdPath: string, config: object }>;
+export type GatheredDocs = Array<{ mdPath: string; config: object }>;

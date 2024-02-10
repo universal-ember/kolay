@@ -6,5 +6,13 @@ const node = configs.node();
 
 module.exports = {
   root: true,
-  overrides: [...node.overrides],
+  overrides: [
+    ...node.overrides,
+    {
+      files: ['**/*.test.{ts,js}'],
+      rules: {
+        'n/no-unpublished-import': 'off',
+      },
+    },
+  ],
 };
