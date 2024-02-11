@@ -20,6 +20,9 @@
   "author": "NullVoxPopuli",
   "type": "module",
   "exports": {
+    ".": {
+      "default": "./src/browser/re-exports.js"
+    },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"
@@ -58,6 +61,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@universal-ember/kolay-ui": "workspace:^",
     "globby": "^14.0.0",
     "unplugin": "^1.6.0"
   },
