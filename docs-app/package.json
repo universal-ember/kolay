@@ -89,5 +89,9 @@
   "dependencies": {
     "ember-route-template": "^1.0.3",
     "kolay": "workspace:^"
+  },
+  "dependenciesMeta":  {
+    "kolay": { "injected": true },
+    "@universal-ember/kolay-ui": { "injected": true }
   }
 }

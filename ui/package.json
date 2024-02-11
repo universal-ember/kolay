@@ -78,6 +78,6 @@
     }
   },
   "peerDependencies": {
-    "ember-source": "~5.5.0"
+    "ember-source": ">= 5.0.0"
   }
 }
