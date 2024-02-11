@@ -23,6 +23,12 @@
     "./build": {
       "import": "./src/plugins/index.js"
     },
+    "./webpack": {
+      "import": "./src/plugins/webpack.js"
+    },
+    "./vite": {
+      "import": "./src/plugins/vite.js"
+    },
     "./build/legacy": {
       "default": "./src/plugins/legacy/index.cjs"
     }
