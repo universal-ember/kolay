@@ -53,6 +53,7 @@
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:published-types": "attw --pack",
+    "build": "pnpm prepack",
     "build:declarations": "tsc",
     "test": "vitest"
   },
