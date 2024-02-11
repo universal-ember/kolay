@@ -30,8 +30,8 @@ function deepSort(input) {
   if ('pages' in input && Array.isArray(input.pages)) {
     input.pages = input.pages.sort(betterSort('name'));
 
-     /** @type {any} */
-     const pages = input.pages;
+    /** @type {any} */
+    const pages = input.pages;
 
     pages.map((/** @type {T} */ page) => deepSort(page));
   }
@@ -40,8 +40,8 @@ function deepSort(input) {
 }
 
 /**
- * 
- * @param {string} segment 
+ *
+ * @param {string} segment
  * @returns {string}
  */
 function cleanSegment(segment) {
@@ -58,7 +58,9 @@ export function build(docs) {
 
   for (let { mdPath, config } of docs) {
     if (!mdPath.includes('/')) {
-      console.warn(`markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`);
+      console.warn(
+        `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
+      );
       continue;
     }
 
@@ -80,7 +82,9 @@ export function build(docs) {
       let groupName = cleanSegment(group);
 
       /** @type {any} */
-      let currentCollection = leafestCollection.pages.find((page) => 'pages' in page && page.name === groupName);
+      let currentCollection = leafestCollection.pages.find(
+        (page) => 'pages' in page && page.name === groupName
+      );
 
       if (!currentCollection) {
         /** @type {import('./types.ts').Collection} */
@@ -97,7 +101,10 @@ export function build(docs) {
       leafestGroupName = group;
     }
 
-    assert(leafestGroupName, 'Could not determine group name. A group / folder is required for each file.');
+    assert(
+      leafestGroupName,
+      'Could not determine group name. A group / folder is required for each file.'
+    );
 
     let groupName = cleanSegment(leafestGroupName);
     let tutorialName = cleanSegment(name);

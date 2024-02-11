@@ -7,7 +7,10 @@ export interface Tutorial {
 
 export interface Collection {
   name: string;
+  first?: string;
   pages: Page[];
+  groupName?: never;
+  tutorialName?: never;
 }
 
 export type Page = Tutorial | Collection;
