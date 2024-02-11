@@ -11,7 +11,7 @@ export default Route(
     {{pageTitle ENV.APP.shortVersion}}
 
     {{outlet}}
-    <Logs />
+    <Demo />
     <pre><code>{{JSON.stringify @model.manifest null 3}}</code></pre>
   </template>
 );

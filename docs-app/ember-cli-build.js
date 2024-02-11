@@ -25,7 +25,7 @@ module.exports = async function (defaults) {
     ],
     packagerOptions: {
       webpackConfig: {
-        devtool: process.env.CI ? 'source-map' : 'eval',
+        devtool: 'source-map',
         plugins: [
           createManifest({ src: 'public/docs', dest: 'docs' }),
         ],

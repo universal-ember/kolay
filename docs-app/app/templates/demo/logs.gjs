@@ -5,11 +5,10 @@ import { Form } from 'ember-primitives';
 import { cell } from 'ember-resources';
 // From this library
 import { Logs } from 'kolay';
-
-const x = cell('text');
+import * as X from 'kolay';
 
 function addToLog(y) {
-  console.log(y);
+  console.log(y.logInput);
 }
 
 export const Demo = <template>
@@ -19,4 +18,5 @@ export const Demo = <template>
       <input name="logInput" />
     </label>
   </Form>
+  <Logs />
 </template>;
