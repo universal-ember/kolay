@@ -47,6 +47,6 @@ export interface CreateManifestOptions {
    * This ignores all of the files on disk, useful if you have many
    * convention-based file names and some other means of enforcing that they all exist.
    * (such as runtime testing)
-  */
+   */
   onlyDirectories?: boolean;
 }

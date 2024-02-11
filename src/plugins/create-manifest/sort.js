@@ -7,7 +7,7 @@
  * This sort function fixes the sort to be intuitive.
  * If some file systems correctly sort files starting with numbers,
  * then this is a no-op.
- * 
+ *
  * @param {string} [property]
  */
 export function betterSort(property) {

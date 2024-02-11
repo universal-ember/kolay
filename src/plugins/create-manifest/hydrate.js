@@ -19,7 +19,7 @@ export async function reshape(paths, cwd) {
 
 /**
  * This requires that the pages are all sorted correctly, where index is always at the top
- * 
+ *
  * @param {import('./types.ts').Page | Array<import('./types.ts').Page>} tree
  *
  * @return {string | undefined}
@@ -33,17 +33,19 @@ export function addInTheFirstPage(tree) {
     if (typeof path === 'string') {
       return path;
     }
+
     return;
   }
-
 
   if ('pages' in tree) {
     let path = addInTheFirstPage(tree.pages);
 
     if (typeof path === 'string') {
       tree.first = path;
+
       return path;
     }
+
     return;
   }
 
@@ -80,4 +82,3 @@ function flatPages(tree) {
 
   return [tree];
 }
-

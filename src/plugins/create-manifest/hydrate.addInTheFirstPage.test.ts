@@ -10,15 +10,15 @@ describe('addInTheFirstPage', () => {
       name: 'top',
       pages: [
         {
-            name: 'foo.md',
-            path: '/top/foo.md',
-            groupName: 'top',
-            tutorialName: 'foo',
-        }
-      ]
+          name: 'foo.md',
+          path: '/top/foo.md',
+          groupName: 'top',
+          tutorialName: 'foo',
+        },
+      ],
     };
 
-    addInTheFirstPage(tree)
+    addInTheFirstPage(tree);
 
     expect(tree).toMatchInlineSnapshot(`
       {
@@ -42,17 +42,19 @@ describe('addInTheFirstPage', () => {
       pages: [
         {
           name: 'mid',
-          pages: [{
-            name: 'foo.md',
-            path: '/top/mid/foo.md',
-            groupName: 'mid',
-            tutorialName: 'foo',
-          }]
-        }
-      ]
+          pages: [
+            {
+              name: 'foo.md',
+              path: '/top/mid/foo.md',
+              groupName: 'mid',
+              tutorialName: 'foo',
+            },
+          ],
+        },
+      ],
     };
 
-    addInTheFirstPage(tree)
+    addInTheFirstPage(tree);
 
     expect(tree).toMatchInlineSnapshot(`
       {
@@ -82,22 +84,25 @@ describe('addInTheFirstPage', () => {
       pages: [
         {
           name: 'mid',
-          pages: [{
-            name: 'index.md',
-            path: '/top/mid/index.md',
-            groupName: 'mid',
-            tutorialName: 'index',
-          },{
-            name: 'foo.md',
-            path: '/top/mid/foo.md',
-            groupName: 'mid',
-            tutorialName: 'foo',
-          }]
-        }
-      ]
+          pages: [
+            {
+              name: 'index.md',
+              path: '/top/mid/index.md',
+              groupName: 'mid',
+              tutorialName: 'index',
+            },
+            {
+              name: 'foo.md',
+              path: '/top/mid/foo.md',
+              groupName: 'mid',
+              tutorialName: 'foo',
+            },
+          ],
+        },
+      ],
     };
 
-    addInTheFirstPage(tree)
+    addInTheFirstPage(tree);
 
     expect(tree).toMatchInlineSnapshot(`
       {
@@ -125,11 +130,5 @@ describe('addInTheFirstPage', () => {
         ],
       }
     `);
-  })
+  });
 });
-
-
-
-
-
-
