@@ -21,32 +21,39 @@
   "type": "module",
   "exports": {
     "./build": {
+      "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"
     },
     "./webpack": {
+      "types": "./declarations/plugins/webpack.d.ts",
       "import": "./src/plugins/webpack.js"
     },
     "./vite": {
+      "types": "./declarations/plugins/vite.d.ts",
       "import": "./src/plugins/vite.js"
     },
     "./build/legacy": {
+      "types": "./declarations/plugins/legacy/index.d.cts",
       "default": "./src/plugins/legacy/index.cjs"
     }
   },
   "files": [
-    "src"
+    "src",
+    "declarations"
   ],
   "scripts": {
+    "prepack": "pnpm build:declarations",
     "fix": "pnpm lint:fix && pnpm --filter docs-app lint:fix",
     "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:prettier:fix",
     "lint:js": "eslint .",
     "lint:js:fix": "eslint . --fix",
-    "lint:types": "tsc --noEmit",
+    "lint:types": "tsc --noEmit --emitDeclarationOnly false",
     "lint:package": "publint",
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:published-types": "attw --pack",
+    "build:declarations": "tsc",
     "test": "vitest"
   },
   "dependencies": {
@@ -67,6 +74,9 @@
     "release-plan": "^0.6.0",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2"
+  },
+  "engines": {
+    "node": ">= 18"
   },
   "volta": {
     "node": "20.10.0",
