@@ -32,24 +32,38 @@ jobs:
   ##############################################################
 
   lints:
-    name: "Lints"
+    name: "Lint ${{ matrix.project.name }}"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [install_dependencies]
     strategy:
       matrix:
         project:
-          - "kolay"
-          - "docs-app"
+          - { name: "kolay", dir: "." }
+          - { name: "docs-app", dir: "./docs-app" }
 
     steps:
       - uses: actions/checkout@v4
       - uses: wyvox/action-setup-pnpm@v3
-      - run: pnpm -w --filter ${{ matrix.project }} lint
+      - run: pnpm build
+      - run: pnpm lint
+        working-directory: ${{ matrix.project.dir }}
+
   ##############################################################
 
-  tests:
-    name: "Tests"
+  node_tests:
+    name: "Node Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [install_dependencies]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wyvox/action-setup-pnpm@v3
+      - run: pnpm test
+
+  browser_tests:
+    name: "Browser Tests"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [install_dependencies]

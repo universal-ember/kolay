@@ -6,5 +6,19 @@ const node = configs.node();
 
 module.exports = {
   root: true,
-  overrides: [...node.overrides],
+  overrides: [
+    ...node.overrides,
+    {
+      files: ['**/*.{ts,js}'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
+      files: ['**/*.test.{ts,js}'],
+      rules: {
+        'n/no-unpublished-import': 'off',
+      },
+    },
+  ],
 };
