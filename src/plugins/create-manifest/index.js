@@ -1,64 +1,57 @@
+import assert from 'node:assert';
+
 import { createUnplugin } from 'unplugin';
 
-import { parse } from './parse.js';
+import { reshape } from './hydrate.js';
 
 /**
  *
  */
-export const createManifest = createUnplugin((options) => {
-  let { src, dest, name, include, exclude, onlyDirectories } = options ?? {};
+export const createManifest = createUnplugin(
+  /**
+   * @param {import('./types.ts').CreateManifestOptions} [ options ]
+   */
+  (options) => {
+    let { src, dest, name, include, exclude, onlyDirectories } = options ?? {};
 
-  dest ??= src;
-  name ??= 'manifest.json';
-  include ??= '**/*';
-  exclude ??= [];
-  onlyDirectories ??= false;
+    const destination = (dest ??= src);
 
-  return {
-    name: 'create-manifest',
-    async buildStart() {
-      const path = await import('node:path');
-      const { globbySync } = await import('globby');
+    assert(
+      destination,
+      `A destination directory could not be determined. Please specify either 'src' or 'dest' in the options for createManifest`
+    );
 
-      const cwd = path.join(process.cwd(), src);
-      let paths = globbySync(include, {
-        cwd,
-        expandDirectories: true,
-        onlyDirectories,
-      });
+    return {
+      name: 'create-manifest',
+      async buildStart() {
+        name ??= 'manifest.json';
+        include ??= '**/*';
+        exclude ??= [];
+        onlyDirectories ??= false;
 
-      paths = paths.filter((path) => !exclude.some((pattern) => path.match(pattern)));
+        const path = await import('node:path');
+        const { globbySync } = await import('globby');
 
-      const reshaped = await reshape(paths, cwd);
+        const cwd = src ? path.join(process.cwd(), src) : process.cwd();
+        let paths = globbySync(include, {
+          cwd,
+          expandDirectories: true,
+          onlyDirectories,
+        });
 
-      await this.emitFile({
-        type: 'asset',
-        fileName: path.join(dest, name),
-        source: JSON.stringify(reshaped),
-      });
-    },
-    // watchChange(id) {
-    //   console.debug('watchChange', id);
-    // },
-  };
-});
+        // Needs to be const, because TS thinks exclude can change while `filter` is running.
+        const excludePattern = exclude;
 
-/**
- * @param {string[]} paths
- * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
- */
-async function reshape(paths, cwd) {
-  let grouped = await parse(paths, cwd);
+        paths = paths.filter((path) => !excludePattern.some((pattern) => path.match(pattern)));
 
-  let entries = Object.entries(grouped);
-  let first = entries[0];
-  let firstTutorial = grouped[first[0]][0];
+        const reshaped = await reshape(paths, cwd);
 
-  let list = entries.map(([, tutorials]) => tutorials);
-
-  return {
-    first: firstTutorial,
-    list,
-    grouped,
-  };
-}
+        this.emitFile({
+          type: 'asset',
+          fileName: path.join(destination, name),
+          source: JSON.stringify(reshaped),
+        });
+      },
+    };
+  }
+);

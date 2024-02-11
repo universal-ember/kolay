@@ -4,22 +4,10 @@ import { join, parse as parsePath } from 'node:path';
 import { betterSort } from './sort.js';
 
 /**
- * @typedef {object} Manifest
- * @property {string[]} sections
- *
- * @typedef {object} Tutorial
- * @property {string} path
- * @property {string} name
- * @property {string} groupName
- * @property {string} tutorialName
- *
- * I don't know if we want this shape long term?
- * @typedef {{ [group: string ]: Tutorial[] }} Tutorials
- *
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  *
- * @returns {Tutorials}
+ * @returns {Promise<import('./types.ts').Collection>}
  */
 export async function parse(paths, cwd) {
   let docs = await gather(paths, cwd);
@@ -32,18 +20,30 @@ export async function parse(paths, cwd) {
 /**
  * Mutates the original structure like Array.prototype.sort,
  * but deeply.
- *
- * @param {import('./types.ts').Collection} input
- * @returns {import('./types.ts').Collection}
+ * @template T
+ * @param {T} input
+ * @returns {T}
  */
 function deepSort(input) {
-  input.pages = input.pages.sort(betterSort('name'));
+  assert(typeof input === 'object' && input !== null, `Cannot deepSort; ${input}`);
 
-  input.pages.map(deepSort);
+  if ('pages' in input && Array.isArray(input.pages)) {
+    input.pages = input.pages.sort(betterSort('name'));
+
+     /** @type {any} */
+     const pages = input.pages;
+
+    pages.map((/** @type {T} */ page) => deepSort(page));
+  }
 
   return input;
 }
 
+/**
+ * 
+ * @param {string} segment 
+ * @returns {string}
+ */
 function cleanSegment(segment) {
   return stripExt(segment.replaceAll(/[\d-]/g, ''));
 }
@@ -53,11 +53,12 @@ function cleanSegment(segment) {
  * @param {import('./types.ts').GatheredDocs} docs
  */
 export function build(docs) {
+  /** @type {import('./types.ts').Collection} */
   let result = { name: 'root', pages: [] };
 
   for (let { mdPath, config } of docs) {
     if (!mdPath.includes('/')) {
-      result[mdPath] ||= [];
+      console.warn(`markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`);
       continue;
     }
 
@@ -68,6 +69,7 @@ export function build(docs) {
     if (groups.length === 0) continue;
     if (!name) continue;
 
+    /** @type {import('./types.ts').Collection} */
     let leafestCollection = result;
     let leafestGroupName;
     let groupStack = [];
@@ -77,9 +79,11 @@ export function build(docs) {
 
       let groupName = cleanSegment(group);
 
-      let currentCollection = leafestCollection.pages.find((page) => page.name === groupName);
+      /** @type {any} */
+      let currentCollection = leafestCollection.pages.find((page) => 'pages' in page && page.name === groupName);
 
       if (!currentCollection) {
+        /** @type {import('./types.ts').Collection} */
         currentCollection = {
           name: groupName,
           pages: [],
@@ -92,6 +96,8 @@ export function build(docs) {
       leafestCollection = currentCollection;
       leafestGroupName = group;
     }
+
+    assert(leafestGroupName, 'Could not determine group name. A group / folder is required for each file.');
 
     let groupName = cleanSegment(leafestGroupName);
     let tutorialName = cleanSegment(name);
@@ -115,7 +121,7 @@ export function build(docs) {
 /**
  * @param {string} attemptedPath
  * @param {string} searchFor
- * @param {import('./types.ts')} collection
+ * @param {import('./types.ts').Collection} collection
  */
 function preAddCheck(attemptedPath, searchFor, collection) {
   let matching = collection.pages.find((page) => stripExt(page.name) === searchFor);
@@ -130,7 +136,7 @@ function preAddCheck(attemptedPath, searchFor, collection) {
           `Please move ${attemptedPath} into the "${matching.name}" folder. ` +
           `If you want this to be the first page, rename the file to ${suggestion}/index.md`
       );
-    } else {
+    } else if ('path' in matching) {
       let folder = stripExt(matching.path);
 
       assert(
@@ -147,7 +153,7 @@ function preAddCheck(attemptedPath, searchFor, collection) {
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  *
- * @returns { Array<{ mdPath: string, config: object }> }
+ * @returns { Promise<import('./types.ts').GatheredDocs> }
  */
 async function gather(paths, cwd) {
   const fs = await import('node:fs/promises');
@@ -156,6 +162,9 @@ async function gather(paths, cwd) {
   let markdown = paths.filter((path) => path.endsWith('.md'));
   let configs = paths.filter((path) => path.endsWith('.json'));
 
+  /**
+   * @param {string} path
+   */
   async function configFor(path) {
     let foundPath = configs.find((configPath) => {
       let configPathWithoutExtension = configPath.replace(/\.json$/, '');

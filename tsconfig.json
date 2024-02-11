@@ -1,5 +1,10 @@
 {
   "extends": ["@tsconfig/strictest", "@tsconfig/node20"],
   "include": ["src"],
-  "exclude": ["docs-app"]
+  "exclude": ["docs-app"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    // type-checking only
+    "noEmit": true
+  }
 }
