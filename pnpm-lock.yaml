@@ -156,7 +156,7 @@ importers:
         version: 11.0.1(ember-source@5.5.0)
       ember-source:
         specifier: ~5.5.0
-        version: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+        version: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
       ember-template-imports:
         specifier: ^4.0.0
         version: 4.0.0
@@ -199,6 +199,9 @@ importers:
       qunit-dom:
         specifier: ^2.0.0
         version: 2.0.0
+      rsvp:
+        specifier: ^4.8.5
+        version: 4.8.5
       stylelint:
         specifier: ^15.11.0
         version: 15.11.0(typescript@5.3.3)
@@ -1934,7 +1937,7 @@ packages:
       ember-auto-import: 2.7.2(webpack@5.89.0)
       ember-cli-babel: 7.26.11
       ember-cli-htmlbars: 6.3.0
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
     transitivePeerDependencies:
       - '@glint/template'
       - supports-color
@@ -6771,7 +6774,7 @@ packages:
       ember-cache-primitive-polyfill: 1.0.1(@babel/core@7.23.6)
       ember-cli-babel: 7.26.11
       ember-cli-babel-plugin-helpers: 1.1.1
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
     transitivePeerDependencies:
       - '@babel/core'
       - '@glint/template'
@@ -6784,7 +6787,7 @@ packages:
       ember-source: ^3.28.0 || >= 4.0.0
     dependencies:
       ember-cli-babel: 7.26.11
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
       git-repo-info: 2.1.1
     transitivePeerDependencies:
       - supports-color
@@ -7390,7 +7393,7 @@ packages:
       '@embroider/addon-shim': 1.8.7
       ember-cli-normalize-entity-name: 1.0.0
       ember-cli-string-utils: 1.1.0
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7402,7 +7405,7 @@ packages:
       ember-source: '>= 3.28.0'
     dependencies:
       '@embroider/addon-shim': 1.8.7
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7450,7 +7453,7 @@ packages:
       '@embroider/addon-shim': 1.8.7
       '@embroider/macros': 1.13.5
       ember-cli-test-loader: 3.1.0
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
       qunit: 2.20.0
     transitivePeerDependencies:
       - '@glint/template'
@@ -7467,7 +7470,7 @@ packages:
         optional: true
     dependencies:
       ember-cli-babel: 7.26.11
-      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0)
+      ember-source: 5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7510,7 +7513,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /ember-source@5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(webpack@5.89.0):
+  /ember-source@5.5.0(@babel/core@7.23.6)(@glimmer/component@1.1.2)(rsvp@4.8.5)(webpack@5.89.0):
     resolution: {integrity: sha512-OTJ9kt76wyvEkdSdjmonoLUTTqYg5OaFxicSiwKsjX9gJ9bVzuCu3uInhBKEfTdC5lSBMEcVuGk8f9LUF3pxJQ==}
     engines: {node: '>= 16.*'}
     peerDependencies:
@@ -7558,7 +7561,7 @@ packages:
       ember-router-generator: 2.0.0
       inflection: 2.0.1
       route-recognizer: 0.3.4
-      router_js: 8.0.3(route-recognizer@0.3.4)
+      router_js: 8.0.3(route-recognizer@0.3.4)(rsvp@4.8.5)
       semver: 7.5.4
       silent-error: 1.1.1
       simple-html-tokenizer: 0.5.11
@@ -12716,7 +12719,7 @@ packages:
   /route-recognizer@0.3.4:
     resolution: {integrity: sha512-2+MhsfPhvauN1O8KaXpXAOfR/fwe8dnUXVM+xw7yt40lJRfPVQxV6yryZm0cgRvAj5fMF/mdRZbL2ptwbs5i2g==}
 
-  /router_js@8.0.3(route-recognizer@0.3.4):
+  /router_js@8.0.3(route-recognizer@0.3.4)(rsvp@4.8.5):
     resolution: {integrity: sha512-lSgNMksk/wp8nspLX3Pn6QD499FUjwYMkgP99RxqKEScil4DKC/59YezpEZ318zGtkq8WR01VBhH+/u3InlLgg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -12725,6 +12728,7 @@ packages:
     dependencies:
       '@glimmer/env': 0.1.7
       route-recognizer: 0.3.4
+      rsvp: 4.8.5
 
   /rsvp@3.2.1:
     resolution: {integrity: sha512-Rf4YVNYpKjZ6ASAmibcwTNciQ5Co5Ztq6iZPEykHpkoflnD/K5ryE/rHehFsTm4NJj8nKDhbi3eKBWGogmNnkg==}
