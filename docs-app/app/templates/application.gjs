@@ -9,5 +9,6 @@ export default Route(
     {{pageTitle ENV.APP.shortVersion}}
 
     {{outlet}}
+    <pre><code>{{JSON.stringify @model.manifest null 3}}</code></pre>
   </template>
 );

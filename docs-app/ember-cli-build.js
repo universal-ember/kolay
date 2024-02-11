@@ -2,12 +2,14 @@
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
-module.exports = function (defaults) {
+module.exports = async function (defaults) {
   const app = new EmberApp(defaults, {
     // Add options here
   });
 
   const { Webpack } = require('@embroider/webpack');
+
+  const { createManifest } = await import('kolay/webpack');
 
   return require('@embroider/compat').compatBuild(app, Webpack, {
     staticAddonTestSupportTrees: true,
@@ -21,5 +23,13 @@ module.exports = function (defaults) {
         package: 'qunit',
       },
     ],
+    packagerOptions: {
+      webpackConfig: {
+        devtool: process.env.CI ? 'source-map' : 'eval',
+        plugins: [
+          createManifest({ src: 'public/docs', dest: 'docs' }),
+        ],
+      },
+    },
   });
 };
