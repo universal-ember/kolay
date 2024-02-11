@@ -13,33 +13,21 @@ const original = {
 const LEVELS = Object.keys(original);
 
 const LogList = <template>
-  <div class="kolay__log-list__scroll">
+  <div class='kolay__log-list__scroll'>
     {{#each @logs as |logEntry|}}
-      <div class="kolay__log-list__level {{logEntry.level}}">
-        <span class="kolay__log-list__time">{{format logEntry.timestamp}}</span>
+      <div class='kolay__log-list__level {{logEntry.level}}'>
+        <span class='kolay__log-list__time'>{{format logEntry.timestamp}}</span>
         <span>{{logEntry.message}}</span>
       </div>
-      {{ (scrollToBottom) }}
+      {{(scrollToBottom)}}
     {{/each}}
   </div>
 
   <style>
-    .kolay__log-list__scroll {
-      position: relative;
-      overflow: auto;
-      max-height: 10rem;
-      filter: invert(1);
-
-      .kolay__log-list__level {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .kolay__log-list__time {
-        border-right: 1px solid;
-        padding-right: 0.5rem;
-      }
-    }
+    .kolay__log-list__scroll { position: relative; overflow: auto; max-height:
+    10rem; filter: invert(1); .kolay__log-list__level { display: flex; gap:
+    0.5rem; } .kolay__log-list__time { border-right: 1px solid; padding-right:
+    0.5rem; } }
   </style>
 </template>;
 
@@ -49,7 +37,9 @@ export class Logs extends Component {
   constructor(...args) {
     super(...args);
 
-    registerDestructor(this, () => LEVELS.forEach((level) => console[level] = original[level]));
+    registerDestructor(this, () =>
+      LEVELS.forEach((level) => (console[level] = original[level])),
+    );
 
     for (let level of LEVELS) {
       console[level] = (...messageParts) => {
@@ -68,20 +58,13 @@ export class Logs extends Component {
   }
 
   <template>
-    <div class="kolay__in-viewport__logs">
+    <div class='kolay__in-viewport__logs'>
       <LogList @logs={{this.logs}} />
     </div>
     <style>
-      .kolay__in-viewport__logs {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 0.5rem;
-        border: 1px solid gray;
-        background: currentColor;
-        filter: invert(1);
-      }
+      .kolay__in-viewport__logs { position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 0.5rem; border: 1px solid gray; background: currentColor; filter:
+      invert(1); }
     </style>
   </template>
 }
@@ -103,9 +86,9 @@ function scrollToBottom() {
 }
 
 let formatter = new Intl.DateTimeFormat('en-GB', {
-  hour: "numeric",
-  minute: "numeric",
-  second: "numeric",
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
   fractionalSecondDigits: 2,
 });
 

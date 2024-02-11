@@ -9,9 +9,7 @@
         {
           "name": "@embroider/addon-blueprint",
           "isBaseBlueprint": true,
-          "options": [
-            "--ci-provider=github"
-          ]
+          "options": ["--ci-provider=github"]
         }
       ]
     }

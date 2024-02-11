@@ -41,6 +41,7 @@ jobs:
         project:
           - { name: "kolay", dir: "." }
           - { name: "docs-app", dir: "./docs-app" }
+          - { name: "ui", dir: "./ui" }
 
     steps:
       - uses: actions/checkout@v4
