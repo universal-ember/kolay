@@ -11,3 +11,4 @@ node_modules/
 
 # npm/pnpm/yarn pack output
 *.tgz
+.eslintcache
