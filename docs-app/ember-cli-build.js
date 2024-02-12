@@ -26,9 +26,7 @@ module.exports = async function (defaults) {
     packagerOptions: {
       webpackConfig: {
         devtool: 'source-map',
-        plugins: [
-          createManifest({ src: 'public/docs', dest: 'docs' }),
-        ],
+        plugins: [createManifest({ src: 'public/docs', dest: 'docs' })],
       },
     },
   });

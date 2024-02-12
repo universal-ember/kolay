@@ -1,13 +1,8 @@
-// For the demo
-import { on } from '@ember/modifier';
-
 import { Form } from 'ember-primitives';
-import { cell } from 'ember-resources';
-// From this library
 import { Logs } from 'kolay';
-import * as X from 'kolay';
 
 function addToLog(y) {
+  // eslint-disable-next-line no-console
   console.log(y.logInput);
 }
 
@@ -18,5 +13,6 @@ export const Demo = <template>
       <input name="logInput" />
     </label>
   </Form>
+
   <Logs />
 </template>;

@@ -1,6 +1,8 @@
+/* eslint-disable no-console */
 import Component from '@glimmer/component';
-import { TrackedArray } from 'tracked-built-ins';
 import { registerDestructor } from '@ember/destroyable';
+
+import { TrackedArray } from 'tracked-built-ins';
 
 const original = {
   log: console.log,
@@ -70,6 +72,7 @@ export class Logs extends Component {
 }
 
 let frame;
+
 function scrollToBottom() {
   if (frame) {
     cancelAnimationFrame(frame);
@@ -77,6 +80,7 @@ function scrollToBottom() {
 
   frame = requestAnimationFrame(() => {
     let el = document.querySelector('.kolay__log-list__scroll');
+
     el.scrollTo({
       top: el.scrollHeight,
       left: 0,
