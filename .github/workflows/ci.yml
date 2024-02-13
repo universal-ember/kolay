@@ -14,6 +14,11 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  TURBO_API: http://127.0.0.1:9080
+  TURBO_TOKEN: this-is-not-a-secret
+  TURBO_TEAM: myself
+
 ##############################################################
 
 jobs:
@@ -25,8 +30,9 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: wyvox/action-setup-pnpm@v3
+      - uses: wyvox/action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: echo ${{ github.event.number }} > ./pr-number.txt
 
   ##############################################################
@@ -38,8 +44,9 @@ jobs:
     needs: [install_dependencies]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: wyvox/action-setup-pnpm@v3
+      - uses: wyvox/action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm lint
 
   ##############################################################
@@ -51,9 +58,10 @@ jobs:
     needs: [install_dependencies]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: wyvox/action-setup-pnpm@v3
-      - run: pnpm test
+      - uses: wyvox/action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm turbo test:node
 
   browser_tests:
     name: "Browser Tests"
@@ -62,9 +70,7 @@ jobs:
     needs: [install_dependencies]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: wyvox/action-setup-pnpm@v3
-      - run: pnpm build
-      - run: pnpm i -f # re-sync injected dependencies
-      - run: pnpm test
-        working-directory: docs-app
+      - uses: wyvox/action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm turbo test:ember

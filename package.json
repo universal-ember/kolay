@@ -59,9 +59,9 @@
     "lint:prettier:fix": "prettier . --write",
     "lint:published-types": "attw --pack",
     "build": "pnpm prepack",
-    "build:declarations": "tsc",
+    "build:declarations": "tsc --declaration",
     "_syncPnpm": "pnpm sync-dependencies-meta-injected",
-    "test": "vitest"
+    "test:node": "vitest"
   },
   "dependencies": {
     "@universal-ember/kolay-ui": "workspace:^",
