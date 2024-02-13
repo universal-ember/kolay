@@ -245,8 +245,6 @@ importers:
         specifier: ^5.89.0
         version: 5.90.1
     dependenciesMeta:
-      '@universal-ember/kolay-ui':
-        injected: true
       kolay:
         injected: true
 

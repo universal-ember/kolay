@@ -97,9 +97,6 @@
   "dependenciesMeta": {
     "kolay": {
       "injected": true
-    },
-    "@universal-ember/kolay-ui": {
-      "injected": true
     }
   }
 }
