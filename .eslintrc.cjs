@@ -20,5 +20,12 @@ module.exports = {
         'n/no-unpublished-import': 'off',
       },
     },
+    {
+      files: ['src/browser/**/*'],
+      rules: {
+        'n/no-unpublished-import': 'off',
+        'n/no-missing-import': 'off',
+      },
+    },
   ],
 };

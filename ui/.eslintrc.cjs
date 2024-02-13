@@ -2,10 +2,11 @@
 
 const { configs } = require('@nullvoxpopuli/eslint-configs');
 
+// accommodates: JS, TS, App, Addon, and V2 Addon
 const config = configs.ember();
 
 module.exports = {
-  root: true,
+  ...config,
   overrides: [
     ...config.overrides,
     {
@@ -17,6 +18,12 @@ module.exports = {
       files: ['**/*.gjs'],
       plugins: ['ember'],
       parser: 'ember-eslint-parser',
+    },
+    {
+      files: ['**/*.ts', '**/*.gts'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
     },
   ],
 };

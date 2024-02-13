@@ -17,7 +17,8 @@ module.exports = async function (defaults) {
     staticHelpers: true,
     staticModifiers: true,
     staticComponents: true,
-    staticEmberSource: true,
+    // https://github.com/emberjs/ember.js/issues/20640
+    // staticEmberSource: true,
     skipBabel: [
       {
         package: 'qunit',
@@ -25,10 +26,8 @@ module.exports = async function (defaults) {
     ],
     packagerOptions: {
       webpackConfig: {
-        devtool: process.env.CI ? 'source-map' : 'eval',
-        plugins: [
-          createManifest({ src: 'public/docs', dest: 'docs' }),
-        ],
+        devtool: 'source-map',
+        plugins: [createManifest({ src: 'public/docs', dest: 'docs' })],
       },
     },
   });
