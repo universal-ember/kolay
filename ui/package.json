@@ -27,12 +27,13 @@
   ],
   "scripts": {
     "build": "rollup --config",
-    "lint": "concurrently 'npm:lint:*(!fix)' --names 'lint:'",
-    "lint:fix": "concurrently 'npm:lint:*:fix' --names 'fix:'",
+    "lint": "pnpm -w turbo --filter @universal-ember/kolay-ui _:lint",
+    "lint:fix": "pnpm -w turbo --filter @universal-ember/kolay-ui _:lint:fix",
     "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
     "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
+    "ember-fetch": "^8.1.2",
     "prepack": "rollup --config",
     "start": "rollup --config --watch",
     "test": "echo 'A v2 addon does not have tests, run tests in test-app'"
