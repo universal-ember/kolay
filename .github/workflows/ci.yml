@@ -32,24 +32,15 @@ jobs:
   ##############################################################
 
   lints:
-    name: "Lint ${{ matrix.project.name }}"
+    name: "Lint"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [install_dependencies]
-    strategy:
-      matrix:
-        project:
-          - { name: "kolay", dir: "." }
-          - { name: "docs-app", dir: "./docs-app" }
-          - { name: "ui", dir: "./ui" }
 
     steps:
       - uses: actions/checkout@v4
       - uses: wyvox/action-setup-pnpm@v3
-      - run: pnpm build
-      - run: pnpm i -f # re-sync injected dependencies
       - run: pnpm lint
-        working-directory: ${{ matrix.project.dir }}
 
   ##############################################################
 

@@ -4,17 +4,61 @@ import { registerDestructor } from '@ember/destroyable';
 
 import { TrackedArray } from 'tracked-built-ins';
 
+import type { TOC } from '@ember/component/template-only';
+import type Owner from '@ember/owner';
+
 const original = {
   log: console.log,
   warn: console.warn,
   error: console.error,
   debug: console.debug,
   info: console.info,
-};
+} as const;
 
-const LEVELS = Object.keys(original);
+type Levels = keyof typeof original;
 
-const LogList = <template>
+const LEVELS = Object.keys(original) as Levels[];
+
+let frame: number;
+
+function scrollToBottom() {
+  if (frame) {
+    cancelAnimationFrame(frame);
+  }
+
+  frame = requestAnimationFrame(() => {
+    let el = document.querySelector('.kolay__log-list__scroll');
+
+    if (!el) return;
+
+    el.scrollTo({
+      top: el.scrollHeight,
+      left: 0,
+      behavior: 'smooth',
+    });
+  });
+}
+
+let formatter = new Intl.DateTimeFormat('en-GB', {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  fractionalSecondDigits: 2,
+});
+
+const format = (date: Date) => formatter.format(date);
+
+interface Log {
+      level: string;
+      timestamp: Date;
+      message: string;
+}
+
+const LogList: TOC<{
+  Args: {
+    logs: Log[]
+  }
+}> = <template>
   <div class='kolay__log-list__scroll'>
     {{#each @logs as |logEntry|}}
       <div class='kolay__log-list__level {{logEntry.level}}'>
@@ -25,19 +69,33 @@ const LogList = <template>
     {{/each}}
   </div>
 
+  {{! prettier-ignore-start }}
   <style>
-    .kolay__log-list__scroll { position: relative; overflow: auto; max-height:
-    10rem; filter: invert(1); .kolay__log-list__level { display: flex; gap:
-    0.5rem; } .kolay__log-list__time { border-right: 1px solid; padding-right:
-    0.5rem; } }
+    .kolay__log-list__scroll {
+      position: relative;
+      overflow: auto;
+      max-height: 10rem;
+      filter: invert(1);
+
+      .kolay__log-list__level {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .kolay__log-list__time {
+        border-right: 1px solid;
+        padding-right: 0.5rem;
+      }
+    }
   </style>
+  {{! prettier-ignore-end }}
 </template>;
 
 export class Logs extends Component {
-  logs = new TrackedArray();
+  logs = new TrackedArray<Log>();
 
-  constructor(...args) {
-    super(...args);
+  constructor(owner: Owner, args: any) {
+    super(owner, args);
 
     registerDestructor(this, () =>
       LEVELS.forEach((level) => (console[level] = original[level])),
@@ -63,37 +121,20 @@ export class Logs extends Component {
     <div class='kolay__in-viewport__logs'>
       <LogList @logs={{this.logs}} />
     </div>
+    {{! prettier-ignore-start }}
     <style>
-      .kolay__in-viewport__logs { position: fixed; bottom: 0; left: 0; right: 0;
-      padding: 0.5rem; border: 1px solid gray; background: currentColor; filter:
-      invert(1); }
+      .kolay__in-viewport__logs {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.5rem;
+        border: 1px solid gray;
+        background: currentColor;
+        filter: invert(1);
+      }
     </style>
+    {{! prettier-ignore-end }}
   </template>
 }
 
-let frame;
-
-function scrollToBottom() {
-  if (frame) {
-    cancelAnimationFrame(frame);
-  }
-
-  frame = requestAnimationFrame(() => {
-    let el = document.querySelector('.kolay__log-list__scroll');
-
-    el.scrollTo({
-      top: el.scrollHeight,
-      left: 0,
-      behavior: 'smooth',
-    });
-  });
-}
-
-let formatter = new Intl.DateTimeFormat('en-GB', {
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-  fractionalSecondDigits: 2,
-});
-
-const format = (date) => formatter.format(date);
