@@ -61,7 +61,7 @@
     "build": "pnpm prepack",
     "build:declarations": "tsc --declaration",
     "_syncPnpm": "pnpm sync-dependencies-meta-injected",
-    "test:node": "vitest"
+    "test:node": "vitest --run"
   },
   "dependencies": {
     "@universal-ember/kolay-ui": "workspace:^",
