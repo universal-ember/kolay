@@ -26,7 +26,6 @@
     "test:ember": "ember test"
   },
   "devDependencies": {
-    "pnpm-sync-dependencies-meta-injected": "^0.0.10",
     "@babel/core": "^7.23.6",
     "@babel/eslint-parser": "^7.23.3",
     "@babel/plugin-proposal-decorators": "^7.23.6",
@@ -69,6 +68,7 @@
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-qunit": "^8.1.1",
     "loader.js": "^4.7.0",
+    "pnpm-sync-dependencies-meta-injected": "^0.0.10",
     "prettier": "^3.1.1",
     "prettier-plugin-ember-template-tag": "^2.0.0",
     "qunit": "^2.20.0",
@@ -89,6 +89,7 @@
     "extends": "../package.json"
   },
   "dependencies": {
+    "@universal-ember/kolay-ui": "workspace:^",
     "ember-route-template": "^1.0.3",
     "kolay": "workspace:^"
   },

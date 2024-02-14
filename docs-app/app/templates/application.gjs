@@ -1,17 +1,38 @@
-// NOTE: this is a virtual module and doesn't actually exist
-//       the build emits it
 import ENV from 'docs-app/config/environment';
 import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 
-import { Demo } from './demo/logs';
+const Nav = <template>
+  <ul>
+    {{#each @item.pages as |page|}}
+      {{#if page.path}}
+        <li>
+          <a href={{page.path}}>{{page.name}}</a>
+        </li>
+      {{else}}
+        <li>
+          {{page.name}}
+          <Nav @item={{page}} />
+        </li>
+      {{/if}}
+    {{/each}}
+  </ul>
+</template>;
 
 export default Route(
   <template>
     {{pageTitle ENV.APP.shortVersion}}
 
-    {{outlet}}
-    <Demo />
-    <pre><code>{{JSON.stringify @model.manifest null 3}}</code></pre>
+    <div class="application__layout">
+      <nav>
+        <Nav @item={{@model.manifest.tree}} />
+      </nav>
+      <main>
+        {{outlet}}
+      </main>
+    </div>
+    <style>
+      .application__layout { display: grid; grid-template-columns: max-content 1fr; gap: 1rem; }
+    </style>
   </template>
 );

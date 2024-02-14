@@ -14,7 +14,7 @@ export const createManifest = createUnplugin(
   (options) => {
     let { src, dest, name, include, exclude, onlyDirectories } = options ?? {};
 
-    const destination = (dest ??= src);
+    const destination = dest ?? 'docs';
 
     assert(
       destination,

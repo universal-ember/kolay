@@ -108,11 +108,17 @@ export class Logs extends Component {
         // Makes debugging easier
         original[level](...messageParts);
 
-        this.logs.push({
-          level,
-          message: messageParts.join(' '),
-          timestamp: new Date(),
-        });
+        (async () => {
+          // We need to await here, so
+          // we don't break {{log thing}} usage
+          await Promise.resolve();
+
+          this.logs.push({
+            level,
+            message: messageParts.join(' '),
+            timestamp: new Date(),
+          });
+        })();
       };
     }
   }

@@ -64,8 +64,12 @@
     "test:node": "vitest --run"
   },
   "dependencies": {
+    "@tsconfig/ember": "^3.0.3",
     "@universal-ember/kolay-ui": "workspace:^",
+    "@zamiell/typedoc-plugin-not-exported": "^0.2.0",
     "globby": "^14.0.0",
+    "package-up": "^5.0.0",
+    "typedoc": "^0.25.8",
     "unplugin": "^1.6.0"
   },
   "dependenciesMeta": {
@@ -102,6 +106,39 @@
     "node": ">= 18"
   },
   "pnpm": {
+    "packageExtensions": {
+      "ember-repl": {
+        "peerDependencies": {
+          "reactiveweb": "*",
+          "ember-source": "*"
+        }
+      },
+      "ember-async-data": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "ember-primitives": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "ember-resources": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "ember-cached-decorator-polyfill": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "@universal-ember/kolay-ui": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      }
+    },
     "peerDependencyRules": {
       "ignoreMissing": [
         "@babel/core",

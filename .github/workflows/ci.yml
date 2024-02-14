@@ -18,6 +18,20 @@ env:
   TURBO_API: http://127.0.0.1:9080
   TURBO_TOKEN: this-is-not-a-secret
   TURBO_TEAM: myself
+  # We have a real case where the verification is incorrect,
+  # webpack appears to only ship one copy of ember-source
+  #
+  # We can deduce this without debugging too hard, because:
+  # - we know that ember-source includes `@glimmer/validator`
+  #   (bundled, not as a dependency)
+  # - we know that `@glimmer/validator` has conniptions if it
+  #   is included twice in the same app - an error is thrown.
+  #
+  # And right now, there is no error about `@glimmer/validator`
+  # being included twice.
+  #
+  # See: https://github.com/embroider-build/embroider/issues/1789
+  I_HAVE_BAD_PEER_DEPS_AND_WANT_A_BROKEN_BUILD: true
 
 ##############################################################
 
@@ -47,7 +61,7 @@ jobs:
       - uses: wyvox/action@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm lint
+      - run: pnpm turbo _:lint
 
   ##############################################################
 

@@ -9,7 +9,7 @@ module.exports = async function (defaults) {
 
   const { Webpack } = require('@embroider/webpack');
 
-  const { createManifest } = await import('kolay/webpack');
+  const { createManifest, apiDocs } = await import('kolay/webpack');
 
   return require('@embroider/compat').compatBuild(app, Webpack, {
     staticAddonTestSupportTrees: true,
@@ -27,7 +27,12 @@ module.exports = async function (defaults) {
     packagerOptions: {
       webpackConfig: {
         devtool: 'source-map',
-        plugins: [createManifest({ src: 'public/docs', dest: 'docs' })],
+        plugins: [
+          createManifest({ src: 'public/docs' }),
+          apiDocs({ package: 'kolay' }),
+          apiDocs({ package: 'ember-primitives' }),
+          apiDocs({ package: 'ember-resources' }),
+        ],
       },
     },
   });

@@ -41,6 +41,10 @@
   "dependencies": {
     "@embroider/addon-shim": "1.8.8-unstable.12a42ca",
     "decorator-transforms": "^1.0.1",
+    "ember-repl": "3.0.0-beta.8",
+    "highlight.js": "^11.9.0",
+    "highlightjs-glimmer": "^2.2.1",
+    "reactiveweb": "^1.2.1",
     "tracked-built-ins": "^3.3.0"
   },
   "devDependencies": {
@@ -86,7 +90,10 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
-      "./components/logs.js": "./dist/_app_/components/logs.js"
+      "./components/logs.js": "./dist/_app_/components/logs.js",
+      "./services/kolay/docs.js": "./dist/_app_/services/kolay/docs.js",
+      "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js",
+      "./services/kolay/types.js": "./dist/_app_/services/kolay/types.js"
     }
   },
   "peerDependencies": {
