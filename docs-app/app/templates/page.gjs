@@ -10,6 +10,12 @@ export default Route(
         class="prose p-4"
         {{(if docs.selected.prose (modifier highlight docs.selected.prose))}}
       >
+        {{#if docs.selected.hasError}}
+          <div style="border: 1px solid red; padding: 1rem;">
+            {{docs.selected.error}}
+          </div>
+        {{/if}}
+
         {{#if docs.selected.prose}}
           <docs.selected.prose />
         {{/if}}

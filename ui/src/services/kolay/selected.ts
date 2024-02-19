@@ -38,7 +38,9 @@ export default class Selected extends Service {
 
   @use proseFile = RemoteData<string>(() => `/docs${this.path}.md`);
   // @use proseCompiled = MarkdownToHTML(() => this.proseFile.value);
-  @use proseCompiled: ReturnType<typeof Compiled> = Compiled(() => this.proseFile.value);
+  @use proseCompiled: ReturnType<typeof Compiled> = Compiled(() => this.proseFile.value, () => ({
+    importMap: this.docs.additionalResolves,
+  }));
 
   /*********************************************************************
    * This is a pattern to help reduce flashes of content during

@@ -37,6 +37,9 @@
       "types": "./declarations/plugins/vite.d.ts",
       "import": "./src/plugins/vite.js"
     },
+    "./plugin-types": {
+      "types": "./src/plugins/types.d.ts"
+    },
     "./build/legacy": {
       "types": "./declarations/plugins/legacy/index.d.cts",
       "default": "./src/plugins/legacy/index.cjs"

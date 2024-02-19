@@ -9,14 +9,16 @@ type Input = string | undefined | null;
 type Format = 'glimdown' | 'gjs' | 'hbs';
 export interface Options {
   format?: Format;
-  importMap: Record<string, Record<string, unknown>>;
-  topLevelScope: Record<string, unknown>;
+  importMap?: Record<string, Record<string, unknown>>;
+  topLevelScope?: Record<string, unknown>;
 }
 
 export function Compiled(
   markdownText: Input | (() => Input),
-  userOptions?: Options
+  options?: Options | (() => Options),
 ): ReturnType<typeof REPLCompiled> {
+  let userOptions = typeof options === 'function' ? options() : options;
+
   return resource(({ use }) => {
     let options = {
       ShadowComponent: 'Shadowed',

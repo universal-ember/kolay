@@ -1,9 +1,9 @@
 # `createManifest(...)`
 
 ```hbs live
-<APIDocs
-  @module="kolay/plugns/create-manifest/types"
-  @name="CreateManifestOptions"
-  @apiDocs="/docs/kolay.json"
-/>
+<APIDocs @module="declarations/plugins/vite" @name="createManifest" @apiDocs="/docs/kolay.json" />
+```
+
+```hbs live
+<APIDocs @module="src/plugins/types" @name="CreateManifestOptions" @apiDocs="/docs/kolay.json" />
 ```

@@ -17,7 +17,7 @@ export default class DocsService extends Service {
 
   @tracked manifestLocation = DEFAULT_MANIFEST;
   @tracked apiDocsLocation = DEFAULT_API_DOCS;
-  @tracked additionalResolves?: Record<string, unknown>;
+  @tracked additionalResolves?: Record<string, Record<string, unknown>>;
   @tracked additionalTopLevelScope?: Record<string, unknown>;
   @tracked remarkPlugins?: unknown[];
 
@@ -35,7 +35,7 @@ export default class DocsService extends Service {
     manifest?: string;
 
     /**
-     * The location of the typedoc output JSON file created with 
+     * The location of the typedoc output JSON file created with
      * the `typedoc` plugin.
      *
      * This must be allowed by CORS, as it is requested via `fetch`
@@ -49,7 +49,7 @@ export default class DocsService extends Service {
      * in the markdown, without a codefence.
      *
      * By default, the fallowing is available:
-     * - for escaping styles / having a clean style-sandbox 
+     * - for escaping styles / having a clean style-sandbox
      *   - <Shadowed>
      * - for rendering your typedoc:
      *   - <APIDocs>
@@ -60,10 +60,10 @@ export default class DocsService extends Service {
     /**
      * Additional modules you'd like to be able to import from.
      * This is in addition the the default modules provided by ember,
-     * and allows you to have access to private libraries without 
+     * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: Record<string, unknown>;
+    resolve?: Record<string, Record<string, unknown>>;
 
     /**
      * Provide additional remark plugins to the default markdown compiler.

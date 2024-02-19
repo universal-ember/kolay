@@ -11,6 +11,11 @@ export default class ApplicationRoute extends Route {
       // TODO: can be determined by createManifest plugin
       //       (if it emits a virtual module)
       manifest: '/docs/manifest.json',
+
+      resolve: {
+        'ember-primitives': await import('ember-primitives'),
+        kolay: await import('kolay'),
+      },
     });
 
     const request = await fetch(this.docs.manifestLocation);
