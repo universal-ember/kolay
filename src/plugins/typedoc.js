@@ -63,7 +63,7 @@ export const apiDocs = createUnplugin(
         const absoluteResolved = resolvedEntries.map((entry) => join(typeInfo.dir, entry));
 
         const typedoc = await import('typedoc');
-        const tmpTSConfigPath = '/tmp/test.json';
+        const tmpTSConfigPath = `/tmp/kolay-typedoc-${options.package}.json`;
         const extendsTsConfig = require.resolve('@tsconfig/ember/tsconfig.json');
 
         const tsConfig = {
@@ -84,6 +84,7 @@ export const apiDocs = createUnplugin(
           basePath: typeInfo.dir,
           cleanOutputDir: false,
           includes: typeInfo.dir,
+          readme: '',
           pretty: false,
           excludeInternal: false,
           skipErrorChecking: true,

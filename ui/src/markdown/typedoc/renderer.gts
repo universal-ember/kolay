@@ -27,12 +27,26 @@ import type {
  *   - only the signature describes what the public API is.
  */
 export const APIDocs: TOC<{
-  Args: {
+  Args: (
+  {
     module: string;
     name: string;
-  };
+  } & ({
+    /**
+     * The name of the package to lookup the module and export name.
+     * TODO: not implemented yet
+     */
+    package: string
+    apiDocs: never;
+  } | {
+    /**
+     * The URL of the api-docs JSON document to lookup the module and export name
+     */
+    apiDocs: string;
+    package: never;
+  }));
 }> = <template>
-  <Load @module="{{@module}}" @name="{{@name}}" as |info|>
+  <Load @module="{{@module}}" @name="{{@name}}" @package={{@package}} @apiDocs={{@apiDocs}} as |info|>
     <Declaration @info={{info}} />
   </Load>
 </template>;

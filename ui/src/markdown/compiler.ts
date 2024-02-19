@@ -37,7 +37,9 @@ export function Compiled(
     // @ts-expect-error - bah
     let output = use(REPLCompiled(markdownText, options));
 
-    return () => output.current;
+    return () => {
+      return output.current;
+    }
   });
 }
 

@@ -1,3 +1,5 @@
+import Component from '@glimmer/component';
+
 import { RemoteData } from 'reactiveweb/remote-data';
 
 import { highlight } from '../../highlight.ts';
@@ -17,6 +19,7 @@ export const infoFor = (data: DeclarationReflection, module: string, name: strin
   return found as DeclarationReflection | undefined;
 };
 
+
 export const Query: TOC<{
   Args: { module: string; name: string; info: DeclarationReflection };
   Blocks: { default: [DeclarationReflection]; notFound: [] };
@@ -34,23 +37,47 @@ function isDeclarationReflection(info: unknown): info is DeclarationReflection {
   return true;
 }
 
-export const Load: TOC<{
-  Args: { module: string; name: string };
+const stringify = (x: unknown) => String(x);
+
+export class Load extends Component<{
+  Args: {
+    module: string; name: string
+    package?: string;
+    apiDocs?: string;
+  };
   Blocks: { default: [DeclarationReflection] };
-}> = <template>
-  {{#let (RemoteData "/api-docs.json") as |request|}}
-    {{#if request.isLoading}}
-      Loading api docs...
+}> {
+  get url() {
+    let { apiDocs, package: pkg } = this.args;
+
+    if (apiDocs) return apiDocs;
+
+    if (pkg) {
+      throw new Error(`Not Implemented`);
+    }
+
+    throw new Error(`Missing Docs Source provided for ${this.args.module} > ${this.args.name}`);
+  }
+
+  <template>
+    {{#let (RemoteData this.url) as |request|}}
+      {{#if request.isLoading}}
+        Loading api docs...
+      {{/if}}
+
+    {{#if request.isError}}
+      {{stringify request.error}}
     {{/if}}
 
-    {{#if request.value}}
-      <section {{highlight request.value}}>
-        {{#if (isDeclarationReflection request.value)}}
-          <Query @info={{request.value}} @module={{@module}} @name={{@name}} as |type|>
-            {{yield type}}
-          </Query>
-        {{/if}}
-      </section>
-    {{/if}}
-  {{/let}}
-</template>;
+      {{#if request.value}}
+        <section {{highlight request.value}}>
+          {{#if (isDeclarationReflection request.value)}}
+            <Query @info={{request.value}} @module={{@module}} @name={{@name}} as |type|>
+              {{yield type}}
+            </Query>
+          {{/if}}
+        </section>
+      {{/if}}
+    {{/let}}
+  </template>
+}
