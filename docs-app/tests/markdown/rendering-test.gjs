@@ -1,13 +1,10 @@
 import { setOwner } from '@ember/owner';
-import { render, visit, waitUntil } from '@ember/test-helpers';
+import { render, waitUntil } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
-import { service } from 'ember-primitives/helpers';
 import { use } from 'ember-resources';
-import { addRoutes, Compiled } from 'kolay';
-
-import { setupRouting } from 'ember-primitives/test-support';
+import { Compiled } from 'kolay';
 
 module('Markdown | Rendering', function (hooks) {
   setupRenderingTest(hooks);
