@@ -7,7 +7,7 @@ settings:
 overrides:
   '@ember/test-waiters': ^3.1.0
   webpack: ^5.90.3
-  ember-repl: 3.0.0-beta.8
+  ember-repl: ^3.0.0
   '@embroider/addon-dev': 4.1.4-unstable.12a42ca
   '@embroider/addon-shim': 1.8.8-unstable.12a42ca
   '@embroider/core': 3.4.4-unstable.12a42ca
@@ -79,7 +79,7 @@ importers:
         version: 7.0.1(eslint@8.56.0)(typescript@5.3.3)
       '@universal-ember/kolay-ui':
         specifier: workspace:^
-        version: file:ui(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)
+        version: file:ui(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
@@ -90,8 +90,8 @@ importers:
         specifier: ^0.11.3
         version: 0.11.3(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-resources@7.0.0)(ember-source@5.5.0)
       ember-repl:
-        specifier: 3.0.0-beta.8
-        version: 3.0.0-beta.8(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
+        specifier: ^3.0.0
+        version: 3.0.0(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
       ember-resources:
         specifier: ^7.0.0
         version: 7.0.0(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-source@5.5.0)
@@ -114,8 +114,8 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-source@5.5.0)
       release-plan:
-        specifier: ^0.7.0
-        version: 0.7.1
+        specifier: ^0.8.0
+        version: 0.8.0
       tracked-built-ins:
         specifier: ^3.3.0
         version: 3.3.0
@@ -136,7 +136,7 @@ importers:
     dependencies:
       '@universal-ember/kolay-ui':
         specifier: workspace:^
-        version: file:ui(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)
+        version: file:ui(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)
       ember-async-data:
         specifier: ^1.0.3
         version: 1.0.3(ember-source@5.5.0)
@@ -144,14 +144,14 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(@babel/core@7.23.9)(@glint/template@1.3.0)(ember-source@5.5.0)
       ember-repl:
-        specifier: 3.0.0-beta.8
-        version: 3.0.0-beta.8(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
+        specifier: ^3.0.0
+        version: 3.0.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
       ember-route-template:
         specifier: ^1.0.3
         version: 1.0.3
       kolay:
         specifier: workspace:^
-        version: file:(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(@universal-ember/kolay-ui@0.0.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)(typescript@5.3.3)
+        version: file:(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(@universal-ember/kolay-ui@0.0.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)(typescript@5.3.3)
       reactiveweb:
         specifier: ^1.2.1
         version: 1.2.1(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-source@5.5.0)
@@ -394,8 +394,8 @@ importers:
         specifier: ^8.2.2
         version: 8.2.2
       ember-repl:
-        specifier: 3.0.0-beta.8
-        version: 3.0.0-beta.8(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
+        specifier: ^3.0.0
+        version: 3.0.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
       ember-source:
         specifier: ~5.5.0
         version: 5.5.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)
@@ -2803,16 +2803,6 @@ packages:
       '@glimmer/wire-format': 0.84.3
       '@simple-dom/interface': 1.4.0
 
-  /@glimmer/compiler@0.88.1:
-    resolution: {integrity: sha512-avlauURF9kCba6cSXYggFCHSW+rEU0iowU931hx2lDs9j4/SpaVl0mUWmMIfEgaFEguQBktWUVkoIPirmMPrfQ==}
-    engines: {node: '>= 16.0.0'}
-    dependencies:
-      '@glimmer/interfaces': 0.88.1
-      '@glimmer/syntax': 0.88.1
-      '@glimmer/util': 0.88.1
-      '@glimmer/vm': 0.88.1
-      '@glimmer/wire-format': 0.88.1
-
   /@glimmer/component@1.1.2(@babel/core@7.23.9):
     resolution: {integrity: sha512-XyAsEEa4kWOPy+gIdMjJ8XlzA3qrGH55ZDv6nA16ibalCR17k74BI0CztxuRds+Rm6CtbUVgheCVlcCULuqD7A==}
     engines: {node: 6.* || 8.* || >= 10.*}
@@ -2870,6 +2860,7 @@ packages:
     resolution: {integrity: sha512-BOcN8xFNX/eppGxwS9Rm1+PlQaFX+tK91cuQLHj2sRwB+qVbL/WeutIa3AUQYr0VVEzMm2S6bYCLvG6p0a8v9A==}
     dependencies:
       '@simple-dom/interface': 1.4.0
+    dev: true
 
   /@glimmer/low-level@0.78.2:
     resolution: {integrity: sha512-0S6TWOOd0fzLLysw1pWZN0TgasaHmYs1Sjz9Til1mTByIXU1S+1rhdyr2veSQPO/aRjPuEQyKXZQHvx23Zax6w==}
@@ -2962,6 +2953,7 @@ packages:
       '@glimmer/wire-format': 0.88.1
       '@handlebars/parser': 2.0.0
       simple-html-tokenizer: 0.5.11
+    dev: true
 
   /@glimmer/tracking@1.1.2:
     resolution: {integrity: sha512-cyV32zsHh+CnftuRX84ALZpd2rpbDrhLhJnTXn9W//QpqdRZ5rdMsxSY9fOsj0CKEc706tmEU299oNnDc0d7tA==}
@@ -2984,6 +2976,7 @@ packages:
     dependencies:
       '@glimmer/env': 0.1.7
       '@glimmer/interfaces': 0.88.1
+    dev: true
 
   /@glimmer/validator@0.44.0:
     resolution: {integrity: sha512-i01plR0EgFVz69GDrEuFgq1NheIjZcyTy3c7q+w7d096ddPVeVcRzU3LKaqCfovvLJ+6lJx40j45ecycASUUyw==}
@@ -3007,12 +3000,6 @@ packages:
       '@glimmer/interfaces': 0.84.3
       '@glimmer/util': 0.84.3
 
-  /@glimmer/vm@0.88.1:
-    resolution: {integrity: sha512-ZpLmelLN9P0mDywhxyxlXcqPVxIdQxOeFH3Cpx8QwplzIK2JPWK0XQcyl5kvaLY8FsPElQQ5cGpwH2YNRpHjCA==}
-    dependencies:
-      '@glimmer/interfaces': 0.88.1
-      '@glimmer/util': 0.88.1
-
   /@glimmer/wire-format@0.84.3:
     resolution: {integrity: sha512-aZVfQhqv4k7tTo2vwjy+b4mAxKt7cHH75JR3zAeCilimApa+yYTYUyY73NDNSUVbelgAlQ5s6vTiMSQ55WwVow==}
     dependencies:
@@ -3024,6 +3011,7 @@ packages:
     dependencies:
       '@glimmer/interfaces': 0.88.1
       '@glimmer/util': 0.88.1
+    dev: true
 
   /@glint/core@1.3.0(typescript@5.3.3):
     resolution: {integrity: sha512-R5Y1QmkZs6lJHQ0LTRRcTKDI1EdeM32YuR2J67LG4qKT+WUNZhmetkqPiAMW9hQAOdrG/PqDZWV+J7Jf3xOlAg==}
@@ -8611,11 +8599,13 @@ packages:
       - supports-color
     dev: true
 
-  /ember-repl@3.0.0-beta.8(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1):
-    resolution: {integrity: sha512-wR8aKKtcTyEft33nBZ+rWanNhyZBquhiM3vUf2kyh02SEWnR4cuPOUJbEPPGMFj9qwxqFvQkK/yv3cYqRy4D0A==}
+  /ember-repl@3.0.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1):
+    resolution: {integrity: sha512-aoUJohJO7y/CQOQza8y8Cc9Y2kzmOPge0F4g61ryRrWOTgrZIIDuwPo6n/GWcCUVacIGo64K87tB91+VojkkUw==}
     engines: {node: '>= v16', npm: use pnpm, yarn: use pnpm}
     peerDependencies:
+      '@glimmer/compiler': '>= 0.86.0'
       '@glimmer/component': ^1.1.2
+      '@glimmer/syntax': '>= 0.86.0'
       '@glint/template': '>= 1.3.0'
       ember-resources: '>= 6.4.2'
       ember-source: '>= 5.5.0'
@@ -8625,9 +8615,7 @@ packages:
       '@babel/standalone': 7.23.10
       '@embroider/addon-shim': 1.8.8-unstable.12a42ca
       '@embroider/macros': 1.13.5-unstable.12a42ca(@glint/template@1.3.0)
-      '@glimmer/compiler': 0.88.1
       '@glimmer/component': 1.1.2(@babel/core@7.23.9)
-      '@glimmer/syntax': 0.88.1
       '@glint/template': 1.3.0
       babel-import-util: 2.0.1
       babel-plugin-ember-template-compilation: 2.2.1
@@ -8656,11 +8644,13 @@ packages:
       - '@babel/core'
       - supports-color
 
-  /ember-repl@3.0.0-beta.8(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1):
-    resolution: {integrity: sha512-wR8aKKtcTyEft33nBZ+rWanNhyZBquhiM3vUf2kyh02SEWnR4cuPOUJbEPPGMFj9qwxqFvQkK/yv3cYqRy4D0A==}
+  /ember-repl@3.0.0(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1):
+    resolution: {integrity: sha512-aoUJohJO7y/CQOQza8y8Cc9Y2kzmOPge0F4g61ryRrWOTgrZIIDuwPo6n/GWcCUVacIGo64K87tB91+VojkkUw==}
     engines: {node: '>= v16', npm: use pnpm, yarn: use pnpm}
     peerDependencies:
+      '@glimmer/compiler': '>= 0.86.0'
       '@glimmer/component': ^1.1.2
+      '@glimmer/syntax': '>= 0.86.0'
       '@glint/template': '>= 1.3.0'
       ember-resources: '>= 6.4.2'
       ember-source: '>= 5.5.0'
@@ -8670,9 +8660,7 @@ packages:
       '@babel/standalone': 7.23.10
       '@embroider/addon-shim': 1.8.8-unstable.12a42ca
       '@embroider/macros': 1.13.5-unstable.12a42ca(@glint/template@1.3.0)
-      '@glimmer/compiler': 0.88.1
       '@glimmer/component': 1.1.2(@babel/core@7.23.9)
-      '@glimmer/syntax': 0.88.1
       '@glint/template': 1.3.0
       babel-import-util: 2.0.1
       babel-plugin-ember-template-compilation: 2.2.1
@@ -14525,8 +14513,8 @@ packages:
       hast-util-to-html: 8.0.4
       unified: 10.1.2
 
-  /release-plan@0.7.1:
-    resolution: {integrity: sha512-BLrJ1eyZ9i4tpzFmf/sd0XvtMUV/wJsWZMw7fxXsBzlBqPUrPPEx5olPR/g0UEfyJaXbiTkbOB6PzZ/KfV4KCQ==}
+  /release-plan@0.8.0:
+    resolution: {integrity: sha512-kOR8rjuSD4ljH/BOoWeX5ECjQ0Wf0jl0xLFeKQpOCx2Qoo2Y+A+is4t2GRMtFUGjoA5Wp+j7aJaIFFbZNEC+oA==}
     hasBin: true
     dependencies:
       '@ef4/lerna-changelog': 2.2.1
@@ -17442,7 +17430,7 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
-  file:(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(@universal-ember/kolay-ui@0.0.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)(typescript@5.3.3):
+  file:(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(@universal-ember/kolay-ui@0.0.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)(typescript@5.3.3):
     resolution: {directory: '', type: directory}
     id: 'file:'
     name: kolay
@@ -17455,7 +17443,7 @@ packages:
       '@universal-ember/kolay-ui': workspace:^
       ember-modifier: ^4.1.0
       ember-primitives: ^0.11.3
-      ember-repl: 3.0.0-beta.8
+      ember-repl: ^3.0.0
       ember-resources: ^7.0.0
       ember-source: ~5.5.0
       reactiveweb: ^1.2.1
@@ -17466,11 +17454,11 @@ packages:
       '@glimmer/tracking': 1.1.2
       '@glint/template': 1.3.0
       '@tsconfig/ember': 3.0.3
-      '@universal-ember/kolay-ui': file:ui(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)
+      '@universal-ember/kolay-ui': file:ui(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0)
       '@zamiell/typedoc-plugin-not-exported': 0.2.0(typedoc@0.25.8)
       ember-modifier: 4.1.0(ember-source@5.5.0)
       ember-primitives: 0.11.3(@babel/core@7.23.9)(@ember/test-helpers@3.3.0)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/environment-ember-loose@1.3.0)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-resources@7.0.0)(ember-source@5.5.0)
-      ember-repl: 3.0.0-beta.8(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
+      ember-repl: 3.0.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
       ember-resources: 7.0.0(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-source@5.5.0)
       ember-source: 5.5.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(webpack@5.90.3)
       globby: 14.0.1
@@ -17483,7 +17471,7 @@ packages:
       - typescript
     dev: false
 
-  file:ui(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0):
+  file:ui(@babel/core@7.23.9)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0):
     resolution: {directory: ui, type: directory}
     id: file:ui
     name: '@universal-ember/kolay-ui'
@@ -17494,7 +17482,7 @@ packages:
       '@glint/template': ^1.3.0
       ember-modifier: ^4.1.0
       ember-primitives: ^0.11.3
-      ember-repl: 3.0.0-beta.8
+      ember-repl: ^3.0.0
       ember-resources: ^7.0.0
       ember-source: '>= 5.0.0'
       reactiveweb: ^1.2.1
@@ -17508,7 +17496,7 @@ packages:
       decorator-transforms: 1.1.0(@babel/core@7.23.9)
       ember-modifier: 4.1.0(ember-source@5.5.0)
       ember-primitives: 0.11.3(@babel/core@7.23.9)(@ember/test-helpers@3.3.0)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/environment-ember-loose@1.3.0)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-resources@7.0.0)(ember-source@5.5.0)
-      ember-repl: 3.0.0-beta.8(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
+      ember-repl: 3.0.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
       ember-resources: 7.0.0(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-source@5.5.0)
       ember-source: 5.5.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)(webpack@5.90.3)
       highlight.js: 11.9.0
@@ -17520,7 +17508,7 @@ packages:
       - supports-color
     dev: false
 
-  file:ui(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0-beta.8)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0):
+  file:ui(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.3)(ember-repl@3.0.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)(tracked-built-ins@3.3.0):
     resolution: {directory: ui, type: directory}
     id: file:ui
     name: '@universal-ember/kolay-ui'
@@ -17531,7 +17519,7 @@ packages:
       '@glint/template': ^1.3.0
       ember-modifier: ^4.1.0
       ember-primitives: ^0.11.3
-      ember-repl: 3.0.0-beta.8
+      ember-repl: ^3.0.0
       ember-resources: ^7.0.0
       ember-source: '>= 5.0.0'
       reactiveweb: ^1.2.1
@@ -17545,7 +17533,7 @@ packages:
       decorator-transforms: 1.1.0(@babel/core@7.23.9)
       ember-modifier: 4.1.0(ember-source@5.5.0)
       ember-primitives: 0.11.3(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-resources@7.0.0)(ember-source@5.5.0)
-      ember-repl: 3.0.0-beta.8(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
+      ember-repl: 3.0.0(@glimmer/component@1.1.2)(@glint/template@1.3.0)(ember-resources@7.0.0)(ember-source@5.5.0)(reactiveweb@1.2.1)
       ember-resources: 7.0.0(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-source@5.5.0)
       ember-source: 5.5.0(@babel/core@7.23.9)(@glimmer/component@1.1.2)(@glint/template@1.3.0)
       highlight.js: 11.9.0
