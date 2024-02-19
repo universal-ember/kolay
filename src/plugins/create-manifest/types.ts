@@ -30,6 +30,7 @@ export interface CreateManifestOptions {
   name?: string;
   /**
    * Where to place the manifest
+   * Defaults to 'docs'
    */
   dest?: string;
   /**

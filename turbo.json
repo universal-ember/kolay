@@ -79,7 +79,7 @@
     "lint:prettier": { "outputs": [] },
     "lint:types": { "outputs": [], "dependsOn": ["_syncPnpm"] },
     "lint:package": { "outputs": [], "dependsOn": ["build"] },
-    "lint:published-types": { "outputs": [] },
+    "lint:published-types": { "outputs": ["build"] },
 
     "_:lint:fix": {
       "cache": false,

@@ -1,9 +1,11 @@
-import { Form } from 'ember-primitives';
-import { Logs } from 'kolay';
+# `<Logs />`
+
+```gjs live no-shadow
+import { Form } from "ember-primitives";
+import { Logs } from "kolay";
 
 function addToLog(y) {
-  // eslint-disable-next-line no-console
-  console.log(y.logInput);
+  console.info(y.logInput);
 }
 
 export const Demo = <template>
@@ -16,3 +18,4 @@ export const Demo = <template>
 
   <Logs />
 </template>;
+```
