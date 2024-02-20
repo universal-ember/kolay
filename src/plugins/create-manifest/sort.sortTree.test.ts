@@ -37,5 +37,43 @@ describe('sortTree', () => {
       }
     `);
   });
+
+
+  test('sorts the pages based on a config', () => {
+    let result = sortTree({
+      name: 'top',
+      pages: [
+        {
+          path: '/top/second',
+          name: 'second',
+          groupName: 'top',
+          tutorialName: 'second',
+
+        }, { name: 'first', path: '/top/first', groupName: 'top', tutorialName: 'first' }
+      ],
+    }, [{ path: '/top/meta.jsonc', config: { order: ['first', 'second'] } }]);
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "name": "top",
+        "pages": [
+          {
+            "groupName": "top",
+            "name": "second",
+            "path": "/top/second",
+            "tutorialName": "second",
+          },
+          {
+            "groupName": "top",
+            "name": "first",
+            "path": "/top/first",
+            "tutorialName": "first",
+          },
+        ],
+      }
+    `);
+  });
+
+
 });
 

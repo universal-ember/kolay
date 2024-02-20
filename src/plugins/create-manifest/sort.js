@@ -49,7 +49,9 @@ export function betterSort(property) {
  * @param {{ path: string, config?: { order: string[] }}[]} configs
  */
 export function sortTree(tree, configs) {
-  console.log(tree, configs);
+  if (configs.length) {
+    throw new Error('not implemented');
+  }
 
   return tree;
 }
