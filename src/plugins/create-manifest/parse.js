@@ -1,5 +1,8 @@
 import assert from 'node:assert';
+import { readFile } from 'node:fs/promises';
 import { join, parse as parsePath } from 'node:path';
+
+import { jsonc } from 'jsonc';
 
 import { betterSort } from './sort.js';
 
@@ -163,11 +166,10 @@ function preAddCheck(attemptedPath, searchFor, collection) {
  * @returns { Promise<import('./types.ts').GatheredDocs> }
  */
 async function gather(paths, cwd) {
-  const fs = await import('node:fs/promises');
   const { join } = await import('node:path');
 
   let markdown = paths.filter((path) => path.endsWith('.md'));
-  let configs = paths.filter((path) => path.endsWith('.json'));
+  let configs = filterConfigs(paths);
 
   /**
    * @param {string} path
@@ -182,9 +184,9 @@ async function gather(paths, cwd) {
     if (!foundPath) return {};
 
     let fullPath = join(cwd, foundPath);
-    let buffer = await fs.readFile(fullPath);
+    let buffer = await readFile(fullPath);
     let str = buffer.toString();
-    let config = JSON.parse(str);
+    let config = jsonc.parse(str);
 
     return config;
   }
@@ -212,4 +214,32 @@ function stripExt(str) {
   let parsed = parsePath(str);
 
   return join(parsed.dir, parsed.name);
+}
+
+/**
+ * @param {string[]} paths
+ */
+function filterConfigs(paths) {
+  return paths.filter((path) => path.endsWith('.json') || path.endsWith('.jsonc'));
+}
+
+/**
+ * @param {string[]} paths
+ * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ */
+export async function configsFrom(paths, cwd) {
+  let configs = filterConfigs(paths);
+
+  let result = [];
+
+  for (let foundPath of configs) {
+    let fullPath = join(cwd, foundPath);
+    let buffer = await readFile(fullPath);
+    let str = buffer.toString();
+    let config = jsonc.parse(str);
+
+    result.push({ path: config, config });
+  }
+
+  return result;
 }

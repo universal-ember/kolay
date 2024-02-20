@@ -1,4 +1,5 @@
-import { parse } from './parse.js';
+import { configsFrom, parse } from './parse.js';
+import { sortTree } from './sort.js';
 
 /**
  * @param {string[]} paths
@@ -6,6 +7,9 @@ import { parse } from './parse.js';
  */
 export async function reshape(paths, cwd) {
   let tree = await parse(paths, cwd);
+  let configs = await configsFrom(paths, cwd);
+
+  tree = sortTree(tree, configs);
 
   addInTheFirstPage(tree);
 

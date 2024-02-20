@@ -43,3 +43,13 @@ export function betterSort(property) {
     return aName.localeCompare(bName);
   };
 }
+
+/**
+ * @param {import('./types.ts').Collection} tree
+ * @param {{ path: string, config?: { order: string[] }}[]} configs
+ */
+export function sortTree(tree, configs) {
+  console.log(tree, configs);
+
+  return tree;
+}
