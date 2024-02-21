@@ -57,11 +57,11 @@ describe('sortTree', () => {
           { name: 'first', path: '/top/first', groupName: 'top', tutorialName: 'first' },
         ],
       },
-      [{ path: '/top/meta.jsonc', config: { order: ['first', 'second'] } }]
+      [{ path: 'top/meta.jsonc', config: { order: ['first', 'second'] } }]
     );
 
     expect(result.pages.length).toEqual(2);
-    expect(result.pages.map(x => x.name)).deep.equal(['first', 'second']);
+    expect(result.pages.map((x) => x.name)).deep.equal(['first', 'second']);
   });
 
   test('sorts deeply nested pages', () => {
@@ -83,11 +83,11 @@ describe('sortTree', () => {
           },
         ],
       },
-      [{ path: '/top/second/meta.jsonc', config: { order: ['first', 'second'] } }]
+      [{ path: 'top/second/meta.jsonc', config: { order: ['first', 'second'] } }]
     );
 
     expect(result.pages.length).toEqual(1);
     expect(result.pages[0]?.pages.length).toEqual(2);
-    expect(result.pages[0]?.pages.map(x => x.name)).deep.equal(['first', 'second']);
+    expect(result.pages[0]?.pages.map((x) => x.name)).deep.equal(['first', 'second']);
   });
 });

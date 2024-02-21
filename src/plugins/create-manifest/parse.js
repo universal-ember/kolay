@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
-import { join, parse as parsePath } from 'node:path';
+import { dirname, join, parse as parsePath } from 'node:path';
 
-import { jsonc } from 'jsonc';
+import JSON5 from 'json5';
 
 import { betterSort } from './sort.js';
 
@@ -184,9 +184,7 @@ async function gather(paths, cwd) {
     if (!foundPath) return {};
 
     let fullPath = join(cwd, foundPath);
-    let buffer = await readFile(fullPath);
-    let str = buffer.toString();
-    let config = jsonc.parse(str);
+    let config = await readJSONC(fullPath);
 
     return config;
   }
@@ -234,12 +232,24 @@ export async function configsFrom(paths, cwd) {
 
   for (let foundPath of configs) {
     let fullPath = join(cwd, foundPath);
-    let buffer = await readFile(fullPath);
-    let str = buffer.toString();
-    let config = jsonc.parse(str);
+    let config = await readJSONC(fullPath);
 
-    result.push({ path: config, config });
+    let dir = dirname(foundPath);
+    let path = dir === '.' ? 'root' : join('root', dir);
+
+    result.push({ path: path, config });
   }
 
   return result;
+}
+
+/**
+ * @param {string} filePath
+ */
+async function readJSONC(filePath) {
+  let buffer = await readFile(filePath);
+  let str = buffer.toString();
+  let config = JSON5.parse(str);
+
+  return config;
 }

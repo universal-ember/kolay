@@ -92,8 +92,8 @@ export function sortTree(tree, configs, parents = []) {
   tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.name]));
 
   if (configs.length > 0) {
-    let subPath = `/${[...parents, tree.name].join('/')}`;
-    let config = configs.find((config) => config.path.startsWith(subPath))?.config;
+    let subPath = `${[...parents, tree.name].join('/')}`;
+    let config = configs.filter(Boolean).find((config) => config.path.startsWith(subPath))?.config;
 
     if (!config?.order) {
       return tree;

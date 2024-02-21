@@ -22,10 +22,18 @@ describe('applyPredestinedOrder', () => {
   });
 
   test('it works when the order specifies things that do not exist', () => {
-    expect(applyPredestinedOrder(['c', 'b', 'a'], ['a', 'c', 'x', 'y', 'z'])).deep.equal(['a', 'c', 'b']);
+    expect(applyPredestinedOrder(['c', 'b', 'a'], ['a', 'c', 'x', 'y', 'z'])).deep.equal([
+      'a',
+      'c',
+      'b',
+    ]);
   });
 
   test('it works when the order specifies duplicates', () => {
-    expect(applyPredestinedOrder(['c', 'b', 'a'], ['a', 'c', 'a', 'c'])).deep.equal(['a', 'c', 'b']);
+    expect(applyPredestinedOrder(['c', 'b', 'a'], ['a', 'c', 'a', 'c'])).deep.equal([
+      'a',
+      'c',
+      'b',
+    ]);
   });
 });
