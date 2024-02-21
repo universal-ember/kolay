@@ -115,7 +115,7 @@ export function build(docs) {
     let pageInfo = {
       ...config,
       path: `/${mdPath}`,
-      name,
+      name: name.replace(/\.\w+$/, ''),
       groupName,
       tutorialName,
     };
@@ -152,7 +152,7 @@ function preAddCheck(attemptedPath, searchFor, collection) {
       assert(
         false,
         `Cannot have a group that matches the name of an individual page. ` +
-          `Please move ${matching.name} into the "${folder}" folder. ` +
+          `Please move ${matching.name}.md into the "${folder}" folder. ` +
           `If you want this to be the first page, rename the file to ${suggestion}/index.md`
       );
     }

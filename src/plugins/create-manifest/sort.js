@@ -100,9 +100,7 @@ export function sortTree(tree, configs, parents = []) {
     }
 
     // Should the name always avoid the extension?
-    let replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) =>
-      page.name.replace(/\.\w+$/, '')
-    );
+    let replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) => page.name);
 
     tree.pages = replacementPages;
   }

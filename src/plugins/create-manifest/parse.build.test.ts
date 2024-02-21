@@ -15,7 +15,7 @@ describe('build', () => {
             "pages": [
               {
                 "groupName": "top",
-                "name": "nested.md",
+                "name": "nested",
                 "path": "/top/nested.md",
                 "tutorialName": "nested",
               },
@@ -42,19 +42,19 @@ describe('build', () => {
             "pages": [
               {
                 "groupName": "top",
-                "name": "nested.md",
+                "name": "nested",
                 "path": "/top/nested.md",
                 "tutorialName": "nested",
               },
               {
                 "groupName": "top",
-                "name": "nested-sibling.md",
+                "name": "nested-sibling",
                 "path": "/top/nested-sibling.md",
                 "tutorialName": "nestedsibling",
               },
               {
                 "groupName": "top",
-                "name": "other.md",
+                "name": "other",
                 "path": "/top-2/other.md",
                 "tutorialName": "other",
               },
@@ -80,7 +80,7 @@ describe('build', () => {
                 "pages": [
                   {
                     "groupName": "deep",
-                    "name": "path.md",
+                    "name": "path",
                     "path": "/top/deep/path.md",
                     "tutorialName": "path",
                   },
@@ -115,7 +115,7 @@ describe('build', () => {
                     "pages": [
                       {
                         "groupName": "another",
-                        "name": "index.md",
+                        "name": "index",
                         "path": "/top/deep/another/index.md",
                         "tutorialName": "index",
                       },
