@@ -29,9 +29,7 @@ module.exports = async function (defaults) {
         devtool: 'source-map',
         plugins: [
           createManifest({ src: 'public/docs' }),
-          apiDocs({ package: 'kolay' }),
-          apiDocs({ package: 'ember-primitives' }),
-          apiDocs({ package: 'ember-resources' }),
+          apiDocs({ packages: ['kolay', 'ember-primitives', 'ember-resources'] }),
         ],
       },
     },
