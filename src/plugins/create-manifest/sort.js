@@ -45,12 +45,63 @@ export function betterSort(property) {
 }
 
 /**
- * @param {import('./types.ts').Collection} tree
- * @param {{ path: string, config?: { order: string[] }}[]} configs
+ * @template Item
+ * @param {Item[]} list
+ * @param {string[]} order
+ * @param {(item: Item) => any} [ find ]
+ * @returns {Item[]}
  */
-export function sortTree(tree, configs) {
-  if (configs.length) {
-    throw new Error('not implemented');
+export function applyPredestinedOrder(list, order, find = (x) => x) {
+  let result = [];
+
+  let remaining = list;
+
+  for (let i = 0; i < Math.max(list.length, order.length); i++) {
+    let current = order[i];
+
+    if (!current) break;
+
+    let foundIndex = remaining.findIndex((x) => find(x) === current);
+
+    if (foundIndex < 0) continue;
+
+    // remove
+    let [found] = remaining.splice(foundIndex, 1);
+
+    if (!found) continue;
+
+    result.push(found);
+  }
+
+  result.push(...remaining);
+
+  return result;
+}
+
+/**
+ * @template {import('./types.ts').Page} Root
+ * @param {Root} tree
+ * @param {{ path: string, config?: { order: string[] }}[]} configs
+ * @param {string[]} [ parents ]
+ */
+export function sortTree(tree, configs, parents = []) {
+  if (!('pages' in tree)) {
+    return tree;
+  }
+
+  tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.name]));
+
+  if (configs.length > 0) {
+    let subPath = `/${[...parents, tree.name].join('/')}`;
+    let config = configs.find((config) => config.path.startsWith(subPath))?.config;
+
+    if (!config?.order) {
+      return tree;
+    }
+
+    let replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) => page.name);
+
+    tree.pages = replacementPages;
   }
 
   return tree;
