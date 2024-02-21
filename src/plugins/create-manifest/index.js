@@ -25,7 +25,6 @@ export const createManifest = createUnplugin(
       name: 'create-manifest',
       async buildStart() {
         name ??= 'manifest.json';
-        onlyDirectories ??= false;
 
         const path = await import('node:path');
         const cwd = src ? path.join(process.cwd(), src) : process.cwd();
