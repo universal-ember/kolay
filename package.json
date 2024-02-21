@@ -70,6 +70,7 @@
     "@tsconfig/ember": "^3.0.3",
     "@zamiell/typedoc-plugin-not-exported": "^0.2.0",
     "globby": "^14.0.0",
+    "json5": "^2.2.3",
     "package-up": "^5.0.0",
     "typedoc": "^0.25.8",
     "unplugin": "^1.6.0"

@@ -1,5 +1,8 @@
 import assert from 'node:assert';
-import { join, parse as parsePath } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { dirname, join, parse as parsePath } from 'node:path';
+
+import JSON5 from 'json5';
 
 import { betterSort } from './sort.js';
 
@@ -112,7 +115,7 @@ export function build(docs) {
     let pageInfo = {
       ...config,
       path: `/${mdPath}`,
-      name,
+      name: name.replace(/\.\w+$/, ''),
       groupName,
       tutorialName,
     };
@@ -149,7 +152,7 @@ function preAddCheck(attemptedPath, searchFor, collection) {
       assert(
         false,
         `Cannot have a group that matches the name of an individual page. ` +
-          `Please move ${matching.name} into the "${folder}" folder. ` +
+          `Please move ${matching.name}.md into the "${folder}" folder. ` +
           `If you want this to be the first page, rename the file to ${suggestion}/index.md`
       );
     }
@@ -163,11 +166,10 @@ function preAddCheck(attemptedPath, searchFor, collection) {
  * @returns { Promise<import('./types.ts').GatheredDocs> }
  */
 async function gather(paths, cwd) {
-  const fs = await import('node:fs/promises');
   const { join } = await import('node:path');
 
   let markdown = paths.filter((path) => path.endsWith('.md'));
-  let configs = paths.filter((path) => path.endsWith('.json'));
+  let configs = filterConfigs(paths);
 
   /**
    * @param {string} path
@@ -182,9 +184,7 @@ async function gather(paths, cwd) {
     if (!foundPath) return {};
 
     let fullPath = join(cwd, foundPath);
-    let buffer = await fs.readFile(fullPath);
-    let str = buffer.toString();
-    let config = JSON.parse(str);
+    let config = await readJSONC(fullPath);
 
     return config;
   }
@@ -212,4 +212,44 @@ function stripExt(str) {
   let parsed = parsePath(str);
 
   return join(parsed.dir, parsed.name);
+}
+
+/**
+ * @param {string[]} paths
+ */
+function filterConfigs(paths) {
+  return paths.filter((path) => path.endsWith('.json') || path.endsWith('.jsonc'));
+}
+
+/**
+ * @param {string[]} paths
+ * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ */
+export async function configsFrom(paths, cwd) {
+  let configs = filterConfigs(paths);
+
+  let result = [];
+
+  for (let foundPath of configs) {
+    let fullPath = join(cwd, foundPath);
+    let config = await readJSONC(fullPath);
+
+    let dir = dirname(foundPath);
+    let path = dir === '.' ? 'root' : join('root', dir);
+
+    result.push({ path: path, config });
+  }
+
+  return result;
+}
+
+/**
+ * @param {string} filePath
+ */
+async function readJSONC(filePath) {
+  let buffer = await readFile(filePath);
+  let str = buffer.toString();
+  let config = JSON5.parse(str);
+
+  return config;
 }

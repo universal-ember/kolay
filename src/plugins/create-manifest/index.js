@@ -2,7 +2,7 @@ import assert from 'node:assert';
 
 import { createUnplugin } from 'unplugin';
 
-import { reshape } from './hydrate.js';
+import { discover } from './discover.js';
 
 /**
  *
@@ -25,26 +25,11 @@ export const createManifest = createUnplugin(
       name: 'create-manifest',
       async buildStart() {
         name ??= 'manifest.json';
-        include ??= '**/*';
-        exclude ??= [];
         onlyDirectories ??= false;
 
         const path = await import('node:path');
-        const { globbySync } = await import('globby');
-
         const cwd = src ? path.join(process.cwd(), src) : process.cwd();
-        let paths = globbySync(include, {
-          cwd,
-          expandDirectories: true,
-          onlyDirectories,
-        });
-
-        // Needs to be const, because TS thinks exclude can change while `filter` is running.
-        const excludePattern = exclude;
-
-        paths = paths.filter((path) => !excludePattern.some((pattern) => path.match(pattern)));
-
-        const reshaped = await reshape(paths, cwd);
+        const reshaped = await discover({ cwd, onlyDirectories, exclude, include });
 
         this.emitFile({
           type: 'asset',
