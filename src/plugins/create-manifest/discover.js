@@ -2,14 +2,18 @@ import { reshape } from './hydrate.js';
 
 /**
  * @typedef {object} Options
- * @property {string} include
- * @property {string[]} exclude
+ * @property {string | undefined} [ include ]
+ * @property {string[] | undefined} [ exclude ]
  * @property {string} cwd
- * @property {boolean} onlyDirectories
+ * @property {boolean | undefined} [ onlyDirectories ]
  *
  * @param {Options} options
  */
 export async function discover({ include, onlyDirectories, exclude, cwd }) {
+  include ??= '**/*';
+  exclude ??= [];
+  onlyDirectories ??= false;
+
   const { globbySync } = await import('globby');
 
   let paths = globbySync(include, {
