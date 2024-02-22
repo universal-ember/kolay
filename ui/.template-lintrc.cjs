@@ -3,6 +3,6 @@
 module.exports = {
   extends: 'recommended',
   rules: {
-    'no-forbidden-elements': 'off'
-  }
+    'no-forbidden-elements': 'off',
+  },
 };

@@ -33,6 +33,8 @@
     "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
+    "lint:prettier": "prettier . --check",
+    "lint:prettier:fix": "prettier . --write",
     "ember-fetch": "^8.1.2",
     "prepack": "rollup --config",
     "start": "rollup --config --watch",

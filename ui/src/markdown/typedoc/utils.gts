@@ -7,18 +7,28 @@ import { highlight } from '../../highlight.ts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
-export function findChildDeclaration(info: DeclarationReflection, name: string) {
-  return info.children?.find((child) => child.variant === 'declaration' && child.name === name);
+export function findChildDeclaration(
+  info: DeclarationReflection,
+  name: string,
+) {
+  return info.children?.find(
+    (child) => child.variant === 'declaration' && child.name === name,
+  );
 }
 
-export const infoFor = (data: DeclarationReflection, module: string, name: string) => {
+export const infoFor = (
+  data: DeclarationReflection,
+  module: string,
+  name: string,
+) => {
   let moduleType = data.children?.find((child) => child.name === module);
 
-  let found = moduleType?.children?.find((grandChild) => grandChild.name === name);
+  let found = moduleType?.children?.find(
+    (grandChild) => grandChild.name === name,
+  );
 
   return found as DeclarationReflection | undefined;
 };
-
 
 export const Query: TOC<{
   Args: { module: string; name: string; info: DeclarationReflection };
@@ -28,7 +38,7 @@ export const Query: TOC<{
     {{#if info}}
       {{yield info}}
     {{else}}
-      {{yield to="notFound"}}
+      {{yield to='notFound'}}
     {{/if}}
   {{/let}}
 </template>;
@@ -41,7 +51,8 @@ const stringify = (x: unknown) => String(x);
 
 export class Load extends Component<{
   Args: {
-    module: string; name: string
+    module: string;
+    name: string;
     package?: string;
     apiDocs?: string;
   };
@@ -56,7 +67,9 @@ export class Load extends Component<{
       throw new Error(`Not Implemented`);
     }
 
-    throw new Error(`Missing Docs Source provided for ${this.args.module} > ${this.args.name}`);
+    throw new Error(
+      `Missing Docs Source provided for ${this.args.module} > ${this.args.name}`,
+    );
   }
 
   <template>
@@ -65,14 +78,19 @@ export class Load extends Component<{
         Loading api docs...
       {{/if}}
 
-    {{#if request.isError}}
-      {{stringify request.error}}
-    {{/if}}
+      {{#if request.isError}}
+        {{stringify request.error}}
+      {{/if}}
 
       {{#if request.value}}
         <section {{highlight request.value}}>
           {{#if (isDeclarationReflection request.value)}}
-            <Query @info={{request.value}} @module={{@module}} @name={{@name}} as |type|>
+            <Query
+              @info={{request.value}}
+              @module={{@module}}
+              @name={{@name}}
+              as |type|
+            >
               {{yield type}}
             </Query>
           {{/if}}

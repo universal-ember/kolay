@@ -27,26 +27,34 @@ import type {
  *   - only the signature describes what the public API is.
  */
 export const APIDocs: TOC<{
-  Args: (
-  {
+  Args: {
     module: string;
     name: string;
-  } & ({
-    /**
-     * The name of the package to lookup the module and export name.
-     * TODO: not implemented yet
-     */
-    package: string
-    apiDocs: never;
-  } | {
-    /**
-     * The URL of the api-docs JSON document to lookup the module and export name
-     */
-    apiDocs: string;
-    package: never;
-  }));
+  } & (
+    | {
+        /**
+         * The name of the package to lookup the module and export name.
+         * TODO: not implemented yet
+         */
+        package: string;
+        apiDocs: never;
+      }
+    | {
+        /**
+         * The URL of the api-docs JSON document to lookup the module and export name
+         */
+        apiDocs: string;
+        package: never;
+      }
+  );
 }> = <template>
-  <Load @module="{{@module}}" @name="{{@name}}" @package={{@package}} @apiDocs={{@apiDocs}} as |info|>
+  <Load
+    @module='{{@module}}'
+    @name='{{@name}}'
+    @package={{@package}}
+    @apiDocs={{@apiDocs}}
+    as |info|
+  >
     <Declaration @info={{info}} />
   </Load>
 </template>;
@@ -70,7 +78,9 @@ export function isGlimmerComponent(info: DeclarationReference) {
 
   if (!extended) return false;
 
-  return extended.name === 'default' && extended.package === '@glimmer/component';
+  return (
+    extended.name === 'default' && extended.package === '@glimmer/component'
+  );
 }
 
 export const Comment: TOC<{
@@ -85,7 +95,7 @@ export const Comment: TOC<{
   {{#if @info.comment.summary}}
     {{#let (Compiled (join (text @info.comment.summary))) as |compiled|}}
       {{#if compiled.isReady}}
-        <div class="typedoc-rendered-comment" {{highlight}}>
+        <div class='typedoc-rendered-comment' {{highlight}}>
           <compiled.component />
         </div>
       {{/if}}
@@ -93,7 +103,8 @@ export const Comment: TOC<{
   {{/if}}
 </template>;
 
-const isIgnored = (name: string) => ['__type', 'TOC', 'TemplateOnlyComponent'].includes(name);
+const isIgnored = (name: string) =>
+  ['__type', 'TOC', 'TemplateOnlyComponent'].includes(name);
 const isConst = (x: { flags: { isConst: boolean } }) => x.flags.isConst;
 const not = (x: unknown) => !x;
 
@@ -103,9 +114,9 @@ const Declaration: TOC<{
   };
 }> = <template>
   {{#if @info}}
-    <div class="typedoc-declaration">
+    <div class='typedoc-declaration'>
       {{#if (not (isIgnored @info.name))}}
-        <span class="typedoc-declaration-name">{{@info.name}}</span>
+        <span class='typedoc-declaration-name'>{{@info.name}}</span>
       {{/if}}
 
       {{#if (isConst @info)}}
@@ -117,7 +128,7 @@ const Declaration: TOC<{
       {{/if}}
 
       {{#if @info.children}}
-        <ul class="typedoc-declaration-children">
+        <ul class='typedoc-declaration-children'>
           {{#each @info.children as |child|}}
             <li><Declaration @info={{child}} /></li>
           {{/each}}
@@ -125,7 +136,7 @@ const Declaration: TOC<{
       {{/if}}
 
       {{#if @info.signatures}}
-        <ul class="typedoc-declaration-signatures">
+        <ul class='typedoc-declaration-signatures'>
           {{#each @info.signatures as |child|}}
             {{! @glint-expect-error }}
             <li><Type @info={{child}} /></li>
@@ -142,9 +153,8 @@ const Declaration: TOC<{
   {{/if}}
 </template>;
 
-const Reflection: TOC<{ info: { declaration: DeclarationReflection } }> = <template>
-  <Declaration @info={{@info.declaration}} />
-</template>;
+const Reflection: TOC<{ info: { declaration: DeclarationReflection } }> =
+  <template><Declaration @info={{@info.declaration}} /></template>;
 
 const isReference = (x: { type: string }) => x.type === 'reference';
 const isReflection = (x: { type: string }) => x.type === 'reflection';
@@ -226,19 +236,19 @@ const isInvokable = (info: ReferenceType) => info.name === 'Invokable';
 
 const Reference: TOC<{ info: ReferenceType }> = <template>
   {{#if (isInvokable @info)}}
-    <div class="typedoc__unknown__yield">
-      <Intrinsic @info={{hash name="Component"}} />
+    <div class='typedoc__unknown__yield'>
+      <Intrinsic @info={{hash name='Component'}} />
     </div>
   {{else}}
-    <div class="typedoc__reference">
+    <div class='typedoc__reference'>
       {{#if (not (isIgnored @info.name))}}
-        <div class="typedoc__reference__name">{{@info.name}}</div>
+        <div class='typedoc__reference__name'>{{@info.name}}</div>
       {{/if}}
       {{#if @info.typeArguments.length}}
-        <div class="typedoc__reference__typeArguments">
+        <div class='typedoc__reference__typeArguments'>
           &lt;
           {{#each @info.typeArguments as |typeArg|}}
-            <div class="typedoc__reference__typeArgument">
+            <div class='typedoc__reference__typeArgument'>
               <Type @info={{typeArg}} />
             </div>
           {{/each}}
@@ -250,11 +260,11 @@ const Reference: TOC<{ info: ReferenceType }> = <template>
 </template>;
 
 const Intrinsic: TOC<{ info: { name: string } }> = <template>
-  <span class="typedoc-intrinsic">{{@info.name}}</span>
+  <span class='typedoc-intrinsic'>{{@info.name}}</span>
 </template>;
 
 const VoidIntrinsic: TOC<{ info: { name: string } }> = <template>
-  <div class="typedoc__void_intrinsic">
+  <div class='typedoc__void_intrinsic'>
     {{! @glint-expect-error }}
     <Function @info={{@info}} />
   </div>
@@ -267,44 +277,46 @@ const Tuple: TOC<{ Args: { info: TupleType } }> = <template>
 </template>;
 
 const NamedTuple: TOC<{ Args: { info: NamedTupleMember } }> = <template>
-  <div class="typedoc-named-tuple">
-    <div class="typedoc-name">{{@info.name}}</div>
+  <div class='typedoc-named-tuple'>
+    <div class='typedoc-name'>{{@info.name}}</div>
     <Type @info={{@info.element}} />
   </div>
 </template>;
 
 const Array: TOC<{ Args: { info: ArrayType } }> = <template>
-  <div class="typedoc__array">
-    <div class="typedoc__array__indicator">Array of</div>
+  <div class='typedoc__array'>
+    <div class='typedoc__array__indicator'>Array of</div>
     <Type @info={{@info.elementType}} />
   </div>
 </template>;
 
 const Function: TOC<{ Args: { info: SignatureReflection } }> = <template>
-  <div class="typedoc__function">
-    <div class="typedoc__function_comment">
+  <div class='typedoc__function'>
+    <div class='typedoc__function_comment'>
       <Comment @info={{@info}} />
     </div>
-    <div class="typedoc__function__type">
-      <div class="typedoc__function__open">(</div>
-      <div class="typedoc__function__parameters">
+    <div class='typedoc__function__type'>
+      <div class='typedoc__function__open'>(</div>
+      <div class='typedoc__function__parameters'>
         {{#each @info.parameters as |param|}}
-          <div class="typedoc__function__parameter__container">
-            <div class="typedoc__function__parameter">
-              <div class="typedoc__function__parameter__name">{{param.name}}</div>
-              <div class="typedoc__function__parameter__type">
+          <div class='typedoc__function__parameter__container'>
+            <div class='typedoc__function__parameter'>
+              <div
+                class='typedoc__function__parameter__name'
+              >{{param.name}}</div>
+              <div class='typedoc__function__parameter__type'>
                 {{! @glint-expect-error }}
                 <Type @info={{param.type}} />
               </div>
             </div>
-            <div class="typedoc__function__parameter__comment">
+            <div class='typedoc__function__parameter__comment'>
               <Comment @info={{param}} />
             </div>
           </div>
         {{/each}}
       </div>
-      <div class="typedoc__function__close">) =></div>
-      <div class="typedoc__function__return_type">
+      <div class='typedoc__function__close'>) =></div>
+      <div class='typedoc__function__return_type'>
         {{! @glint-expect-error }}
         <Type @info={{@info.type}} />
       </div>
@@ -313,15 +325,15 @@ const Function: TOC<{ Args: { info: SignatureReflection } }> = <template>
 </template>;
 
 const Unknown: TOC<{ Args: { info: any } }> = <template>
-  <div class="typedoc__unknown">
+  <div class='typedoc__unknown'>
     {{@info.name}}
   </div>
 </template>;
 
 const Union: TOC<{ Args: { info: UnionType } }> = <template>
-  <div class="typedoc__union">
+  <div class='typedoc__union'>
     {{#each @info.types as |type|}}
-      <div class="typedoc__union__type">
+      <div class='typedoc__union__type'>
         <Type @info={{type}} />
       </div>
     {{/each}}
@@ -341,7 +353,7 @@ const literalAsString = (x: LiteralType['value']) => {
 };
 
 const Literal: TOC<{ Args: { info: LiteralType } }> = <template>
-  <div class="typedoc__literal">
+  <div class='typedoc__literal'>
     {{literalAsString @info.value}}
   </div>
 </template>;
@@ -377,6 +389,6 @@ export const Type: TOC<{ Args: { info: SomeType } }> = <template>
     <Unknown @info={{@info}} />
   {{else}}
     {{! template-lint-disable no-log }}
-    {{log "Unknown Type" @info}}
+    {{log 'Unknown Type' @info}}
   {{/if}}
 </template>;

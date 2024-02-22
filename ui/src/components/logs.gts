@@ -49,15 +49,15 @@ let formatter = new Intl.DateTimeFormat('en-GB', {
 const format = (date: Date) => formatter.format(date);
 
 interface Log {
-      level: string;
-      timestamp: Date;
-      message: string;
+  level: string;
+  timestamp: Date;
+  message: string;
 }
 
 const LogList: TOC<{
   Args: {
-    logs: Log[]
-  }
+    logs: Log[];
+  };
 }> = <template>
   <div class='kolay__log-list__scroll'>
     {{#each @logs as |logEntry|}}
@@ -71,22 +71,10 @@ const LogList: TOC<{
 
   {{! prettier-ignore-start }}
   <style>
-    .kolay__log-list__scroll {
-      position: relative;
-      overflow: auto;
-      max-height: 10rem;
-      filter: invert(1);
-
-      .kolay__log-list__level {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .kolay__log-list__time {
-        border-right: 1px solid;
-        padding-right: 0.5rem;
-      }
-    }
+    .kolay__log-list__scroll { position: relative; overflow: auto; max-height:
+    10rem; filter: invert(1); .kolay__log-list__level { display: flex; gap:
+    0.5rem; } .kolay__log-list__time { border-right: 1px solid; padding-right:
+    0.5rem; } }
   </style>
   {{! prettier-ignore-end }}
 </template>;
@@ -129,18 +117,10 @@ export class Logs extends Component {
     </div>
     {{! prettier-ignore-start }}
     <style>
-      .kolay__in-viewport__logs {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 0.5rem;
-        border: 1px solid gray;
-        background: currentColor;
-        filter: invert(1);
-      }
+      .kolay__in-viewport__logs { position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 0.5rem; border: 1px solid gray; background: currentColor; filter:
+      invert(1); }
     </style>
     {{! prettier-ignore-end }}
   </template>
 }
-

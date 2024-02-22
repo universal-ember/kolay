@@ -41,7 +41,6 @@ export function Compiled(
 
     return () => {
       return output.current;
-    }
+    };
   });
 }
-

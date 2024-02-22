@@ -87,10 +87,14 @@ section {
   line-height: 1.5rem;
 }
 
-.typedoc__component-signature__block .typedoc-declaration-name + .typedoc-reference {
+.typedoc__component-signature__block
+  .typedoc-declaration-name
+  + .typedoc-reference {
   margin-bottom: -0.25rem;
 }
-.typedoc__component-signature__block > .typedoc-property .typedoc-declaration-children {
+.typedoc__component-signature__block
+  > .typedoc-property
+  .typedoc-declaration-children {
   display: grid;
   gap: 0.5rem;
 }
@@ -220,7 +224,7 @@ section {
   gap: 0.25rem;
 }
 .typedoc__union__type::before {
-  content: "|";
+  content: '|';
 }
 .typedoc__union .typedoc__union__type:first-child::before {
   display: none;

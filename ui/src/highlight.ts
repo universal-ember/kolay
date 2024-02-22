@@ -13,16 +13,17 @@ export async function getHighlighter(): Promise<HLJSApi> {
    * since we now use hljs on initial page load, eagerly, we want to load
    * as little as possible
    */
-  let [hljs, glimmer, javascript, typescript, markdown, css, bash, diff] = await Promise.all([
-    import('highlight.js/lib/core'),
-    import('highlightjs-glimmer'),
-    import('highlight.js/lib/languages/javascript'),
-    import('highlight.js/lib/languages/typescript'),
-    import('highlight.js/lib/languages/markdown'),
-    import('highlight.js/lib/languages/css'),
-    import('highlight.js/lib/languages/bash'),
-    import('highlight.js/lib/languages/diff'),
-  ]);
+  let [hljs, glimmer, javascript, typescript, markdown, css, bash, diff] =
+    await Promise.all([
+      import('highlight.js/lib/core'),
+      import('highlightjs-glimmer'),
+      import('highlight.js/lib/languages/javascript'),
+      import('highlight.js/lib/languages/typescript'),
+      import('highlight.js/lib/languages/markdown'),
+      import('highlight.js/lib/languages/css'),
+      import('highlight.js/lib/languages/bash'),
+      import('highlight.js/lib/languages/diff'),
+    ]);
 
   HIGHLIGHT = hljs.default;
   HIGHLIGHT.registerLanguage('javascript', javascript.default);
@@ -43,7 +44,9 @@ export async function getHighlighter(): Promise<HLJSApi> {
 
 export const highlight = modifier((element: HTMLElement, [_]: unknown[]) => {
   if (!_) {
-    console.warn(`No argument was passed to {{highlight-code-blocks}}. Updates won't be detected`);
+    console.warn(
+      `No argument was passed to {{highlight-code-blocks}}. Updates won't be detected`,
+    );
   }
 
   (async () => {

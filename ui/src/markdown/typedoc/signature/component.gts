@@ -10,7 +10,10 @@ function getSignature(info: DeclarationReflection) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
-  if (info.type?.type === 'reference' && info.type?.typeArguments?.[0]?.type === 'reflection') {
+  if (
+    info.type?.type === 'reference' &&
+    info.type?.typeArguments?.[0]?.type === 'reflection'
+  ) {
     return info.type.typeArguments[0].declaration;
   }
 
@@ -20,7 +23,10 @@ function getSignature(info: DeclarationReflection) {
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
     let extendedType = info.extendedTypes?.[0];
 
-    if (extendedType?.type === 'reference' && extendedType?.package === '@glimmer/component') {
+    if (
+      extendedType?.type === 'reference' &&
+      extendedType?.package === '@glimmer/component'
+    ) {
       let typeArg = extendedType.typeArguments?.[0];
 
       if (typeArg?.type === 'reflection') {
@@ -37,23 +43,25 @@ function getSignature(info: DeclarationReflection) {
 
 const not = (x: unknown) => !x;
 
-export const ComponentSignature: TOC<{ Args: { module: string; name: string } }> = <template>
+export const ComponentSignature: TOC<{
+  Args: { module: string; name: string };
+}> = <template>
   <Load @module={{@module}} @name={{@name}} as |declaration|>
     {{#let (getSignature declaration) as |info|}}
-      <Element @info={{findChildDeclaration info "Element"}} />
-      <Args @info={{findChildDeclaration info "Args"}} />
-      <Blocks @info={{findChildDeclaration info "Blocks"}} />
+      <Element @info={{findChildDeclaration info 'Element'}} />
+      <Args @info={{findChildDeclaration info 'Args'}} />
+      <Blocks @info={{findChildDeclaration info 'Blocks'}} />
     {{/let}}
   </Load>
 </template>;
 
 const Args: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <h3 class="typedoc-heading">Arguments</h3>
+    <h3 class='typedoc-heading'>Arguments</h3>
     {{#each @info.type.declaration.children as |child|}}
-      <span class="typedoc-component-arg">
-        <span class="typedoc-component-arg-info">
-          <pre class="typedoc-name">@{{child.name}}</pre>
+      <span class='typedoc-component-arg'>
+        <span class='typedoc-component-arg-info'>
+          <pre class='typedoc-name'>@{{child.name}}</pre>
           {{#if (isIntrinsic child.type)}}
             <Type @info={{child.type}} />
           {{/if}}
@@ -69,17 +77,23 @@ const Args: TOC<{ Args: { info: any } }> = <template>
 </template>;
 
 const mdnElement = (typeName: string) => {
-  let element = typeName.replace('HTML', '').replace('Element', '').toLowerCase();
+  let element = typeName
+    .replace('HTML', '')
+    .replace('Element', '')
+    .toLowerCase();
 
   return `https://developer.mozilla.org/en-US/docs/Web/HTML/Element/${element}`;
 };
 
 const Element: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <span class="typedoc__component-signature__element">
-      <span class="typedoc__component-signature__element-type">
-        <span class="typedoc__name">{{@info.name}}</span>
-        <ExternalLink href={{mdnElement @info.type.name}} class="typedoc__type-link">
+    <span class='typedoc__component-signature__element'>
+      <span class='typedoc__component-signature__element-type'>
+        <span class='typedoc__name'>{{@info.name}}</span>
+        <ExternalLink
+          href={{mdnElement @info.type.name}}
+          class='typedoc__type-link'
+        >
           {{@info.type.name}}
           ➚
         </ExternalLink>
@@ -90,12 +104,12 @@ const Element: TOC<{ Args: { info: any } }> = <template>
 </template>;
 const Blocks: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <h3 class="typedoc-heading">Blocks</h3>
+    <h3 class='typedoc-heading'>Blocks</h3>
     {{#each @info.type.declaration.children as |child|}}
-      <span class="typedoc__component-signature__block">
-        <pre class="typedoc__name">&lt;:{{child.name}}&gt;</pre>
+      <span class='typedoc__component-signature__block'>
+        <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
         {{! <span class='typedoc-category'>Properties </span> }}
-        <div class="typedoc-property">
+        <div class='typedoc-property'>
           <Type @info={{child.type}} />
           <Comment @info={{child}} />
         </div>

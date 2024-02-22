@@ -90,16 +90,16 @@ export default class DocsService extends Service {
   };
 
   /**
-  * The flat list of all pages.
-  * Each page knows the name of its immediate parent.
-  */
+   * The flat list of all pages.
+   * Each page knows the name of its immediate parent.
+   */
   get pages() {
     return this.docs.value?.list ?? [];
   }
 
   /**
-  * The full page hierachy
-  */
+   * The full page hierachy
+   */
   get tree() {
     return this.docs.value?.tree ?? {};
   }
