@@ -8,6 +8,7 @@ export default class ApplicationRoute extends Route {
     // TODO?: Should setup also fetch the manifest?
     //        then we just await setup here?
     this.docs.setup({
+      apiDocs: await import('virtual/kolay/api-docs'),
       // TODO: can be determined by createManifest plugin
       //       (if it emits a virtual module)
       manifest: '/docs/manifest.json',

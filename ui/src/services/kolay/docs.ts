@@ -4,6 +4,7 @@ import Service, { service } from '@ember/service';
 import { use } from 'ember-resources';
 import { RemoteData } from 'reactiveweb/remote-data';
 
+import type ApiDocs from './api-docs';
 import type Selected from './selected';
 import type { Manifest } from './types';
 import type RouterService from '@ember/routing/router-service';
@@ -14,6 +15,7 @@ const DEFAULT_API_DOCS = '/api-docs.json';
 export default class DocsService extends Service {
   @service declare router: RouterService;
   @service('kolay/selected') declare selected: Selected;
+  @service('kolay/api-docs') declare apiDocs: ApiDocs;
 
   @tracked manifestLocation = DEFAULT_MANIFEST;
   @tracked apiDocsLocation = DEFAULT_API_DOCS;
@@ -35,14 +37,9 @@ export default class DocsService extends Service {
     manifest?: string;
 
     /**
-     * The location of the typedoc output JSON file created with
-     * the `typedoc` plugin.
-     *
-     * This must be allowed by CORS, as it is requested via `fetch`
-     *
-     * The default is '/api-docs.json'
+  * TODO: write this
      */
-    typedoc?: string;
+    apiDocs?: any;
 
     /**
      * Additional invokables that you'd like to have access to
@@ -76,8 +73,9 @@ export default class DocsService extends Service {
       this.manifestLocation = options.manifest;
     }
 
-    if (options.typedoc) {
-      this.apiDocsLocation = options.typedoc;
+    if (options.apiDocs) {
+      this.apiDocs.packages = options.apiDocs.packages;
+      this.apiDocs.loadApiDocs = options.apiDocs.loadApiDocs;
     }
 
     if (options.resolve) {
@@ -87,6 +85,7 @@ export default class DocsService extends Service {
     if (options.topLevelScope) {
       this.additionalTopLevelScope = options.topLevelScope;
     }
+
   };
 
   /**
