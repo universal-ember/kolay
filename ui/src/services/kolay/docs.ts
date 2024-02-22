@@ -37,7 +37,7 @@ export default class DocsService extends Service {
     manifest?: string;
 
     /**
-  * TODO: write this
+     * TODO: write this
      */
     apiDocs?: any;
 
@@ -85,7 +85,6 @@ export default class DocsService extends Service {
     if (options.topLevelScope) {
       this.additionalTopLevelScope = options.topLevelScope;
     }
-
   };
 
   /**

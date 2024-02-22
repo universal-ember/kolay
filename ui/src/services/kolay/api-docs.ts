@@ -9,7 +9,10 @@ export default class DocsService extends Service {
   loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
 
   load = (name: string) => {
-assert(`loadApiDocs was never set, did you forget to pass it do docs.setup?`, this.loadApiDocs);
+    assert(
+      `loadApiDocs was never set, did you forget to pass it do docs.setup?`,
+      this.loadApiDocs,
+    );
 
     let loader = this.loadApiDocs[name];
 
