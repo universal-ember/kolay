@@ -69,6 +69,7 @@
   "dependencies": {
     "@tsconfig/ember": "^3.0.3",
     "@zamiell/typedoc-plugin-not-exported": "^0.2.0",
+    "common-tags": "^1.8.2",
     "globby": "^14.0.0",
     "json5": "^2.2.3",
     "package-up": "^5.0.0",
@@ -89,6 +90,7 @@
     "@nullvoxpopuli/eslint-configs": "^3.2.2",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.3",
+    "@types/common-tags": "^1.8.4",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "@universal-ember/kolay-ui": "workspace:^",

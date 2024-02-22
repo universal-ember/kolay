@@ -1,9 +1,11 @@
 import Component from '@glimmer/component';
+import { service } from '@ember/service';
 
-import { RemoteData } from 'reactiveweb/remote-data';
+import { trackedFunction } from 'reactiveweb/function';
 
 import { highlight } from '../../highlight.ts';
 
+import type APIDocsService from '../../services/kolay/api-docs.ts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
@@ -58,44 +60,43 @@ export class Load extends Component<{
   };
   Blocks: { default: [DeclarationReflection] };
 }> {
-  get url() {
-    let { apiDocs, package: pkg } = this.args;
+  @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
-    if (apiDocs) return apiDocs;
+  request = trackedFunction(this, async () => {
+    let { package: pkg } = this.args;
 
-    if (pkg) {
-      throw new Error(`Not Implemented`);
+    if (!pkg) {
+      throw new Error(`A @package must be specified to load.`);
     }
 
-    throw new Error(
-      `Missing Docs Source provided for ${this.args.module} > ${this.args.name}`,
-    );
-  }
+    let req = await this.apiDocs.load(pkg);
+    let json = await req.json();
+
+    return json;
+  });
 
   <template>
-    {{#let (RemoteData this.url) as |request|}}
-      {{#if request.isLoading}}
-        Loading api docs...
-      {{/if}}
+    {{#if this.request.isLoading}}
+      Loading api docs...
+    {{/if}}
 
-      {{#if request.isError}}
-        {{stringify request.error}}
-      {{/if}}
+    {{#if this.request.isError}}
+      {{stringify this.request.error}}
+    {{/if}}
 
-      {{#if request.value}}
-        <section {{highlight request.value}}>
-          {{#if (isDeclarationReflection request.value)}}
-            <Query
-              @info={{request.value}}
-              @module={{@module}}
-              @name={{@name}}
-              as |type|
-            >
-              {{yield type}}
-            </Query>
-          {{/if}}
-        </section>
-      {{/if}}
-    {{/let}}
+    {{#if this.request.value}}
+      <section {{highlight this.request.value}}>
+        {{#if (isDeclarationReflection this.request.value)}}
+          <Query
+            @info={{this.request.value}}
+            @module={{@module}}
+            @name={{@name}}
+            as |type|
+          >
+            {{yield type}}
+          </Query>
+        {{/if}}
+      </section>
+    {{/if}}
   </template>
 }

@@ -23,7 +23,8 @@
     "addon-main.cjs",
     "declarations",
     "dist",
-    "src"
+    "src",
+    "virtual-types.d.ts"
   ],
   "scripts": {
     "build": "rollup --config",
@@ -93,6 +94,7 @@
     "main": "addon-main.cjs",
     "app-js": {
       "./components/logs.js": "./dist/_app_/components/logs.js",
+      "./services/kolay/api-docs.js": "./dist/_app_/services/kolay/api-docs.js",
       "./services/kolay/docs.js": "./dist/_app_/services/kolay/docs.js",
       "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js",
       "./services/kolay/types.js": "./dist/_app_/services/kolay/types.js"
