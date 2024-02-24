@@ -10,11 +10,7 @@ module('<APIDocs>', function (hooks) {
   test('it works', async function (assert) {
     await render(
       <template>
-        <APIDocs
-          @module="declarations/browser/re-exports"
-          @name="APIDocs"
-          @apiDocs="/docs/kolay.json"
-        />
+        <APIDocs @package="kolay" @module="declarations/browser/re-exports" @name="APIDocs" />
       </template>
     );
 
