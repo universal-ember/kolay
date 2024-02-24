@@ -25,6 +25,11 @@
       "import": "./src/browser/re-exports.js",
       "default": "./src/browser/re-exports.js"
     },
+    "./test-support": {
+      "types": "./declarations/browser/test-support.d.ts",
+      "import": "./src/browser/test-support.js",
+      "default": "./src/browser/test-support.js"
+    },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"
@@ -69,6 +74,7 @@
   "dependencies": {
     "@tsconfig/ember": "^3.0.3",
     "@zamiell/typedoc-plugin-not-exported": "^0.2.0",
+    "common-tags": "^1.8.2",
     "globby": "^14.0.0",
     "json5": "^2.2.3",
     "package-up": "^5.0.0",
@@ -89,6 +95,7 @@
     "@nullvoxpopuli/eslint-configs": "^3.2.2",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.3",
+    "@types/common-tags": "^1.8.4",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "@universal-ember/kolay-ui": "workspace:^",
@@ -158,20 +165,7 @@
     "overrides": {
       "@ember/test-waiters": "^3.1.0",
       "webpack": "^5.90.3",
-      "ember-repl": "^3.0.0",
-      "@embroider/addon-dev": "4.1.4-unstable.12a42ca",
-      "@embroider/addon-shim": "1.8.8-unstable.12a42ca",
-      "@embroider/core": "3.4.4-unstable.12a42ca",
-      "@embroider/compat": "3.4.4-unstable.12a42ca",
-      "@embroider/macros": "1.13.5-unstable.12a42ca",
-      "@embroider/hbs-loader": "3.0.4-unstable.12a42ca",
-      "@embroider/reverse-exports": "0.1.1-unstable.12a42ca",
-      "@embroider/router": "2.1.7-unstable.12a42ca",
-      "@embroider/shared-internals": "2.5.2-unstable.12a42ca",
-      "@embroider/test-setup": "3.0.4-unstable.12a42ca",
-      "@embroider/util": "1.12.2-unstable.12a42ca",
-      "@embroider/vite": "0.2.1-unstable.12a42ca",
-      "@embroider/webpack": "3.2.2-unstable.12a42ca"
+      "ember-repl": "^3.0.0"
     }
   },
   "volta": {

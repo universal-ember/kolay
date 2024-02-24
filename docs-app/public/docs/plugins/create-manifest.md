@@ -8,9 +8,9 @@ either json or jsonc
 - change name
 
 ```hbs live no-shadow
-<APIDocs @module="declarations/plugins/vite" @name="createManifest" @apiDocs="/docs/kolay.json" />
+<APIDocs @package="kolay" @module="declarations/plugins/vite" @name="createManifest" />
 ```
 
 ```hbs live no-shadow
-<APIDocs @module="src/plugins/types" @name="CreateManifestOptions" @apiDocs="/docs/kolay.json" />
+<APIDocs @package="kolay" @module="src/plugins/types" @name="CreateManifestOptions" />
 ```
