@@ -5,23 +5,15 @@ export default class ApplicationRoute extends Route {
   @service('kolay/docs') docs;
 
   async model() {
-    // TODO?: Should setup also fetch the manifest?
-    //        then we just await setup here?
-    this.docs.setup({
-      apiDocs: await import('virtual/kolay/api-docs'),
-      // TODO: can be determined by createManifest plugin
-      //       (if it emits a virtual module)
-      manifest: '/docs/manifest.json',
-
+    await this.docs.setup({
+      apiDocs: await import('kolay/api-docs:virtual'),
+      manifest: await import('kolay/manifest:virtual'),
       resolve: {
         'ember-primitives': await import('ember-primitives'),
         kolay: await import('kolay'),
       },
     });
 
-    const request = await fetch(this.docs.manifestLocation);
-    const json = await request.json();
-
-    return { manifest: json };
+    return { manifest: this.docs.manifest };
   }
 }

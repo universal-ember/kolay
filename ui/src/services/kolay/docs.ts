@@ -1,8 +1,6 @@
 import { tracked } from '@glimmer/tracking';
+import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
-
-import { use } from 'ember-resources';
-import { RemoteData } from 'reactiveweb/remote-data';
 
 import type ApiDocs from './api-docs';
 import type Selected from './selected';
@@ -24,22 +22,24 @@ export default class DocsService extends Service {
   @tracked additionalResolves?: Record<string, Record<string, unknown>>;
   @tracked additionalTopLevelScope?: Record<string, unknown>;
   @tracked remarkPlugins?: unknown[];
+  _docs: Manifest | undefined;
 
-  @use docs = RemoteData<Manifest>(() => `/docs/manifest.json`);
+  loadManifest: () => Promise<Manifest> = () =>
+    Promise.resolve({
+      list: [],
+      tree: {},
+    } as any);
 
-  setup = (options: {
+  setup = async (options: {
     /**
-     * The location of the manifest JSON file created with
-     * the `createManifest` plugin.
-     *
-     * This must be allowed by CORS, as it is requested via `fetch`
-     *
-     * The default is '/docs/manifest.json'
+     * The module of the manifest virtual module.
+     * This should be set to `await import('kolay/manifest:virtual')
      */
-    manifest?: string;
+    manifest?: any;
 
     /**
-     * TODO: write this
+     * The module of the api docs virtual module.
+     * This should be set to `await import('kolay/api-docs:virtual')
      */
     apiDocs?: any;
 
@@ -72,7 +72,7 @@ export default class DocsService extends Service {
     remarkPlugins?: unknown[];
   }) => {
     if (options.manifest) {
-      this.manifestLocation = options.manifest;
+      this.loadManifest = options.manifest.load;
     }
 
     if (options.apiDocs) {
@@ -87,21 +87,36 @@ export default class DocsService extends Service {
     if (options.topLevelScope) {
       this.additionalTopLevelScope = options.topLevelScope;
     }
+
+    this._docs = await this.loadManifest();
   };
+
+  get docs() {
+    assert(
+      `Docs' manifest was not loaded. Be sure to call setup() before accessing anything on the docs service.`,
+      this._docs,
+    );
+
+    return this._docs;
+  }
+
+  get manifest() {
+    return this.docs;
+  }
 
   /**
    * The flat list of all pages.
    * Each page knows the name of its immediate parent.
    */
   get pages() {
-    return this.docs.value?.list ?? [];
+    return this.docs?.list ?? [];
   }
 
   /**
    * The full page hierachy
    */
   get tree() {
-    return this.docs.value?.tree ?? {};
+    return this.docs?.tree ?? {};
   }
 }
 

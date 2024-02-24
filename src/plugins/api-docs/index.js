@@ -3,7 +3,7 @@ import { createUnplugin } from 'unplugin';
 
 import { generateTypeDocJSON } from './typedoc.js';
 
-const SECRET_INTERNAL_IMPORT = 'virtual/kolay/api-docs';
+const SECRET_INTERNAL_IMPORT = 'kolay/api-docs:virtual';
 
 /**
  * Generates JSON from typedoc given a target path.

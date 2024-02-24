@@ -4,10 +4,13 @@ import type QUnit from 'qunit';
 
 type NestedHooks = Parameters<NonNullable<Parameters<QUnit['module']>[1]>>[0];
 
-export function setupKolay(hooks: NestedHooks, config: SetupOptions) {
-  hooks.beforeEach(function (this: { owner: Owner } ) {
+export function setupKolay(
+  hooks: NestedHooks,
+  config: () => Promise<SetupOptions>,
+) {
+  hooks.beforeEach(async function (this: { owner: Owner }) {
     let docs = this.owner.lookup('service:kolay/docs');
 
-    docs.setup(config);
+    docs.setup(await config());
   });
 }

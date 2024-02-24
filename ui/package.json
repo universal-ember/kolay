@@ -15,7 +15,7 @@
     },
     "./test-support": {
       "types": "./declarations/test-support/index.d.ts",
-      "default": "./dest/test-support/index.js"
+      "default": "./dist/test-support/index.js"
     },
     "./*": {
       "types": "./declarations/*.d.ts",
