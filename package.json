@@ -25,6 +25,11 @@
       "import": "./src/browser/re-exports.js",
       "default": "./src/browser/re-exports.js"
     },
+    "./test-support": {
+      "types": "./declarations/browser/test-support.d.ts",
+      "import": "./src/browser/test-support.js",
+      "default": "./src/browser/test-support.js"
+    },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"

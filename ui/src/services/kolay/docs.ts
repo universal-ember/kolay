@@ -12,6 +12,8 @@ import type RouterService from '@ember/routing/router-service';
 const DEFAULT_MANIFEST = '/docs/manifest.json';
 const DEFAULT_API_DOCS = '/api-docs.json';
 
+export type SetupOptions = Parameters<DocsService['setup']>[0];
+
 export default class DocsService extends Service {
   @service declare router: RouterService;
   @service('kolay/selected') declare selected: Selected;
