@@ -21,7 +21,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./declarations/browser/re-exports.d.ts",
+      "types": "./src/browser/re-exports.d.ts",
       "import": "./src/browser/re-exports.js",
       "default": "./src/browser/re-exports.js"
     },
@@ -45,16 +45,8 @@
       "default": "./src/browser/virtual/empty.js"
     },
     "./test-support": {
-      "types": "./src/browser/virtual/test-support.d.ts",
-      "default": "./src/browser/virtual/empty.js"
-    },
-    "./*virtual": {
-      "types": "./src/browser/virtual/*:virtual.d.ts",
-      "default": "./src/browser/virtual/empty.js"
-    },
-    "./manifest:virtual": {
-      "types": "./src/browser/virtual/manifest:virtual.d.ts",
-      "default": "./src/browser/virtual/empty.js"
+      "types": "./src/browser/test-support.d.ts",
+      "default": "./src/browser/test-support.js"
     },
     "./build/legacy": {
       "types": "./declarations/plugins/legacy/index.d.cts",

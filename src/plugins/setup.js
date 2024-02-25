@@ -38,14 +38,20 @@ export const setup = createUnplugin(() => {
             //       
             //       If you find yourself reading this comment, 
             //       be sure to have both plugins setup in your plugins array.
-            let [apiDocs, manifest] = await Promise.all([
-              options.apiDocs ?? import('kolay/api-docs:virtual'),
-              options.manifest ?? import('kolay/manifest:virtual'),
-            ]);
+            //
+            //       NOTE: we can't have a virtual module import 
+            //             more virtual modules under embroide.
+            //             :(
+            //             So the whole strategy / benefit of setupKolay is 
+            //             .... much less useful than originally planned
+            // let [apiDocs, manifest] = await Promise.all([
+            //   import('kolay/api-docs:virtual'),
+            //   import('kolay/manifest:virtual'),
+            // ]);
 
             await docs.setup({
-              apiDocs,
-              manifest, 
+              // apiDocs,
+              // manifest, 
               ...options,
             });
 
@@ -53,20 +59,27 @@ export const setup = createUnplugin(() => {
           }
         `,
       },
-      {
-        importPath: 'kolay/test-support',
-        content: stripIndent`
-          import { setupKolay as setup } from 'kolay/setup';
+      // NOTE: we can't have a virtual module import
+      //       more virtual modules under embroide.
+      //       :(
+      //       So the whole strategy / benefit of setupKolay is
+      //       .... much less useful than originally planned
+      //
+      //
+      // {
+      //   importPath: 'kolay/test-support',
+      //   content: stripIndent`
+      //     import { setupKolay as setup } from 'kolay/setup';
 
-          export function setupKolay(hooks, config) {
-            hooks.beforeEach(async function () {
-              let docs = this.owner.lookup('service:kolay/docs');
+      //     export function setupKolay(hooks, config) {
+      //       hooks.beforeEach(async function () {
+      //         let docs = this.owner.lookup('service:kolay/docs');
 
-              await setup(this, config);
-            });
-          }
-        `,
-      },
+      //         await setup(this, config);
+      //       });
+      //     }
+      //   `,
+      // },
     ]),
   };
 });

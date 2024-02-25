@@ -4,11 +4,16 @@ import { setupRenderingTest } from 'ember-qunit';
 
 import { APIDocs } from 'kolay';
 
-// import { setupKolay } from 'kolay/test-support';
+import { setupKolay } from 'kolay/test-support';
 
 module('<APIDocs>', function (hooks) {
   setupRenderingTest(hooks);
-  // setupKolay(hooks);
+  setupKolay(hooks, async () => ({
+      // @ts-expect-error
+      apiDocs: await import('kolay/api-docs:virtual'),
+      // @ts-expect-error
+      manifest: await import('kolay/manifest:virtual'),
+  }));
 
   test('it works', async function (assert) {
     await render(

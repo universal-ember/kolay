@@ -1,9 +1,13 @@
 import Route from '@ember/routing/route';
-import { setupKolay } from 'kolay/setup';
+import { service } from '@ember/service';
+
+import type { DocsService, Manifest } from 'kolay';
 
 export default class ApplicationRoute extends Route {
-  async model() {
-    const manifest = await setupKolay(this, {
+  @service('kolay/docs') declare docs: DocsService;
+
+  async model(): Promise<{ manifest: Manifest }> {
+    await this.docs.setup({
       apiDocs: await import('kolay/api-docs:virtual'),
       manifest: await import('kolay/manifest:virtual'),
       resolve: {
@@ -12,6 +16,6 @@ export default class ApplicationRoute extends Route {
       },
     });
 
-    return { manifest };
+    return { manifest: this.docs.manifest };
   }
 }

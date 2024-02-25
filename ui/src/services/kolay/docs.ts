@@ -89,6 +89,8 @@ export default class DocsService extends Service {
     }
 
     this._docs = await this.loadManifest();
+
+    return this.manifest;
   };
 
   get docs() {
