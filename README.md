@@ -2,9 +2,33 @@
 
 Documentation system for the the `@universal-ember` family of projects.
 
-Features:
-- author markdown
-- render code from jsdoc using 
+## Features
+
+### Use Markdown
+
+- from any folder, any project (good for monorepos)
+- scales infinitely with your project size, as compiling the pages is done on-demand, rather than on-deploy
+- any codefence can become a live demo with the `live` tag
+  ~~~md
+  Some prose here about the demo
+
+  ```gjs live
+  <template>
+    interactive!
+  </template>
+  ```
+  ~~~
+
+### Use JSDoc
+
+- JSDoc / TypeDoc is renderable via the `<APIDocs />` component
+  ~~~md
+  ## API Reference
+
+  <APIDocs @package="my-library" @module="..." @name="theExport" />
+
+  ~~~
+- render examples from your jsdoc for interactive demonstration of concepts using 
   ~~~
   text here
 
@@ -12,7 +36,7 @@ Features:
   // the "live" tag on the codefence
   ```
   ~~~
-- render API Reference documentation inline with markdown
-- render code from API Reference documentation for interactive API docs
+
+### Navigation 
+
 - generate navigation based on convention based file layout
-- light / dark theme

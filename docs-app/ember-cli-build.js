@@ -5,6 +5,9 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = async function (defaults) {
   const app = new EmberApp(defaults, {
     // Add options here
+    'ember-cli-babel': {
+      enableTypeScriptTransform: true,
+    },
   });
 
   const { Webpack } = require('@embroider/webpack');
@@ -31,11 +34,10 @@ module.exports = async function (defaults) {
           setup(),
           markdownPages({
             src: 'public/docs',
-            include: ['../README.md'],
             groups: [
               {
                 name: 'Runtime',
-                include: ['../ui/docs/**/*'],
+                src: '../ui/docs/**/*',
               },
             ],
           }),

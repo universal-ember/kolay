@@ -101,7 +101,6 @@ export function virtualFile(options) {
 
       assert(opt, `Could not find content for ${opt?.importPath}`);
 
-      console.log(opt.content);
       return opt.content;
     },
   };

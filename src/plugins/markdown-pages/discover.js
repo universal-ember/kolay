@@ -1,19 +1,60 @@
 import { reshape } from './hydrate.js';
 
 /**
- * @typedef {object} Options
+ * @typedef {object} Group
+ * @property {string} name
+ * @property {string} src
  * @property {string | undefined} [ include ]
  * @property {string[] | undefined} [ exclude ]
- * @property {string} cwd
  * @property {boolean | undefined} [ onlyDirectories ]
  *
+ * @typedef {object} Options
+ * @property {string | undefined} [ src ]
+ * @property {Group[] | undefined} [ groups ]
+ *
  * @param {Options} options
+ * @return {Promise<import('./types.ts').Manifest>}
  */
-export async function discover({ include, onlyDirectories, exclude, cwd }) {
-  include ??= '**/*';
-  exclude ??= [];
-  onlyDirectories ??= false;
+export async function discover({ groups, src }) {
+  groups ??= [];
 
+  if (src) {
+    groups.unshift({ name: 'root', src });
+  }
+
+  let foundGroups = await Promise.all(
+    groups.map(async (group) => {
+      let { include, onlyDirectories, exclude } = group;
+
+      const found = await pathsFor({
+        include: include ?? '**/*',
+        onlyDirectories: onlyDirectories ?? false,
+        exclude: exclude ?? [],
+        cwd: group.src,
+      });
+
+      return {
+        name: group.name,
+        ...found,
+      };
+    })
+  );
+
+  return {
+    groups: foundGroups,
+  };
+}
+
+/**
+ * @typedef {object} PathsForOptions
+ * @property {string} include
+ * @property {string[] } exclude
+ * @property {string} cwd
+ * @property {boolean} onlyDirectories
+ *
+ * @param {PathsForOptions} options
+ */
+async function pathsFor({ include, onlyDirectories, exclude, cwd }) {
   const { globbySync } = await import('globby');
 
   let paths = globbySync(include, {

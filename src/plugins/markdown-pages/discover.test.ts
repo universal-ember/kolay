@@ -7,13 +7,13 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 import { discover } from './discover.js';
 
-const fixtures = path.join(__dirname, '../../../fixtures/discover');
+const fixtures = path.join(__dirname, '../../../fixtures');
 
 describe('discover', () => {
   test('it works', async () => {
-    let result = await discover({ cwd: fixtures });
+    let result = await discover({ src: path.join(fixtures, 'discover') });
 
-    expect(result.tree).toMatchInlineSnapshot(`
+    expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
       {
         "first": "/c/c-b.md",
         "name": "root",
@@ -75,5 +75,90 @@ describe('discover', () => {
         ],
       }
     `);
+  });
+
+  test('it works with a tiny set of docs', async () => {
+    let result = await discover({ src: path.join(fixtures, 'discover-tiny') });
+
+    expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
+      {
+        "first": "/main/index.md",
+        "name": "root",
+        "pages": [
+          {
+            "first": "/main/index.md",
+            "name": "main",
+            "pages": [
+              {
+                "cleanedName": "index",
+                "groupName": "main",
+                "name": "index",
+                "path": "/main/index.md",
+              },
+            ],
+          },
+        ],
+      }
+    `);
+  });
+
+  test('it works with a folder that does not exist', async () => {
+    let result = await discover({ src: path.join(fixtures, '---does-not-exist---') });
+
+    expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
+      {
+        "name": "root",
+        "pages": [],
+      }
+    `);
+  });
+
+  test('it can work on only groups', async () => {
+
+    let result = await discover({
+      groups: [
+        {
+          name: "Group 1",
+          src: path.join(fixtures, 'group-1'),
+        }
+      ]
+    });
+
+    expect(result.groups.length).toBe(1);
+  });
+
+  test('it adds in a group by name', async () => {
+
+    let result = await discover({
+      src: path.join(fixtures, 'discover-tiny'),
+      groups: [
+        {
+          name: "Group 1",
+          src: path.join(fixtures, 'group-1'),
+        }
+      ]
+    });
+
+    expect(result.groups.length).toBe(2);
+    expect(result.groups[0]?.list).toMatchInlineSnapshot(`
+      [
+        {
+          "cleanedName": "index",
+          "groupName": "main",
+          "name": "index",
+          "path": "/main/index.md",
+        },
+      ]
+    `)
+  expect(result.groups[1]?.list).toMatchInlineSnapshot(`
+    [
+      {
+        "cleanedName": "somefile",
+        "groupName": "components",
+        "name": "some-file",
+        "path": "/components/some-file.md",
+      },
+    ]
+  `)
   });
 });

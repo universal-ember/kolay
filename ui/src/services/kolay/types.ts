@@ -1,6 +1,9 @@
 export interface Manifest {
-  list: Page[];
-  tree: Collection;
+  groups: {
+    name: string;
+    list: Page[];
+    tree: Collection;
+  }[];
 }
 
 export interface Collection {

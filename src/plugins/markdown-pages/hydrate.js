@@ -62,6 +62,7 @@ export function addInTheFirstPage(tree) {
 
 /**
  * @param {import('./types.ts').Collection} tree
+ * @return {import('./types.ts').Page[]}
  */
 export function getList(tree) {
   let flatList = [];
@@ -73,7 +74,7 @@ export function getList(tree) {
 
 /**
  * @param {import('./types.ts').Node[] | import('./types.ts').Node} tree
- * @returns {import('./types.ts').Node[]}
+ * @returns {import('./types.ts').Page[]}
  */
 function flatPages(tree) {
   if (Array.isArray(tree)) {

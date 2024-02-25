@@ -14,7 +14,7 @@ export const markdownPages = createUnplugin(
    * @param {import('./types.ts').MarkdownPagesOptions} [ options ]
    */
   (options) => {
-    let { src, dest, name, include, exclude, onlyDirectories } = options ?? {};
+    let { src, dest, name, groups } = options ?? {};
 
     const destination = dest ?? 'kolay-manifest';
 
@@ -29,14 +29,14 @@ export const markdownPages = createUnplugin(
     );
 
     name ??= 'manifest.json';
+    groups ??= [];
 
     const fileName = join(destination, name);
 
     return {
       name: 'kolay:markdown-docs',
       async buildStart() {
-        const cwd = src ? join(process.cwd(), src) : process.cwd();
-        const reshaped = await discover({ cwd, onlyDirectories, exclude, include });
+        const reshaped = await discover({ src, groups });
 
         // TODO: if reshaped contains outside of `./**`, we need to emitFile them to a matching location
 
