@@ -110,17 +110,17 @@ export function build(docs) {
     );
 
     let groupName = cleanSegment(leafestGroupName);
-    let tutorialName = cleanSegment(name);
+    let cleanedName = cleanSegment(name);
 
     let pageInfo = {
       ...config,
       path: `/${mdPath}`,
       name: name.replace(/\.\w+$/, ''),
       groupName,
-      tutorialName,
+      cleanedName,
     };
 
-    preAddCheck(mdPath, tutorialName, leafestCollection);
+    preAddCheck(mdPath, cleanedName, leafestCollection);
 
     leafestCollection.pages.push(pageInfo);
   }

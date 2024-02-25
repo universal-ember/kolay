@@ -79,7 +79,7 @@ export function applyPredestinedOrder(list, order, find = (x) => x) {
 }
 
 /**
- * @template {import('./types.ts').Page} Root
+ * @template {import('./types.ts').Node} Root
  * @param {Root} tree
  * @param {{ path: string, config?: { order: string[] }}[]} configs
  * @param {string[]} [ parents ]

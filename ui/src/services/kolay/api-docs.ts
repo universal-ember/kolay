@@ -1,12 +1,18 @@
-import './virtual-types.d.ts';
-
 import { assert } from '@ember/debug';
 import Service from '@ember/service';
 
 export default class DocsService extends Service {
-  // packages = packageNames;
-  packages: string[] = [];
+  _packages: string[] = [];
   loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
+
+  get packages() {
+    assert(
+      `packages was never set. Did you forget to import 'kolay/api-docs:virtual' and set it to 'apiDocs' when calling docs.setup()?`,
+      this._packages,
+    );
+
+    return this._packages;
+  }
 
   load = (name: string) => {
     assert(

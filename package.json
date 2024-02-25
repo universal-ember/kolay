@@ -45,6 +45,14 @@
     "./plugin-types": {
       "types": "./src/plugins/types.d.ts"
     },
+    "./api-docs:virtual": {
+      "types": "./src/browser/virtual/api-docs.d.ts",
+      "import": "./src/browser/virtual/empty.js"
+    },
+    "./manifest:virtual": {
+      "types": "./src/browser/virtual/manifest.d.ts",
+      "import": "./src/browser/virtual/empty.js"
+    },
     "./build/legacy": {
       "types": "./declarations/plugins/legacy/index.d.cts",
       "default": "./src/plugins/legacy/index.cjs"

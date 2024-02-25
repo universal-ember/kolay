@@ -30,7 +30,13 @@ module.exports = async function (defaults) {
         plugins: [
           markdownPages({
             src: 'public/docs',
-            include: ['../README.md', '../docs/**/*.md'],
+            include: ['../README.md'],
+            groups: [
+              {
+                name: 'Runtime',
+                include: ['../ui/docs/**/*'],
+              },
+            ],
           }),
           apiDocs({ packages: ['kolay', 'ember-primitives', 'ember-resources'] }),
         ],

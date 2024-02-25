@@ -2,9 +2,9 @@ import { describe, expect, test } from 'vitest';
 
 import { betterSort } from './sort.js';
 
-import type { Tutorial } from './types.ts';
+import type { Page } from './types.ts';
 
-type Entry = Pick<Tutorial, 'name' | 'path'>;
+type Entry = Pick<Page, 'name' | 'path'>;
 
 describe('addInTheFirstPage', () => {
   test('sorts on a property', () => {

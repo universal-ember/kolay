@@ -76,7 +76,7 @@ export default class DocsService extends Service {
     }
 
     if (options.apiDocs) {
-      this.apiDocs.packages = options.apiDocs.packages;
+      this.apiDocs._packages = options.apiDocs.packages;
       this.apiDocs.loadApiDocs = options.apiDocs.loadApiDocs;
     }
 

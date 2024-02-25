@@ -1,23 +1,11 @@
-export interface Tutorial {
-  path: string;
-  name: string;
-  groupName: string;
-  tutorialName: string;
-}
+export type { Collection, Manifest, Page } from '@universal-ember/kolay-ui/services/kolay/types';
+import type { Collection, Page } from '@universal-ember/kolay-ui/services/kolay/types';
 
-export interface Collection {
-  name: string;
-  first?: string;
-  pages: Page[];
-  groupName?: never;
-  tutorialName?: never;
-}
-
-export type Page = Tutorial | Collection;
+export type Node = Page | Collection;
 
 export type GatheredDocs = Array<{ mdPath: string; config?: object }>;
 
-export interface CreateManifestOptions {
+export interface MarkdownPagesOptions {
   /**
    * The source directory for where to look for files to create the manifest from.
    * This is relative to the CWD.
@@ -51,4 +39,3 @@ export interface CreateManifestOptions {
    */
   onlyDirectories?: boolean;
 }
-
