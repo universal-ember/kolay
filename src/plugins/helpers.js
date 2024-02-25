@@ -55,3 +55,40 @@ function extractExports(exports, kind) {
 
   return result;
 }
+
+/**
+ * @typedef {object} VirtualFileOptions
+ * @property {string} importPath
+ * @property {string} content
+ *
+ * @param {VirtualFileOptions} options
+ * @return {Omit<import('unplugin').UnpluginOptions, 'name'>}
+ */
+export function virtualFile(options) {
+  assert(options.importPath, 'Must pass `importPath` to virtualFile');
+  assert(options.content, 'Must pass `content` to virtualFile');
+
+  return {
+    resolveId(id) {
+      if (id === options.importPath) {
+        return {
+          id: `\0${id}`,
+        };
+      }
+
+      return;
+    },
+    loadInclude(id) {
+      if (!id.startsWith('\0')) return false;
+
+      return id.slice(1) === options.importPath;
+    },
+    load(id) {
+      if (!id.startsWith('\0')) return;
+
+      if (id.slice(1) !== options.importPath) return;
+
+      return options.content;
+    },
+  };
+}
