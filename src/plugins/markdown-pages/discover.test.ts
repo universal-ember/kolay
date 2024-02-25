@@ -23,32 +23,32 @@ describe('discover', () => {
             "name": "c",
             "pages": [
               {
+                "cleanedName": "cb",
                 "groupName": "c",
                 "name": "c-b",
                 "path": "/c/c-b.md",
-                "tutorialName": "cb",
               },
               {
+                "cleanedName": "ca",
                 "groupName": "c",
                 "name": "c-a",
                 "path": "/c/c-a.md",
-                "tutorialName": "ca",
               },
               {
                 "first": "/c/d/d-a.md",
                 "name": "d",
                 "pages": [
                   {
+                    "cleanedName": "da",
                     "groupName": "d",
                     "name": "d-a",
                     "path": "/c/d/d-a.md",
-                    "tutorialName": "da",
                   },
                   {
+                    "cleanedName": "db",
                     "groupName": "d",
                     "name": "d-b",
                     "path": "/c/d/d-b.md",
-                    "tutorialName": "db",
                   },
                 ],
               },
@@ -57,16 +57,16 @@ describe('discover', () => {
                 "name": "e",
                 "pages": [
                   {
+                    "cleanedName": "eb",
                     "groupName": "e",
                     "name": "e-b",
                     "path": "/c/e/e-b.md",
-                    "tutorialName": "eb",
                   },
                   {
+                    "cleanedName": "ea",
                     "groupName": "e",
                     "name": "e-a",
                     "path": "/c/e/e-a.md",
-                    "tutorialName": "ea",
                   },
                 ],
               },

@@ -26,10 +26,10 @@ describe('addInTheFirstPage', () => {
         "name": "top",
         "pages": [
           {
+            "cleanedName": "foo",
             "groupName": "top",
             "name": "foo.md",
             "path": "/top/foo.md",
-            "tutorialName": "foo",
           },
         ],
       }
@@ -66,10 +66,10 @@ describe('addInTheFirstPage', () => {
             "name": "mid",
             "pages": [
               {
+                "cleanedName": "foo",
                 "groupName": "mid",
                 "name": "foo.md",
                 "path": "/top/mid/foo.md",
-                "cleanedName": "foo",
               },
             ],
           },
@@ -114,16 +114,16 @@ describe('addInTheFirstPage', () => {
             "name": "mid",
             "pages": [
               {
+                "cleanedName": "index",
                 "groupName": "mid",
                 "name": "index.md",
                 "path": "/top/mid/index.md",
-                "cleanedName": "index",
               },
               {
+                "cleanedName": "foo",
                 "groupName": "mid",
                 "name": "foo.md",
                 "path": "/top/mid/foo.md",
-                "cleanedName": "foo",
               },
             ],
           },

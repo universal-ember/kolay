@@ -27,16 +27,16 @@ describe('sortTree', () => {
         "name": "top",
         "pages": [
           {
+            "cleanedName": "second",
             "groupName": "top",
             "name": "second",
             "path": "/top/second",
-            "cleanedName": "second",
           },
           {
+            "cleanedName": "first",
             "groupName": "top",
             "name": "first",
             "path": "/top/first",
-            "cleanedName": "first",
           },
         ],
       }
