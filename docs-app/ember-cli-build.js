@@ -9,7 +9,7 @@ module.exports = async function (defaults) {
 
   const { Webpack } = require('@embroider/webpack');
 
-  const { markdownPages, apiDocs } = await import('kolay/webpack');
+  const { markdownPages, apiDocs, setup } = await import('kolay/webpack');
 
   return require('@embroider/compat').compatBuild(app, Webpack, {
     staticAddonTestSupportTrees: true,
@@ -28,6 +28,7 @@ module.exports = async function (defaults) {
       webpackConfig: {
         devtool: 'source-map',
         plugins: [
+          setup(),
           markdownPages({
             src: 'public/docs',
             include: ['../README.md'],

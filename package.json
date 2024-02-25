@@ -45,11 +45,17 @@
     "./plugin-types": {
       "types": "./src/plugins/types.d.ts"
     },
-    "./api-docs:virtual": {
-      "types": "./src/browser/virtual/api-docs.d.ts"
+    "./setup": {
+      "types": "./src/browser/virtual/setup.d.ts",
+      "default": "./src/browser/virtual/empty.js"
+    },
+    "./*virtual": {
+      "types": "./src/browser/virtual/*:virtual.d.ts",
+      "default": "./src/browser/virtual/empty.js"
     },
     "./manifest:virtual": {
-      "types": "./src/browser/virtual/manifest.d.ts"
+      "types": "./src/browser/virtual/manifest:virtual.d.ts",
+      "default": "./src/browser/virtual/empty.js"
     },
     "./build/legacy": {
       "types": "./declarations/plugins/legacy/index.d.cts",

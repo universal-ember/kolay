@@ -52,7 +52,6 @@ export async function generateTypeDocJSON({ packageName }) {
     basePath: typeInfo.dir,
     cleanOutputDir: false,
     includes: typeInfo.dir,
-    readme: '',
     pretty: false,
     excludeInternal: false,
     skipErrorChecking: true,
