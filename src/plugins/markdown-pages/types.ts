@@ -11,7 +11,7 @@ export interface MarkdownPagesOptions {
    * This is relative to the CWD.
    * Note that only md, json, and jsonc files are used.
    *
-   * This option is the same as the one in `groups`, but is a shorthand for if 
+   * This option is the same as the one in `groups`, but is a shorthand for if
    * you only have one set of docs with no configuration needed.
    */
   src?: string;

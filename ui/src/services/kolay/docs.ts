@@ -106,9 +106,12 @@ export default class DocsService extends Service {
   get currentGroup() {
     let groups = this.manifest?.groups ?? [];
 
-    let group = groups.find(group => group.name === this.selectedGroup);
+    let group = groups.find((group) => group.name === this.selectedGroup);
 
-    assert(`Could not find group in manifest under the name ${this.selectedGroup}. The available groups are: ${groups.map(group => group.name).join(', ')}`, group);
+    assert(
+      `Could not find group in manifest under the name ${this.selectedGroup}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
+      group,
+    );
 
     return group;
   }

@@ -29,14 +29,13 @@ declare module 'kolay/api-docs:virtual' {
 
 /**
  * Virtual Module responsible for building a "manifest"
- * for: 
+ * for:
  * - where all the markdown files in your project
  * can be fetched at runtime
  * - the structure of all those files
  * - the nesting / grouping / library association of those files
  */
 declare module 'kolay/manifest:virtual' {
-
   import type { Manifest } from '@universal-ember/kolay-ui/services/kolay/types';
 
   /**

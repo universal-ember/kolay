@@ -114,29 +114,27 @@ describe('discover', () => {
   });
 
   test('it can work on only groups', async () => {
-
     let result = await discover({
       groups: [
         {
-          name: "Group 1",
+          name: 'Group 1',
           src: path.join(fixtures, 'group-1'),
-        }
-      ]
+        },
+      ],
     });
 
     expect(result.groups.length).toBe(1);
   });
 
   test('it adds in a group by name', async () => {
-
     let result = await discover({
       src: path.join(fixtures, 'discover-tiny'),
       groups: [
         {
-          name: "Group 1",
+          name: 'Group 1',
           src: path.join(fixtures, 'group-1'),
-        }
-      ]
+        },
+      ],
     });
 
     expect(result.groups.length).toBe(2);
@@ -149,8 +147,8 @@ describe('discover', () => {
           "path": "/main/index.md",
         },
       ]
-    `)
-  expect(result.groups[1]?.list).toMatchInlineSnapshot(`
+    `);
+    expect(result.groups[1]?.list).toMatchInlineSnapshot(`
     [
       {
         "cleanedName": "somefile",
@@ -159,6 +157,6 @@ describe('discover', () => {
         "path": "/components/some-file.md",
       },
     ]
-  `)
+  `);
   });
 });
