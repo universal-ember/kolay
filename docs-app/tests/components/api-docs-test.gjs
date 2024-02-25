@@ -4,11 +4,11 @@ import { setupRenderingTest } from 'ember-qunit';
 
 import { APIDocs } from 'kolay';
 
-import { setupKolay } from 'kolay/test-support';
+// import { setupKolay } from 'kolay/test-support';
 
 module('<APIDocs>', function (hooks) {
   setupRenderingTest(hooks);
-  setupKolay(hooks);
+  // setupKolay(hooks);
 
   test('it works', async function (assert) {
     await render(

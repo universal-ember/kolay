@@ -25,11 +25,6 @@
       "import": "./src/browser/re-exports.js",
       "default": "./src/browser/re-exports.js"
     },
-    "./test-support": {
-      "types": "./declarations/browser/test-support.d.ts",
-      "import": "./src/browser/test-support.js",
-      "default": "./src/browser/test-support.js"
-    },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"
@@ -47,6 +42,10 @@
     },
     "./setup": {
       "types": "./src/browser/virtual/setup.d.ts",
+      "default": "./src/browser/virtual/empty.js"
+    },
+    "./test-support": {
+      "types": "./src/browser/virtual/test-support.d.ts",
       "default": "./src/browser/virtual/empty.js"
     },
     "./*virtual": {

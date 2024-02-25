@@ -1,20 +1,22 @@
+/**
+ * This plugin is *basically* what v1 addons did.
+ */
 import { stripIndent } from 'common-tags';
 import { createUnplugin } from 'unplugin';
 
 import { virtualFile } from './helpers.js';
 
-const SECRET_INTERNAL_IMPORT = 'kolay/setup';
-
 export const setup = createUnplugin(() => {
   return {
-    name: 'kolay:setup',
-    ...virtualFile({
-      importPath: SECRET_INTERNAL_IMPORT,
-      content: stripIndent`
+    name: 'kolay-setup',
+    ...virtualFile([
+      {
+        importPath: 'kolay/setup',
+        content: stripIndent`
           import { getOwner } from '@ember/owner';
           import { assert } from '@ember/debug';
 
-          export function setupKolay(context, options) {
+          export async function setupKolay(context, options) {
             let owner = getOwner(context);            
 
             assert(
@@ -37,8 +39,8 @@ export const setup = createUnplugin(() => {
             //       If you find yourself reading this comment, 
             //       be sure to have both plugins setup in your plugins array.
             let [apiDocs, manifest] = await Promise.all([
-              import('kolay/api-docs:virtual'),
-              import('kolay/manifest:virtual'),
+              options.apiDocs ?? import('kolay/api-docs:virtual'),
+              options.manifest ?? import('kolay/manifest:virtual'),
             ]);
 
             await docs.setup({
@@ -50,6 +52,21 @@ export const setup = createUnplugin(() => {
             return docs.manifest;
           }
         `,
-    }),
+      },
+      {
+        importPath: 'kolay/test-support',
+        content: stripIndent`
+          import { setupKolay as setup } from 'kolay/setup';
+
+          export function setupKolay(hooks, config) {
+            hooks.beforeEach(async function () {
+              let docs = this.owner.lookup('service:kolay/docs');
+
+              await setup(this, config);
+            });
+          }
+        `,
+      },
+    ]),
   };
 });

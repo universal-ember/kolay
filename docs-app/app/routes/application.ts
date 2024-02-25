@@ -1,12 +1,11 @@
 import Route from '@ember/routing/route';
-
 import { setupKolay } from 'kolay/setup';
 
-import type { Manifest } from 'kolay';
-
 export default class ApplicationRoute extends Route {
-  async model(): Promise<{ manifest: Manifest }> {
+  async model() {
     const manifest = await setupKolay(this, {
+      apiDocs: await import('kolay/api-docs:virtual'),
+      manifest: await import('kolay/manifest:virtual'),
       resolve: {
         'ember-primitives': await import('ember-primitives'),
         kolay: await import('kolay'),
