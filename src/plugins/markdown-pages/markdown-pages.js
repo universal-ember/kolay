@@ -44,7 +44,7 @@ export const markdownPages = createUnplugin(
             `it must be held within the current directory. ` +
             `The current directory is ${process.cwd()}, and with a \`src\` of ${src}, ` +
             `we exit the project. If you want to include files from outside the project, ` +
-            `use the \'groups\' key.`
+            `use the 'groups' key.`
         );
 
         const reshaped = await discover({ src, groups });

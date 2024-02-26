@@ -124,7 +124,7 @@ describe('discover', () => {
     });
 
     expect(result.groups.length).toBe(1);
-    expect(result.groups.map(x => x.name)).deep.equal(['Group 1']);
+    expect(result.groups.map((x) => x.name)).deep.equal(['Group 1']);
   });
 
   test('it adds in a group by name', async () => {
@@ -139,7 +139,7 @@ describe('discover', () => {
     });
 
     expect(result.groups.length).toBe(2);
-    expect(result.groups.map(x => x.name)).deep.equal(['root', 'Group 1']);
+    expect(result.groups.map((x) => x.name)).deep.equal(['root', 'Group 1']);
     expect(result.groups[0]?.list).toMatchInlineSnapshot(`
       [
         {

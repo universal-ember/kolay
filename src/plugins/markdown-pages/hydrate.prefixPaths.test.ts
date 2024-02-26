@@ -1,4 +1,3 @@
-
 import { describe, expect, test } from 'vitest';
 
 import { prefixPaths } from './hydrate.js';
@@ -7,7 +6,6 @@ import type { Collection } from './types.ts';
 
 describe('prefixPaths', () => {
   test('it works', () => {
-
     let tree: Collection = {
       name: 'top',
       pages: [
@@ -34,7 +32,7 @@ describe('prefixPaths', () => {
           },
         ],
       }
-    `)
+    `);
   });
 
   test('works on deep objects', () => {
