@@ -151,14 +151,14 @@ describe('discover', () => {
       ]
     `);
     expect(result.groups[1]?.list).toMatchInlineSnapshot(`
-    [
-      {
-        "cleanedName": "somefile",
-        "groupName": "components",
-        "name": "some-file",
-        "path": "/components/some-file.md",
-      },
-    ]
-  `);
+      [
+        {
+          "cleanedName": "somefile",
+          "groupName": "components",
+          "name": "some-file",
+          "path": "/Group 1/components/some-file.md",
+        },
+      ]
+    `);
   });
 });

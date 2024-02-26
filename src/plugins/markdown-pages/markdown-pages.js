@@ -1,7 +1,9 @@
 import assert from 'node:assert';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { join, relative, resolve } from 'node:path';
 
 import { stripIndent } from 'common-tags';
+import { globbySync } from 'globby';
 import { createUnplugin } from 'unplugin';
 
 import { virtualFile } from '../helpers.js';
@@ -36,9 +38,40 @@ export const markdownPages = createUnplugin(
     return {
       name: 'kolay:markdown-docs',
       async buildStart() {
+        assert(
+          src && !relative(process.cwd(), src).startsWith('../'),
+          `When using \`src\` as a top-level option to \`markdownPages\`, ` +
+            `it must be held within the current directory. ` +
+            `The current directory is ${process.cwd()}, and with a \`src\` of ${src}, ` +
+            `we exit the project. If you want to include files from outside the project, ` +
+            `use the \'groups\' key.`
+        );
+
         const reshaped = await discover({ src, groups });
 
-        // TODO: if reshaped contains outside of `./**`, we need to emitFile them to a matching location
+        if (groups) {
+          groups.forEach((group) => {
+            // discover mutates the groups array
+            if (group.name === 'root') return;
+
+            const paths = globbySync('**/*.{md,json,jsonc}', {
+              cwd: group.src,
+              expandDirectories: true,
+            });
+
+            paths.forEach((p) => {
+              const fileName = join(group.src, p);
+              const fullPath = resolve(fileName);
+
+              this.addWatchFile(fullPath);
+              this.emitFile({
+                type: 'asset',
+                fileName: join(group.name, p),
+                source: readFileSync(fullPath).toString(),
+              });
+            });
+          });
+        }
 
         // The *Manifest*
         //   Includes a list and tree structure of all discovered docs

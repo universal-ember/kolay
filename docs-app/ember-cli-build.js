@@ -37,7 +37,7 @@ module.exports = async function (defaults) {
             groups: [
               {
                 name: 'Runtime',
-                src: '../ui/docs/**/*',
+                src: '../ui/docs',
               },
             ],
           }),

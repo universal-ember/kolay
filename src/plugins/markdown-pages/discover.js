@@ -24,13 +24,15 @@ export async function discover({ groups, src }) {
 
   let foundGroups = await Promise.all(
     groups.map(async (group) => {
-      let { include, onlyDirectories, exclude } = group;
+      const { include, onlyDirectories, exclude } = group;
+      const prefix = group.name === 'root' ? '' : `/${group.name}`;
 
       const found = await pathsFor({
         include: include ?? '**/*',
         onlyDirectories: onlyDirectories ?? false,
         exclude: exclude ?? [],
         cwd: group.src,
+        prefix,
       });
 
       return {
@@ -51,10 +53,11 @@ export async function discover({ groups, src }) {
  * @property {string[] } exclude
  * @property {string} cwd
  * @property {boolean} onlyDirectories
+ * @property {string} [ prefix ]
  *
  * @param {PathsForOptions} options
  */
-async function pathsFor({ include, onlyDirectories, exclude, cwd }) {
+async function pathsFor({ include, onlyDirectories, exclude, cwd, prefix }) {
   const { globbySync } = await import('globby');
 
   let paths = globbySync(include, {
@@ -68,7 +71,11 @@ async function pathsFor({ include, onlyDirectories, exclude, cwd }) {
 
   paths = paths.filter((path) => !excludePattern.some((pattern) => path.match(pattern)));
 
-  const reshaped = await reshape(paths, cwd);
+  const reshaped = await reshape({
+    cwd,
+    paths,
+    prefix,
+  });
 
   return reshaped;
 }
