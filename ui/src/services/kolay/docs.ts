@@ -120,7 +120,6 @@ export default class DocsService extends Service {
    * The flat list of all pages.
    * Each page knows the name of its immediate parent.
    */
-  @cached
   get pages() {
     return this.currentGroup?.list ?? [];
   }

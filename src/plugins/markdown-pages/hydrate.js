@@ -14,6 +14,7 @@ export async function reshape({ paths, cwd, prefix }) {
   let configs = await configsFrom(paths, cwd);
 
   tree = sortTree(tree, configs);
+
   if (prefix) {
     tree = prefixPaths(tree, prefix);
   }
