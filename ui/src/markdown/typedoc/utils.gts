@@ -61,9 +61,9 @@ export class Load extends Component<{
 }> {
   @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
-/**
-  * TODO: move this to the service and dedupe requests
-  */
+  /**
+   * TODO: move this to the service and dedupe requests
+   */
   request = trackedFunction(this, async () => {
     let { package: pkg } = this.args;
 

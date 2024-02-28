@@ -36,18 +36,13 @@ export const APIDocs: TOC<{
      * The name of the export to render the type / JSDoc of
      */
     name: string;
-        /**
-         * The name of the package to lookup the module and export name.
-         */
-        package: string;
-  }
+    /**
+     * The name of the package to lookup the module and export name.
+     */
+    package: string;
+  };
 }> = <template>
-  <Load
-    @module={{@module}}
-    @name='{{@name}}'
-    @package={{@package}}
-    as |info|
-  >
+  <Load @module={{@module}} @name='{{@name}}' @package={{@package}} as |info|>
     <Declaration @info={{info}} />
   </Load>
 </template>;
@@ -62,10 +57,10 @@ export const CommentQuery: TOC<{
      * The name of the export to render the type / JSDoc of
      */
     name: string;
-        /**
-         * The name of the package to lookup the module and export name.
-         */
-        package: string;
+    /**
+     * The name of the package to lookup the module and export name.
+     */
+    package: string;
   };
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |info|>

@@ -118,13 +118,13 @@ export default class DocsService extends Service {
   }
 
   selectGroup = (group: string) => {
-      assert(
-        `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
-        this.availableGroups.includes(group)
-      );
+    assert(
+      `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
+      this.availableGroups.includes(group),
+    );
 
-     this.selectedGroup = group;
-  }
+    this.selectedGroup = group;
+  };
 
   get availableGroups() {
     let groups = this.manifest?.groups ?? [];
