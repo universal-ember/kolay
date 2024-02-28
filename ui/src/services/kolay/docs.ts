@@ -102,20 +102,6 @@ export default class DocsService extends Service {
     return this.docs;
   }
 
-  @cached
-  get currentGroup() {
-    let groups = this.manifest?.groups ?? [];
-
-    let group = groups.find((group) => group.name === this.selectedGroup);
-
-    assert(
-      `Could not find group in manifest under the name ${this.selectedGroup}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
-      group,
-    );
-
-    return group;
-  }
-
   /**
    * The flat list of all pages.
    * Each page knows the name of its immediate parent.
@@ -129,6 +115,35 @@ export default class DocsService extends Service {
    */
   get tree() {
     return this.currentGroup?.tree ?? {};
+  }
+
+  selectGroup = (group: string) => {
+      assert(
+        `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
+        this.availableGroups.includes(group)
+      );
+
+     this.selectedGroup = group;
+  }
+
+  get availableGroups() {
+    let groups = this.manifest?.groups ?? [];
+
+    return groups.map((group) => group.name);
+  }
+
+  @cached
+  get currentGroup() {
+    let groups = this.manifest?.groups ?? [];
+
+    let group = groups.find((group) => group.name === this.selectedGroup);
+
+    assert(
+      `Could not find group in manifest under the name ${this.selectedGroup}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
+      group,
+    );
+
+    return group;
   }
 }
 

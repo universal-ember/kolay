@@ -19,6 +19,7 @@ module('<APIDocs>', function (hooks) {
         <APIDocs @package="kolay" @module="declarations/browser/re-exports" @name="APIDocs" />
       </template>
     );
+    await this.pauseTest();
 
     assert.dom().containsText('APIDocs');
   });

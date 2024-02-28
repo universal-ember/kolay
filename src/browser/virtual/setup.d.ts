@@ -1,6 +1,13 @@
 export function setupKolay(
   context: object,
   options: {
+    // Temporary until I can figure out how to make 
+    // virtual modules import virtual modules
+    apiDocs: any;
+    // Temporary until I can figure out how to make 
+    // virtual modules import virtual modules
+    manifest: any;
+
     /**
      * Additional invokables that you'd like to have access to
      * in the markdown, without a codefence.

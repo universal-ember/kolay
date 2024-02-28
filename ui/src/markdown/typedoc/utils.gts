@@ -55,13 +55,15 @@ export class Load extends Component<{
   Args: {
     module: string;
     name: string;
-    package?: string;
-    apiDocs?: string;
+    package: string;
   };
   Blocks: { default: [DeclarationReflection] };
 }> {
   @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
+/**
+  * TODO: move this to the service and dedupe requests
+  */
   request = trackedFunction(this, async () => {
     let { package: pkg } = this.args;
 

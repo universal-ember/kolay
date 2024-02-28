@@ -44,9 +44,24 @@ function getSignature(info: DeclarationReflection) {
 const not = (x: unknown) => !x;
 
 export const ComponentSignature: TOC<{
-  Args: { module: string; name: string };
+  Args: {
+
+    /**
+     * Which module to import the type from
+     */
+    module: string;
+    /**
+     * The name of the component to render the type / JSDoc of
+     */
+    name: string;
+        /**
+         * The name of the package to lookup the module and export name.
+         */
+        package: string;
+
+  };
 }> = <template>
-  <Load @module={{@module}} @name={{@name}} as |declaration|>
+  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration|>
     {{#let (getSignature declaration) as |info|}}
       <Element @info={{findChildDeclaration info 'Element'}} />
       <Args @info={{findChildDeclaration info 'Args'}} />
