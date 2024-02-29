@@ -16,11 +16,11 @@ module('<APIDocs>', function (hooks) {
   test('it works', async function (assert) {
     await render(
       <template>
-        <APIDocs @package="kolay" @module="declarations/browser/re-exports" @name="APIDocs" />
+        <APIDocs @package="kolay" @module="src/browser/re-exports" @name="Manifest" />
       </template>
     );
     await this.pauseTest();
 
-    assert.dom().containsText('APIDocs');
+    assert.dom().containsText('Manifest');
   });
 });
