@@ -1,0 +1,29 @@
+import { render, settled } from '@ember/test-helpers';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+
+import { CommentQuery } from 'kolay';
+
+import { setupKolay } from 'kolay/test-support';
+
+module('<CommentQuery>', function (hooks) {
+  setupRenderingTest(hooks);
+  setupKolay(hooks, async () => ({
+    apiDocs: await import('kolay/api-docs:virtual'),
+    manifest: await import('kolay/manifest:virtual'),
+  }));
+
+  test('it works', async function (assert) {
+    await render(
+      <template>
+        <CommentQuery @package="kolay" @module="src/browser/re-exports" @name="CommentQuery" />
+      </template>
+    );
+
+    // TODO: I'm missing a waiter here, so this timeout shouldn't be needed
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await settled();
+
+    assert.dom().containsText('Used for referencing the comment on a const or class.');
+  });
+});

@@ -14,10 +14,10 @@ describe('build', () => {
             "name": "top",
             "pages": [
               {
+                "cleanedName": "nested",
                 "groupName": "top",
                 "name": "nested",
                 "path": "/top/nested.md",
-                "tutorialName": "nested",
               },
             ],
           },
@@ -41,22 +41,22 @@ describe('build', () => {
             "name": "top",
             "pages": [
               {
+                "cleanedName": "nested",
                 "groupName": "top",
                 "name": "nested",
                 "path": "/top/nested.md",
-                "tutorialName": "nested",
               },
               {
+                "cleanedName": "nestedsibling",
                 "groupName": "top",
                 "name": "nested-sibling",
                 "path": "/top/nested-sibling.md",
-                "tutorialName": "nestedsibling",
               },
               {
+                "cleanedName": "other",
                 "groupName": "top",
                 "name": "other",
                 "path": "/top-2/other.md",
-                "tutorialName": "other",
               },
             ],
           },
@@ -79,10 +79,10 @@ describe('build', () => {
                 "name": "deep",
                 "pages": [
                   {
+                    "cleanedName": "path",
                     "groupName": "deep",
                     "name": "path",
                     "path": "/top/deep/path.md",
-                    "tutorialName": "path",
                   },
                 ],
               },
@@ -114,10 +114,10 @@ describe('build', () => {
                     "name": "another",
                     "pages": [
                       {
+                        "cleanedName": "index",
                         "groupName": "another",
                         "name": "index",
                         "path": "/top/deep/another/index.md",
-                        "tutorialName": "index",
                       },
                     ],
                   },

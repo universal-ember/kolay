@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import { assert } from '@ember/debug';
 import { service } from '@ember/service';
 
 import { trackedFunction } from 'reactiveweb/function';
@@ -24,6 +25,13 @@ export const infoFor = (
   name: string,
 ) => {
   let moduleType = data.children?.find((child) => child.name === module);
+
+  assert(
+    `Could not find module by name: ${module}. Available modules in this set of api docs are: ${data.children
+      ?.map((child) => child.name)
+      .join(', ')}`,
+    moduleType,
+  );
 
   let found = moduleType?.children?.find(
     (grandChild) => grandChild.name === name,
@@ -55,13 +63,15 @@ export class Load extends Component<{
   Args: {
     module: string;
     name: string;
-    package?: string;
-    apiDocs?: string;
+    package: string;
   };
   Blocks: { default: [DeclarationReflection] };
 }> {
   @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
+  /**
+   * TODO: move this to the service and dedupe requests
+   */
   request = trackedFunction(this, async () => {
     let { package: pkg } = this.args;
 

@@ -5,11 +5,14 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = async function (defaults) {
   const app = new EmberApp(defaults, {
     // Add options here
+    'ember-cli-babel': {
+      enableTypeScriptTransform: true,
+    },
   });
 
   const { Webpack } = require('@embroider/webpack');
 
-  const { createManifest, apiDocs } = await import('kolay/webpack');
+  const { markdownPages, apiDocs, setup } = await import('kolay/webpack');
 
   return require('@embroider/compat').compatBuild(app, Webpack, {
     staticAddonTestSupportTrees: true,
@@ -28,7 +31,16 @@ module.exports = async function (defaults) {
       webpackConfig: {
         devtool: 'source-map',
         plugins: [
-          createManifest({ src: 'public/docs' }),
+          setup(),
+          markdownPages({
+            src: 'public/docs',
+            groups: [
+              {
+                name: 'Runtime',
+                src: '../ui/docs',
+              },
+            ],
+          }),
           apiDocs({ packages: ['kolay', 'ember-primitives', 'ember-resources'] }),
         ],
       },

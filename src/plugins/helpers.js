@@ -55,3 +55,53 @@ function extractExports(exports, kind) {
 
   return result;
 }
+
+/**
+ * @typedef {object} VirtualFileOptions
+ * @property {string} importPath
+ * @property {string} content
+ *
+ * @param {VirtualFileOptions | VirtualFileOptions[]} options
+ * @return {Omit<import('unplugin').UnpluginOptions, 'name'>}
+ */
+export function virtualFile(options) {
+  const opts = Array.isArray(options) ? options : [options];
+
+  opts.forEach((opt, i) => {
+    assert(opt.importPath, `Must pass \`importPath\` to virtualFile:${i}`);
+    assert(opt.content, `Must pass \`content\` to virtualFile:${i}`);
+  });
+
+  const imports = opts.map((opt) => opt.importPath);
+  const allowed = new Set(imports);
+
+  return {
+    resolveId(id) {
+      if (allowed.has(id)) {
+        return {
+          id: `\0${id}`,
+        };
+      }
+
+      return;
+    },
+    loadInclude(id) {
+      if (!id.startsWith('\0')) return false;
+
+      return allowed.has(id.slice(1));
+    },
+    load(id) {
+      if (!id.startsWith('\0')) return;
+
+      let importPath = id.slice(1);
+
+      if (!allowed.has(importPath)) return;
+
+      let opt = opts.find((opt) => opt.importPath === importPath);
+
+      assert(opt, `Could not find content for ${opt?.importPath}`);
+
+      return opt.content;
+    },
+  };
+}

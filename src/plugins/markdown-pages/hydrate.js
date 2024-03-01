@@ -2,14 +2,22 @@ import { configsFrom, parse } from './parse.js';
 import { sortTree } from './sort.js';
 
 /**
- * @param {string[]} paths
- * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ * @typedef {object} ReshapeOptions
+ * @property {string[]} paths
+ * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ * @property {string | undefined} [prefix]
+ *
+ * @param {ReshapeOptions} options
  */
-export async function reshape(paths, cwd) {
+export async function reshape({ paths, cwd, prefix }) {
   let tree = await parse(paths, cwd);
   let configs = await configsFrom(paths, cwd);
 
   tree = sortTree(tree, configs);
+
+  if (prefix) {
+    tree = prefixPaths(tree, prefix);
+  }
 
   addInTheFirstPage(tree);
 
@@ -22,9 +30,28 @@ export async function reshape(paths, cwd) {
 }
 
 /**
+ * @template {import('./types.ts').Node} Root
+ * @param {Root} tree
+ * @param {string} prefix
+ */
+export function prefixPaths(tree, prefix) {
+  if (!('pages' in tree)) {
+    if ('path' in tree) {
+      tree.path = `${prefix}${tree.path}`;
+    }
+
+    return tree;
+  }
+
+  tree.pages.map((subTree) => prefixPaths(subTree, prefix));
+
+  return tree;
+}
+
+/**
  * This requires that the pages are all sorted correctly, where index is always at the top
  *
- * @param {import('./types.ts').Page | Array<import('./types.ts').Page>} tree
+ * @param {import('./types.ts').Node | Array<import('./types.ts').Node>} tree
  *
  * @return {string | undefined}
  */
@@ -62,6 +89,7 @@ export function addInTheFirstPage(tree) {
 
 /**
  * @param {import('./types.ts').Collection} tree
+ * @return {import('./types.ts').Page[]}
  */
 export function getList(tree) {
   let flatList = [];
@@ -72,8 +100,8 @@ export function getList(tree) {
 }
 
 /**
- * @param {import('./types.ts').Page[] | import('./types.ts').Page} tree
- * @returns {import('./types.ts').Tutorial[]}
+ * @param {import('./types.ts').Node[] | import('./types.ts').Node} tree
+ * @returns {import('./types.ts').Page[]}
  */
 function flatPages(tree) {
   if (Array.isArray(tree)) {

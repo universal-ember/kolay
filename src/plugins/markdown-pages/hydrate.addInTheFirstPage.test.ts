@@ -13,7 +13,7 @@ describe('addInTheFirstPage', () => {
           name: 'foo.md',
           path: '/top/foo.md',
           groupName: 'top',
-          tutorialName: 'foo',
+          cleanedName: 'foo',
         },
       ],
     };
@@ -26,10 +26,10 @@ describe('addInTheFirstPage', () => {
         "name": "top",
         "pages": [
           {
+            "cleanedName": "foo",
             "groupName": "top",
             "name": "foo.md",
             "path": "/top/foo.md",
-            "tutorialName": "foo",
           },
         ],
       }
@@ -47,7 +47,7 @@ describe('addInTheFirstPage', () => {
               name: 'foo.md',
               path: '/top/mid/foo.md',
               groupName: 'mid',
-              tutorialName: 'foo',
+              cleanedName: 'foo',
             },
           ],
         },
@@ -66,10 +66,10 @@ describe('addInTheFirstPage', () => {
             "name": "mid",
             "pages": [
               {
+                "cleanedName": "foo",
                 "groupName": "mid",
                 "name": "foo.md",
                 "path": "/top/mid/foo.md",
-                "tutorialName": "foo",
               },
             ],
           },
@@ -89,13 +89,13 @@ describe('addInTheFirstPage', () => {
               name: 'index.md',
               path: '/top/mid/index.md',
               groupName: 'mid',
-              tutorialName: 'index',
+              cleanedName: 'index',
             },
             {
               name: 'foo.md',
               path: '/top/mid/foo.md',
               groupName: 'mid',
-              tutorialName: 'foo',
+              cleanedName: 'foo',
             },
           ],
         },
@@ -114,16 +114,16 @@ describe('addInTheFirstPage', () => {
             "name": "mid",
             "pages": [
               {
+                "cleanedName": "index",
                 "groupName": "mid",
                 "name": "index.md",
                 "path": "/top/mid/index.md",
-                "tutorialName": "index",
               },
               {
+                "cleanedName": "foo",
                 "groupName": "mid",
                 "name": "foo.md",
                 "path": "/top/mid/foo.md",
-                "tutorialName": "foo",
               },
             ],
           },

@@ -1,4 +1,4 @@
-import { tracked } from '@glimmer/tracking';
+import { cached, tracked } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
 
@@ -7,9 +7,6 @@ import type Selected from './selected';
 import type { Manifest } from './types';
 import type RouterService from '@ember/routing/router-service';
 
-const DEFAULT_MANIFEST = '/docs/manifest.json';
-const DEFAULT_API_DOCS = '/api-docs.json';
-
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
 export default class DocsService extends Service {
@@ -17,8 +14,7 @@ export default class DocsService extends Service {
   @service('kolay/selected') declare selected: Selected;
   @service('kolay/api-docs') declare apiDocs: ApiDocs;
 
-  @tracked manifestLocation = DEFAULT_MANIFEST;
-  @tracked apiDocsLocation = DEFAULT_API_DOCS;
+  @tracked selectedGroup = 'root';
   @tracked additionalResolves?: Record<string, Record<string, unknown>>;
   @tracked additionalTopLevelScope?: Record<string, unknown>;
   @tracked remarkPlugins?: unknown[];
@@ -76,7 +72,7 @@ export default class DocsService extends Service {
     }
 
     if (options.apiDocs) {
-      this.apiDocs.packages = options.apiDocs.packages;
+      this.apiDocs._packages = options.apiDocs.packages;
       this.apiDocs.loadApiDocs = options.apiDocs.loadApiDocs;
     }
 
@@ -89,6 +85,8 @@ export default class DocsService extends Service {
     }
 
     this._docs = await this.loadManifest();
+
+    return this.manifest;
   };
 
   get docs() {
@@ -109,14 +107,43 @@ export default class DocsService extends Service {
    * Each page knows the name of its immediate parent.
    */
   get pages() {
-    return this.docs?.list ?? [];
+    return this.currentGroup?.list ?? [];
   }
 
   /**
    * The full page hierachy
    */
   get tree() {
-    return this.docs?.tree ?? {};
+    return this.currentGroup?.tree ?? {};
+  }
+
+  selectGroup = (group: string) => {
+    assert(
+      `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
+      this.availableGroups.includes(group),
+    );
+
+    this.selectedGroup = group;
+  };
+
+  get availableGroups() {
+    let groups = this.manifest?.groups ?? [];
+
+    return groups.map((group) => group.name);
+  }
+
+  @cached
+  get currentGroup() {
+    let groups = this.manifest?.groups ?? [];
+
+    let group = groups.find((group) => group.name === this.selectedGroup);
+
+    assert(
+      `Could not find group in manifest under the name ${this.selectedGroup}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
+      group,
+    );
+
+    return group;
   }
 }
 

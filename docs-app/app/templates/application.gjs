@@ -2,31 +2,15 @@ import ENV from 'docs-app/config/environment';
 import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 
-const Nav = <template>
-  <ul>
-    {{#each @item.pages as |page|}}
-      {{#if page.path}}
-        <li>
-          <a href={{page.path}}>{{page.name}}</a>
-        </li>
-      {{else}}
-        <li>
-          {{page.name}}
-          <Nav @item={{page}} />
-        </li>
-      {{/if}}
-    {{/each}}
-  </ul>
-</template>;
+import { Nav } from './nav';
 
 export default Route(
   <template>
     {{pageTitle ENV.APP.shortVersion}}
 
     <div class="application__layout">
-      <nav>
-        <Nav @item={{@model.manifest.tree}} />
-      </nav>
+      <Nav />
+
       <main>
         {{outlet}}
       </main>

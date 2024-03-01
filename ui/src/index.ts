@@ -12,3 +12,4 @@ export type {
   default as DocsService,
   SetupOptions,
 } from './services/kolay/docs.ts';
+export type { Collection, Manifest, Page } from './services/kolay/types.ts';
