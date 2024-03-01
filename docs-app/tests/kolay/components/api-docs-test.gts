@@ -8,10 +8,7 @@ import { setupKolay } from 'kolay/test-support';
 
 module('<APIDocs>', function (hooks) {
   setupRenderingTest(hooks);
-  setupKolay(hooks, async () => ({
-    apiDocs: await import('kolay/api-docs:virtual'),
-    manifest: await import('kolay/manifest:virtual'),
-  }));
+  setupKolay(hooks);
 
   test('it works', async function (assert) {
     await render(

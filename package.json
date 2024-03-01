@@ -45,8 +45,7 @@
       "default": "./src/browser/virtual/empty.js"
     },
     "./test-support": {
-      "types": "./src/browser/test-support.d.ts",
-      "default": "./src/browser/test-support.js"
+      "types": "./src/browser/test-support.d.ts"
     },
     "./build/legacy": {
       "types": "./declarations/plugins/legacy/index.d.cts",

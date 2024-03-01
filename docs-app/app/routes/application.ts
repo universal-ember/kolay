@@ -8,8 +8,6 @@ export default class ApplicationRoute extends Route {
 
   async model(): Promise<{ manifest: Manifest }> {
     await this.docs.setup({
-      apiDocs: await import('kolay/api-docs:virtual'),
-      manifest: await import('kolay/manifest:virtual'),
       resolve: {
         'ember-primitives': await import('ember-primitives'),
         kolay: await import('kolay'),
