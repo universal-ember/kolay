@@ -1,6 +1,6 @@
 import { Shadowed } from 'ember-primitives';
 import { Compiled as REPLCompiled } from 'ember-repl';
-import { resource } from 'ember-resources';
+import { resource, resourceFactory } from 'ember-resources';
 
 import { defaultOptions } from './import-map.ts';
 import { APIDocs, ComponentSignature } from './typedoc/index.ts';
@@ -44,3 +44,6 @@ export function Compiled(
     };
   });
 }
+
+// template-only support
+resourceFactory(Compiled);

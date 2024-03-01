@@ -47,6 +47,22 @@ export const APIDocs: TOC<{
   </Load>
 </template>;
 
+/**
+ * Used for referencing the comment on a const or class.
+ *
+ * For example:
+ * ```
+ * /*
+ * * Comment block here is what is targeted
+ * *\/
+ * export const CommentQuery ...
+ * ```
+ *
+ * Usage:
+ * ```hbs
+ * <CommentQuery @name="CommentQuery" ... />
+ * ```
+ */
 export const CommentQuery: TOC<{
   Args: {
     /**
