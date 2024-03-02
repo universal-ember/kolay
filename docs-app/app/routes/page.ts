@@ -31,6 +31,7 @@ export default class ApplicationRoute extends Route {
 
     if (!first) {
       console.warn(`Could not determine first page in group: ${groupName}`);
+
       return;
     }
 
