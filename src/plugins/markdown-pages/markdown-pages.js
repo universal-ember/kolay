@@ -66,7 +66,7 @@ export const markdownPages = createUnplugin(
               this.addWatchFile(fullPath);
               this.emitFile({
                 type: 'asset',
-                fileName: join(group.name, p),
+                fileName: join('docs', group.name, p),
                 source: readFileSync(fullPath).toString(),
               });
             });

@@ -36,3 +36,28 @@ const Pages: TOC<{ Args: { item: Page | Collection } }> = <template>
     {{/if}}
   </ul>
 </template>;
+
+export class TopNav extends Component {
+  @service('kolay/docs') declare docs: DocsService;
+
+  get groups() {
+    return this.docs.availableGroups.map((groupName) => {
+      if (groupName === 'root') return { text: 'Home', value: '/' };
+
+      return { text: groupName, value: `/${groupName}` };
+    });
+  }
+
+  <template>
+    <nav id="group-nav">
+      {{#each this.groups as |group|}}
+        <a href={{group.value}}>
+          {{group.text}}
+        </a>
+      {{/each}}
+    </nav>
+    <style>
+      nav#group-nav { display: flex; gap: 0.5rem; }
+    </style>
+  </template>
+}

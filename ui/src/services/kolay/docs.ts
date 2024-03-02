@@ -14,7 +14,6 @@ export default class DocsService extends Service {
   @service('kolay/selected') declare selected: Selected;
   @service('kolay/api-docs') declare apiDocs: ApiDocs;
 
-  @tracked selectedGroup = 'root';
   @tracked additionalResolves?: Record<string, Record<string, unknown>>;
   @tracked additionalTopLevelScope?: Record<string, unknown>;
   @tracked remarkPlugins?: unknown[];
@@ -117,13 +116,38 @@ export default class DocsService extends Service {
     return this.currentGroup?.tree ?? {};
   }
 
+  /**
+   * We use the URL for denoting which group we're looking at.
+   * The first segment of the URL will either be a group,
+   * or part of the path segment on the root namespace.
+   *
+   * This does open us up for collisions, so maybe
+   * we'll need to alias "root" with something, or at
+   * the very least not use a non-path segement for it.
+   */
+  get selectedGroup() {
+    let [/* leading slash */,first] = this.router.currentURL?.split('/') || [];
+
+    if (!first) return 'root';
+
+    if (!this.availableGroups.includes(first)) return 'root';
+
+    return first;
+  }
+
   selectGroup = (group: string) => {
     assert(
       `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
       this.availableGroups.includes(group),
     );
 
-    this.selectedGroup = group;
+    if (group === 'root') {
+      this.router.transitionTo('/');
+
+      return;
+    }
+
+    this.router.transitionTo(`/${group}`);
   };
 
   get availableGroups() {
@@ -134,12 +158,16 @@ export default class DocsService extends Service {
 
   @cached
   get currentGroup() {
+    return this.groupFor(this.selectedGroup);
+  }
+
+  groupFor = (groupName: string) => {
     let groups = this.manifest?.groups ?? [];
 
-    let group = groups.find((group) => group.name === this.selectedGroup);
+    let group = groups.find((group) => group.name === groupName);
 
     assert(
-      `Could not find group in manifest under the name ${this.selectedGroup}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
+      `Could not find group in manifest under the name ${groupName}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
       group,
     );
 

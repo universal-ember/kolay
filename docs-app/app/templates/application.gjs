@@ -2,11 +2,13 @@ import ENV from 'docs-app/config/environment';
 import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 
-import { Nav } from './nav';
+import { Nav, TopNav } from './nav';
 
 export default Route(
   <template>
     {{pageTitle ENV.APP.shortVersion}}
+
+    <TopNav />
 
     <div class="application__layout">
       <Nav />
