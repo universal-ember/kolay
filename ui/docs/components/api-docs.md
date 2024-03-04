@@ -1,9 +1,5 @@
 # `<APIDocs />`
 
 ```hbs live no-shadow
-<APIDocs
-  @module='declarations/browser/re-exports'
-  @name='APIDocs'
-  @apiDocs='/docs/kolay.json'
-/>
+<APIDocs @module='src/browser/re-exports' @name='APIDocs' @package='kolay' />
 ```
