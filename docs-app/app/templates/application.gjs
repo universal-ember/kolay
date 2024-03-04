@@ -8,17 +8,24 @@ export default Route(
   <template>
     {{pageTitle ENV.APP.shortVersion}}
 
-    <TopNav />
+    <div class="container">
+      <header>
+        <TopNav />
+      </header>
 
-    <div class="application__layout">
-      <Nav />
+      <div class="application__layout">
+        <aside>
+          <Nav />
+        </aside>
 
-      <main>
-        {{outlet}}
-      </main>
+        <main>
+          {{outlet}}
+        </main>
+      </div>
+
     </div>
     <style>
-      .application__layout { display: grid; grid-template-columns: max-content 1fr; gap: 1rem; }
+      .application__layout { display: grid; grid-template-columns: max-content 1fr; gap: 2rem; }
     </style>
   </template>
 );

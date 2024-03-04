@@ -20,8 +20,7 @@ module.exports = async function (defaults) {
     staticHelpers: true,
     staticModifiers: true,
     staticComponents: true,
-    // https://github.com/emberjs/ember.js/issues/20640
-    staticEmberSource: false,
+    staticEmberSource: true,
     skipBabel: [
       {
         package: 'qunit',
