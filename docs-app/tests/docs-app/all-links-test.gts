@@ -6,7 +6,10 @@ import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 
 function findInAppLinks(): string[] {
-return (findAll('a')?.map(link => link.getAttribute('href'))?.filter(href => !href?.startsWith('http')).filter(Boolean) || []) as string[];
+  return (findAll('a')
+    ?.map((link) => link.getAttribute('href'))
+    ?.filter((href) => !href?.startsWith('http'))
+    .filter(Boolean) || []) as string[];
 }
 
 module('All Links', function (hooks) {
@@ -22,7 +25,7 @@ module('All Links', function (hooks) {
     await visit(returnTo);
 
     let inAppLinks = findInAppLinks();
-    let queue: (string | { changeReturnTo: string } )[] = [...inAppLinks];
+    let queue: (string | { changeReturnTo: string })[] = [...inAppLinks];
 
     while (queue.length > 0) {
       let toVisit = queue.shift();
@@ -42,10 +45,13 @@ module('All Links', function (hooks) {
 
       let link = find(`a[href="${toVisit}"]`);
 
-      debugAssert(`link exists with ${toVisit}`, link)
+      debugAssert(`link exists with ${toVisit}`, link);
 
       await click(link);
-      assert.ok(currentURL().startsWith(toVisit), `Navigation was successful: to:${ toVisit }, from:${returnTo}`);
+      assert.ok(
+        currentURL().startsWith(toVisit),
+        `Navigation was successful: to:${toVisit}, from:${returnTo}`
+      );
       visited.add(key);
 
       let links = findInAppLinks();

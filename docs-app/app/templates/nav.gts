@@ -50,11 +50,11 @@ export class TopNav extends Component {
     });
   }
 
-    isActive = (subPath: string) => {
+  isActive = (subPath: string) => {
     if (subPath === '/') return false;
 
     return this.router.currentURL?.startsWith(subPath);
-  }
+  };
 
   <template>
     <nav id="group-nav">

@@ -126,7 +126,8 @@ export default class DocsService extends Service {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    let [/* leading slash */,first] = this.router.currentURL?.split('/') || [];
+    let [, /* leading slash */ first] =
+      this.router.currentURL?.split('/') || [];
 
     if (!first) return 'root';
 
@@ -172,7 +173,7 @@ export default class DocsService extends Service {
     );
 
     return group;
-  }
+  };
 }
 
 // DO NOT DELETE: this is how TypeScript knows how to look up your services.

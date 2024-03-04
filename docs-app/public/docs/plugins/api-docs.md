@@ -1,6 +1,5 @@
 # `apiDocs(...)`
 
-
 ```hbs live no-shadow
 <APIDocs @package="kolay" @module="declarations/plugins/vite" @name="apiDocs" />
 ```

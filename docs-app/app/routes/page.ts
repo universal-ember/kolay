@@ -16,11 +16,9 @@ export default class ApplicationRoute extends Route {
   beforeModel(transition: Transition) {
     if (transition.to?.localName !== 'index') return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let yolo = transition as any;
-
-    console.log(yolo.intent?.url, transition);
-
-    let groupName = (transition.to as any  /* that didn't take long */).parent?.params?.page;
+    let groupName = yolo.to.parent?.params?.page;
 
     if (!groupName) return;
     if (!this.docs.availableGroups.includes(groupName)) return;
