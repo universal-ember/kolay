@@ -96,6 +96,7 @@
   },
   "dependencies": {
     "@universal-ember/kolay-ui": "workspace:^",
+    "@universal-ember/test-support": "^0.0.0",
     "ember-async-data": "^1.0.3",
     "ember-cached-decorator-polyfill": "^1.0.2",
     "ember-repl": "3.0.0",
