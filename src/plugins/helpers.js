@@ -19,7 +19,7 @@ const require = createRequire(import.meta.url);
  *   Webpack supports "data:" and "file:" URIs by default
  *   You may need an additional plugin to handle "virtual:" URIs.
  */
-export const INTERNAL_PREFIX = `[virtual:kolay]`;
+export const INTERNAL_PREFIX = `\0`;
 
 /**
  * @param {string} packageName
