@@ -4,7 +4,7 @@
 import { stripIndent } from 'common-tags';
 import { createUnplugin } from 'unplugin';
 
-import { virtualFile } from './helpers.js';
+import { INTERNAL_PREFIX, virtualFile } from './helpers.js';
 
 export const setup = createUnplugin(() => {
   return {
@@ -39,8 +39,8 @@ export const setup = createUnplugin(() => {
             //       If you find yourself reading this comment, 
             //       be sure to have both plugins setup in your plugins array.
             let [apiDocs, manifest] = await Promise.all([
-              import('kolay/api-docs:virtual'),
-              import('kolay/manifest:virtual'),
+              import('${INTERNAL_PREFIX}kolay/api-docs:virtual'),
+              import('${INTERNAL_PREFIX}kolay/manifest:virtual'),
             ]);
 
             await docs.setup({
@@ -56,7 +56,7 @@ export const setup = createUnplugin(() => {
       {
         importPath: 'kolay/test-support',
         content: stripIndent`
-          import { setupKolay as setup } from 'kolay/setup';
+          import { setupKolay as setup } from '${INTERNAL_PREFIX}kolay/setup';
 
           export function setupKolay(hooks, config) {
             hooks.beforeEach(async function () {
