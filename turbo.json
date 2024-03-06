@@ -43,6 +43,10 @@
       "outputs": ["dist/**", "declarations/**"],
       "dependsOn": ["_syncPnpm"]
     },
+    "build:app": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["_syncPnpm"]
+    },
     "_syncPnpm": {
       "dependsOn": ["^build"],
       "cache": false
