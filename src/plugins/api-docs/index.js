@@ -1,5 +1,4 @@
 import { stripIndent } from 'common-tags';
-import { createUnplugin } from 'unplugin';
 
 import { virtualFile } from '../helpers.js';
 import { generateTypeDocJSON } from './typedoc.js';
@@ -26,8 +25,10 @@ const SECRET_INTERNAL_IMPORT = 'kolay/api-docs:virtual';
  *   ]
  * })
  * ```
+ *
+ * @type {import('unplugin').UnpluginFactory<any, boolean>}
  */
-export const apiDocs = createUnplugin(
+export const apiDocs =
   /**
    * @param {import('./types.ts').APIDocsOptions} options
    */
@@ -81,5 +82,4 @@ export const apiDocs = createUnplugin(
         `,
       }),
     };
-  }
-);
+  };

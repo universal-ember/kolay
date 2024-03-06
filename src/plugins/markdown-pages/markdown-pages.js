@@ -4,14 +4,14 @@ import { join, relative, resolve } from 'node:path';
 
 import { stripIndent } from 'common-tags';
 import { globbySync } from 'globby';
-import { createUnplugin } from 'unplugin';
 
 import { virtualFile } from '../helpers.js';
 import { discover } from './discover.js';
 
 const SECRET_INTERNAL_IMPORT = 'kolay/manifest:virtual';
 
-export const markdownPages = createUnplugin(
+/** @type {() => ReturnType<import('unplugin').UnpluginFactory<any, boolean>>} */
+export const markdownPages =
   /**
    * @param {import('./types.ts').MarkdownPagesOptions} [ options ]
    */
@@ -97,5 +97,4 @@ export const markdownPages = createUnplugin(
         `,
       }),
     };
-  }
-);
+  };
