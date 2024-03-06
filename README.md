@@ -26,7 +26,6 @@ Documentation system for the the `@universal-ember` family of projects.
   ## API Reference
 
   <APIDocs @package="my-library" @module="..." @name="theExport" />
-
   ~~~
 - render examples from your jsdoc for interactive demonstration of concepts using 
   ~~~
