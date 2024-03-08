@@ -12,4 +12,3 @@ either json or jsonc
 ```hbs live no-shadow
 <APIDocs @package="kolay" @module="declarations/vite" @name="kolay" />
 ```
-
