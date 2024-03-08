@@ -30,12 +30,12 @@
       "import": "./src/plugins/index.js"
     },
     "./webpack": {
-      "types": "./declarations/plugins/webpack.d.ts",
-      "import": "./src/plugins/webpack.js"
+      "types": "./declarations/webpack.d.ts",
+      "import": "./src/webpack.js"
     },
     "./vite": {
-      "types": "./declarations/plugins/vite.d.ts",
-      "import": "./src/plugins/vite.js"
+      "types": "./declarations/vite.d.ts",
+      "import": "./src/vite.js"
     },
     "./plugin-types": {
       "types": "./src/plugins/types.d.ts"
