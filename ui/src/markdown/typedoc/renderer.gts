@@ -1,6 +1,5 @@
 import { hash } from '@ember/helper';
 
-import { highlight } from '../../highlight.ts';
 import { Compiled } from '../../markdown/compiler.ts';
 import { Load } from './utils.gts';
 
@@ -109,7 +108,7 @@ export const Comment: TOC<{
   {{#if @info.comment.summary}}
     {{#let (Compiled (join (text @info.comment.summary))) as |compiled|}}
       {{#if compiled.isReady}}
-        <div class='typedoc-rendered-comment' {{highlight}}>
+        <div class='typedoc-rendered-comment'>
           <compiled.component />
         </div>
       {{/if}}

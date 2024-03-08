@@ -1,6 +1,8 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
+import { pascalCase } from 'change-case';
+
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { Collection, DocsService, Page } from 'kolay';
@@ -9,15 +11,32 @@ export class Nav extends Component {
   @service('kolay/docs') declare docs: DocsService;
 
   <template>
-    <nav>
+    <nav id="side-nav">
       <Pages @item={{this.docs.tree}} />
     </nav>
-    <style>nav ul { padding-left: 0.5rem; list-style: none; line-height: 1.75rem; }</style>
+    <style>
+      nav#side-nav { min-width: 150px; ul { padding-left: 0.5rem; list-style: none; line-height:
+      1.75rem; } }
+    </style>
   </template>
 }
 
 function isCollection(x: Page | Collection): x is Collection {
   return 'pages' in x;
+}
+
+function nameFor(x: Page) {
+  // We defined componentName via json file
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ('componentName' in x) {
+    return `${x.componentName}`;
+  }
+
+  if (x.path.includes('/components/')) {
+    return `<${pascalCase(x.name)} />`;
+  }
+
+  return x.name;
 }
 
 const Pages: TOC<{ Args: { item: Page | Collection } }> = <template>
@@ -33,7 +52,7 @@ const Pages: TOC<{ Args: { item: Page | Collection } }> = <template>
         </li>
       {{/each}}
     {{else}}
-      <a href={{@item.path}}>{{@item.name}}</a>
+      <a href={{@item.path}}>{{nameFor @item}}</a>
     {{/if}}
   </ul>
 </template>;

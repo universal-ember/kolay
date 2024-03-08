@@ -5,7 +5,6 @@ import * as emberResources from 'ember-resources';
 import * as trackedBuiltIns from 'tracked-built-ins';
 
 import { Logs } from '../components/logs.gts';
-import { highlight } from '../highlight.ts';
 import { APIDocs, CommentQuery, ComponentSignature } from './typedoc/index.ts';
 
 export const defaultOptions = {
@@ -19,7 +18,6 @@ export const defaultOptions = {
       APIDocs,
       ComponentSignature,
       CommentQuery,
-      highlight,
     },
   },
 };

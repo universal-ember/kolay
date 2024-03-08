@@ -16,6 +16,27 @@
     <link integrity="" rel="stylesheet" href="{{rootURL}}assets/docs-app.css" />
 
     {{content-for "head-footer"}}
+
+    <style>
+      #kolay__loading {
+        position: fixed;
+        inset: 0;
+        background: #111;
+        color: white;
+        font-size: 4rem;
+        z-index: 10;
+        font-family: "System UI", "System";
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 4rem;
+
+        [aria-busy="true"] {
+          background: #111;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -23,6 +44,11 @@
 
     <script src="{{rootURL}}assets/vendor.js"></script>
     <script src="{{rootURL}}assets/docs-app.js"></script>
+
+    <div id="kolay__loading">
+      Kolay
+      <article aria-busy="true"></article>
+    </div>
 
     {{content-for "body-footer"}}
   </body>

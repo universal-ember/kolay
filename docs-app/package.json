@@ -84,7 +84,7 @@
     "stylelint-prettier": "^5.0.0",
     "tracked-built-ins": "^3.3.0",
     "typescript": "^5.3.3",
-    "webpack": "^5.89.0"
+    "webpack": "^5.90.3"
   },
   "engines": {
     "node": ">= 18"
@@ -96,14 +96,17 @@
     "extends": "../package.json"
   },
   "dependencies": {
+    "@shikijs/rehype": "^1.1.7",
     "@universal-ember/kolay-ui": "workspace:^",
     "@universal-ember/test-support": "^0.0.0",
+    "change-case": "^5.4.3",
     "ember-async-data": "^1.0.3",
     "ember-cached-decorator-polyfill": "^1.0.2",
-    "ember-repl": "3.0.0",
+    "ember-repl": "^4.1.1",
     "ember-route-template": "^1.0.3",
     "kolay": "workspace:^",
-    "reactiveweb": "^1.2.1"
+    "reactiveweb": "^1.2.1",
+    "shiki": "^1.1.7"
   },
   "dependenciesMeta": {
     "kolay": {

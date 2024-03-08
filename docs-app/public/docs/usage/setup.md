@@ -18,45 +18,67 @@
 
 <hr>
 
+## Install[^type-module]
+
+```bash
+pnpm add kolay @universal-ember/kolay-ui
+```
+
+[^type-module]: `@universal-ember/kolay-ui` is only needed because due to a temporary technical problem. Once the ember ecosystem has broader `package.json#type=module` support for its own ember using libraries, `@universal-ember/kolay-ui` can be removed and there will only be `kolay`. Note that `package.json#type=module` support is already working and has worked for a good number of years for non-Ember libraries.
+
 ## Setup
 
-There are two areas of configuration needed: buildtime, and runtime.
+There are two areas of configuration needed: buildtime, and runtime[^runtime-optional].
+
+[^runtime-optional]: The runtime components are optional and if you don't import them, they will not be included in your app. However, since links generated from markdown use vanilla `<a>` tags, you'll probably want at least `@properLinks` from `ember-primitives`.
 
 ### Build: Embroider + Webpack
 
 import `kolay/webpack`
 
 ```js
-const { createManifest, apiDocs } = await import("kolay/webpack");
+const { kolay } = await import("kolay/webpack");
 
 return require("@embroider/compat").compatBuild(app, Webpack, {
   /* ... */
   packagerOptions: {
     webpackConfig: {
       devtool: "source-map",
-      plugins: [createManifest({ src: "public/docs" }), apiDocs({ package: "kolay" })],
+      plugins: [
+        kolay({
+          src: "public/docs",
+          // Generate API docs from JSDoc
+          packages: ["kolay"],
+        }),
+      ],
     },
   },
 });
 ```
 
-You can create docs for multiple libraries by invoking these plugins more than once:
+You can create docs for multiple libraries at once:
 
 ```js
 devtool: 'source-map',
 plugins: [
-  createManifest({ src: 'public/docs', name: 'own-manifest.json' }),
-  apiDocs({ package: 'kolay' }),
-  createManifest({ src: '../../my-library', name: 'my-library-manifest.json' }),
-  apiDocs({ package: 'my-library' }),
+  kolay({
+    src: 'public/docs',
+    groups: [
+      {
+        name: 'Runtime',
+        src: '../ui/docs',
+      },
+    ],
+    // Generate API docs from JSDoc
+    // NOTE: these must all be declared in your projects package.json
+    packages: ['kolay', 'ember-primitives', 'ember-resources'],
+  }),
 ],
 ```
 
-See related for
+This is useful for monorepos where they may be scaling to large teams and many packages could end up being added quickly. In a traditionally compiled app, this may cause build times to slow down over time. Since many docs' sites are deployed continuously, that is wasted time and money spent on building things that may not be looked at all that often (we all wish folks looked at docs more!).
 
-- [createManifest(...)](/plugins/create-manifest.md)
-- [apiDocs(...)](/plugins/api-docs.md)
-- [All Build Plugins](/plugins/index.md)
+By distributing the rendering of pages to the browesr, we only pay for "build" when somenoe views the page.
 
 ### Runtime: Routing
 

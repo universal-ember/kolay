@@ -26,6 +26,7 @@ export default Route(
     </div>
     <style>
       .application__layout { display: grid; grid-template-columns: max-content 1fr; gap: 2rem; }
+      header { filter: drop-shadow(0 10px 0.75rem #000000); }
     </style>
   </template>
 );

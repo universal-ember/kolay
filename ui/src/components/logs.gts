@@ -4,6 +4,8 @@ import { registerDestructor } from '@ember/destroyable';
 
 import { TrackedArray } from 'tracked-built-ins';
 
+import { Scroller } from './logs/scroller.gts';
+
 import type { TOC } from '@ember/component/template-only';
 import type Owner from '@ember/owner';
 
@@ -18,26 +20,6 @@ const original = {
 type Levels = keyof typeof original;
 
 const LEVELS = Object.keys(original) as Levels[];
-
-let frame: number;
-
-function scrollToBottom() {
-  if (frame) {
-    cancelAnimationFrame(frame);
-  }
-
-  frame = requestAnimationFrame(() => {
-    let el = document.querySelector('.kolay__log-list__scroll');
-
-    if (!el) return;
-
-    el.scrollTo({
-      top: el.scrollHeight,
-      left: 0,
-      behavior: 'smooth',
-    });
-  });
-}
 
 let formatter = new Intl.DateTimeFormat('en-GB', {
   hour: 'numeric',
@@ -59,7 +41,7 @@ const LogList: TOC<{
     logs: Log[];
   };
 }> = <template>
-  <div class='kolay__log-list__scroll'>
+  <Scroller class='kolay__log-list__scroll' as |scrollToBottom|>
     {{#each @logs as |logEntry|}}
       <div class='kolay__log-list__level {{logEntry.level}}'>
         <span class='kolay__log-list__time'>{{format logEntry.timestamp}}</span>
@@ -67,7 +49,7 @@ const LogList: TOC<{
       </div>
       {{(scrollToBottom)}}
     {{/each}}
-  </div>
+  </Scroller>
 
   {{! prettier-ignore-start }}
   <style>

@@ -17,6 +17,7 @@ export default class DocsService extends Service {
   @tracked additionalResolves?: Record<string, Record<string, unknown>>;
   @tracked additionalTopLevelScope?: Record<string, unknown>;
   @tracked remarkPlugins?: unknown[];
+  @tracked rehypePlugins?: unknown[];
   _docs: Manifest | undefined;
 
   loadManifest: () => Promise<Manifest> = () =>
@@ -30,13 +31,13 @@ export default class DocsService extends Service {
      * The module of the manifest virtual module.
      * This should be set to `await import('kolay/manifest:virtual')
      */
-    manifest?: any;
+    manifest?: Promise<any>;
 
     /**
      * The module of the api docs virtual module.
      * This should be set to `await import('kolay/api-docs:virtual')
      */
-    apiDocs?: any;
+    apiDocs?: Promise<any>;
 
     /**
      * Additional invokables that you'd like to have access to
@@ -57,30 +58,50 @@ export default class DocsService extends Service {
      * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: Record<string, Record<string, unknown>>;
+    resolve?: Record<string, Promise<Record<string, unknown>>>;
 
     /**
      * Provide additional remark plugins to the default markdown compiler.
      *
-     * These can be used to add fetaures like notes, callouts, footnotes, etc
+     * These can be used to add features like notes, callouts, footnotes, etc
      */
     remarkPlugins?: unknown[];
+    /**
+     * Provide additional rehype plugins to the default html compiler.
+     *
+     * These can be used to add features syntax-highlighting to pre elements, etc
+     */
+    rehypePlugins?: unknown[];
   }) => {
+    let [manifest, apiDocs, resolve] = await Promise.all([
+      options.manifest,
+      options.apiDocs,
+      promiseHash(options.resolve),
+    ]);
+
     if (options.manifest) {
-      this.loadManifest = options.manifest.load;
+      this.loadManifest = manifest.load;
     }
 
     if (options.apiDocs) {
-      this.apiDocs._packages = options.apiDocs.packages;
-      this.apiDocs.loadApiDocs = options.apiDocs.loadApiDocs;
+      this.apiDocs._packages = apiDocs.packages;
+      this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
 
     if (options.resolve) {
-      this.additionalResolves = options.resolve;
+      this.additionalResolves = resolve;
     }
 
     if (options.topLevelScope) {
       this.additionalTopLevelScope = options.topLevelScope;
+    }
+
+    if (options.remarkPlugins) {
+      this.remarkPlugins = options.remarkPlugins;
+    }
+
+    if (options.rehypePlugins) {
+      this.rehypePlugins = options.rehypePlugins;
     }
 
     this._docs = await this.loadManifest();
@@ -174,6 +195,49 @@ export default class DocsService extends Service {
 
     return group;
   };
+}
+
+/**
+ * RSVP.hash, but native
+ */
+async function promiseHash<T>(
+  obj?: Record<string, Promise<T>>,
+): Promise<Record<string, T>> {
+  let result: Record<string, T> = {};
+
+  if (!obj) {
+    return result;
+  }
+
+  let keys: string[] = [];
+  let promises = [];
+
+  for (let [key, promise] of Object.entries(obj)) {
+    keys.push(key);
+    promises.push(promise);
+  }
+
+  assert(
+    `Something went wrong when resolving a promise Hash`,
+    keys.length === promises.length,
+  );
+
+  let resolved = await Promise.all(promises);
+
+  for (let i = 0; i < resolved.length; i++) {
+    let key = keys[i];
+    let resolvedValue = resolved[i];
+
+    assert(`Missing key for index ${i}`, key);
+    assert(
+      `Resolved value for key ${key} is not an object`,
+      typeof resolvedValue === 'object',
+    );
+
+    result[key] = resolvedValue;
+  }
+
+  return result;
 }
 
 // DO NOT DELETE: this is how TypeScript knows how to look up your services.
