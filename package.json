@@ -37,9 +37,6 @@
       "types": "./declarations/vite.d.ts",
       "import": "./src/vite.js"
     },
-    "./plugin-types": {
-      "types": "./src/plugins/types.d.ts"
-    },
     "./setup": {
       "types": "./src/browser/virtual/setup.d.ts",
       "default": "./src/browser/virtual/empty.js"
