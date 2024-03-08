@@ -2,11 +2,11 @@
  * This plugin is *basically* what v1 addons did.
  */
 import { stripIndent } from 'common-tags';
-import { createUnplugin } from 'unplugin';
 
 import { virtualFile } from './helpers.js';
 
-export const setup = createUnplugin(() => {
+/** @type {() => import('unplugin').UnpluginOptions} */
+export const setup = () => {
   return {
     name: 'kolay-setup',
     ...virtualFile([
@@ -82,4 +82,4 @@ export const setup = createUnplugin(() => {
       // },
     ]),
   };
-});
+};

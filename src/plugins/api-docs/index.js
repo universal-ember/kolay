@@ -1,5 +1,4 @@
 import { stripIndent } from 'common-tags';
-import { createUnplugin } from 'unplugin';
 
 import { virtualFile } from '../helpers.js';
 import { generateTypeDocJSON } from './typedoc.js';
@@ -26,47 +25,45 @@ const SECRET_INTERNAL_IMPORT = 'kolay/api-docs:virtual';
  *   ]
  * })
  * ```
+ *
+ * @type {(options: import('./types.ts').APIDocsOptions) => import('unplugin').UnpluginOptions}
  */
-export const apiDocs = createUnplugin(
+export const apiDocs = (options) => {
+  const name = 'kolay-api-docs';
+
   /**
-   * @param {import('./types.ts').APIDocsOptions} options
+   * @param {string} pkgName
    */
-  (options) => {
-    const name = 'kolay-api-docs';
+  function getDest(pkgName) {
+    return `${options.dest ?? 'docs'}/${pkgName}.json`;
+  }
 
+  return {
+    name,
     /**
-     * @param {string} pkgName
+     * 1. generate typedoc config
+     * 2. given the
      */
-    function getDest(pkgName) {
-      return `${options.dest ?? 'docs'}/${pkgName}.json`;
-    }
+    async buildEnd() {
+      await Promise.all(
+        options.packages.map(async (pkgName) => {
+          let data = await generateTypeDocJSON({ packageName: pkgName });
 
-    return {
-      name,
-      /**
-       * 1. generate typedoc config
-       * 2. given the
-       */
-      async buildEnd() {
-        await Promise.all(
-          options.packages.map(async (pkgName) => {
-            let data = await generateTypeDocJSON({ packageName: pkgName });
+          if (data) {
+            let dest = getDest(pkgName);
 
-            if (data) {
-              let dest = getDest(pkgName);
-
-              this.emitFile({
-                type: 'asset',
-                fileName: dest,
-                source: JSON.stringify(data),
-              });
-            }
-          })
-        );
-      },
-      ...virtualFile({
-        importPath: SECRET_INTERNAL_IMPORT,
-        content: stripIndent`
+            this.emitFile({
+              type: 'asset',
+              fileName: dest,
+              source: JSON.stringify(data),
+            });
+          }
+        })
+      );
+    },
+    ...virtualFile({
+      importPath: SECRET_INTERNAL_IMPORT,
+      content: stripIndent`
           export const packageNames = [
             ${options.packages.map((raw) => `'${raw}',`).join('\n  ')}
           ];
@@ -79,7 +76,6 @@ export const apiDocs = createUnplugin(
               .join('\n  ')}
           };
         `,
-      }),
-    };
-  }
-);
+    }),
+  };
+};

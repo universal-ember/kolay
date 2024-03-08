@@ -7,6 +7,21 @@ import { packageUp } from 'package-up';
 const require = createRequire(import.meta.url);
 
 /**
+ * I used to use \0 for the prefix, but when explicitly
+ * using the prefix in our own virtual modules (importing other virtual modules),
+ * we get an error:
+ *   Module not found:
+ *     TypeError [ERR_INVALID_ARG_VALUE]:
+ *       The argument 'path' must be a string, Uint8Array, or URL without null bytes.
+ *       Received '<consuming-project-path>/node_modules/\x00kolay/package.json'
+ *
+ * I had also tried using `virtual:` for a prefix, but webpack doesn't allow that
+ *   Webpack supports "data:" and "file:" URIs by default
+ *   You may need an additional plugin to handle "virtual:" URIs.
+ */
+export const INTERNAL_PREFIX = `\0`;
+
+/**
  * @param {string} packageName
  */
 export async function packageTypes(packageName) {
@@ -79,19 +94,19 @@ export function virtualFile(options) {
     resolveId(id) {
       if (allowed.has(id)) {
         return {
-          id: `\0${id}`,
+          id: `${INTERNAL_PREFIX}${id}`,
         };
       }
 
       return;
     },
     loadInclude(id) {
-      if (!id.startsWith('\0')) return false;
+      if (!id.startsWith(INTERNAL_PREFIX)) return false;
 
       return allowed.has(id.slice(1));
     },
     load(id) {
-      if (!id.startsWith('\0')) return;
+      if (!id.startsWith(INTERNAL_PREFIX)) return;
 
       let importPath = id.slice(1);
 

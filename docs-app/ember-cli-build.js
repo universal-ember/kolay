@@ -12,7 +12,7 @@ module.exports = async function (defaults) {
 
   const { Webpack } = require('@embroider/webpack');
 
-  const { markdownPages, apiDocs, setup } = await import('kolay/webpack');
+  const { kolay } = await import('kolay/webpack');
 
   return require('@embroider/compat').compatBuild(app, Webpack, {
     staticAddonTestSupportTrees: true,
@@ -30,8 +30,7 @@ module.exports = async function (defaults) {
       webpackConfig: {
         devtool: 'source-map',
         plugins: [
-          setup(),
-          markdownPages({
+          kolay({
             src: 'public/docs',
             groups: [
               {
@@ -39,8 +38,8 @@ module.exports = async function (defaults) {
                 src: '../ui/docs',
               },
             ],
+            packages: ['kolay', 'ember-primitives', 'ember-resources'],
           }),
-          apiDocs({ packages: ['kolay', 'ember-primitives', 'ember-resources'] }),
         ],
       },
     },
