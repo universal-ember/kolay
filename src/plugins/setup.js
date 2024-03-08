@@ -5,7 +5,7 @@ import { stripIndent } from 'common-tags';
 
 import { virtualFile } from './helpers.js';
 
-/** @type {import('unplugin').UnpluginFactory<any, boolean>} */
+/** @type {() => import('unplugin').UnpluginOptions} */
 export const setup = () => {
   return {
     name: 'kolay-setup',

@@ -6,7 +6,11 @@ import { setup } from './setup.js';
 
 export const combined = /* #__PURE__ */ createUnplugin(
   /**
-   * @param {object} options
+   * @param {Parameters<typeof apiDocs>[0] & Parameters<typeof markdownPages>[0]} options
    */
-  (options) => [setup(options), apiDocs(options), markdownPages(options)]
+  (options) => [
+    setup(),
+    apiDocs({ packages: options.packages, dest: options.dest }),
+    markdownPages({ src: options.src, groups: options.groups, dest: options.dest }),
+  ]
 );

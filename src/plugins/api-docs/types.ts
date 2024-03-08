@@ -8,5 +8,5 @@ export interface APIDocsOptions {
    * Destination folder to place the api docs json files in.
    * Defaults to "docs"
    */
-  dest?: string;
+  dest?: string | undefined;
 }

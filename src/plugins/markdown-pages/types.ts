@@ -14,7 +14,7 @@ export interface MarkdownPagesOptions {
    * This option is the same as the one in `groups`, but is a shorthand for if
    * you only have one set of docs with no configuration needed.
    */
-  src?: string;
+  src?: string | undefined;
 
   /**
    * Additional markdown sources to include
@@ -59,10 +59,10 @@ export interface MarkdownPagesOptions {
    * The name of the file that is written.
    * Defaults to 'manifest.json'
    */
-  name?: string;
+  name?: string | undefined;
   /**
    * Where to place the manifest
    * Defaults to 'docs'
    */
-  dest?: string;
+  dest?: string | undefined;
 }
