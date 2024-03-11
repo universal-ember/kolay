@@ -25,6 +25,11 @@
       "import": "./src/browser/re-exports.js",
       "default": "./src/browser/re-exports.js"
     },
+    "./components": {
+      "types": "./src/browser/components.d.ts",
+      "import": "./src/browser/components.js",
+      "default": "./src/browser/components.js"
+    },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"

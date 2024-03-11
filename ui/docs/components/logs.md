@@ -10,7 +10,7 @@ In this demo, a `console` message is printed every character entry in the input.
 
 ```gjs live no-shadow preview
 import { Form } from 'ember-primitives';
-import { Logs } from 'kolay';
+import { Logs } from 'kolay/components';
 
 function addToLog(y) {
   console.info(y.logInput);

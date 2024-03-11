@@ -12,7 +12,11 @@ const addon = new Addon({
 export default {
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.
-  output: addon.output(),
+  output: {
+    ...addon.output(),
+    // Handy tool to debug brittle module cycles
+    preserveModules: true,
+  },
   plugins: [
     // These are the modules that users should be able to import from your
     // addon. Anything not listed here may get optimized away.
@@ -21,7 +25,7 @@ export default {
     // up your addon's public API. Also make sure your package.json#exports
     // is aligned to the config here.
     // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
-    addon.publicEntrypoints(['**/*.js', 'index.js']),
+    addon.publicEntrypoints(['**/*.js']),
 
     // These are the modules that should get reexported into the traditional
     // "app" tree. Things in here should also be in publicEntrypoints above, but
@@ -48,9 +52,6 @@ export default {
       extensions: ['.js', '.gjs', '.gts', '.ts'],
       babelHelpers: 'bundled',
     }),
-
-    // Ensure that standalone .hbs files are properly integrated as Javascript.
-    addon.hbs(),
 
     // Ensure that .gjs files are properly integrated as Javascript
     addon.gjs(),

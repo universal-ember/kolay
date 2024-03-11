@@ -5,7 +5,9 @@ import * as emberResources from 'ember-resources';
 import * as trackedBuiltIns from 'tracked-built-ins';
 
 import { Logs } from '../components/logs.gts';
-import { APIDocs, CommentQuery, ComponentSignature } from './typedoc/index.ts';
+import { Page } from '../components/page.gts';
+import { APIDocs, CommentQuery } from './typedoc/renderer.gts';
+import { ComponentSignature } from './typedoc/signature/component.gts';
 
 export const defaultOptions = {
   format: 'glimdown',
@@ -14,10 +16,13 @@ export const defaultOptions = {
     'tracked-built-ins': trackedBuiltIns,
     'ember-modifier': eModifier,
     kolay: {
-      Logs,
       APIDocs,
       ComponentSignature,
       CommentQuery,
     },
+    'kolay/components': {
+      Logs,
+      Page,
+    }
   },
 };

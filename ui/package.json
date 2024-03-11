@@ -76,7 +76,7 @@
     "prettier-plugin-ember-template-tag": "^2.0.0",
     "qunit": "^2.20.0",
     "reactiveweb": "^1.2.1",
-    "rollup": "^4.9.1",
+    "rollup": "^4.12.1",
     "rollup-plugin-copy": "^3.5.0",
     "tracked-built-ins": "^3.3.0",
     "typescript": "^5.3.3"
@@ -95,6 +95,7 @@
     "app-js": {
       "./components/logs.js": "./dist/_app_/components/logs.js",
       "./components/logs/scroller.js": "./dist/_app_/components/logs/scroller.js",
+      "./components/page.js": "./dist/_app_/components/page.js",
       "./services/kolay/api-docs.js": "./dist/_app_/services/kolay/api-docs.js",
       "./services/kolay/docs.js": "./dist/_app_/services/kolay/docs.js",
       "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js",

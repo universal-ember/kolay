@@ -56,7 +56,7 @@ export default class Selected extends Service {
    *
    ********************************************************************/
 
-  @use prose: ComponentLike<string> = keepLatest({
+  @use prose: ComponentLike<{}> = keepLatest({
     value: () => this.proseCompiled.component,
     when: () => !this.proseCompiled.isReady,
   });

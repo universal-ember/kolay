@@ -3,7 +3,8 @@ import { Compiled as REPLCompiled } from 'ember-repl';
 import { resource, resourceFactory } from 'ember-resources';
 
 import { defaultOptions } from './import-map.ts';
-import { APIDocs, ComponentSignature } from './typedoc/index.ts';
+import { APIDocs } from './typedoc/renderer.gts';
+import { ComponentSignature } from './typedoc/signature/component.gts';
 
 type Input = string | undefined | null;
 type Format = 'glimdown' | 'gjs' | 'hbs';
