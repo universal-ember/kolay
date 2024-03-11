@@ -1,13 +1,14 @@
 ## Rendering Pages
 
 The way this the docs app for Kolay renders pages looks like this:
+
 ```gjs
 // app/templates/page.gjs
-import { service } from 'ember-primitives/helpers';
-import Route from 'ember-route-template';
+import { service } from "ember-primitives/helpers";
+import Route from "ember-route-template";
 
 function removeLoader() {
-  document.querySelector('#kolay__loading')?.remove();
+  document.querySelector("#kolay__loading")?.remove();
 }
 
 export default Route(
@@ -28,6 +29,6 @@ export default Route(
       </div>
 
     {{/let}}
-  </template>
+  </template>,
 );
 ```
