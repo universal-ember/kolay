@@ -2,7 +2,7 @@ import { Shadowed } from 'ember-primitives';
 import { Compiled as REPLCompiled } from 'ember-repl';
 import { resource, resourceFactory } from 'ember-resources';
 
-import { defaultOptions } from './import-map.ts';
+import { getDefaultOptions } from './import-map.ts';
 import { APIDocs } from './typedoc/renderer.gts';
 import { ComponentSignature } from './typedoc/signature/component.gts';
 
@@ -21,10 +21,15 @@ export function Compiled(
   let userOptions = typeof options === 'function' ? options() : options;
 
   return resource(({ use }) => {
+    let defaults = getDefaultOptions();
     let options = {
       ShadowComponent: 'Shadowed',
-      ...defaultOptions,
+      ...defaults,
       ...userOptions,
+      importMap: {
+        ...defaults.importMap,
+        ...userOptions?.importMap,
+      },
       topLevelScope: {
         Shadowed,
         APIDocs,

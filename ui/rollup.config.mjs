@@ -15,7 +15,7 @@ export default {
   output: {
     ...addon.output(),
     // Handy tool to debug brittle module cycles
-    preserveModules: true,
+    // preserveModules: true,
   },
   plugins: [
     // These are the modules that users should be able to import from your

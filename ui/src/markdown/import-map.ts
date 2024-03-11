@@ -9,20 +9,22 @@ import { Page } from '../components/page.gts';
 import { APIDocs, CommentQuery } from './typedoc/renderer.gts';
 import { ComponentSignature } from './typedoc/signature/component.gts';
 
-export const defaultOptions = {
-  format: 'glimdown',
-  importMap: {
-    'ember-resources': emberResources,
-    'tracked-built-ins': trackedBuiltIns,
-    'ember-modifier': eModifier,
-    kolay: {
-      APIDocs,
-      ComponentSignature,
-      CommentQuery,
+export function getDefaultOptions() {
+  return {
+    format: 'glimdown',
+    importMap: {
+      'ember-resources': emberResources,
+      'tracked-built-ins': trackedBuiltIns,
+      'ember-modifier': eModifier,
+      kolay: {
+        APIDocs,
+        ComponentSignature,
+        CommentQuery,
+      },
+      'kolay/components': {
+        Logs,
+        Page,
+      }
     },
-    'kolay/components': {
-      Logs,
-      Page,
-    }
-  },
-};
+  };
+}
