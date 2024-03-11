@@ -1,5 +1,4 @@
 export { Logs } from './components/logs.gts';
-export { highlight } from './highlight.ts';
 export { Compiled } from './markdown/index.ts';
 export {
   APIDocs,

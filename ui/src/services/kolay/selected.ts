@@ -42,6 +42,9 @@ export default class Selected extends Service {
     () => this.proseFile.value,
     () => ({
       importMap: this.docs.additionalResolves,
+      topLevelScope: this.docs.additionalTopLevelScope,
+      remarkPlugins: this.docs.remarkPlugins,
+      rehypePlugins: this.docs.rehypePlugins,
     }),
   );
 

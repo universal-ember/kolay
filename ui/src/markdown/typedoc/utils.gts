@@ -4,8 +4,6 @@ import { service } from '@ember/service';
 
 import { trackedFunction } from 'reactiveweb/function';
 
-import { highlight } from '../../highlight.ts';
-
 import type APIDocsService from '../../services/kolay/api-docs.ts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
@@ -95,7 +93,7 @@ export class Load extends Component<{
     {{/if}}
 
     {{#if this.request.value}}
-      <section {{highlight this.request.value}}>
+      <section>
         {{#if (isDeclarationReflection this.request.value)}}
           <Query
             @info={{this.request.value}}
