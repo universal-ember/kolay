@@ -24,7 +24,7 @@
     "declarations",
     "dist",
     "src",
-    "virtual-types.d.ts"
+    "docs"
   ],
   "scripts": {
     "build": "rollup --config",
@@ -97,6 +97,7 @@
       "./components/logs/scroller.js": "./dist/_app_/components/logs/scroller.js",
       "./components/page.js": "./dist/_app_/components/page.js",
       "./services/kolay/api-docs.js": "./dist/_app_/services/kolay/api-docs.js",
+      "./services/kolay/compiler.js": "./dist/_app_/services/kolay/compiler.js",
       "./services/kolay/docs.js": "./dist/_app_/services/kolay/docs.js",
       "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js",
       "./services/kolay/types.js": "./dist/_app_/services/kolay/types.js"

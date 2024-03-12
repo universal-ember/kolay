@@ -23,7 +23,7 @@
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "start": "concurrently 'ember serve' 'pnpm _syncPnpm --watch' --names 'serve,sync'",
-    "_syncPnpm": "pnpm sync-dependencies-meta-injected",
+    "_syncPnpm": "DEBUG=* pnpm sync-dependencies-meta-injected",
     "test:ember": "ember test"
   },
   "devDependencies": {

@@ -4,31 +4,33 @@ The way this the docs app for Kolay renders pages looks like this:
 
 ```gjs
 // app/templates/page.gjs
-import { service } from "ember-primitives/helpers";
-import Route from "ember-route-template";
+import Route from 'ember-route-template';
+import { Page } from 'kolay/components';
 
+// Removes the App Shell / welcome UI 
+// before initial rending and chunk loading finishes
 function removeLoader() {
-  document.querySelector("#kolay__loading")?.remove();
+  document.querySelector('#kolay__loading')?.remove();
 }
 
 export default Route(
   <template>
-    {{#let (service "kolay/docs") as |docs|}}
+    <div>
+      <Page>
 
-      <div>
-        {{#if docs.selected.hasError}}
+        <:error as |error|>
           <div style="border: 1px solid red; padding: 1rem;">
-            {{docs.selected.error}}
+            {{error}}
           </div>
-        {{/if}}
+        </:error>
 
-        {{#if docs.selected.prose}}
-          <docs.selected.prose />
+        <:success as |prose|>
+          <prose />
           {{(removeLoader)}}
-        {{/if}}
-      </div>
+        </:success>
 
-    {{/let}}
-  </template>,
+      </Page>
+    </div>
+  </template>
 );
 ```
