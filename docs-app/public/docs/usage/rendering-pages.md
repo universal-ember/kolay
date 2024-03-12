@@ -34,3 +34,38 @@ export default Route(
   </template>,
 );
 ```
+
+If you want to render a page within a page, you can do that with the `Compiled` helper. This will use your site-wide configuration so all the remark plugins, rehype plugins, extra modules, etc will all be used when you use `Compiled`.
+
+```gjs live preview no-shadow
+import { Compiled } from "kolay";
+
+// Maybe you got this content from an API
+const page = `
+  Hello World!
+
+  Let's install Rust!
+
+  \`\`\`bash
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  \`\`\`
+
+  As recommended from [rust-lang.org](https://www.rust-lang.org/tools/install)
+`;
+
+<template>
+  <fieldset><legend>Demo</legend>
+
+    {{#let (Compiled page) as |compiled|}}
+      {{#if compiled.component}}
+        <compiled.component />
+      {{/if}}
+    {{/let}}
+
+  </fieldset>
+
+  <style>
+    fieldset { border: 1px solid #ccc; padding: 1rem; }
+  </style>
+</template>
+```
