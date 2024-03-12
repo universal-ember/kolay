@@ -4,7 +4,7 @@ import { service } from '@ember/service';
 
 import { trackedFunction } from 'reactiveweb/function';
 
-import type APIDocsService from '../../services/kolay/api-docs.ts';
+import type APIDocsService from '../services/kolay/api-docs.ts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 

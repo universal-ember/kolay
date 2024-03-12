@@ -3,20 +3,23 @@ import Service, { service } from '@ember/service';
 import { Shadowed } from 'ember-primitives';
 import { compile } from 'ember-repl';
 
-import { APIDocs } from '../../markdown/typedoc/renderer.gts';
-import { ComponentSignature } from '../../markdown/typedoc/signature/component.gts';
+import { APIDocs } from '../../typedoc/renderer.gts';
+import { ComponentSignature } from '../../typedoc/signature/component.gts';
 import { CompileState } from './compiler/compile-state.ts';
 import { getDefaultOptions } from './compiler/import-map.ts';
 
 import type DocsService from './docs.ts';
 
-export type Input = string | undefined | null;
-
 export default class Compiler extends Service {
   @service('kolay/docs') declare docs: DocsService;
 
-  compileMD = (code: Input) => {
+  // for debugging in the inspector / console
+  last?: CompileState;
+
+  compileMD = (code: string | undefined | null) => {
     let state = new CompileState();
+
+    this.last = state;
 
     if (!code) {
       return state;
@@ -27,7 +30,13 @@ export default class Compiler extends Service {
 
     compile(code, {
       ...defaults,
+      /**
+       * Documentation can only be in markdown.
+       */
+      format: 'glimdown',
       ShadowComponent: 'Shadowed',
+      remarkPlugins,
+      rehypePlugins,
       importMap: {
         ...defaults.importMap,
         ...importMap,
@@ -38,21 +47,9 @@ export default class Compiler extends Service {
         ComponentSignature,
         ...topLevelScope,
       },
-      remarkPlugins,
-      rehypePlugins,
-      /**
-       * Documentation can only be in markdown.
-       */
-      format: 'glimdown',
-      onSuccess: async (component) => {
-        state.success(component);
-      },
-      onError: async (e) => {
-        state.fail(e);
-      },
-      onCompileStart: async () => {
-        state.isCompiling = true;
-      },
+      onSuccess: async (component) => state.success(component),
+      onError: async (e) => state.fail(e),
+      onCompileStart: async () => state.isCompiling = true,
     });
 
     return state;

@@ -4,7 +4,7 @@ import { assert } from '@ember/debug';
 import type { ComponentLike } from '@glint/template';
 
 export class CompileState {
-  @tracked isCompiling = false;
+  @tracked isCompiling = true;
   @tracked error: null | string = null;
   @tracked component: ComponentLike<{}> | undefined;
 
@@ -19,13 +19,14 @@ export class CompileState {
     });
   }
 
-  then = (...args: [((value: ComponentLike) => ComponentLike | PromiseLike<ComponentLike>) | null | undefined ]) => this.#promise.then(...args);
+  then = (...args: [((value: ComponentLike) => ComponentLike | PromiseLike<ComponentLike>) | null | undefined]) => this.#promise.then(...args);
 
   success = (component: ComponentLike) => {
     assert(`Resolve is missing`, this.#resolve);
-    this.#resolve(component);
+    this.component = component;
     this.isCompiling = false;
     this.error = null;
+    this.#resolve(component);
   }
 
   fail = (error: string) => {

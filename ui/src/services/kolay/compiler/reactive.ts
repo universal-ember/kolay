@@ -9,7 +9,7 @@ export function Compiled(textFn: string | null | (() => string | null)): Compile
 
     let text = typeof textFn === 'function' ? textFn() : textFn;
 
-    return () => compiler.compileMD(text);
+    return compiler.compileMD(text);
   });
 }
 

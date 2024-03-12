@@ -6,18 +6,27 @@ import type ApiDocs from './api-docs';
 import type Selected from './selected';
 import type { Manifest } from './types';
 import type RouterService from '@ember/routing/router-service';
+import type { UnifiedPlugin } from 'ember-repl';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
+
+interface ResolveMap {
+  [moduleName: string]: ScopeMap;
+}
+
+interface ScopeMap {
+  [identifier: string]: unknown;
+}
 
 export default class DocsService extends Service {
   @service declare router: RouterService;
   @service('kolay/selected') declare selected: Selected;
   @service('kolay/api-docs') declare apiDocs: ApiDocs;
 
-  @tracked additionalResolves?: Record<string, Record<string, unknown>>;
-  @tracked additionalTopLevelScope?: Record<string, unknown>;
-  @tracked remarkPlugins?: unknown[];
-  @tracked rehypePlugins?: unknown[];
+  @tracked additionalResolves?: ResolveMap;
+  @tracked additionalTopLevelScope?: ScopeMap;
+  @tracked remarkPlugins?: UnifiedPlugin[];
+  @tracked rehypePlugins?: UnifiedPlugin[];
   _docs: Manifest | undefined;
 
   loadManifest: () => Promise<Manifest> = () =>
@@ -50,7 +59,7 @@ export default class DocsService extends Service {
      *   - <APIDocs>
      *   - <ComponentSignature>
      */
-    topLevelScope?: Record<string, unknown>;
+    topLevelScope?: ScopeMap;
 
     /**
      * Additional modules you'd like to be able to import from.
@@ -58,20 +67,20 @@ export default class DocsService extends Service {
      * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: Record<string, Promise<Record<string, unknown>>>;
+    resolve?: { [moduleName: string]: Promise<ScopeMap> };
 
     /**
      * Provide additional remark plugins to the default markdown compiler.
      *
      * These can be used to add features like notes, callouts, footnotes, etc
      */
-    remarkPlugins?: unknown[];
+    remarkPlugins?: UnifiedPlugin[];
     /**
      * Provide additional rehype plugins to the default html compiler.
      *
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
-    rehypePlugins?: unknown[];
+    rehypePlugins?: UnifiedPlugin[];
   }) => {
     let [manifest, apiDocs, resolve] = await Promise.all([
       options.manifest,
@@ -201,8 +210,8 @@ export default class DocsService extends Service {
  * RSVP.hash, but native
  */
 async function promiseHash<T>(
-  obj?: Record<string, Promise<T>>,
-): Promise<Record<string, T>> {
+  obj?: { [key: string]: Promise<T> },
+): Promise<{ [key: string]: T }> {
   let result: Record<string, T> = {};
 
   if (!obj) {

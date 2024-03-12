@@ -20,7 +20,7 @@ module.exports = async function (defaults) {
     staticHelpers: true,
     staticModifiers: true,
     staticComponents: true,
-    staticEmberSource: true,
+    staticEmberSource: false,
     skipBabel: [
       {
         package: 'qunit',

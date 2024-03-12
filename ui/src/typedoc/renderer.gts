@@ -1,6 +1,6 @@
 import { hash } from '@ember/helper';
 
-import { Compiled } from '../../services/kolay/compiler/reactive.ts';
+import { Compiled } from '../services/kolay/compiler/reactive.ts';
 import { Load } from './utils.gts';
 
 import type { TOC } from '@ember/component/template-only';

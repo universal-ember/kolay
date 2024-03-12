@@ -10,7 +10,6 @@ import type CompilerService from './compiler';
 import type DocsService from './docs';
 import type { Page } from './types';
 import type RouterService from '@ember/routing/router-service';
-import type { ComponentLike } from '@glint/template';
 
 /**
  * Populate a cache of all the documents.
@@ -49,7 +48,7 @@ export default class Selected extends Service {
    *
    ********************************************************************/
 
-  @use prose: ComponentLike<{}> = keepLatest({
+  @use prose = keepLatest({
     value: () => this.proseCompiled.component,
     when: () => !this.proseCompiled.isReady,
   });
@@ -63,7 +62,7 @@ export default class Selected extends Service {
   }
 
   get hasError() {
-    return this.proseCompiled.error;
+    return Boolean(this.proseCompiled.error);
   }
   get error() {
     return String(this.proseCompiled.error);

@@ -3,11 +3,11 @@ export {
   APIDocs,
   CommentQuery,
   ComponentSignature,
-} from './markdown/typedoc/index.ts';
+} from './typedoc/index.ts';
 
 // Required to use Kolay
-export { Compiled } from './markdown/index.ts';
 export { addRoutes } from './router.ts';
+export { Compiled } from './services/kolay/compiler/reactive.ts';
 
 // Types
 export type { default as APIDocsService } from './services/kolay/api-docs.ts';

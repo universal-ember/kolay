@@ -4,10 +4,10 @@ import * as emberResources from 'ember-resources';
 // other
 import * as trackedBuiltIns from 'tracked-built-ins';
 
-import { Logs } from '../components/logs.gts';
-import { Page } from '../components/page.gts';
-import { APIDocs, CommentQuery } from './typedoc/renderer.gts';
-import { ComponentSignature } from './typedoc/signature/component.gts';
+import { Logs } from '../../../components/logs.gts';
+import { Page } from '../../../components/page.gts';
+import { APIDocs, CommentQuery } from '../../../typedoc/renderer.gts';
+import { ComponentSignature } from '../../../typedoc/signature/component.gts';
 
 export function getDefaultOptions() {
   return {
@@ -26,5 +26,5 @@ export function getDefaultOptions() {
         Page,
       }
     },
-  };
+  } as const;
 }
