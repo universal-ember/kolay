@@ -15,8 +15,8 @@ export default Route(
           </div>
         </:error>
 
-        <:success as |prose|>
-          <prose />
+        <:success as |Prose|>
+          <Prose />
           {{(removeLoader)}}
         </:success>
 

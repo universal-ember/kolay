@@ -24,7 +24,7 @@ export function getDefaultOptions() {
       'kolay/components': {
         Logs,
         Page,
-      }
+      },
     },
   } as const;
 }

@@ -25,7 +25,12 @@ export default class Compiler extends Service {
       return state;
     }
 
-    let { additionalResolves: importMap, additionalTopLevelScope: topLevelScope, remarkPlugins, rehypePlugins } = this.docs;
+    let {
+      additionalResolves: importMap,
+      additionalTopLevelScope: topLevelScope,
+      remarkPlugins,
+      rehypePlugins,
+    } = this.docs;
     let defaults = getDefaultOptions();
 
     compile(code, {
@@ -49,7 +54,7 @@ export default class Compiler extends Service {
       },
       onSuccess: async (component) => state.success(component),
       onError: async (e) => state.fail(e),
-      onCompileStart: async () => state.isCompiling = true,
+      onCompileStart: async () => (state.isCompiling = true),
     });
 
     return state;

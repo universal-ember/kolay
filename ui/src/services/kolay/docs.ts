@@ -209,9 +209,9 @@ export default class DocsService extends Service {
 /**
  * RSVP.hash, but native
  */
-async function promiseHash<T>(
-  obj?: { [key: string]: Promise<T> },
-): Promise<{ [key: string]: T }> {
+async function promiseHash<T>(obj?: {
+  [key: string]: Promise<T>;
+}): Promise<{ [key: string]: T }> {
   let result: Record<string, T> = {};
 
   if (!obj) {

@@ -48,16 +48,16 @@ export class Page extends Component<{
      * </template>
      * ```
      */
-    success: [prose: ComponentLike<{ }>];
-  }
+    success: [prose: ComponentLike<{}>];
+  };
 }> {
   <template>
     {{#if this.selected.hasError}}
-      {{yield this.selected.error to="error"}}
+      {{yield this.selected.error to='error'}}
     {{/if}}
 
     {{#if this.selected.prose}}
-      {{yield this.selected.prose to="success"}}
+      {{yield this.selected.prose to='success'}}
     {{/if}}
   </template>
 

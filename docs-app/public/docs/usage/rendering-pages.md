@@ -4,13 +4,13 @@ The way this the docs app for Kolay renders pages looks like this:
 
 ```gjs
 // app/templates/page.gjs
-import Route from 'ember-route-template';
-import { Page } from 'kolay/components';
+import Route from "ember-route-template";
+import { Page } from "kolay/components";
 
-// Removes the App Shell / welcome UI 
+// Removes the App Shell / welcome UI
 // before initial rending and chunk loading finishes
 function removeLoader() {
-  document.querySelector('#kolay__loading')?.remove();
+  document.querySelector("#kolay__loading")?.remove();
 }
 
 export default Route(
@@ -31,6 +31,6 @@ export default Route(
 
       </Page>
     </div>
-  </template>
+  </template>,
 );
 ```

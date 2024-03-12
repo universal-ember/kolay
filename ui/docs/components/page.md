@@ -5,5 +5,9 @@ This component is a page of your for the currently selected document, determined
 [kolay-plugin]: /plugins/kolay.md
 
 ```hbs live no-shadow
-<ComponentSignature @package="kolay" @name="Page" @module="src/browser/components" /> 
+<ComponentSignature
+  @package='kolay'
+  @name='Page'
+  @module='src/browser/components'
+/>
 ```
