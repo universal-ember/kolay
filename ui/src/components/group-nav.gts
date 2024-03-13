@@ -39,9 +39,9 @@ export class GroupNav extends Component<{
      * const format = text => text.toUpperCase();
      *
      * <template>
-     *  <GroupNav as |name|>
-     *    {{format name}}
-     *  </GroupNav>
+     *   <GroupNav as |name|>
+     *     {{format name}}
+     *   </GroupNav>
      * </template>
      * ```
      */
