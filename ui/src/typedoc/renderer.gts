@@ -52,8 +52,8 @@ export const APIDocs: TOC<{
  * For example:
  * ```
  * /*
- * * Comment block here is what is targeted
- * *\/
+ *  * Comment block here is what is targeted
+ *  *\/
  * export const CommentQuery ...
  * ```
  *

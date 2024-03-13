@@ -3,7 +3,7 @@ import Service, { service } from '@ember/service';
 import { Shadowed } from 'ember-primitives';
 import { compile } from 'ember-repl';
 
-import { APIDocs } from '../../typedoc/renderer.gts';
+import { APIDocs, CommentQuery } from '../../typedoc/renderer.gts';
 import { ComponentSignature } from '../../typedoc/signature/component.gts';
 import { CompileState } from './compiler/compile-state.ts';
 import { getDefaultOptions } from './compiler/import-map.ts';
@@ -49,6 +49,7 @@ export default class Compiler extends Service {
       topLevelScope: {
         Shadowed,
         APIDocs,
+        CommentQuery,
         ComponentSignature,
         ...topLevelScope,
       },

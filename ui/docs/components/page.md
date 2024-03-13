@@ -4,6 +4,8 @@ This component is a page of your for the currently selected document, determined
 
 [kolay-plugin]: /plugins/kolay.md
 
+## API Reference
+
 ```hbs live no-shadow
 <ComponentSignature
   @package='kolay'
