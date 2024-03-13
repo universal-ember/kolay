@@ -94,6 +94,7 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
+      "./components/group-nav.js": "./dist/_app_/components/group-nav.js",
       "./components/logs.js": "./dist/_app_/components/logs.js",
       "./components/logs/scroller.js": "./dist/_app_/components/logs/scroller.js",
       "./components/page.js": "./dist/_app_/components/page.js",

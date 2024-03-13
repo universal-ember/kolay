@@ -66,6 +66,7 @@ async function pathsFor({ include, onlyDirectories, exclude, cwd, prefix }) {
 
   let paths = globbySync(include, {
     cwd,
+    ignore: ['**/node_modules/**'],
     expandDirectories: true,
     onlyDirectories,
   });
