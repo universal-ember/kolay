@@ -62,7 +62,7 @@
     "@types/qunit": "^2.19.10",
     "babel-plugin-ember-template-compilation": "^2.2.1",
     "concurrently": "^8.2.2",
-    "ember-repl": "^4.2.0",
+    "ember-repl": "^4.1.1",
     "ember-source": "~5.7.0",
     "ember-template-lint": "^5.13.0",
     "eslint": "^8.56.0",

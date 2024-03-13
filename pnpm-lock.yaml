@@ -146,8 +146,8 @@ importers:
         specifier: workspace:^
         version: file:ui(@babel/core@7.24.0)(@ember/test-waiters@3.1.0)(@glimmer/component@1.1.2)(@glimmer/tracking@1.1.2)(@glint/template@1.3.0)(ember-modifier@4.1.0)(ember-primitives@0.11.4)(ember-repl@4.2.0)(ember-resources@7.0.0)(ember-source@5.7.0)(qunit@2.20.1)(reactiveweb@1.2.2)(tracked-built-ins@3.3.0)
       '@universal-ember/test-support':
-        specifier: ^0.1.1
-        version: 0.1.1(@babel/core@7.24.0)(@glint/template@1.3.0)(ember-source@5.7.0)(qunit@2.20.1)(webpack@5.90.3)
+        specifier: ^0.2.0
+        version: 0.2.0(@babel/core@7.24.0)(@glint/template@1.3.0)(ember-source@5.7.0)(qunit@2.20.1)(webpack@5.90.3)
       change-case:
         specifier: ^5.4.3
         version: 5.4.3
@@ -4728,8 +4728,8 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@universal-ember/test-support@0.1.1(@babel/core@7.24.0)(@glint/template@1.3.0)(ember-source@5.7.0)(qunit@2.20.1)(webpack@5.90.3):
-    resolution: {integrity: sha512-L9Wl5pxUnWdivCLo8TtfDvHnnPuSthw+oN4pKFmxVL3u5l7cXnsqgfSDcbkpREJ0rPdYTsoneUvnpg2RKfVzLw==}
+  /@universal-ember/test-support@0.2.0(@babel/core@7.24.0)(@glint/template@1.3.0)(ember-source@5.7.0)(qunit@2.20.1)(webpack@5.90.3):
+    resolution: {integrity: sha512-bWhEI/A1RVEwgSkb1m5kcA68eiAfgIql7yTxD/tl0onGi+0KjcECukCkxId/eTYgNhUG8Hf4w1eiT+00IN/WnQ==}
     peerDependencies:
       qunit: ^2.20.1
     dependencies:
@@ -17326,7 +17326,7 @@ packages:
       ember-primitives: ^0.11.3
       ember-repl: ^4.1.1
       ember-resources: ^7.0.0
-      ember-source: ~5.5.0
+      ember-source: '>= 5.7.0'
       reactiveweb: ^1.2.1
       tracked-built-ins: ^3.3.0
     dependencies:

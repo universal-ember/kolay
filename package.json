@@ -109,7 +109,7 @@
     "concurrently": "^8.2.2",
     "ember-modifier": "^4.1.0",
     "ember-primitives": "^0.11.4",
-    "ember-repl": "^4.2.0",
+    "ember-repl": "^4.1.1",
     "ember-resources": "^7.0.0",
     "ember-source": "~5.7.0",
     "eslint": "^8.56.0",

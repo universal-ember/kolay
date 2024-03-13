@@ -6,6 +6,8 @@ import { setupRenderingTest } from 'ember-qunit';
 import { use } from 'ember-resources';
 import { Compiled } from 'kolay';
 
+import { getService } from '@universal-ember/test-support';
+
 module('Markdown | Rendering', function (hooks) {
   setupRenderingTest(hooks);
 
@@ -80,10 +82,10 @@ module('Markdown | Rendering', function (hooks) {
       '<hr>\n' +
       '```\n';
 
+    getService('kolay/docs').additionalTopLevelScope = { Response };
+
     class Demo {
-      @use doc = Compiled(() => doc, {
-        topLevelScope: { Response },
-      });
+      @use doc = Compiled(doc);
     }
 
     let state = new Demo();
