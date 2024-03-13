@@ -24,6 +24,7 @@ export default class ApplicationRoute extends Route {
         import('shiki/langs/html.mjs'),
         import('shiki/langs/glimmer-js.mjs'),
         import('shiki/langs/glimmer-ts.mjs'),
+        import('shiki/langs/handlebars.mjs'),
       ],
       langAlias: {
         gjs: 'glimmer-js',

@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
-import { pascalCase } from 'change-case';
+import { pascalCase, sentenceCase } from 'change-case';
 
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
@@ -36,7 +36,7 @@ function nameFor(x: Page) {
     return `<${pascalCase(x.name)} />`;
   }
 
-  return x.name;
+  return sentenceCase(x.name);
 }
 
 const Pages: TOC<{ Args: { item: Page | Collection } }> = <template>
@@ -45,7 +45,7 @@ const Pages: TOC<{ Args: { item: Page | Collection } }> = <template>
       {{#each @item.pages as |page|}}
         <li>
           {{#if (isCollection page)}}
-            {{page.name}}
+            {{sentenceCase page.name}}
           {{/if}}
 
           <Pages @item={{page}} />

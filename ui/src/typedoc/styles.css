@@ -119,6 +119,7 @@ section {
   overflow-y: hidden;
   overflow-x: hidden;
   overflow: hidden;
+  margin: 0;
   max-height: unset;
 }
 

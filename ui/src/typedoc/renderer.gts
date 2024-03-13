@@ -1,6 +1,6 @@
 import { hash } from '@ember/helper';
 
-import { Compiled } from '../../markdown/compiler.ts';
+import { Compiled } from '../services/kolay/compiler/reactive.ts';
 import { Load } from './utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -52,8 +52,8 @@ export const APIDocs: TOC<{
  * For example:
  * ```
  * /*
- * * Comment block here is what is targeted
- * *\/
+ *  * Comment block here is what is targeted
+ *  *\/
  * export const CommentQuery ...
  * ```
  *

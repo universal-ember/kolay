@@ -25,6 +25,11 @@
       "import": "./src/browser/re-exports.js",
       "default": "./src/browser/re-exports.js"
     },
+    "./components": {
+      "types": "./src/browser/components.d.ts",
+      "import": "./src/browser/components.js",
+      "default": "./src/browser/components.js"
+    },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"
@@ -184,7 +189,7 @@
     "ember-primitives": "^0.11.3",
     "ember-repl": "^4.1.1",
     "ember-resources": "^7.0.0",
-    "ember-source": "~5.5.0",
+    "ember-source": ">= 5.7.0",
     "reactiveweb": "^1.2.1",
     "tracked-built-ins": "^3.3.0"
   }

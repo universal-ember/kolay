@@ -4,12 +4,12 @@ import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { RemoteData } from 'reactiveweb/remote-data';
 
-import { Compiled } from '../../markdown/index.ts';
+import { Compiled } from './compiler/reactive.ts';
 
+import type CompilerService from './compiler';
 import type DocsService from './docs';
 import type { Page } from './types';
 import type RouterService from '@ember/routing/router-service';
-import type { ComponentLike } from '@glint/template';
 
 /**
  * Populate a cache of all the documents.
@@ -28,6 +28,7 @@ const firstPath = '/1-get-started/intro.md';
 export default class Selected extends Service {
   @service declare router: RouterService;
   @service('kolay/docs') declare docs: DocsService;
+  @service('kolay/compiler') declare compiler: CompilerService;
 
   /*********************************************************************
    * These load the files from /public and handle loading / error state.
@@ -37,16 +38,7 @@ export default class Selected extends Service {
    *******************************************************************/
 
   @use proseFile = RemoteData<string>(() => `/docs${this.path}.md`);
-  // @use proseCompiled = MarkdownToHTML(() => this.proseFile.value);
-  @use proseCompiled: ReturnType<typeof Compiled> = Compiled(
-    () => this.proseFile.value,
-    () => ({
-      importMap: this.docs.additionalResolves,
-      topLevelScope: this.docs.additionalTopLevelScope,
-      remarkPlugins: this.docs.remarkPlugins,
-      rehypePlugins: this.docs.rehypePlugins,
-    }),
-  );
+  @use proseCompiled = Compiled(() => this.proseFile.value);
 
   /*********************************************************************
    * This is a pattern to help reduce flashes of content during
@@ -56,7 +48,7 @@ export default class Selected extends Service {
    *
    ********************************************************************/
 
-  @use prose: ComponentLike<string> = keepLatest({
+  @use prose = keepLatest({
     value: () => this.proseCompiled.component,
     when: () => !this.proseCompiled.isReady,
   });
@@ -70,7 +62,7 @@ export default class Selected extends Service {
   }
 
   get hasError() {
-    return this.proseCompiled.error;
+    return Boolean(this.proseCompiled.error);
   }
   get error() {
     return String(this.proseCompiled.error);

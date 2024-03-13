@@ -1,5 +1,5 @@
-import { service } from 'ember-primitives/helpers';
 import Route from 'ember-route-template';
+import { Page } from 'kolay/components';
 
 function removeLoader() {
   document.querySelector('#kolay__loading')?.remove();
@@ -7,19 +7,20 @@ function removeLoader() {
 
 export default Route(
   <template>
-    {{#let (service "kolay/docs") as |docs|}}
-      <div data-prose class="prose p-4">
-        {{#if docs.selected.hasError}}
+    <div>
+      <Page>
+        <:error as |error|>
           <div style="border: 1px solid red; padding: 1rem;">
-            {{docs.selected.error}}
+            {{error}}
           </div>
-        {{/if}}
+        </:error>
 
-        {{#if docs.selected.prose}}
-          <docs.selected.prose />
+        <:success as |Prose|>
+          <Prose />
           {{(removeLoader)}}
-        {{/if}}
-      </div>
-    {{/let}}
+        </:success>
+
+      </Page>
+    </div>
   </template>
 );
