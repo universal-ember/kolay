@@ -2,9 +2,8 @@
 import Component from '@glimmer/component';
 import { registerDestructor } from '@ember/destroyable';
 
+import { Scroller } from 'ember-primitives/components/scroller';
 import { TrackedArray } from 'tracked-built-ins';
-
-import { Scroller } from './logs/scroller.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type Owner from '@ember/owner';
@@ -41,13 +40,13 @@ const LogList: TOC<{
     logs: Log[];
   };
 }> = <template>
-  <Scroller class='kolay__log-list__scroll' as |scrollToBottom|>
+  <Scroller class='kolay__log-list__scroll' as |x|>
     {{#each @logs as |logEntry|}}
       <div class='kolay__log-list__level {{logEntry.level}}'>
         <span class='kolay__log-list__time'>{{format logEntry.timestamp}}</span>
         <span>{{logEntry.message}}</span>
       </div>
-      {{(scrollToBottom)}}
+      {{(x.scrollToBottom)}}
     {{/each}}
   </Scroller>
 

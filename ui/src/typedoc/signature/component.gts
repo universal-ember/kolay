@@ -1,4 +1,4 @@
-import { ExternalLink } from 'ember-primitives';
+import { ExternalLink } from 'ember-primitives/components/external-link';
 
 import { Comment, isIntrinsic, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
