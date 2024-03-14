@@ -1,8 +1,19 @@
 'use strict';
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const { prebuild } = require('@embroider/compat');
+
+const USE_WEBPACK = Boolean(process.env.WEBPACK);
 
 module.exports = async function (defaults) {
+  if (!USE_WEBPACK) {
+    const app = new EmberApp(defaults, {
+      // Add options here
+    });
+
+    return prebuild(app);
+  }
+
   const app = new EmberApp(defaults, {
     // Add options here
     'ember-cli-babel': {
@@ -11,7 +22,6 @@ module.exports = async function (defaults) {
   });
 
   const { Webpack } = require('@embroider/webpack');
-
   const { kolay } = await import('kolay/webpack');
 
   return require('@embroider/compat').compatBuild(app, Webpack, {
