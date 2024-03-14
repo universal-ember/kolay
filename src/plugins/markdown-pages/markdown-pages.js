@@ -50,9 +50,14 @@ export const markdownPages = (options) => {
           // discover mutates the groups array
           if (group.name === 'root') return;
 
+          /**
+           * We can support pulling docs out of node_modules,
+           * but going deeply through node_modules would be bonkers.
+           */
           const paths = globbySync('**/*.{md,json,jsonc}', {
             cwd: group.src,
             expandDirectories: true,
+            ignore: ['**/node_modules/**'],
           });
 
           paths.forEach((p) => {

@@ -2,9 +2,9 @@ import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
 import { pascalCase, sentenceCase } from 'change-case';
+import { GroupNav } from 'kolay/components';
 
 import type { TOC } from '@ember/component/template-only';
-import type RouterService from '@ember/routing/router-service';
 import type { Collection, DocsService, Page } from 'kolay';
 
 export class Nav extends Component {
@@ -57,35 +57,4 @@ const Pages: TOC<{ Args: { item: Page | Collection } }> = <template>
   </ul>
 </template>;
 
-export class TopNav extends Component {
-  @service('kolay/docs') declare docs: DocsService;
-  @service declare router: RouterService;
-
-  get groups() {
-    return this.docs.availableGroups.map((groupName) => {
-      if (groupName === 'root') return { text: 'Home', value: '/' };
-
-      return { text: groupName, value: `/${groupName}` };
-    });
-  }
-
-  isActive = (subPath: string) => {
-    if (subPath === '/') return false;
-
-    return this.router.currentURL?.startsWith(subPath);
-  };
-
-  <template>
-    <nav id="group-nav">
-      <ul>
-        {{#each this.groups as |group|}}
-          <li>
-            <a href={{group.value}} class={{if (this.isActive group.value) "active"}}>
-              {{group.text}}
-            </a>
-          </li>
-        {{/each}}
-      </ul>
-    </nav>
-  </template>
-}
+export const TopNav = GroupNav;

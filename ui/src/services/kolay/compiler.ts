@@ -1,6 +1,6 @@
 import Service, { service } from '@ember/service';
 
-import { Shadowed } from 'ember-primitives';
+import { Shadowed } from 'ember-primitives/components/shadowed';
 import { compile } from 'ember-repl';
 
 import { APIDocs, CommentQuery } from '../../typedoc/renderer.gts';

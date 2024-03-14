@@ -1,4 +1,4 @@
-import { ExternalLink } from 'ember-primitives';
+import { ExternalLink } from 'ember-primitives/components/external-link';
 
 import { Comment, isIntrinsic, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
@@ -105,9 +105,9 @@ const mdnElement = (typeName: string) => {
 
 const Element: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <span class='typedoc__component-signature__element'>
+    <h3 class='typedoc-heading typedoc__component-signature__element-header'>
+      <span class='typedoc__name'>{{@info.name}}</span>
       <span class='typedoc__component-signature__element-type'>
-        <span class='typedoc__name'>{{@info.name}}</span>
         <ExternalLink
           href={{mdnElement @info.type.name}}
           class='typedoc__type-link'
@@ -116,6 +116,8 @@ const Element: TOC<{ Args: { info: any } }> = <template>
           ➚
         </ExternalLink>
       </span>
+    </h3>
+    <span class='typedoc__component-signature__element'>
       <Comment @info={{@info}} />
     </span>
   {{/if}}
