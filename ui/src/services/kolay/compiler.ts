@@ -5,6 +5,8 @@ import { compile } from 'ember-repl';
 
 import { APIDocs, CommentQuery } from '../../typedoc/renderer.gts';
 import { ComponentSignature } from '../../typedoc/signature/component.gts';
+import { HelperSignature } from '../../typedoc/signature/helper.gts';
+import { ModifierSignature } from '../../typedoc/signature/modifier.gts';
 import { CompileState } from './compiler/compile-state.ts';
 import { getDefaultOptions } from './compiler/import-map.ts';
 
@@ -51,6 +53,8 @@ export default class Compiler extends Service {
         APIDocs,
         CommentQuery,
         ComponentSignature,
+        ModifierSignature,
+        HelperSignature,
         ...topLevelScope,
       },
       onSuccess: async (component) => state.success(component),

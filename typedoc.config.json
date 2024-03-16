@@ -8,9 +8,10 @@
     "./declarations/plugins/index.d.ts",
     "./declarations/plugins/types.d.ts",
     "./src/browser/components.d.ts",
-    "./src/browser/test-support.d.ts"
+    "./src/browser/test-support.d.ts",
+    "./src/browser/private/samples.d.ts"
   ],
-  "includes": ["./declarations"],
+  "exclude": ["node_modules"],
   "cleanOutputDir": true,
   "compilerOptions": {
     "noEmitOnError": false

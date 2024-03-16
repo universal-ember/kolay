@@ -1,5 +1,5 @@
 import { findChildDeclaration, Load } from '../utils.gts';
-import { NamedArgs } from './args.gts';
+import { getNamedArgs, NamedArgs } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -17,14 +17,14 @@ function getSignature(info: DeclarationReflection) {
   }
 
   /**
-   * export class Foo extends Component<{ signature here }> { ... }
+   * export const foo = modifier<Signature>(() => {});
    */
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
     let extendedType = info.extendedTypes?.[0];
 
     if (
       extendedType?.type === 'reference' &&
-      extendedType?.package === '@glimmer/component'
+      extendedType?.package === 'ember-modifier'
     ) {
       let typeArg = extendedType.typeArguments?.[0];
 
@@ -40,17 +40,7 @@ function getSignature(info: DeclarationReflection) {
   return info;
 }
 
-function getNamedArgs(info: DeclarationReflection) {
-  let args = findChildDeclaration(info, 'Args');
-
-  if (!args) return;
-
-  let named = findChildDeclaration(args, 'Named');
-
-  return named;
-}
-
-export const ComponentSignature: TOC<{
+export const ModifierSignature: TOC<{
   Args: {
     /**
      * Which module to import the type from
@@ -72,6 +62,7 @@ export const ComponentSignature: TOC<{
     @name={{@name}}
     as |declaration|
   >
+    {{log 'modifier' declaration}}
     {{#let (getSignature declaration) as |info|}}
       <Element @kind='modifier' @info={{findChildDeclaration info 'Element'}} />
       <NamedArgs @kind='modifier' @info={{getNamedArgs info}} />

@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { globby } from 'globby';
 
@@ -34,12 +34,21 @@ export async function generateTypeDocJSON({ packageName }) {
   const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
   const extendsTsConfig = require.resolve('@tsconfig/ember/tsconfig.json');
 
+  const home = process.cwd();
+
+  const homeRequire = createRequire(home);
+
   const tsConfig = {
     extends: extendsTsConfig,
-    include: [join(typeInfo.dir, '**/*')],
+    // include: [join(typeInfo.dir, '**/*')],
+    include: absoluteResolved.map((entry) => dirname(entry)),
     compilerOptions: {
       baseUrl: typeInfo.dir,
       noEmitOnError: false,
+      types: [
+        homeRequire.resolve('ember-source/types/stable/index.d.ts'),
+        homeRequire.resolve('ember-modifier/index.d.ts'),
+      ],
     },
   };
 

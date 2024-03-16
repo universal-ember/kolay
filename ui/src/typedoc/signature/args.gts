@@ -1,8 +1,36 @@
 import { Comment, isIntrinsic, Type } from '../renderer.gts';
+import { findChildDeclaration } from '../utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
+import type { DeclarationReflection } from 'typedoc';
 
 const not = (x: unknown) => !x;
+
+/**
+ * Get named args from a full Args signature
+ */
+export function getNamedArgs(info: DeclarationReflection) {
+  let args = findChildDeclaration(info, 'Args');
+
+  if (!args) return;
+
+  let named = findChildDeclaration(args, 'Named');
+
+  return named;
+}
+
+/**
+ * Get positional args from a full Args signature
+ */
+export function getPositionalArgs(info: DeclarationReflection) {
+  let args = findChildDeclaration(info, 'Args');
+
+  if (!args) return;
+
+  let named = findChildDeclaration(args, 'Positional');
+
+  return named;
+}
 
 export const NamedArgs: TOC<{
   Args: { kind: 'component' | 'modifier' | 'helper'; info: any };

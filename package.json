@@ -38,6 +38,10 @@
       "types": "./declarations/plugins/types.d.ts",
       "import": "./src/plugins/index.js"
     },
+    "./private/samples": {
+      "types": "./src/browser/private/samples.d.ts",
+      "default": "./src/browser/private/samples.js"
+    },
     "./webpack": {
       "types": "./declarations/webpack.d.ts",
       "import": "./src/webpack.js"
@@ -108,6 +112,8 @@
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.3",
     "@types/common-tags": "^1.8.4",
+    "@types/qunit": "^2.19.10",
+    "@types/rsvp": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "@universal-ember/kolay-ui": "workspace:^",

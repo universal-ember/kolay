@@ -10,8 +10,16 @@ API Reference generated via:
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module='src/browser/re-exports'
-  @name='ComponentSignature'
+  @module='src/browser/private/samples'
+  @name='plainHelperA'
+  @package='kolay'
+/>
+```
+
+```hbs live no-shadow preview below
+<HelperSignature
+  @module='src/browser/private/samples'
+  @name='helperLikeB'
   @package='kolay'
 />
 ```
