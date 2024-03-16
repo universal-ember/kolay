@@ -96,6 +96,7 @@
     "app-js": {
       "./components/group-nav.js": "./dist/_app_/components/group-nav.js",
       "./components/logs.js": "./dist/_app_/components/logs.js",
+      "./components/page-nav.js": "./dist/_app_/components/page-nav.js",
       "./components/page.js": "./dist/_app_/components/page.js",
       "./services/kolay/api-docs.js": "./dist/_app_/services/kolay/api-docs.js",
       "./services/kolay/compiler.js": "./dist/_app_/services/kolay/compiler.js",
