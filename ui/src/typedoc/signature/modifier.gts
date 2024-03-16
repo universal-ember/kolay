@@ -40,6 +40,16 @@ function getSignature(info: DeclarationReflection) {
   return info;
 }
 
+function getNamedArgs(info: DeclarationReflection) {
+  let args = findChildDeclaration(info, 'Args');
+
+if (!args) return;
+
+let named = findChildDeclaration(args, 'Named');
+
+return named;
+}
+
 export const ComponentSignature: TOC<{
   Args: {
     /**
@@ -64,7 +74,7 @@ export const ComponentSignature: TOC<{
   >
     {{#let (getSignature declaration) as |info|}}
       <Element @kind='modifier' @info={{findChildDeclaration info 'Element'}} />
-      <NamedArgs @kind='modifier' @info={{findChildDeclaration info 'Args'}} />
+      <NamedArgs @kind='modifier' @info={{getNamedArgs info}} />
     {{/let}}
   </Load>
 </template>;

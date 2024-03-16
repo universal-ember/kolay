@@ -31,7 +31,7 @@ export async function generateTypeDocJSON({ packageName }) {
   const absoluteResolved = resolvedEntries.map((entry) => join(typeInfo.dir, entry));
 
   const typedoc = await import('typedoc');
-  const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName}.json`;
+  const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
   const extendsTsConfig = require.resolve('@tsconfig/ember/tsconfig.json');
 
   const tsConfig = {

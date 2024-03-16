@@ -10,8 +10,8 @@ API Reference generated via:
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='src/browser/re-exports'
-  @name='ComponentSignature'
-  @package='kolay'
+  @module='declarations/samples/-private/modifier'
+  @name='functionExampleA'
+  @package='@universal-ember/kolay-ui'
 />
 ```

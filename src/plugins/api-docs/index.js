@@ -35,7 +35,7 @@ export const apiDocs = (options) => {
    * @param {string} pkgName
    */
   function getDest(pkgName) {
-    return `${options.dest ?? 'docs'}/${pkgName}.json`;
+    return `${options.dest ?? 'docs'}/${pkgName.replace('/', '__')}.json`;
   }
 
   return {
