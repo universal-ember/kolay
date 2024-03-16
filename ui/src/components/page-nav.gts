@@ -29,7 +29,7 @@ export class PageNav extends Component<{
      * ```gjs
      * import { PageNav } from 'kolay/components';
      *
-     * function toSentenceCase(name) { /* ... \*\/ }
+     * function toSentenceCase(name) { /* ... *\/ }
      *
      * <template>
      *   <PageNav>
@@ -49,7 +49,7 @@ export class PageNav extends Component<{
      * ```gjs
      * import { PageNav } from 'kolay/components';
      *
-     * function toSentenceCase(name) { /* ... \*\/ }
+     * function toSentenceCase(name) { /* ... *\/ }
      *
      * <template>
      *   <PageNav>

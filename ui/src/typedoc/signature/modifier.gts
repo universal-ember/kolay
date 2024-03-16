@@ -1,4 +1,3 @@
-import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
 import { NamedArgs } from './args.gts';
 import { Element } from './element.gts';
@@ -64,28 +63,8 @@ export const ComponentSignature: TOC<{
     as |declaration|
   >
     {{#let (getSignature declaration) as |info|}}
-      <Element
-        @kind='component'
-        @info={{findChildDeclaration info 'Element'}}
-      />
-      <NamedArgs @kind='component' @info={{findChildDeclaration info 'Args'}} />
-      <Blocks @info={{findChildDeclaration info 'Blocks'}} />
+      <Element @kind='modifier' @info={{findChildDeclaration info 'Element'}} />
+      <NamedArgs @kind='modifier' @info={{findChildDeclaration info 'Args'}} />
     {{/let}}
   </Load>
-</template>;
-
-const Blocks: TOC<{ Args: { info: any } }> = <template>
-  {{#if @info}}
-    <h3 class='typedoc-heading'>Blocks</h3>
-    {{#each @info.type.declaration.children as |child|}}
-      <span class='typedoc__component-signature__block'>
-        <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
-        {{! <span class='typedoc-category'>Properties </span> }}
-        <div class='typedoc-property'>
-          <Type @info={{child.type}} />
-          <Comment @info={{child}} />
-        </div>
-      </span>
-    {{/each}}
-  {{/if}}
 </template>;
