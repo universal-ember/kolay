@@ -1,43 +1,16 @@
 import { Comment, isIntrinsic, Type } from '../renderer.gts';
-import { findChildDeclaration } from '../utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
 const not = (x: unknown) => !x;
 
-/**
- * Get named args from a full Args signature
- */
-export function getNamedArgs(info: DeclarationReflection) {
-  let args = findChildDeclaration(info, 'Args');
-
-  if (!args) return;
-
-  let named = findChildDeclaration(args, 'Named');
-
-  return named;
-}
-
-/**
- * Get positional args from a full Args signature
- */
-export function getPositionalArgs(info: DeclarationReflection) {
-  let args = findChildDeclaration(info, 'Args');
-
-  if (!args) return;
-
-  let named = findChildDeclaration(args, 'Positional');
-
-  return named;
-}
-
-export const NamedArgs: TOC<{
+export const Args: TOC<{
   Args: { kind: 'component' | 'modifier' | 'helper'; info: any };
 }> = <template>
   {{#if @info}}
     <h3 class='typedoc-heading'>Arguments</h3>
-    {{#each @info.type.declaration.children as |child|}}
+    {{#each (listifyArgs @info) as |child|}}
       <span class='typedoc-{{@kind}}-arg'>
         <span class='typedoc-{{@kind}}-arg-info'>
           <pre class='typedoc-name'>@{{child.name}}</pre>
@@ -54,3 +27,23 @@ export const NamedArgs: TOC<{
     {{/each}}
   {{/if}}
 </template>;
+
+function listifyArgs(info: DeclarationReflection): any[] {
+  if (!info) return [];
+
+  if (Array.isArray(info)) {
+    return info;
+  }
+
+  if ('children' in info && Array.isArray(info.children)) {
+    return info.children;
+  }
+
+  if (info.type && 'declaration' in info.type && info.type.declaration) {
+    return listifyArgs(info.type.declaration);
+  }
+
+  console.log('unhandled', info);
+
+  return [];
+}

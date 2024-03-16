@@ -1,6 +1,6 @@
 import { Type } from '../renderer.gts';
 import { Load } from '../utils.gts';
-import { getNamedArgs, getPositionalArgs, NamedArgs } from './args.gts';
+import { Args } from './args.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
@@ -18,6 +18,7 @@ function getSignature(info: DeclarationReflection) {
     info.type.typeArguments[0] &&
     'declaration' in info.type.typeArguments[0]
   ) {
+    // There can only be one type argument for a HelperLike
     return info.type.typeArguments[0]?.declaration;
   }
 
@@ -35,6 +36,10 @@ function getSignature(info: DeclarationReflection) {
 }
 
 function getArgs(info: any) {
+  if ('parameters' in info) {
+    return info.parameters;
+  }
+
   if (Array.isArray(info)) {
     return info.find(item => item.name === 'Args');
   }
@@ -45,6 +50,10 @@ function getArgs(info: any) {
 }
 
 function getReturn(info: any) {
+  if (info.variant === 'signature' ){
+    return info.type;
+  }
+
   if (Array.isArray(info)) {
     return info.find(item => item.name === 'Return')?.type;
   }
@@ -88,17 +97,13 @@ export const HelperSignature: TOC<{
     {{#let (getSignature declaration) as |info|}}
       {{#if (Array.isArray info)}}
         {{#each info as |signature|}}
-          {{! TODO: have special formatting for parameters vs return type }}
-        {{! @glint-expect-error }}
-          <Type @info={{signature}} />
+          <Args @kind='helper' @info={{getArgs signature}} />
+          <Return @info={{getReturn signature}} />
         {{/each}}
       {{else}}
         {{! Whenever we have a "Full Signature" or "HelperLike" definition }}
-        {{#let (getArgs info) (getReturn info) as |args returnType|}}
-          <NamedArgs @kind='modifier' @info={{getPositionalArgs args}} />
-          <NamedArgs @kind='modifier' @info={{getNamedArgs args}} />
-          <Return @info={{returnType}} />
-        {{/let}}
+        <Args @kind='helper' @info={{getArgs info}} />
+        <Return @info={{getReturn info}} />
       {{/if}}
 
     {{/let}}

@@ -1,5 +1,5 @@
 import { findChildDeclaration, Load } from '../utils.gts';
-import { getNamedArgs, NamedArgs } from './args.gts';
+import { Args } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -65,7 +65,7 @@ export const ModifierSignature: TOC<{
     {{log 'modifier' declaration}}
     {{#let (getSignature declaration) as |info|}}
       <Element @kind='modifier' @info={{findChildDeclaration info 'Element'}} />
-      <NamedArgs @kind='modifier' @info={{getNamedArgs info}} />
+      <Args @kind='modifier' @info={{info}} />
     {{/let}}
   </Load>
 </template>;

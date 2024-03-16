@@ -8,6 +8,9 @@ module.exports = async function (defaults) {
     'ember-cli-babel': {
       enableTypeScriptTransform: true,
     },
+    autoImport: {
+      watchedDependencies: ['kolay', '@universal-ember/kolay-ui'],
+    },
   });
 
   const { Webpack } = require('@embroider/webpack');

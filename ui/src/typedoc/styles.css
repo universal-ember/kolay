@@ -95,6 +95,12 @@ section {
   align-items: baseline;
 }
 
+.typedoc__component-signature__block .typedoc-rendered-comment {
+  border-top: 1px solid #333;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
 .typedoc__component-signature__block
   .typedoc-declaration-name
   + .typedoc-reference {

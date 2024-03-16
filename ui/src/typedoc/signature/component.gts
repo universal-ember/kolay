@@ -1,12 +1,12 @@
 import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
-import { NamedArgs } from './args.gts';
+import { Args } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
-function getSignature(info: DeclarationReflection) {
+function getSignatureType(info: DeclarationReflection) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
@@ -41,6 +41,16 @@ function getSignature(info: DeclarationReflection) {
   return info;
 }
 
+function getSignature(info: DeclarationReflection) {
+  let type = getSignatureType(info);
+
+  return {
+    Element: findChildDeclaration(type, 'Element'),
+    Args: findChildDeclaration(type, 'Args'),
+    Blocks: findChildDeclaration(type, 'Blocks'),
+  }
+}
+
 export const ComponentSignature: TOC<{
   Args: {
     /**
@@ -64,12 +74,9 @@ export const ComponentSignature: TOC<{
     as |declaration|
   >
     {{#let (getSignature declaration) as |info|}}
-      <Element
-        @kind='component'
-        @info={{findChildDeclaration info 'Element'}}
-      />
-      <NamedArgs @kind='component' @info={{findChildDeclaration info 'Args'}} />
-      <Blocks @info={{findChildDeclaration info 'Blocks'}} />
+      <Element @kind='component' @info={{info.Element}} />
+      <Args @kind='component' @info={{info.Args}} />
+      <Blocks @info={{info.Blocks}} />
     {{/let}}
   </Load>
 </template>;

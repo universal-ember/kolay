@@ -1,6 +1,2 @@
-export { helperLikeB, plainHelperA } from './helper.ts';
-export {
-  functionModifierA,
-  functionModifierB,
-  functionModifierC,
-} from './modifier.ts';
+export * from './helper.ts';
+export * from './modifier.ts';
