@@ -1,0 +1,24 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "tsconfig": "./tsconfig.typedoc.json",
+  "entryPoints": [
+    "./declarations/index.d.ts",
+    "./declarations/vite.d.ts",
+    "./declarations/webpack.d.ts",
+    "./declarations/plugins/index.d.ts",
+    "./declarations/plugins/types.d.ts",
+    "./src/browser/components.d.ts",
+    "./src/browser/test-support.d.ts"
+  ],
+  "includes": ["./declarations"],
+  "cleanOutputDir": true,
+  "compilerOptions": {
+    "noEmitOnError": false
+  },
+  "out": "./dist-typedoc",
+  "json": "./dist-typedoc/typedoc.json",
+  "pretty": true,
+  "excludeInternal": false,
+  "skipErrorChecking": true,
+  "plugin": ["@zamiell/typedoc-plugin-not-exported"]
+}

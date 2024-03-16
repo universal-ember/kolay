@@ -43,11 +43,11 @@ function getSignature(info: DeclarationReflection) {
 function getNamedArgs(info: DeclarationReflection) {
   let args = findChildDeclaration(info, 'Args');
 
-if (!args) return;
+  if (!args) return;
 
-let named = findChildDeclaration(args, 'Named');
+  let named = findChildDeclaration(args, 'Named');
 
-return named;
+  return named;
 }
 
 export const ComponentSignature: TOC<{

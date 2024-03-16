@@ -32,6 +32,10 @@
     },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
+      "import": "./src/browser/virtual/empty.js"
+    },
+    "./build/types": {
+      "types": "./declarations/plugins/types.d.ts",
       "import": "./src/plugins/index.js"
     },
     "./webpack": {
@@ -75,6 +79,7 @@
     "build": "pnpm prepack",
     "build:declarations": "tsc --declaration",
     "_syncPnpm": "pnpm sync-dependencies-meta-injected",
+    "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
     "test:node": "vitest --run"
   },
   "dependencies": {

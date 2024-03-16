@@ -1,0 +1,7 @@
+{
+  "extends": ["@tsconfig/ember", "@tsconfig/node20"],
+  "include": ["declarations/**/*"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true
+  }
+}
