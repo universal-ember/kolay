@@ -106,6 +106,13 @@ export default Route(
         display: grid;
         grid-template-columns: max-content 1fr;
         gap: 2rem;
+
+        main {
+          max-width: 100%;
+          display: flex;
+          flex-direction: column;
+          overflow-x: hidden;
+        }
       }
 
       .mobile-menu__tray, .big-layout {

@@ -3,3 +3,12 @@
 a.active {
   font-weight: bold;
 }
+
+pre.shiki {
+  white-space: pre-wrap;
+  /* overflow: hidden; */
+}
+pre.shiki>code {
+  /* padding-right: 1rem; */
+  /* overflow: auto; */
+}

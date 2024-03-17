@@ -15,22 +15,20 @@ function removeLoader() {
 
 export default Route(
   <template>
-    <div>
-      <Page>
+    <Page>
 
-        <:error as |error|>
-          <div style="border: 1px solid red; padding: 1rem;">
-            {{error}}
-          </div>
-        </:error>
+      <:error as |error|>
+        <div style="border: 1px solid red; padding: 1rem;">
+          {{error}}
+        </div>
+      </:error>
 
-        <:success as |prose|>
-          <prose />
-          {{(removeLoader)}}
-        </:success>
+      <:success as |prose|>
+        <prose />
+        {{(removeLoader)}}
+      </:success>
 
-      </Page>
-    </div>
+    </Page>
   </template>,
 );
 ```

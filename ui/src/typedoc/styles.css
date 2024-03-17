@@ -46,17 +46,22 @@ section {
 }
 
 .typedoc-named-tuple,
-.typedoc-component-arg-info {
+.typedoc-component-arg-info,
+.typedoc-helper-arg-info {
   display: flex;
   gap: 0.25rem;
   align-items: baseline;
   justify-content: space-between;
 }
-.typedoc-component-arg-info > .typedoc-name {
+.typedoc-component-arg-info > .typedoc-name,
+.typedoc-helper-arg-info > .typedoc-name {
   display: inline-block;
   margin: 0;
   font-size: 1rem;
   font-weight: bold;
+}
+.typedoc-helper-arg-info  {
+  border-bottom: 1px gray dashed;
 }
 
 .typedoc-declaration-children {
@@ -69,11 +74,13 @@ section {
  * Component Signatures
  *
  */
+.typedoc__modifier-signature__element,
 .typedoc__component-signature__element,
 .typedoc__component-signature__block {
   display: block;
   padding: 0 1rem;
 }
+.typedoc__modifier-signature__element-type,
 .typedoc__component-signature__element-type {
   display: flex;
   gap: 0.25rem;
@@ -81,12 +88,14 @@ section {
   justify-content: space-between;
 }
 
+.typedoc__modifier-signature__element-type > .typedoc__name,
 .typedoc__component-signature__element-type > .typedoc__name {
   display: inline-block;
   margin: 0;
   line-height: 1.5rem;
 }
 
+.typedoc__modifier-signature__element-header,
 .typedoc__component-signature__element-header {
   display: flex;
   flex-direction: row;
@@ -95,6 +104,7 @@ section {
   align-items: baseline;
 }
 
+.typedoc__helper-signature__block .typedoc-rendered-comment,
 .typedoc__component-signature__block .typedoc-rendered-comment {
   border-top: 1px solid #333;
   padding-top: 0.5rem;
@@ -122,11 +132,13 @@ section {
   padding: 0.5rem;
 }
 
+.typedoc-helper-arg,
 .typedoc-component-arg {
   margin-bottom: 0.5rem;
   display: grid;
   gap: 0.25rem;
 }
+.typedoc-helper-arg > .typedoc-name,
 .typedoc-component-arg > .typedoc-name,
 .typedoc__component-signature__block > .typedoc__name {
   font-size: 1.2rem;
@@ -137,6 +149,7 @@ section {
   max-height: unset;
 }
 
+.typedoc-helper-arg .typedoc-rendered-comment p,
 .typedoc-component-arg .typedoc-rendered-comment p {
   margin-top: 0;
   margin-bottom: 0.25rem;

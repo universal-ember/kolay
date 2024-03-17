@@ -3,6 +3,10 @@ import Helper from '@ember/component/helper';
 
 import type { HelperLike } from '@glint/template';
 
+/**
+ * @param {number} a - the first argument
+ * @param {number} b - the second argument
+ */
 export function plainHelperA(a: number, b: number): number {
   return a + b;
 }
