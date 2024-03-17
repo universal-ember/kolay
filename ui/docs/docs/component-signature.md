@@ -6,12 +6,12 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 
 ## API Reference
 
-API Reference generated via:
-
-```hbs live no-shadow preview below
+```hbs live no-shadow
 <ComponentSignature
   @module='src/browser/re-exports'
   @name='ComponentSignature'
   @package='kolay'
 />
 ```
+
+## Supported Signatures

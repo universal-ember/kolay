@@ -6,7 +6,15 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 
 ## API Reference
 
-API Reference generated via:
+```hbs live no-shadow
+<ComponentSignature
+  @module='src/browser/re-exports'
+  @name='HelperSignature'
+  @package='kolay'
+/>
+```
+
+## Supported Signatures
 
 ```ts
 export function plainHelperA(a: number, b: number): number {
