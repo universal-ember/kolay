@@ -169,14 +169,16 @@ const Declaration: TOC<{
 const Reflection: TOC<{ info: { declaration: DeclarationReflection } }> =
   <template><Declaration @info={{@info.declaration}} /></template>;
 
-const isReference = (x: { type: string }) => x.type === 'reference';
-const isReflection = (x: { type: string }) => x.type === 'reflection';
+const isReference = (x: { type: string }) => x?.type === 'reference';
+const isReflection = (x: { type: string }) => x?.type === 'reflection';
 
-export const isIntrinsic = (x: { type: string }) => x.type === 'intrinsic';
+export const isIntrinsic = (x: { type: string }) => x?.type === 'intrinsic';
 
-const isTuple = (x: { type: string }) => x.type === 'tuple';
-const isNamedTuple = (x: SomeType | undefined): x is NamedTupleMember =>
+const isTuple = (x: { type: string }) => x?.type === 'tuple';
+
+export const isNamedTuple = (x: SomeType | undefined): x is NamedTupleMember =>
   x?.type === 'namedTupleMember';
+
 const isVoidIntrinsic = (x: unknown | undefined) => {
   if (!x) return false;
   if (typeof x !== 'object') return false;
@@ -289,7 +291,7 @@ const Tuple: TOC<{ Args: { info: TupleType } }> = <template>
   {{/each}}
 </template>;
 
-const NamedTuple: TOC<{ Args: { info: NamedTupleMember } }> = <template>
+export const NamedTuple: TOC<{ Args: { info: NamedTupleMember } }> = <template>
   <div class='typedoc-named-tuple'>
     <div class='typedoc-name'>{{@info.name}}</div>
     <Type @info={{@info.element}} />

@@ -1,4 +1,4 @@
-import { Comment, isIntrinsic, Type } from '../renderer.gts';
+import { Comment, isIntrinsic, isNamedTuple, Type } from '../renderer.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
@@ -26,10 +26,14 @@ export const Args: TOC<{
             }}{{child.name}}</pre>
           {{#if (isIntrinsic child.type)}}
             <Type @info={{child.type}} />
+          {{else if (isNamedTuple child)}}
+            <Type @info={{child.element}} />
           {{/if}}
         </span>
         {{#if (not (isIntrinsic child.type))}}
           <Type @info={{child.type}} />
+        {{else if (isNamedTuple child)}}
+          <Type @info={{child.element}} />
         {{else}}
           <Comment @info={{child}} />
         {{/if}}
@@ -45,7 +49,19 @@ function listifyArgs(info: DeclarationReflection): any[] {
     return info;
   }
 
+  /**
+   * This object *may* have Named and Positional on them,
+   * in which case, we want to create [...Postiional, Named]
+   */
   if ('children' in info && Array.isArray(info.children)) {
+    if (info.children.length <= 2) {
+      let flattened = flattenArgs(info.children);
+
+      if (flattened.length > 0) {
+        return flattened;
+      }
+    }
+
     return info.children;
   }
 
@@ -57,4 +73,21 @@ function listifyArgs(info: DeclarationReflection): any[] {
   console.warn('unhandled', info);
 
   return [];
+}
+
+function flattenArgs(args: any[]): any[] {
+  let named = args.find((x) => x.name === 'Named');
+  let positional = args.find((x) => x.name === 'Positional');
+
+  let result = [];
+
+  if (positional) {
+    result.push(positional.type?.elements);
+  }
+
+  if (named) {
+    result.push(named);
+  }
+
+  return result.flat();
 }
