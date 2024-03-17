@@ -61,7 +61,15 @@ section {
   font-weight: bold;
 }
 .typedoc-helper-arg-info  {
-  border-bottom: 1px gray dashed;
+  border-bottom: 1px rgba(125,125,125,0.5) dashed;
+}
+.typedoc__helper__return {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.typedoc__helper__return > .typedoc-heading {
+  margin: 0;
 }
 
 .typedoc-declaration-children {

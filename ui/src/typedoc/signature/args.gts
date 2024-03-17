@@ -5,6 +5,12 @@ import type { DeclarationReflection } from 'typedoc';
 
 const not = (x: unknown) => !x;
 
+const isComponent = (kind: 'component' | 'modifier' | 'helper') => kind === 'component';
+
+/**
+ * Only components' args are prefixed with a `@`, 
+ * because only components have template-content.
+ */
 export const Args: TOC<{
   Args: { kind: 'component' | 'modifier' | 'helper'; info: any };
 }> = <template>
@@ -13,7 +19,7 @@ export const Args: TOC<{
     {{#each (listifyArgs @info) as |child|}}
       <span class='typedoc-{{@kind}}-arg'>
         <span class='typedoc-{{@kind}}-arg-info'>
-          <pre class='typedoc-name'>@{{child.name}}</pre>
+          <pre class='typedoc-name'>{{if (isComponent @kind) "@"}}{{child.name}}</pre>
           {{#if (isIntrinsic child.type)}}
             <Type @info={{child.type}} />
           {{/if}}

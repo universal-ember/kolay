@@ -2,7 +2,9 @@ import Route from 'ember-route-template';
 import { Page } from 'kolay/components';
 
 function removeLoader() {
-  document.querySelector('#kolay__loading')?.remove();
+  requestAnimationFrame(() => {
+    document.querySelector('#kolay__loading')?.remove();
+  });
 }
 
 export default Route(
