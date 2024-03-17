@@ -13,6 +13,7 @@ export function plainHelperA(a: number, b: number): number {
   return a + b;
 }
 ```
+
 ```hbs live no-shadow preview below
 <HelperSignature
   @module='src/browser/private/samples'
@@ -21,12 +22,14 @@ export function plainHelperA(a: number, b: number): number {
 />
 ```
 
----------
+---
 
 ```ts
 import type { HelperLike } from '@glint/template';
 
-export const helperLikeB = ((...args: unknown[]) => { /* ... */ }) as unknown as HelperLike<{
+export const helperLikeB = ((...args: unknown[]) => {
+  /* ... */
+}) as unknown as HelperLike<{
   Args: {
     Named: { optional?: boolean };
     Positional: [first: string, second?: string];
@@ -34,6 +37,7 @@ export const helperLikeB = ((...args: unknown[]) => { /* ... */ }) as unknown as
   Return: string;
 }>;
 ```
+
 ```hbs live no-shadow preview below
 <HelperSignature
   @module='src/browser/private/samples'
@@ -42,14 +46,19 @@ export const helperLikeB = ((...args: unknown[]) => { /* ... */ }) as unknown as
 />
 ```
 
----------
+---
 
 ```ts
-export const plainHelperC = (a: number, b: number, options?: { optional?: boolean, required: boolean  }) => {
+export const plainHelperC = (
+  a: number,
+  b: number,
+  options?: { optional?: boolean; required: boolean },
+) => {
   /* ... */
   console.log(a, b, options);
-}
+};
 ```
+
 ```hbs live no-shadow preview below
 <HelperSignature
   @module='src/browser/private/samples'
@@ -58,7 +67,7 @@ export const plainHelperC = (a: number, b: number, options?: { optional?: boolea
 />
 ```
 
----------
+---
 
 ```ts
 export class ClassHelperD extends Helper<{
@@ -71,6 +80,7 @@ export class ClassHelperD extends Helper<{
   /* ... */
 }
 ```
+
 ```hbs live no-shadow preview below
 <HelperSignature
   @module='src/browser/private/samples'
@@ -79,7 +89,7 @@ export class ClassHelperD extends Helper<{
 />
 ```
 
----------
+---
 
 ```ts
 interface ESignature {

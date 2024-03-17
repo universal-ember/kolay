@@ -48,7 +48,7 @@ function getSignature(info: DeclarationReflection) {
     Element: findChildDeclaration(type, 'Element'),
     Args: findChildDeclaration(type, 'Args'),
     Blocks: findChildDeclaration(type, 'Blocks'),
-  }
+  };
 }
 
 export const ComponentSignature: TOC<{

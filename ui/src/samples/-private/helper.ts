@@ -21,10 +21,14 @@ export const helperLikeB = ((...args: unknown[]) => {
   Return: string;
 }>;
 
-export const plainHelperC = (a: number, b: number, options?: { optional?: boolean, required: boolean  }) => {
+export const plainHelperC = (
+  a: number,
+  b: number,
+  options?: { optional?: boolean; required: boolean },
+) => {
   /* ... */
   console.log(a, b, options);
-}
+};
 
 export class classHelperD extends Helper<{
   Args: {

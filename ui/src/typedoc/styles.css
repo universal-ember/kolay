@@ -60,8 +60,8 @@ section {
   font-size: 1rem;
   font-weight: bold;
 }
-.typedoc-helper-arg-info  {
-  border-bottom: 1px rgba(125,125,125,0.5) dashed;
+.typedoc-helper-arg-info {
+  border-bottom: 1px rgba(125, 125, 125, 0.5) dashed;
 }
 .typedoc__helper__return {
   display: flex;

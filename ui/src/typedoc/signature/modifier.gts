@@ -62,7 +62,6 @@ export const ModifierSignature: TOC<{
     @name={{@name}}
     as |declaration|
   >
-    {{log 'modifier' declaration}}
     {{#let (getSignature declaration) as |info|}}
       <Element @kind='modifier' @info={{findChildDeclaration info 'Element'}} />
       <Args @kind='modifier' @info={{info}} />

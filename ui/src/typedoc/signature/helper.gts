@@ -41,7 +41,7 @@ function getArgs(info: any) {
   }
 
   if (Array.isArray(info)) {
-    return info.find(item => item.name === 'Args');
+    return info.find((item) => item.name === 'Args');
   }
 
   if ('children' in info) {
@@ -50,12 +50,12 @@ function getArgs(info: any) {
 }
 
 function getReturn(info: any) {
-  if (info.variant === 'signature' ){
+  if (info.variant === 'signature') {
     return info.type;
   }
 
   if (Array.isArray(info)) {
-    return info.find(item => item.name === 'Return')?.type;
+    return info.find((item) => item.name === 'Return')?.type;
   }
 
   if ('children' in info) {
@@ -63,9 +63,9 @@ function getReturn(info: any) {
   }
 }
 
-const Return: TOC<{ Args: { info: any }}> = <template>
+const Return: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <div class="typedoc__helper__return">
+    <div class='typedoc__helper__return'>
       <h3 class='typedoc-heading'>Return</h3>
 
       <Type @info={{@info}} />
@@ -95,7 +95,6 @@ export const HelperSignature: TOC<{
     @name={{@name}}
     as |declaration|
   >
-    {{log 'hepler' declaration}}
     {{#let (getSignature declaration) as |info|}}
       {{#if (Array.isArray info)}}
         {{#each info as |signature|}}

@@ -1,5 +1,4 @@
-
-import 'ember-mobile-menu/themes/android'
+import 'ember-mobile-menu/themes/android';
 
 import { on } from '@ember/modifier';
 
@@ -14,13 +13,17 @@ import { GroupNav, PageNav } from 'kolay/components';
 import type { TOC } from '@ember/component/template-only';
 import type { Page } from 'kolay';
 
-const Menu: TOC<{ Element: SVGElement }>  = <template>
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  x="0px" y="0px" viewBox="0 0 50 50"
-  style="fill:currentColor"
-  ...attributes
-><path d="M 0 7.5 L 0 12.5 L 50 12.5 L 50 7.5 Z M 0 22.5 L 0 27.5 L 50 27.5 L 50 22.5 Z M 0 37.5 L 0 42.5 L 50 42.5 L 50 37.5 Z"></path></svg>
+const Menu: TOC<{ Element: SVGElement }> = <template>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    x="0px"
+    y="0px"
+    viewBox="0 0 50 50"
+    style="fill:currentColor"
+    ...attributes
+  ><path
+      d="M 0 7.5 L 0 12.5 L 50 12.5 L 50 7.5 Z M 0 22.5 L 0 27.5 L 50 27.5 L 50 22.5 Z M 0 37.5 L 0 42.5 L 50 42.5 L 50 37.5 Z"
+    ></path></svg>
 </template>;
 
 const SideNav: TOC<{ Element: HTMLElement }> = <template>
@@ -40,36 +43,29 @@ export default Route(
   <template>
     {{pageTitle ENV.APP.shortVersion}}
 
-      <MenuWrapper as |mmw|>
-        <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
-          <SideNav {{on "click" mm.actions.close}} />
-        </mmw.MobileMenu>
+    <MenuWrapper as |mmw|>
+      <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
+        <SideNav {{on "click" mm.actions.close}} />
+      </mmw.MobileMenu>
 
-        <mmw.Content class="container">
-          <header style="display: flex; align-items: baseline; gap: 1rem;">
-            <mmw.Toggle><Menu /></mmw.Toggle>
-            <GroupNav />
-          </header>
+      <mmw.Content class="container">
+        <header style="display: flex; align-items: baseline; gap: 1rem;">
+          <mmw.Toggle><Menu /></mmw.Toggle>
+          <GroupNav />
+        </header>
 
-          <div class="big-layout">
-            <SideNav />
+        <div class="big-layout">
+          <SideNav />
 
-            <main style="padding-top: 1rem;">
-              {{outlet}}
-            </main>
-          </div>
-        </mmw.Content>
-      </MenuWrapper>
+          <main style="padding-top: 1rem;">
+            {{outlet}}
+          </main>
+        </div>
+      </mmw.Content>
+    </MenuWrapper>
 
     {{!-- prettier-ignore --}}
     <style>
-      :root {
-        --mobile-menu-header-bg:                 #E04E39;
-
-        --mobile-menu-item-color:                #333;
-        --mobile-menu-item-active-bg:            #EEE;
-        --mobile-menu-item-link-disabled-color:  #6C757D;
-      }
       .mobile-menu-wrapper__content,
       .mobile-menu__tray {
         background: none;
