@@ -17,8 +17,13 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 ## Supported Signatures
 
 ```ts
-export function plainHelperA(a: number, b: number): number {
-  return a + b;
+/**
+ * @param {number} first - the first argument
+ * @param {number} second - the second argument
+ * @return {number} the sum of the two values
+ */
+export function plainHelperA(first: number, second: number): number {
+  return first + second;
 }
 ```
 

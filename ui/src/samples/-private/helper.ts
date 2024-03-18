@@ -4,11 +4,12 @@ import Helper from '@ember/component/helper';
 import type { HelperLike } from '@glint/template';
 
 /**
- * @param {number} a - the first argument
- * @param {number} b - the second argument
+ * @param {number} first - the first argument
+ * @param {number} second - the second argument
+ * @return {number} the sum of the two values
  */
-export function plainHelperA(a: number, b: number): number {
-  return a + b;
+export function plainHelperA(first: number, second: number): number {
+  return first + second;
 }
 
 export const helperLikeB = ((...args: unknown[]) => {
