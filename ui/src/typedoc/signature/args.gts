@@ -91,3 +91,21 @@ function flattenArgs(args: any[]): any[] {
 
   return result.flat();
 }
+
+/**
+* Returns args for either a function or signature
+*/
+export function getArgs(info: any) {
+  if ('parameters' in info) {
+    return info.parameters;
+  }
+
+  if (Array.isArray(info)) {
+    return info.find((item) => item.name === 'Args');
+  }
+
+  if ('children' in info) {
+    return getArgs(info.children);
+  }
+}
+

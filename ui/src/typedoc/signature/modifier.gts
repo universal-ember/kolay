@@ -1,11 +1,11 @@
+/** eslint-disable @typescript-eslint/no-unused-vars */
 import { findChildDeclaration, Load } from '../utils.gts';
 import { Args } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection } from 'typedoc';
 
-function getSignature(info: DeclarationReflection) {
+function getSignatureType(info: any) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
@@ -17,8 +17,34 @@ function getSignature(info: DeclarationReflection) {
   }
 
   /**
-   * export const foo = modifier<Signature>(() => {});
+  * import { modifier } from 'ember-modifier';
+  *
+   * export const foo = modifier<{ ... }>(() => {});
    */
+  /**
+* (implicit signature)
+*
+  * import { modifier } from 'ember-modifier';
+  *
+   * export const foo = modifier(() => {});
+   */
+  if (info.variant === 'declaration' && 'type' in info) {
+    if (info.type.package === 'ember-modifier') {
+      // can't get at the inline signature here
+    }
+
+/**
+* import type { ModifierLike } from '@glint/template';
+*
+* export const X: ModifierLike<{ ... }>
+*/
+if (info.type.package === '@glint/template' && Array.isArray(info.type.typeArguments) && info.type.typeArguments.length > 0) {
+return info.type.typeArguments[0].declaration;
+}
+  }
+
+
+
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
     let extendedType = info.extendedTypes?.[0];
 
@@ -38,6 +64,21 @@ function getSignature(info: DeclarationReflection) {
    * export interface Signature { ... }
    */
   return info;
+}
+
+function getSignature(info: any) {
+  let type = getSignatureType(info);
+
+  if (!type) {
+    console.warn('Could not finde signature');
+
+    return;
+  }
+
+  return {
+    Element: findChildDeclaration(type, 'Element'),
+    Args: findChildDeclaration(type, 'Args'),
+  };
 }
 
 export const ModifierSignature: TOC<{
@@ -63,8 +104,8 @@ export const ModifierSignature: TOC<{
     as |declaration|
   >
     {{#let (getSignature declaration) as |info|}}
-      <Element @kind='modifier' @info={{findChildDeclaration info 'Element'}} />
-      <Args @kind='modifier' @info={{info}} />
+      <Element @kind='modifier' @info={{info.Element}} />
+      <Args @kind='modifier' @info={{info.Args}} />
     {{/let}}
   </Load>
 </template>;

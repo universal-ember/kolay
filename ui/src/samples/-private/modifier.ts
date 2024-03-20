@@ -2,6 +2,14 @@ import { modifier } from 'ember-modifier';
 
 import type { ModifierLike } from '@glint/template';
 
+export interface ModifierSignatureA {
+  Element: HTMLDivElement;
+  Args: {
+    Positional: [x: number, y: number];
+    Named: { invert?: boolean };
+  };
+}
+
 export const functionModifierA = modifier<{
   Element: HTMLDivElement;
   Args: {

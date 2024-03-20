@@ -1,6 +1,6 @@
 import { Type } from '../renderer.gts';
 import { Load } from '../utils.gts';
-import { Args } from './args.gts';
+import { Args, getArgs } from './args.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
@@ -56,20 +56,6 @@ if (Array.isArray(info.extendedTypes) && info.extendedTypes.length > 0) {
    * export interface Signature { ... }
    */
   return info;
-}
-
-function getArgs(info: any) {
-  if ('parameters' in info) {
-    return info.parameters;
-  }
-
-  if (Array.isArray(info)) {
-    return info.find((item) => item.name === 'Args');
-  }
-
-  if ('children' in info) {
-    return getArgs(info.children);
-  }
 }
 
 function getReturn(info: any) {

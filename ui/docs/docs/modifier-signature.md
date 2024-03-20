@@ -16,7 +16,50 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 
 ## Supported Signatures
 
-API Reference generated via:
+<fieldset>
+  <summary>Direct Interface</summary>
+
+```ts
+export interface ModifierSignatureA {
+  Element: HTMLDivElement;
+  Args: {
+    Positional: [x: number, y: number];
+    Named: { invert?: boolean };
+  };
+}
+```
+
+```hbs live no-shadow preview below
+<ModifierSignature
+  @module='src/browser/private/samples'
+  @name='ModifierSignatureA'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>function modifier, inline signature</summary>
+
+```ts
+export const functionModifierA = modifier<{
+  Element: HTMLDivElement;
+  Args: {
+    Positional: [x: number, y: number];
+    Named: { invert?: boolean };
+  };
+}>(
+  (
+    element: HTMLDivElement,
+    positional: [x: number, y: number],
+    named: { invert?: boolean },
+  ) => {
+    // eslint-disable-next-line no-console
+    console.log(element, positional, named);
+  },
+);
+```
 
 ```hbs live no-shadow preview below
 <ModifierSignature
@@ -26,12 +69,56 @@ API Reference generated via:
 />
 ```
 
+</fieldset>
+
+<fieldset>
+  <summary>function modifier, implicit signature</summary>
+
+```ts
+export const functionModifierB = modifier(
+  (
+    element: HTMLDivElement,
+    positional: [x: number, y: number],
+    named: { invert?: boolean },
+  ) => {
+    // eslint-disable-next-line no-console
+    console.log(element, positional, named);
+  },
+);
+
+```
 ```hbs live no-shadow preview below
 <ModifierSignature
   @module='src/browser/private/samples'
   @name='functionModifierB'
   @package='kolay'
 />
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>function modifier, ModifierLike</summary>
+
+```ts
+import { ModifierLike } from '@glint/template';
+
+export const functionModifierC: ModifierLike<{
+  Element: HTMLDivElement;
+  Args: {
+    Positional: [x: number, y: number];
+    Named: { invert?: boolean };
+  };
+}> = modifier(
+  (
+    element: HTMLDivElement,
+    positional: [x: number, y: number],
+    named: { invert?: boolean },
+  ) => {
+    // eslint-disable-next-line no-console
+    console.log(element, positional, named);
+  },
+);
 ```
 
 ```hbs live no-shadow preview below
@@ -41,3 +128,5 @@ API Reference generated via:
   @package='kolay'
 />
 ```
+
+</fieldset>
