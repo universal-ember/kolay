@@ -6,17 +6,21 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
-function lookupReference(reference: any, info: any) {
-  let id = reference.target;
-  let lookup = info.symbolIdMap[id];
+// function lookupReference(reference: any, info: any) {
+//   let id = reference.target;
+//   let lookup = info.symbolIdMap[id];
 
-  let fileName = lookup?.sourceFileName;
-  let name = lookup?.qualifiedName;
+//   let fileName = lookup?.sourceFileName;
+//   let name = lookup?.qualifiedName;
 
-  return findReferenceByFilename(name, fileName, info);
-}
+//   return findReferenceByFilename(name, fileName, info);
+// }
 
-function findReferenceByFilename(name: string, fileName: string, info: any): any {
+function findReferenceByFilename(
+  name: string,
+  fileName: string,
+  info: any,
+): any {
   if (!info.children) return;
 
   for (let child of info.children) {
@@ -26,7 +30,9 @@ function findReferenceByFilename(name: string, fileName: string, info: any): any
 
     if (!child.children) continue;
 
-    let isRelevant = child.children.find(( grandChild: any) => grandChild.sources[0].fileName === fileName);
+    let isRelevant = child.children.find(
+      (grandChild: any) => grandChild.sources[0].fileName === fileName,
+    );
 
     if (isRelevant) {
       return isRelevant;
@@ -68,7 +74,11 @@ function getSignatureType(info: DeclarationReflection, doc: any) {
       if (typeArg?.type === 'reference') {
         if ('symbolIdMap' in doc) {
           // This is hard, maybe typedoc has a util?
-          return findReferenceByFilename(typeArg.name, ( extendedType as any).target.sourceFileName, doc);
+          return findReferenceByFilename(
+            typeArg.name,
+            (extendedType as any).target.sourceFileName,
+            doc,
+          );
         }
       }
     }

@@ -85,8 +85,8 @@ export const functionModifierB = modifier(
     console.log(element, positional, named);
   },
 );
-
 ```
+
 ```hbs live no-shadow preview below
 <ModifierSignature
   @module='src/browser/private/samples'

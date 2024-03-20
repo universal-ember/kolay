@@ -17,15 +17,15 @@ function getSignatureType(info: any) {
   }
 
   /**
-  * import { modifier } from 'ember-modifier';
-  *
+   * import { modifier } from 'ember-modifier';
+   *
    * export const foo = modifier<{ ... }>(() => {});
    */
   /**
-* (implicit signature)
-*
-  * import { modifier } from 'ember-modifier';
-  *
+   * (implicit signature)
+   *
+   * import { modifier } from 'ember-modifier';
+   *
    * export const foo = modifier(() => {});
    */
   if (info.variant === 'declaration' && 'type' in info) {
@@ -33,17 +33,19 @@ function getSignatureType(info: any) {
       // can't get at the inline signature here
     }
 
-/**
-* import type { ModifierLike } from '@glint/template';
-*
-* export const X: ModifierLike<{ ... }>
-*/
-if (info.type.package === '@glint/template' && Array.isArray(info.type.typeArguments) && info.type.typeArguments.length > 0) {
-return info.type.typeArguments[0].declaration;
-}
+    /**
+     * import type { ModifierLike } from '@glint/template';
+     *
+     * export const X: ModifierLike<{ ... }>
+     */
+    if (
+      info.type.package === '@glint/template' &&
+      Array.isArray(info.type.typeArguments) &&
+      info.type.typeArguments.length > 0
+    ) {
+      return info.type.typeArguments[0].declaration;
+    }
   }
-
-
 
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
     let extendedType = info.extendedTypes?.[0];

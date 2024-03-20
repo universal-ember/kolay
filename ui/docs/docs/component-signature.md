@@ -30,10 +30,9 @@ export interface SignatureA {
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-  }
+  };
 }
 ```
-
 
 ```hbs live no-shadow preview below
 <ComponentSignature
@@ -59,7 +58,7 @@ export class ClassA extends Component<{
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-  }
+  };
 }> {}
 ```
 
@@ -94,10 +93,10 @@ export class ClassB extends Component<SignatureA> {}
   <summary>TemplateOnly w/ Reference (not currently supported)</summary>
 
 ```gts
-export const TemplateOnlyC: TOC<SignatureA> = <template> ... </template>;
+export const TemplateOnlyC: TOC<SignatureA> = <template>...</template>;
 ```
 
-```hbs live no-shadow 
+```hbs live no-shadow
 <ComponentSignature
   @module='src/browser/private/samples'
   @name='TemplateOnlyC'
@@ -121,7 +120,7 @@ export const TemplateOnlyD: TOC<{
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-  }
+  };
 }> = <template>hi</template>;
 ```
 

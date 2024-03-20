@@ -13,7 +13,7 @@ export interface SignatureA {
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-  }
+  };
 }
 
 export class ClassA extends Component<{
@@ -26,15 +26,12 @@ export class ClassA extends Component<{
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-  }
+  };
 }> {}
-
 
 export class ClassB extends Component<SignatureA> {}
 
-export const TemplateOnlyC: TOC<SignatureA> = <template>
-  hi there
-</template>;
+export const TemplateOnlyC: TOC<SignatureA> = <template>hi there</template>;
 
 export const TemplateOnlyD: TOC<{
   Element: HTMLDivElement;
@@ -46,5 +43,5 @@ export const TemplateOnlyD: TOC<{
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-  }
+  };
 }> = <template>hi</template>;

@@ -81,7 +81,6 @@ export const plainHelperC = (
 };
 ```
 
-
 ```hbs live no-shadow preview below
 <HelperSignature
   @module='src/browser/private/samples'
@@ -134,7 +133,7 @@ export class classHelperE extends Helper<ESignature> {
 }
 ```
 
-```hbs live no-shadow 
+```hbs live no-shadow
 <HelperSignature
   @module='src/browser/private/samples'
   @name='classHelperE'

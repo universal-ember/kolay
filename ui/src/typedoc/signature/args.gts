@@ -93,8 +93,8 @@ function flattenArgs(args: any[]): any[] {
 }
 
 /**
-* Returns args for either a function or signature
-*/
+ * Returns args for either a function or signature
+ */
 export function getArgs(info: any) {
   if ('parameters' in info) {
     return info.parameters;
@@ -108,4 +108,3 @@ export function getArgs(info: any) {
     return getArgs(info.children);
   }
 }
-
