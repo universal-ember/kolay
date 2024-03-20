@@ -63,7 +63,7 @@ export class Load extends Component<{
     name: string;
     package: string;
   };
-  Blocks: { default: [DeclarationReflection] };
+  Blocks: { default: [DeclarationReflection, any] };
 }> {
   @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
@@ -101,7 +101,7 @@ export class Load extends Component<{
             @name={{@name}}
             as |type|
           >
-            {{yield type}}
+            {{yield type this.request.value}}
           </Query>
         {{/if}}
       </section>

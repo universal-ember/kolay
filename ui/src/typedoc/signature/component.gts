@@ -6,7 +6,39 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
-function getSignatureType(info: DeclarationReflection) {
+function lookupReference(reference: any, info: any) {
+  let id = reference.target;
+  let lookup = info.symbolIdMap[id];
+
+  let fileName = lookup?.sourceFileName;
+  let name = lookup?.qualifiedName;
+
+  return findReferenceByFilename(name, fileName, info);
+}
+
+function findReferenceByFilename(name: string, fileName: string, info: any): any {
+  if (!info.children) return;
+
+  for (let child of info.children) {
+    if (child.sources[0].fileName === fileName) {
+      return child;
+    }
+
+    if (!child.children) continue;
+
+    let isRelevant = child.children.find(( grandChild: any) => grandChild.sources[0].fileName === fileName);
+
+    if (isRelevant) {
+      return isRelevant;
+    }
+
+    let grand = findReferenceByFilename(name, fileName, child);
+
+    if (grand) return grand;
+  }
+}
+
+function getSignatureType(info: DeclarationReflection, doc: any) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
@@ -32,6 +64,13 @@ function getSignatureType(info: DeclarationReflection) {
       if (typeArg?.type === 'reflection') {
         return typeArg.declaration;
       }
+
+      if (typeArg?.type === 'reference') {
+        if ('symbolIdMap' in doc) {
+          // This is hard, maybe typedoc has a util?
+          return findReferenceByFilename(typeArg.name, ( extendedType as any).target.sourceFileName, doc);
+        }
+      }
     }
   }
 
@@ -41,8 +80,14 @@ function getSignatureType(info: DeclarationReflection) {
   return info;
 }
 
-function getSignature(info: DeclarationReflection) {
-  let type = getSignatureType(info);
+function getSignature(info: DeclarationReflection, doc: any) {
+  let type = getSignatureType(info, doc);
+
+  if (!type) {
+    console.warn('Could not finde signature');
+
+    return;
+  }
 
   return {
     Element: findChildDeclaration(type, 'Element'),
@@ -71,9 +116,9 @@ export const ComponentSignature: TOC<{
     @package={{@package}}
     @module={{@module}}
     @name={{@name}}
-    as |declaration|
+    as |declaration doc|
   >
-    {{#let (getSignature declaration) as |info|}}
+    {{#let (getSignature declaration doc) as |info|}}
       <Element @kind='component' @info={{info.Element}} />
       <Args @kind='component' @info={{info.Args}} />
       <Blocks @info={{info.Blocks}} />
