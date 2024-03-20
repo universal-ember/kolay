@@ -19,7 +19,23 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 <fieldset>
   <summary>Separate Interface</summary>
 
-```hbs live no-shadow
+```gts
+export interface SignatureA {
+  Element: HTMLDivElement;
+  Args: {
+    foo: number;
+    bar: string;
+  };
+  Blocks: {
+    default: [first: number, second: string];
+    namedBlockA: [first: typeof ClassA];
+    namedBlockB: [boolean];
+  }
+}
+```
+
+
+```hbs live no-shadow preview below
 <ComponentSignature
   @module='src/browser/private/samples'
   @name='SignatureA'
@@ -32,10 +48,87 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 <fieldset>
   <summary>Inline</summary>
 
-```hbs live no-shadow
+```gts
+export class ClassA extends Component<{
+  Element: HTMLDivElement;
+  Args: {
+    foo: number;
+    bar: string;
+  };
+  Blocks: {
+    default: [first: number, second: string];
+    namedBlockA: [first: typeof ClassA];
+    namedBlockB: [boolean];
+  }
+}> {}
+```
+
+```hbs live no-shadow preview below
 <ComponentSignature
   @module='src/browser/private/samples'
   @name='ClassA'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>Reference</summary>
+
+```gts
+export class ClassB extends Component<SignatureA> {}
+```
+
+```hbs live no-shadow preview below
+<ComponentSignature
+  @module='src/browser/private/samples'
+  @name='ClassB'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>TemplateOnly w/ Reference</summary>
+
+```gts
+export const TemplateOnlyC: TOC<SignatureA> = <template> ... </template>;
+```
+
+```hbs live no-shadow preview below
+<ComponentSignature
+  @module='src/browser/private/samples'
+  @name='TemplateOnlyC'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>TemplateOnly w/ Inline</summary>
+
+```gts
+export const TemplateOnlyD: TOC<{
+  Element: HTMLDivElement;
+  Args: {
+    foo: number;
+    bar: string;
+  };
+  Blocks: {
+    default: [first: number, second: string];
+    namedBlockA: [first: typeof ClassA];
+    namedBlockB: [boolean];
+  }
+}> = <template>hi</template>;
+```
+
+```hbs live no-shadow preview below
+<ComponentSignature
+  @module='src/browser/private/samples'
+  @name='TemplateOnlyD'
   @package='kolay'
 />
 ```
