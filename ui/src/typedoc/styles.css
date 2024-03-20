@@ -72,7 +72,8 @@ section {
   margin: 0;
 }
 
-.typedoc-declaration-children {
+.typedoc-declaration-children,
+.typedoc-declaration-children li {
   list-style: none;
   padding: 0 0.5rem;
 }

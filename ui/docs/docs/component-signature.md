@@ -74,13 +74,13 @@ export class ClassA extends Component<{
 </fieldset>
 
 <fieldset>
-  <summary>Reference</summary>
+  <summary>Reference (not currently supported)</summary>
 
 ```gts
 export class ClassB extends Component<SignatureA> {}
 ```
 
-```hbs live no-shadow preview below
+```hbs live no-shadow
 <ComponentSignature
   @module='src/browser/private/samples'
   @name='ClassB'
@@ -91,13 +91,13 @@ export class ClassB extends Component<SignatureA> {}
 </fieldset>
 
 <fieldset>
-  <summary>TemplateOnly w/ Reference</summary>
+  <summary>TemplateOnly w/ Reference (not currently supported)</summary>
 
 ```gts
 export const TemplateOnlyC: TOC<SignatureA> = <template> ... </template>;
 ```
 
-```hbs live no-shadow preview below
+```hbs live no-shadow 
 <ComponentSignature
   @module='src/browser/private/samples'
   @name='TemplateOnlyC'

@@ -16,6 +16,9 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 
 ## Supported Signatures
 
+<fieldset>
+  <summary>Plain Function, JSDoc</summary>
+
 ```ts
 /**
  * @param {number} first - the first argument
@@ -35,7 +38,10 @@ export function plainHelperA(first: number, second: number): number {
 />
 ```
 
----
+</fieldset>
+
+<fieldset>
+  <summary>Plain Function, cast as HelperLike</summary>
 
 ```ts
 import type { HelperLike } from '@glint/template';
@@ -59,7 +65,10 @@ export const helperLikeB = ((...args: unknown[]) => {
 />
 ```
 
----
+</fieldset>
+
+<fieldset>
+  <summary>Plain Function, typescript</summary>
 
 ```ts
 export const plainHelperC = (
@@ -72,6 +81,7 @@ export const plainHelperC = (
 };
 ```
 
+
 ```hbs live no-shadow preview below
 <HelperSignature
   @module='src/browser/private/samples'
@@ -80,7 +90,10 @@ export const plainHelperC = (
 />
 ```
 
----
+</fieldset>
+
+<fieldset>
+  <summary>class-based classic Helper, inline Signature</summary>
 
 ```ts
 export class ClassHelperD extends Helper<{
@@ -102,7 +115,10 @@ export class ClassHelperD extends Helper<{
 />
 ```
 
----
+</fieldset>
+
+<fieldset>
+  <summary>class-based classic Helper, referenced Signature (not currently supported)</summary>
 
 ```ts
 interface ESignature {
@@ -118,10 +134,12 @@ export class classHelperE extends Helper<ESignature> {
 }
 ```
 
-```hbs live no-shadow preview below
+```hbs live no-shadow 
 <HelperSignature
   @module='src/browser/private/samples'
   @name='classHelperE'
   @package='kolay'
 />
 ```
+
+</fieldset>

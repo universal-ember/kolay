@@ -22,6 +22,29 @@ function getSignature(info: DeclarationReflection) {
     return info.type.typeArguments[0]?.declaration;
   }
 
+/**
+* export class MyHelper extends ...
+*/
+if (Array.isArray(info.extendedTypes) && info.extendedTypes.length > 0) {
+  let firstExtended = info.extendedTypes[0];
+
+/**
+* import Helper from '@ember/component/helper';
+*
+* export class MyHelper extends Helper<{...}>
+*/
+  if (
+    firstExtended?.type === 'reference' &&
+    firstExtended.package === 'ember-source' &&
+    firstExtended.qualifiedName.includes('/helper') &&
+     Array.isArray(firstExtended.typeArguments) &&
+     firstExtended.typeArguments[0] &&
+    'declaration' in firstExtended.typeArguments[0]
+  ){
+    return firstExtended.typeArguments[0].declaration;
+  }
+}
+
   /**
    * export function(...): return;
    */
