@@ -15,3 +15,29 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 ```
 
 ## Supported Signatures
+
+<fieldset>
+  <summary>Separate Interface</summary>
+
+```hbs live no-shadow
+<ComponentSignature
+  @module='src/browser/private/samples'
+  @name='SignatureA'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>Inline</summary>
+
+```hbs live no-shadow
+<ComponentSignature
+  @module='src/browser/private/samples'
+  @name='ClassA'
+  @package='kolay'
+/>
+```
+
+</fieldset>
