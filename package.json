@@ -1,6 +1,6 @@
 {
   "name": "kolay",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "keywords": [
     "documentation",
@@ -87,21 +87,21 @@
     "test:node": "vitest --run"
   },
   "peerDependencies": {
+    "@ember/test-waiters": ">= 3.1.0",
+    "@glimmer/component": ">= 1.1.2",
+    "@glimmer/tracking": ">= 1.1.2",
+    "@glint/template": ">= 1.3.0",
     "@universal-ember/kolay-ui": "workspace:^",
-    "ember-source": "^5.7.0"
+    "ember-modifier": ">= 4.1.0",
+    "ember-primitives": "^0.11.3",
+    "ember-repl": ">= 4.1.1",
+    "ember-resources": ">= 7.0.0",
+    "ember-source": ">= 5.7.0",
+    "reactiveweb": ">+ 1.2.1",
+    "tracked-built-ins": ">= 3.3.0"
   },
   "dependencies": {
     "@tsconfig/ember": "^3.0.3",
-    "@ember/test-waiters": "^3.1.0",
-    "@glimmer/component": "^1.1.2",
-    "@glimmer/tracking": "^1.1.2",
-    "@glint/template": "^1.3.0",
-    "ember-modifier": "^4.1.0",
-    "ember-primitives": "^0.12.0",
-    "ember-repl": "^4.1.1",
-    "ember-resources": "^7.0.0",
-    "reactiveweb": "^1.2.1",
-    "tracked-built-ins": "^3.3.0",
     "@zamiell/typedoc-plugin-not-exported": "^0.2.0",
     "common-tags": "^1.8.2",
     "globby": "^14.0.0",
@@ -112,8 +112,11 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.0",
-    "@universal-ember/kolay-ui": "workspace:^",
+    "@ember/test-waiters": "^3.1.0",
+    "@glimmer/component": "^1.1.2",
+    "@glimmer/tracking": "^1.1.2",
     "@glint/core": "^1.3.0",
+    "@glint/template": "^1.3.0",
     "@nullvoxpopuli/eslint-configs": "^3.2.2",
     "@tsconfig/node20": "^20.1.2",
     "@tsconfig/strictest": "^2.0.3",
