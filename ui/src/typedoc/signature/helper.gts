@@ -75,7 +75,7 @@ function getReturn(info: any) {
 const Return: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
     <div class='typedoc__helper__return'>
-      <h3 class='typedoc-heading'>Return</h3>
+      <h3 class='typedoc__heading'>Return</h3>
 
       <Type @info={{@info}} />
     </div>

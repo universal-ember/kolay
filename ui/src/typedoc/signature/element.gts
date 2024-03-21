@@ -17,7 +17,7 @@ export const Element: TOC<{
   Args: { kind: 'component' | 'modifier'; info: any };
 }> = <template>
   {{#if @info}}
-    <h3 class='typedoc-heading typedoc__{{@kind}}-signature__element-header'>
+    <h3 class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
       <span class='typedoc__name'>{{@info.name}}</span>
       <span class='typedoc__{{@kind}}-signature__element-type'>
         <ExternalLink

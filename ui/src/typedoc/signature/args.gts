@@ -16,11 +16,11 @@ export const Args: TOC<{
   Args: { kind: 'component' | 'modifier' | 'helper'; info: any };
 }> = <template>
   {{#if @info}}
-    <h3 class='typedoc-heading'>Arguments</h3>
+    <h3 class='typedoc__heading'>Arguments</h3>
     {{#each (listifyArgs @info) as |child|}}
-      <span class='typedoc-{{@kind}}-arg'>
-        <span class='typedoc-{{@kind}}-arg-info'>
-          <pre class='typedoc-name'>{{if
+      <span class='typedoc__{{@kind}}-signature__arg'>
+        <span class='typedoc__{{@kind}}-signature__arg-info'>
+          <pre class='typedoc__name'>{{if
               (isComponent @kind)
               '@'
             }}{{child.name}}</pre>

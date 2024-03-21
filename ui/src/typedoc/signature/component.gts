@@ -138,12 +138,12 @@ export const ComponentSignature: TOC<{
 
 const Blocks: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <h3 class='typedoc-heading'>Blocks</h3>
+    <h3 class='typedoc__heading'>Blocks</h3>
     {{#each @info.type.declaration.children as |child|}}
       <span class='typedoc__component-signature__block'>
         <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
         {{! <span class='typedoc-category'>Properties </span> }}
-        <div class='typedoc-property'>
+        <div class='typedoc__property'>
           <Type @info={{child.type}} />
           <Comment @info={{child}} />
         </div>

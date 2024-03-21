@@ -92,7 +92,7 @@ export const plainHelperC = (
 </fieldset>
 
 <fieldset>
-  <summary>class-based classic Helper, inline Signature</summary>
+  <summary>class-based classic Helper, inline Signature (not currently supported)</summary>
 
 ```ts
 export class ClassHelperD extends Helper<{
@@ -106,7 +106,7 @@ export class ClassHelperD extends Helper<{
 }
 ```
 
-```hbs live no-shadow preview below
+```hbs live no-shadow
 <HelperSignature
   @module='src/browser/private/samples'
   @name='classHelperD'

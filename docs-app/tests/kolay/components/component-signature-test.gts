@@ -1,5 +1,5 @@
 import { render } from '@ember/test-helpers';
-import { module, test } from 'qunit';
+import { module, skip, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
 import { ComponentSignature } from 'kolay';
@@ -13,7 +13,7 @@ module('<ComponentSignature>', function (hooks) {
     manifest: await import('kolay/manifest:virtual'),
   }));
 
-  test('it works', async function (assert) {
+  test('self', async function (assert) {
     await render(
       <template>
         <ComponentSignature
@@ -24,7 +24,110 @@ module('<ComponentSignature>', function (hooks) {
       </template>
     );
 
+    assert.dom().doesNotContainText('Element');
     assert.dom().containsText('Arguments');
     assert.dom().containsText('@package');
+    assert.dom().containsText('@module');
+    assert.dom().containsText('@name');
+    assert.dom().doesNotContainText('Blocks');
+  });
+
+  test('interface', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="src/browser/private/samples"
+          @name="SignatureA"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('HTMLDivElement');
+    assert.dom().containsText('Arguments');
+    assert.dom().containsText('@foo');
+    assert.dom().containsText('@bar');
+    assert.dom().containsText('Blocks');
+    assert.dom().containsText(':namedBlockA');
+    assert.dom().containsText(':namedBlockB');
+  });
+
+  test('class:inline', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature @module="src/browser/private/samples" @name="ClassA" @package="kolay" />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('HTMLDivElement');
+    assert.dom().containsText('Arguments');
+    assert.dom().containsText('@foo');
+    assert.dom().containsText('@bar');
+    assert.dom().containsText('Blocks');
+    assert.dom().containsText(':default');
+    assert.dom().containsText(':namedBlockA');
+    assert.dom().containsText(':namedBlockB');
+  });
+
+  skip('class:reference', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature @module="src/browser/private/samples" @name="ClassB" @package="kolay" />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('HTMLDivElement');
+    assert.dom().containsText('Arguments');
+    assert.dom().containsText('@foo');
+    assert.dom().containsText('@bar');
+    assert.dom().containsText('Blocks');
+    assert.dom().containsText(':namedBlockA');
+    assert.dom().containsText(':namedBlockB');
+  });
+
+  skip('template-only:reference', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="src/browser/private/samples"
+          @name="TemplateOnlyC"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('HTMLDivElement');
+    assert.dom().containsText('Arguments');
+    assert.dom().containsText('@foo');
+    assert.dom().containsText('@bar');
+    assert.dom().containsText('Blocks');
+    assert.dom().containsText(':namedBlockA');
+    assert.dom().containsText(':namedBlockB');
+  });
+
+  test('template-only:inline', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="src/browser/private/samples"
+          @name="TemplateOnlyD"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('HTMLDivElement');
+    assert.dom().containsText('Arguments');
+    assert.dom().containsText('@foo');
+    assert.dom().containsText('@bar');
+    assert.dom().containsText('Blocks');
+    assert.dom().containsText(':default');
+    assert.dom().containsText(':namedBlockA');
+    assert.dom().containsText(':namedBlockB');
   });
 });

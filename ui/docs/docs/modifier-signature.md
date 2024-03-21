@@ -40,64 +40,6 @@ export interface ModifierSignatureA {
 </fieldset>
 
 <fieldset>
-  <summary>function modifier, inline signature</summary>
-
-```ts
-export const functionModifierA = modifier<{
-  Element: HTMLDivElement;
-  Args: {
-    Positional: [x: number, y: number];
-    Named: { invert?: boolean };
-  };
-}>(
-  (
-    element: HTMLDivElement,
-    positional: [x: number, y: number],
-    named: { invert?: boolean },
-  ) => {
-    // eslint-disable-next-line no-console
-    console.log(element, positional, named);
-  },
-);
-```
-
-```hbs live no-shadow preview below
-<ModifierSignature
-  @module='src/browser/private/samples'
-  @name='functionModifierA'
-  @package='kolay'
-/>
-```
-
-</fieldset>
-
-<fieldset>
-  <summary>function modifier, implicit signature</summary>
-
-```ts
-export const functionModifierB = modifier(
-  (
-    element: HTMLDivElement,
-    positional: [x: number, y: number],
-    named: { invert?: boolean },
-  ) => {
-    // eslint-disable-next-line no-console
-    console.log(element, positional, named);
-  },
-);
-```
-
-```hbs live no-shadow preview below
-<ModifierSignature
-  @module='src/browser/private/samples'
-  @name='functionModifierB'
-  @package='kolay'
-/>
-```
-
-</fieldset>
-
-<fieldset>
   <summary>function modifier, ModifierLike</summary>
 
 ```ts
@@ -115,8 +57,7 @@ export const functionModifierC: ModifierLike<{
     positional: [x: number, y: number],
     named: { invert?: boolean },
   ) => {
-    // eslint-disable-next-line no-console
-    console.log(element, positional, named);
+    /* ... */
   },
 );
 ```
@@ -125,6 +66,62 @@ export const functionModifierC: ModifierLike<{
 <ModifierSignature
   @module='src/browser/private/samples'
   @name='functionModifierC'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>function modifier, inline signature (not currently supported)</summary>
+
+```ts
+export const functionModifierA = modifier<{
+  Element: HTMLDivElement;
+  Args: {
+    Positional: [x: number, y: number];
+    Named: { invert?: boolean };
+  };
+}>(
+  (
+    element: HTMLDivElement,
+    positional: [x: number, y: number],
+    named: { invert?: boolean },
+  ) => {
+    /* ... */
+  },
+);
+```
+
+```hbs live no-shadow preview below
+<ModifierSignature
+  @module='src/browser/private/samples'
+  @name='functionModifierA'
+  @package='kolay'
+/>
+```
+
+</fieldset>
+
+<fieldset>
+  <summary>function modifier, implicit signature (not currentnly supported)</summary>
+
+```ts
+export const functionModifierB = modifier(
+  (
+    element: HTMLDivElement,
+    positional: [x: number, y: number],
+    named: { invert?: boolean },
+  ) => {
+    /* ... */
+  },
+);
+```
+
+```hbs live no-shadow preview below
+<ModifierSignature
+  @module='src/browser/private/samples'
+  @name='functionModifierB'
   @package='kolay'
 />
 ```
