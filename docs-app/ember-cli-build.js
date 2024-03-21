@@ -41,7 +41,7 @@ module.exports = async function (defaults) {
                 src: '../ui/docs',
               },
             ],
-            packages: ['kolay', 'ember-primitives', 'ember-resources'],
+            packages: ['kolay'],
           }),
         ],
       },
