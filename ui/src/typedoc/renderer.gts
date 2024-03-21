@@ -127,9 +127,9 @@ const Declaration: TOC<{
   };
 }> = <template>
   {{#if @info}}
-    <div class='typedoc-declaration'>
+    <div class='typedoc__declaration'>
       {{#if (not (isIgnored @info.name))}}
-        <span class='typedoc-declaration-name'>{{@info.name}}</span>
+        <span class='typedoc__declaration-name'>{{@info.name}}</span>
       {{/if}}
 
       {{#if (isConst @info)}}
@@ -141,7 +141,7 @@ const Declaration: TOC<{
       {{/if}}
 
       {{#if @info.children}}
-        <ul class='typedoc-declaration-children'>
+        <ul class='typedoc__declaration-children'>
           {{#each @info.children as |child|}}
             <li><Declaration @info={{child}} /></li>
           {{/each}}
@@ -149,7 +149,7 @@ const Declaration: TOC<{
       {{/if}}
 
       {{#if @info.signatures}}
-        <ul class='typedoc-declaration-signatures'>
+        <ul class='typedoc__declaration-signatures'>
           {{#each @info.signatures as |child|}}
             {{! @glint-expect-error }}
             <li><Type @info={{child}} /></li>
@@ -169,14 +169,16 @@ const Declaration: TOC<{
 const Reflection: TOC<{ info: { declaration: DeclarationReflection } }> =
   <template><Declaration @info={{@info.declaration}} /></template>;
 
-const isReference = (x: { type: string }) => x.type === 'reference';
-const isReflection = (x: { type: string }) => x.type === 'reflection';
+const isReference = (x: { type: string }) => x?.type === 'reference';
+const isReflection = (x: { type: string }) => x?.type === 'reflection';
 
-export const isIntrinsic = (x: { type: string }) => x.type === 'intrinsic';
+export const isIntrinsic = (x: { type: string }) => x?.type === 'intrinsic';
 
-const isTuple = (x: { type: string }) => x.type === 'tuple';
-const isNamedTuple = (x: SomeType | undefined): x is NamedTupleMember =>
+const isTuple = (x: { type: string }) => x?.type === 'tuple';
+
+export const isNamedTuple = (x: SomeType | undefined): x is NamedTupleMember =>
   x?.type === 'namedTupleMember';
+
 const isVoidIntrinsic = (x: unknown | undefined) => {
   if (!x) return false;
   if (typeof x !== 'object') return false;
@@ -273,7 +275,7 @@ const Reference: TOC<{ info: ReferenceType }> = <template>
 </template>;
 
 const Intrinsic: TOC<{ info: { name: string } }> = <template>
-  <span class='typedoc-intrinsic'>{{@info.name}}</span>
+  <span class='typedoc__intrinsic'>{{@info.name}}</span>
 </template>;
 
 const VoidIntrinsic: TOC<{ info: { name: string } }> = <template>
@@ -289,9 +291,9 @@ const Tuple: TOC<{ Args: { info: TupleType } }> = <template>
   {{/each}}
 </template>;
 
-const NamedTuple: TOC<{ Args: { info: NamedTupleMember } }> = <template>
-  <div class='typedoc-named-tuple'>
-    <div class='typedoc-name'>{{@info.name}}</div>
+export const NamedTuple: TOC<{ Args: { info: NamedTupleMember } }> = <template>
+  <div class='typedoc__named-tuple'>
+    <div class='typedoc__name'>{{@info.name}}</div>
     <Type @info={{@info.element}} />
   </div>
 </template>;

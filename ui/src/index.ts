@@ -1,5 +1,11 @@
 // Required to *sanely* use typedoc data
-export { APIDocs, CommentQuery, ComponentSignature } from './typedoc/index.ts';
+export {
+  APIDocs,
+  CommentQuery,
+  ComponentSignature,
+  HelperSignature,
+  ModifierSignature,
+} from './typedoc/index.ts';
 
 // Required to use Kolay
 export { addRoutes } from './router.ts';

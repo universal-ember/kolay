@@ -1,5 +1,7 @@
 node_modules/
 declarations/
+dist/
+dist-typedoc/
 *.yaml
 *.md
 docs-app/

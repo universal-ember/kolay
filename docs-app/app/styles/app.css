@@ -3,3 +3,22 @@
 a.active {
   font-weight: bold;
 }
+
+pre.shiki {
+  white-space: pre-wrap;
+  /* overflow: hidden; */
+}
+pre.shiki > code {
+  /* padding-right: 1rem; */
+  /* overflow: auto; */
+}
+
+fieldset {
+  padding: 1rem;
+}
+fieldset summary {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #888;
+}

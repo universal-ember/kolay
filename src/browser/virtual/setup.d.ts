@@ -1,3 +1,5 @@
+import type { Manifest } from '@universal-ember/kolay-ui';
+
 export function setupKolay(
   context: object,
   options: {

@@ -1,12 +1,50 @@
-import { ExternalLink } from 'ember-primitives/components/external-link';
-
-import { Comment, isIntrinsic, Type } from '../renderer.gts';
+import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
+import { Args } from './args.gts';
+import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
-function getSignature(info: DeclarationReflection) {
+// function lookupReference(reference: any, info: any) {
+//   let id = reference.target;
+//   let lookup = info.symbolIdMap[id];
+
+//   let fileName = lookup?.sourceFileName;
+//   let name = lookup?.qualifiedName;
+
+//   return findReferenceByFilename(name, fileName, info);
+// }
+
+function findReferenceByFilename(
+  name: string,
+  fileName: string,
+  info: any,
+): any {
+  if (!info.children) return;
+
+  for (let child of info.children) {
+    if (child.sources[0].fileName === fileName) {
+      return child;
+    }
+
+    if (!child.children) continue;
+
+    let isRelevant = child.children.find(
+      (grandChild: any) => grandChild.sources[0].fileName === fileName,
+    );
+
+    if (isRelevant) {
+      return isRelevant;
+    }
+
+    let grand = findReferenceByFilename(name, fileName, child);
+
+    if (grand) return grand;
+  }
+}
+
+function getSignatureType(info: DeclarationReflection, doc: any) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
@@ -32,6 +70,17 @@ function getSignature(info: DeclarationReflection) {
       if (typeArg?.type === 'reflection') {
         return typeArg.declaration;
       }
+
+      if (typeArg?.type === 'reference') {
+        if ('symbolIdMap' in doc) {
+          // This is hard, maybe typedoc has a util?
+          return findReferenceByFilename(
+            typeArg.name,
+            (extendedType as any).target.sourceFileName,
+            doc,
+          );
+        }
+      }
     }
   }
 
@@ -41,7 +90,21 @@ function getSignature(info: DeclarationReflection) {
   return info;
 }
 
-const not = (x: unknown) => !x;
+function getSignature(info: DeclarationReflection, doc: any) {
+  let type = getSignatureType(info, doc);
+
+  if (!type) {
+    console.warn('Could not finde signature');
+
+    return;
+  }
+
+  return {
+    Element: findChildDeclaration(type, 'Element'),
+    Args: findChildDeclaration(type, 'Args'),
+    Blocks: findChildDeclaration(type, 'Blocks'),
+  };
+}
 
 export const ComponentSignature: TOC<{
   Args: {
@@ -63,73 +126,24 @@ export const ComponentSignature: TOC<{
     @package={{@package}}
     @module={{@module}}
     @name={{@name}}
-    as |declaration|
+    as |declaration doc|
   >
-    {{#let (getSignature declaration) as |info|}}
-      <Element @info={{findChildDeclaration info 'Element'}} />
-      <Args @info={{findChildDeclaration info 'Args'}} />
-      <Blocks @info={{findChildDeclaration info 'Blocks'}} />
+    {{#let (getSignature declaration doc) as |info|}}
+      <Element @kind='component' @info={{info.Element}} />
+      <Args @kind='component' @info={{info.Args}} />
+      <Blocks @info={{info.Blocks}} />
     {{/let}}
   </Load>
 </template>;
 
-const Args: TOC<{ Args: { info: any } }> = <template>
-  {{#if @info}}
-    <h3 class='typedoc-heading'>Arguments</h3>
-    {{#each @info.type.declaration.children as |child|}}
-      <span class='typedoc-component-arg'>
-        <span class='typedoc-component-arg-info'>
-          <pre class='typedoc-name'>@{{child.name}}</pre>
-          {{#if (isIntrinsic child.type)}}
-            <Type @info={{child.type}} />
-          {{/if}}
-        </span>
-        {{#if (not (isIntrinsic child.type))}}
-          <Type @info={{child.type}} />
-        {{else}}
-          <Comment @info={{child}} />
-        {{/if}}
-      </span>
-    {{/each}}
-  {{/if}}
-</template>;
-
-const mdnElement = (typeName: string) => {
-  let element = typeName
-    .replace('HTML', '')
-    .replace('Element', '')
-    .toLowerCase();
-
-  return `https://developer.mozilla.org/en-US/docs/Web/HTML/Element/${element}`;
-};
-
-const Element: TOC<{ Args: { info: any } }> = <template>
-  {{#if @info}}
-    <h3 class='typedoc-heading typedoc__component-signature__element-header'>
-      <span class='typedoc__name'>{{@info.name}}</span>
-      <span class='typedoc__component-signature__element-type'>
-        <ExternalLink
-          href={{mdnElement @info.type.name}}
-          class='typedoc__type-link'
-        >
-          {{@info.type.name}}
-          ➚
-        </ExternalLink>
-      </span>
-    </h3>
-    <span class='typedoc__component-signature__element'>
-      <Comment @info={{@info}} />
-    </span>
-  {{/if}}
-</template>;
 const Blocks: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <h3 class='typedoc-heading'>Blocks</h3>
+    <h3 class='typedoc__heading'>Blocks</h3>
     {{#each @info.type.declaration.children as |child|}}
       <span class='typedoc__component-signature__block'>
         <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
         {{! <span class='typedoc-category'>Properties </span> }}
-        <div class='typedoc-property'>
+        <div class='typedoc__property'>
           <Type @info={{child.type}} />
           <Comment @info={{child}} />
         </div>
