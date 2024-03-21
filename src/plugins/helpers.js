@@ -22,6 +22,8 @@ const require = createRequire(import.meta.url);
 export const INTERNAL_PREFIX = `\0`;
 
 /**
+ * Gather the `types` entries from `package.json#exports`
+ *
  * @param {string} packageName
  */
 export async function packageTypes(packageName) {
@@ -72,6 +74,8 @@ function extractExports(exports, kind) {
 }
 
 /**
+ * Create a virtual file in a rollup-based API by only specifying the desired import path and the content of the virtual file.
+ *
  * @typedef {object} VirtualFileOptions
  * @property {string} importPath
  * @property {string} content
