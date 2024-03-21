@@ -27,10 +27,6 @@ export default class ApplicationRoute extends Route {
         import('shiki/langs/handlebars.mjs'),
         import('shiki/langs/jsonc.mjs'),
       ],
-      langAlias: {
-        gjs: 'glimmer-js',
-        gts: 'glimmer-ts',
-      },
       loadWasm: getWasm,
     });
 

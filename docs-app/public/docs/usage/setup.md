@@ -102,3 +102,74 @@ Router.map(function () {
 ```
 
 In the spirit of dynamically compiled and discovered docs, this adds a `*wildcard` route that matches all paths and then tries to derive which file to load from there.
+
+### Runtime: Rendering and Highlighting
+
+Here is what this site does
+
+- setup shiki for highlighting
+  - installed as a rehype plugin
+  - custom set of initially loaded syntaxes, for best experience
+- mandatory setup (`apiDocs` and `manifest`)
+- additional `resolve` entries for code blocks to pull from
+
+```ts
+// app/routes/application.ts
+import Route from "@ember/routing/route";
+import { service } from "@ember/service";
+
+import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
+import { colorScheme, sync } from "ember-primitives/color-scheme";
+import { getHighlighterCore } from "shiki/core";
+import getWasm from "shiki/wasm";
+
+sync();
+
+import type { DocsService, Manifest } from "kolay";
+
+export default class ApplicationRoute extends Route {
+  @service("kolay/docs") declare docs: DocsService;
+
+  async model(): Promise<{ manifest: Manifest }> {
+    const highlighter = await getHighlighterCore({
+      themes: [import("shiki/themes/github-dark.mjs"), import("shiki/themes/github-light.mjs")],
+      langs: [
+        import("shiki/langs/javascript.mjs"),
+        import("shiki/langs/typescript.mjs"),
+        import("shiki/langs/bash.mjs"),
+        import("shiki/langs/css.mjs"),
+        import("shiki/langs/html.mjs"),
+        import("shiki/langs/glimmer-js.mjs"),
+        import("shiki/langs/glimmer-ts.mjs"),
+        import("shiki/langs/handlebars.mjs"),
+        import("shiki/langs/jsonc.mjs"),
+      ],
+      loadWasm: getWasm,
+    });
+
+    await this.docs.setup({
+      apiDocs: import("kolay/api-docs:virtual"),
+      manifest: import("kolay/manifest:virtual"),
+      resolve: {
+        "ember-primitives": import("ember-primitives"),
+        kolay: import("kolay"),
+      },
+      rehypePlugins: [
+        [
+          rehypeShikiFromHighlighter,
+          highlighter,
+          {
+            defaultColor: colorScheme.current === "dark" ? "dark" : "light",
+            themes: {
+              light: "github-light",
+              dark: "github-dark",
+            },
+          },
+        ],
+      ],
+    });
+
+    return { manifest: this.docs.manifest };
+  }
+}
+```
