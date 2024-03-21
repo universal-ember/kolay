@@ -30,9 +30,6 @@ importers:
       '@tsconfig/ember':
         specifier: ^3.0.3
         version: 3.0.6
-      '@universal-ember/kolay-ui':
-        specifier: workspace:^
-        version: link:ui
       '@zamiell/typedoc-plugin-not-exported':
         specifier: ^0.2.0
         version: 0.2.0(typedoc@0.25.13)
@@ -103,6 +100,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.7.1
         version: 7.7.1(eslint@8.57.0)(typescript@5.4.5)
+      '@universal-ember/kolay-ui':
+        specifier: workspace:^
+        version: link:ui
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
