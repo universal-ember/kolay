@@ -1,6 +1,6 @@
 {
   "name": "kolay",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "keywords": [
     "documentation",
@@ -32,11 +32,11 @@
     },
     "./build": {
       "types": "./declarations/plugins/index.d.ts",
-      "import": "./src/browser/virtual/empty.js"
+      "import": "./src/plugins/index.js"
     },
     "./build/types": {
       "types": "./declarations/plugins/types.d.ts",
-      "import": "./src/plugins/index.js"
+      "import": "./src/plugins/types.js"
     },
     "./private/samples": {
       "types": "./src/browser/private/samples.d.ts",
@@ -97,7 +97,7 @@
     "ember-repl": ">= 4.1.1",
     "ember-resources": ">= 7.0.0",
     "ember-source": ">= 5.7.0",
-    "reactiveweb": ">+ 1.2.1",
+    "reactiveweb": ">= 1.2.1",
     "tracked-built-ins": ">= 3.3.0"
   },
   "dependencies": {
