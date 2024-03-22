@@ -27,8 +27,51 @@ export const INTERNAL_PREFIX = `\0`;
  * @param {string} packageName
  */
 export async function packageTypes(packageName) {
+  let cwd = process.cwd();
+  let hostManifestPath = await packageUp({ cwd });
+
+  /*
+   * Support packageName being _yourself_
+   */
+  if (hostManifestPath && dirname(hostManifestPath) === cwd) {
+    let manifest = require(hostManifestPath);
+
+    if (manifest.name === packageName) {
+      return ownPackageTypes(hostManifestPath);
+    }
+  }
+
+  return dependencyTypes({ cwd, packageName });
+}
+
+/**
+ * @param {string} manifestPath
+ */
+async function ownPackageTypes(manifestPath) {
+  let manifest = require(manifestPath);
+  let dir = dirname(manifestPath);
+
+  assert(`Manifest at ${manifestPath} does not have exports`, manifest.exports);
+
+  let types = extractExports(manifest.exports, 'types');
+
+  return {
+    manifest,
+    dir,
+    types,
+  };
+}
+
+/**
+ * @typedef {object} DependencyTypesOptions
+ * @property {string} cwd
+ * @property {string} packageName
+ *
+ * @param {DependencyTypesOptions} options
+ */
+async function dependencyTypes({ cwd, packageName }) {
   let entryPath = require.resolve(packageName, {
-    paths: [process.cwd()],
+    paths: [cwd],
   });
 
   let manifestPath = await packageUp({ cwd: entryPath });
@@ -40,6 +83,8 @@ export async function packageTypes(packageName) {
 
   let manifest = require(manifestPath);
   let dir = dirname(manifestPath);
+
+  assert(`Manifest at ${manifestPath} does not have exports`, manifest.exports);
 
   let types = extractExports(manifest.exports, 'types');
 
