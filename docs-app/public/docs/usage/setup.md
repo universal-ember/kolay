@@ -87,7 +87,7 @@ If using `@ember/routing/router` or `@embroider/router`
 You'll want to also install `ember-primitives`, so that you can use the [`@properLinks`] decorator on the router, giveng you the ability to _just use anchor tags (`<a>`)_ (a requirement for in-browser linking in markdown).
 
 ```js
-import { kolayRoutes } from "kolay";
+import { addRoutes } from "kolay";
 import { properLinks } from "ember-primitives/proper-links";
 
 @properLinks
@@ -97,7 +97,7 @@ export default class Router extends EmberRouter {
 }
 
 Router.map(function () {
-  kolayRoutes(this);
+  addRoutes(this);
 });
 ```
 
