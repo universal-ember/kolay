@@ -183,7 +183,22 @@
     "overrides": {
       "@ember/test-waiters": "^3.1.0",
       "webpack": "^5.90.3",
-      "ember-repl": "^4.1.1"
+      "ember-repl": "^4.1.1",
+      "@embroider/addon-dev": "4.2.2-unstable.bdb7f3d",
+      "@embroider/addon-shim": "1.8.8-unstable.bdb7f3d",
+      "@embroider/babel-loader-9": "3.1.2-unstable.bdb7f3d",
+      "@embroider/broccoli-side-watch": "0.0.2-unstable.bdb7f3d",
+      "@embroider/core": "3.4.6-unstable.bdb7f3d",
+      "@embroider/compat": "3.4.6-unstable.bdb7f3d",
+      "@embroider/macros": "1.14.1-unstable.bdb7f3d",
+      "@embroider/hbs-loader": "3.0.4-unstable.bdb7f3d",
+      "@embroider/reverse-exports": "0.1.1-unstable.bdb7f3d",
+      "@embroider/router": "2.1.7-unstable.bdb7f3d",
+      "@embroider/shared-internals": "2.5.3-unstable.bdb7f3d",
+      "@embroider/test-setup": "3.0.4-unstable.bdb7f3d",
+      "@embroider/util": "1.12.2-unstable.bdb7f3d",
+      "@embroider/vite": "0.2.1-unstable.bdb7f3d",
+      "@embroider/webpack": "3.2.3-unstable.bdb7f3d"
     }
   },
   "volta": {
