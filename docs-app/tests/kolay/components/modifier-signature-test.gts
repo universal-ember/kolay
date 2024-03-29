@@ -8,10 +8,7 @@ import { setupKolay } from 'kolay/test-support';
 
 module('<ModifierSignature>', function (hooks) {
   setupRenderingTest(hooks);
-  setupKolay(hooks, async () => ({
-    apiDocs: await import('kolay/api-docs:virtual'),
-    manifest: await import('kolay/manifest:virtual'),
-  }));
+  setupKolay(hooks);
 
   test('self', async function (assert) {
     // This is not supported

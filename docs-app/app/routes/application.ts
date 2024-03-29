@@ -31,8 +31,6 @@ export default class ApplicationRoute extends Route {
     });
 
     await this.docs.setup({
-      apiDocs: import('kolay/api-docs:virtual'),
-      manifest: import('kolay/manifest:virtual'),
       resolve: {
         'ember-primitives': import('ember-primitives'),
         kolay: import('kolay'),

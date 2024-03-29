@@ -5,10 +5,7 @@ import { setupKolay } from 'kolay/test-support';
 
 module('@service(Docs)', function (hooks) {
   setupTest(hooks);
-  setupKolay(hooks, async () => ({
-    apiDocs: await import('kolay/api-docs:virtual'),
-    manifest: await import('kolay/manifest:virtual'),
-  }));
+  setupKolay(hooks);
 
   test('No duplicates in available Groups', async function (assert) {
     let docs = this.owner.lookup('service:kolay/docs');
