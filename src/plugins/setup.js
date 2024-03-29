@@ -44,14 +44,14 @@ export const setup = () => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is 
             //             .... much less useful than originally planned
-            // let [apiDocs, manifest] = await Promise.all([
-            //   import('kolay/api-docs:virtual'),
-            //   import('kolay/manifest:virtual'),
-            // ]);
+            let [apiDocs, manifest] = await Promise.all([
+              import('kolay/api-docs:virtual'),
+              import('kolay/manifest:virtual'),
+            ]);
 
             await docs.setup({
-              // apiDocs,
-              // manifest, 
+              apiDocs,
+              manifest, 
               ...options,
             });
 
@@ -66,20 +66,20 @@ export const setup = () => {
       //       .... much less useful than originally planned
       //
       //
-      // {
-      //   importPath: 'kolay/test-support',
-      //   content: stripIndent`
-      //     import { setupKolay as setup } from 'kolay/setup';
+      {
+        importPath: 'kolay/test-support',
+        content: stripIndent`
+          import { setupKolay as setup } from 'kolay/setup';
 
-      //     export function setupKolay(hooks, config) {
-      //       hooks.beforeEach(async function () {
-      //         let docs = this.owner.lookup('service:kolay/docs');
+          export function setupKolay(hooks, config) {
+            hooks.beforeEach(async function () {
+              let docs = this.owner.lookup('service:kolay/docs');
 
-      //         await setup(this, config);
-      //       });
-      //     }
-      //   `,
-      // },
+              await setup(this, config);
+            });
+          }
+        `,
+      },
     ]),
   };
 };

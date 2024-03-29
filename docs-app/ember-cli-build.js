@@ -1,6 +1,7 @@
 'use strict';
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const { prebuild } = require('@embroider/compat');
 
 module.exports = async function (defaults) {
   const app = new EmberApp(defaults, {
@@ -12,6 +13,10 @@ module.exports = async function (defaults) {
       watchedDependencies: ['kolay', '@universal-ember/kolay-ui'],
     },
   });
+
+  if (!process.env.WEBPACK) {
+    return prebuild(app);
+  }
 
   const { Webpack } = require('@embroider/webpack');
 
