@@ -105,7 +105,7 @@ export const HelperSignature: TOC<{
     as |declaration|
   >
     {{#let (getSignature declaration) as |info|}}
-      {{#if (Array.isArray info)}}
+      {{#if (globalThis.Array.isArray info)}}
         {{#each info as |signature|}}
           <Args @kind='helper' @info={{getArgs signature}} />
           <Return @info={{getReturn signature}} />
