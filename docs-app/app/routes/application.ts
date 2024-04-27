@@ -3,6 +3,7 @@ import { service } from '@ember/service';
 
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 import { colorScheme, sync } from 'ember-primitives/color-scheme';
+import { setupKolay } from 'kolay/setup';
 import { getHighlighterCore } from 'shiki/core';
 import getWasm from 'shiki/wasm';
 
@@ -14,6 +15,8 @@ export default class ApplicationRoute extends Route {
   @service('kolay/docs') declare docs: DocsService;
 
   async model(): Promise<{ manifest: Manifest }> {
+    await setupKolay(this);
+
     const highlighter = await getHighlighterCore({
       themes: [import('shiki/themes/github-dark.mjs'), import('shiki/themes/github-light.mjs')],
       langs: [
