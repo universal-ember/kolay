@@ -18,5 +18,11 @@ module.exports = {
       plugins: ['ember'],
       parser: 'ember-eslint-parser',
     },
+    {
+      files: ['**/*.{cjs,js}'],
+      rules: {
+        'n/no-unsupported-features': 'off',
+      },
+    },
   ],
 };
