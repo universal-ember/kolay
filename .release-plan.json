@@ -1,13 +1,21 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "0.0.2",
-      "newVersion": "0.0.3",
+      "impact": "major",
+      "oldVersion": "0.0.8",
+      "newVersion": "1.0.0",
       "constraints": [
         {
+          "impact": "major",
+          "reason": "Appears in changelog section :boom: Breaking Change"
+        },
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
           "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
+          "reason": "Appears in changelog section :memo: Documentation"
         },
         {
           "impact": "patch",
@@ -15,7 +23,10 @@
         }
       ],
       "pkgJSONPath": "./package.json"
+    },
+    "@universal-ember/kolay-ui": {
+      "oldVersion": "0.0.3"
     }
   },
-  "description": "## Release (2023-12-26)\n\nkolay 0.0.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#6](https://github.com/universal-ember/kolay/pull/6) Need to support directory-only manifests for convention based docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `kolay`\n  * [#7](https://github.com/universal-ember/kolay/pull/7) Prepare Release ([@github-actions[bot]](https://github.com/apps/github-actions))\n  * [#8](https://github.com/universal-ember/kolay/pull/8) Pin tool versions ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#5](https://github.com/universal-ember/kolay/pull/5) Add docs-app for this repo to use itself for its own docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#4](https://github.com/universal-ember/kolay/pull/4) Setup release plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n- [@github-actions[bot]](https://github.com/apps/github-actions)\n"
+  "description": "## Release (2024-04-27)\n\nkolay 1.0.0 (major)\n\n#### :boom: Breaking Change\n* `kolay`\n  * [#23](https://github.com/universal-ember/kolay/pull/23) Add markdown/glimdown rendering, TypeDoc, etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#12](https://github.com/universal-ember/kolay/pull/12) Use recursive structure in the manifest to allow more flexible and deep navigation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#60](https://github.com/universal-ember/kolay/pull/60) Simplify ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#48](https://github.com/universal-ember/kolay/pull/48) Simplify package.jsons or prove things work in a real project ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#59](https://github.com/universal-ember/kolay/pull/59) Update peer ranges ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#58](https://github.com/universal-ember/kolay/pull/58) Upgrade dependencies ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#43](https://github.com/universal-ember/kolay/pull/43) More signature rendering ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#42](https://github.com/universal-ember/kolay/pull/42) Add <PageNav> ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#41](https://github.com/universal-ember/kolay/pull/41) Extract more utilities ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#39](https://github.com/universal-ember/kolay/pull/39) More Docs, Polish, etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#37](https://github.com/universal-ember/kolay/pull/37) More docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#35](https://github.com/universal-ember/kolay/pull/35) Nested plugins ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#28](https://github.com/universal-ember/kolay/pull/28) Add option to include markdown from anywhere ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#27](https://github.com/universal-ember/kolay/pull/27) Use virtual module to abstract away the generated URLs for the api-docs (typedoc JSON) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#25](https://github.com/universal-ember/kolay/pull/25) Refactor so that the typedoc plugin can be used outside of unplugin ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#24](https://github.com/universal-ember/kolay/pull/24) All manual specifying of sort order of folders and pages (in both JSON and JSONC) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#19](https://github.com/universal-ember/kolay/pull/19) Add UI, turbo, real test setup, ci, linting, etc etc etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#12](https://github.com/universal-ember/kolay/pull/12) Use recursive structure in the manifest to allow more flexible and deep navigation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* `kolay`\n  * [#46](https://github.com/universal-ember/kolay/pull/46) More docs, testing, complete setup, etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#39](https://github.com/universal-ember/kolay/pull/39) More Docs, Polish, etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#37](https://github.com/universal-ember/kolay/pull/37) More docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#23](https://github.com/universal-ember/kolay/pull/23) Add markdown/glimdown rendering, TypeDoc, etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `kolay`\n  * [#48](https://github.com/universal-ember/kolay/pull/48) Simplify package.jsons or prove things work in a real project ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#50](https://github.com/universal-ember/kolay/pull/50) Update Node.js to v20.12.2 ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#54](https://github.com/universal-ember/kolay/pull/54) Lock file maintenance ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#34](https://github.com/universal-ember/kolay/pull/34) Use @universal-ember/test-support ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#32](https://github.com/universal-ember/kolay/pull/32) More Tests (and their fixes) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#15](https://github.com/universal-ember/kolay/pull/15) Update Node.js to v20.11.1 ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#30](https://github.com/universal-ember/kolay/pull/30) Update peter-evans/create-pull-request action to v6 ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#20](https://github.com/universal-ember/kolay/pull/20) Update actions/setup-node action to v4 ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#18](https://github.com/universal-ember/kolay/pull/18) Update actions/checkout action to v4 ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#17](https://github.com/universal-ember/kolay/pull/17) Update pnpm to v8.15.4 ([@renovate[bot]](https://github.com/apps/renovate))\n  * [#26](https://github.com/universal-ember/kolay/pull/26) Remove extraneous setting in createManifest ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#19](https://github.com/universal-ember/kolay/pull/19) Add UI, turbo, real test setup, ci, linting, etc etc etc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
