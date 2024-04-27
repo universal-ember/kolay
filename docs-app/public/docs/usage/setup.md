@@ -116,7 +116,7 @@ Here is what this site does
 ```ts
 // app/routes/application.ts
 import Route from "@ember/routing/route";
-import { service } from "@ember/service";
+import { setupKolay } from "kolay/setup";
 
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
 import { colorScheme, sync } from "ember-primitives/color-scheme";
@@ -125,11 +125,9 @@ import getWasm from "shiki/wasm";
 
 sync();
 
-import type { DocsService, Manifest } from "kolay";
+import type { Manifest } from "kolay";
 
 export default class ApplicationRoute extends Route {
-  @service("kolay/docs") declare docs: DocsService;
-
   async model(): Promise<{ manifest: Manifest }> {
     const highlighter = await getHighlighterCore({
       themes: [import("shiki/themes/github-dark.mjs"), import("shiki/themes/github-light.mjs")],
@@ -147,9 +145,7 @@ export default class ApplicationRoute extends Route {
       loadWasm: getWasm,
     });
 
-    await this.docs.setup({
-      apiDocs: import("kolay/api-docs:virtual"),
-      manifest: import("kolay/manifest:virtual"),
+    const manifest = await setupKolay({
       resolve: {
         "ember-primitives": import("ember-primitives"),
         kolay: import("kolay"),
@@ -169,7 +165,7 @@ export default class ApplicationRoute extends Route {
       ],
     });
 
-    return { manifest: this.docs.manifest };
+    return { manifest };
   }
 }
 ```
