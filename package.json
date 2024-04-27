@@ -34,10 +34,6 @@
       "types": "./declarations/plugins/index.d.ts",
       "import": "./src/plugins/index.js"
     },
-    "./build/types": {
-      "types": "./declarations/plugins/types.d.ts",
-      "import": "./src/plugins/types.js"
-    },
     "./private/samples": {
       "types": "./src/browser/private/samples.d.ts",
       "default": "./src/browser/private/samples.js"
