@@ -29,11 +29,19 @@ const Menu: TOC<{ Element: SVGElement }> = <template>
 const SideNav: TOC<{ Element: HTMLElement }> = <template>
   <aside>
     <PageNav ...attributes>
-      <:page as |page|>
-        {{nameFor page}}
+      <:page as |x|>
+        <x.Link>
+          {{nameFor x.page}}
+        </x.Link>
       </:page>
-      <:collection as |collection|>
-        {{sentenceCase collection.name}}
+      <:collection as |x|>
+        {{#if x.index}}
+          <x.index.Link>
+            {{sentenceCase x.collection.name}}
+          </x.index.Link>
+        {{else}}
+          {{sentenceCase x.collection.name}}
+        {{/if}}
       </:collection>
     </PageNav>
   </aside>

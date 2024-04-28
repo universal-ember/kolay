@@ -20,6 +20,7 @@ export default class ApplicationRoute extends Route {
         import('shiki/langs/bash.mjs'),
         import('shiki/langs/css.mjs'),
         import('shiki/langs/html.mjs'),
+        import('shiki/langs/markdown.mjs'),
         import('shiki/langs/glimmer-js.mjs'),
         import('shiki/langs/glimmer-ts.mjs'),
         import('shiki/langs/handlebars.mjs'),

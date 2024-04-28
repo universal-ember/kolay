@@ -1,23 +1,3 @@
-<h1 style="
-  font-size: 2rem; 
-  display: inline-block; 
-  margin-bottom: 0; 
-  padding-bottom: 0">kolay</h1> 
-<small><code>adjective</code></small>
-
-<ul style="margin: 0; padding-left: 1rem; padding-bottom: 0;">
-    <li>easy</li>
-    <li>simple</li>
-    <li>uncomplicated</li>
-</ul>
-
-<small style="
-  float: right; 
-  margin-top: -2rem; 
-  font-size: 0.5rem;">after initial setup</small>
-
-<hr>
-
 ## Install[^type-module]
 
 ```bash
