@@ -1,9 +1,20 @@
 import Component from '@glimmer/component';
+import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
 import type DocsService from '../services/kolay/docs.ts';
 import type { Collection, Page } from '../services/kolay/types.ts';
+import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
+import type { ComponentLike } from '@glint/template';
+
+type InternalPageYield = {
+  page: Page;
+  Link: ComponentLike<{
+    Element: HTMLAnchorElement;
+    Blocks: { default: [page: Page, isActive: boolean] };
+  }>;
+};
 
 export class PageNav extends Component<{
   /**
@@ -22,8 +33,8 @@ export class PageNav extends Component<{
   };
   Blocks: {
     /**
-     * If provided, this block will yield back the page for customizing the name.
-     * By default the `name` property will be used.
+     * If provided, this block will yield back the page for customizing the name and element.
+     * By default the `name` property will be used in a link.
      *
      * Example:
      * ```gjs
@@ -34,16 +45,26 @@ export class PageNav extends Component<{
      * <template>
      *   <PageNav>
      *     <:page as |page|>
-     *       {{toSentenceCase page.name}}
+     *       <x.Link>
+     *         {{toSentenceCase page.name}}
+     *       </x.Link>
      *     </:page>
      *   </PageNav>
      * </template>
      * ```
      */
-    page: [Page];
+    page: [
+      {
+        page: Page;
+        Link: ComponentLike<{
+          Element: HTMLAnchorElement;
+          Blocks: { default: [page: Page, isActive: boolean] };
+        }>;
+      },
+    ];
     /**
      * If provided, this block will yield back the collection for customizing the name.
-     * By default the `name` property will be used.
+     * By default the `name` property will be used or a link will be rendered if an index page is present..
      *
      * Example:
      * ```gjs
@@ -53,14 +74,35 @@ export class PageNav extends Component<{
      *
      * <template>
      *   <PageNav>
-     *     <:collection as |collection|>
-     *       {{toSentenceCase collection.name}}
+     *     <:collection as |x|>
+     *       {{#if x.index}}
+     *         <x.index.Link>
+     *           {{sentenceCase x.collection.name}}
+     *         </x.index.Link>
+     *       {{else}}
+     *         {{sentenceCase x.collection.name}}
+     *       {{/if}}
      *     </:collection>
      *   </PageNav>
      * </template>
      * ```
      */
-    collection: [Collection];
+    collection: [
+      {
+        collection: Collection;
+        /**
+         * If there is an index page, it'll be provided here,
+         * and omitted from the :page block.
+         */
+        index?: {
+          page: Page;
+          Link: ComponentLike<{
+            Element: HTMLAnchorElement;
+            Blocks: { default: [page: Page, isActive: boolean] };
+          }>;
+        };
+      },
+    ];
   };
 }> {
   @service('kolay/docs') declare docs: DocsService;
@@ -79,7 +121,9 @@ export class PageNav extends Component<{
           {{#if (has-block 'page')}}
             {{yield p to='page'}}
           {{else}}
-            {{p.name}}
+            <p.Link>
+              {{p.page.name}}
+            </p.Link>
           {{/if}}
         </:page>
 
@@ -87,10 +131,15 @@ export class PageNav extends Component<{
           {{#if (has-block 'collection')}}
             {{yield c to='collection'}}
           {{else}}
-            {{c.name}}
+            {{#if c.index}}
+              <c.index.Link>
+                {{c.index.page.name}}
+              </c.index.Link>
+            {{else}}
+              {{c.collection.name}}
+            {{/if}}
           {{/if}}
         </:collection>
-
       </Pages>
     </nav>
   </template>
@@ -100,32 +149,63 @@ function isCollection(x: Page | Collection): x is Collection {
   return 'pages' in x;
 }
 
-class Pages extends Component<{
-  Args: { item: Page | Collection; activeClass?: string };
+function isIndex(x: Page | Collection) {
+  if (isCollection(x)) return false;
+
+  return x.path.endsWith('index.md');
+}
+
+function getIndexPage(x: Collection): Page | undefined {
+  let page = x.pages.find(isIndex);
+
+  if (page && isCollection(page)) return;
+
+  return page;
+}
+
+const not = (x: unknown) => !x;
+
+const Pages: TOC<{
+  Args: {
+    item: Page | Collection;
+    activeClass?: string;
+  };
   Blocks: {
-    page: [Page];
-    collection: [Collection];
+    page: [InternalPageYield];
+    collection: [
+      {
+        collection: Collection;
+        index?: InternalPageYield;
+      },
+    ];
   };
-}> {
-  @service declare router: RouterService;
-
-  get activeClass() {
-    return this.args.activeClass ?? 'active';
-  }
-
-  isActive = (subPath: string) => {
-    if (subPath === '/') return false;
-
-    return this.router.currentURL?.startsWith(subPath);
-  };
-
-  <template>
+}> = <template>
+  {{#if (isCollection @item)}}
     <ul>
-      {{#if (isCollection @item)}}
-        {{#each @item.pages as |page|}}
+      {{#each @item.pages as |page|}}
+        {{#if (not (isIndex page))}}
           <li>
             {{#if (isCollection page)}}
-              {{yield page to='collection'}}
+
+              {{! index.md pages can make the whole collection clickable }}
+              {{#let (getIndexPage page) as |indexPage|}}
+                {{#if indexPage}}
+                  {{yield
+                    (hash
+                      collection=page
+                      index=(hash
+                        page=indexPage
+                        Link=(component
+                          PageLink item=indexPage activeClass=@activeClass
+                        )
+                      )
+                    )
+                    to='collection'
+                  }}
+                {{else}}
+                  {{yield (hash collection=page) to='collection'}}
+                {{/if}}
+              {{/let}}
             {{/if}}
 
             <Pages @item={{page}}>
@@ -133,13 +213,46 @@ class Pages extends Component<{
               <:collection as |c|>{{yield c to='collection'}}</:collection>
             </Pages>
           </li>
-        {{/each}}
-      {{else}}
-        <a
-          href={{@item.path}}
-          class={{if (this.isActive @item.path) this.activeClass}}
-        >{{yield @item to='page'}}</a>
-      {{/if}}
+        {{/if}}
+      {{/each}}
     </ul>
+  {{else}}
+    {{yield
+      (hash
+        page=@item Link=(component PageLink item=@item activeClass=@activeClass)
+      )
+      to='page'
+    }}
+  {{/if}}
+</template>;
+
+class PageLink extends Component<{
+  Element: HTMLAnchorElement;
+  Args: {
+    item: Page;
+    activeClass?: string;
+  };
+  Blocks: { default: [page: Page, isActive: boolean] };
+}> {
+  @service declare router: RouterService;
+
+  get activeClass() {
+    return this.args.activeClass ?? 'active';
+  }
+
+  get isActive() {
+    let subPath = this.args.item.path;
+
+    if (subPath === '/') return false;
+
+    return this.router.currentURL?.startsWith(subPath) ?? false;
+  }
+
+  <template>
+    <a
+      href={{@item.path}}
+      class={{if this.isActive this.activeClass}}
+      ...attributes
+    >{{yield @item this.isActive}}</a>
   </template>
 }
