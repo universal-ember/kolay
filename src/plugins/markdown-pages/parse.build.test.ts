@@ -26,6 +26,29 @@ describe('build', () => {
     `);
   });
 
+  test('hypehenated group', () => {
+    let result = build([{ mdPath: 'top-level/nested.md' }]);
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "name": "root",
+        "pages": [
+          {
+            "name": "top level",
+            "pages": [
+              {
+                "cleanedName": "nested",
+                "groupName": "top level",
+                "name": "nested",
+                "path": "/top-level/nested.md",
+              },
+            ],
+          },
+        ],
+      }
+    `);
+  });
+
   test('multiple shallow paths', () => {
     let result = build([
       { mdPath: 'top/nested.md' },
@@ -47,14 +70,19 @@ describe('build', () => {
                 "path": "/top/nested.md",
               },
               {
-                "cleanedName": "nestedsibling",
+                "cleanedName": "nested sibling",
                 "groupName": "top",
                 "name": "nested-sibling",
                 "path": "/top/nested-sibling.md",
               },
+            ],
+          },
+          {
+            "name": "top ",
+            "pages": [
               {
                 "cleanedName": "other",
-                "groupName": "top",
+                "groupName": "top ",
                 "name": "other",
                 "path": "/top-2/other.md",
               },
