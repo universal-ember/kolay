@@ -23,13 +23,13 @@ describe('discover', () => {
             "name": "c",
             "pages": [
               {
-                "cleanedName": "cb",
+                "cleanedName": "c b",
                 "groupName": "c",
                 "name": "c-b",
                 "path": "/c/c-b.md",
               },
               {
-                "cleanedName": "ca",
+                "cleanedName": "c a",
                 "groupName": "c",
                 "name": "c-a",
                 "path": "/c/c-a.md",
@@ -39,13 +39,13 @@ describe('discover', () => {
                 "name": "d",
                 "pages": [
                   {
-                    "cleanedName": "da",
+                    "cleanedName": "d a",
                     "groupName": "d",
                     "name": "d-a",
                     "path": "/c/d/d-a.md",
                   },
                   {
-                    "cleanedName": "db",
+                    "cleanedName": "d b",
                     "groupName": "d",
                     "name": "d-b",
                     "path": "/c/d/d-b.md",
@@ -57,13 +57,13 @@ describe('discover', () => {
                 "name": "e",
                 "pages": [
                   {
-                    "cleanedName": "eb",
+                    "cleanedName": "e b",
                     "groupName": "e",
                     "name": "e-b",
                     "path": "/c/e/e-b.md",
                   },
                   {
-                    "cleanedName": "ea",
+                    "cleanedName": "e a",
                     "groupName": "e",
                     "name": "e-a",
                     "path": "/c/e/e-a.md",
@@ -153,7 +153,7 @@ describe('discover', () => {
     expect(result.groups[1]?.list).toMatchInlineSnapshot(`
       [
         {
-          "cleanedName": "somefile",
+          "cleanedName": "some file",
           "groupName": "components",
           "name": "some-file",
           "path": "/Group 1/components/some-file.md",
