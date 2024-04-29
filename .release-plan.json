@@ -2,19 +2,19 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "1.0.0",
-      "newVersion": "1.0.1",
+      "oldVersion": "1.0.1",
+      "newVersion": "1.0.2",
       "constraints": [
         {
           "impact": "patch",
-          "reason": "Appears in changelog section :memo: Documentation"
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.3"
+      "oldVersion": "0.0.5"
     }
   },
-  "description": "## Release (2024-04-28)\n\nkolay 1.0.1 (patch)\n\n#### :memo: Documentation\n* `kolay`\n  * [#61](https://github.com/universal-ember/kolay/pull/61) Update docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-29)\n\nkolay 1.0.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#69](https://github.com/universal-ember/kolay/pull/69) Fix name cleaning ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
