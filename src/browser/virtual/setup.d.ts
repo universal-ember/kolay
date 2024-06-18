@@ -38,5 +38,12 @@ export function setupKolay(
      * These can be used to add fetaures like notes, callouts, footnotes, etc
      */
     remarkPlugins?: unknown[];
+
+    /**
+     * Provide additional rehype plugins to the default html compiler.
+     *
+     * These can be used to add features syntax-highlighting to pre elements, etc
+     */
+    rehypePlugins?: unknown[];
   }
 ): Promise<Manifest>;
