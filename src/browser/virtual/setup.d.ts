@@ -1,5 +1,13 @@
 import type { Manifest } from '@universal-ember/kolay-ui';
 
+interface ResolveMap {
+  [moduleName: string]: ScopeMap;
+}
+
+interface ScopeMap {
+  [identifier: string]: unknown;
+}
+
 export function setupKolay(
   context: object,
   options?: {
@@ -14,7 +22,7 @@ export function setupKolay(
      *   - <APIDocs>
      *   - <ComponentSignature>
      */
-    topLevelScope?: Record<string, unknown>;
+    topLevelScope?: ScopeMap;
 
     /**
      * Additional modules you'd like to be able to import from.
@@ -22,7 +30,7 @@ export function setupKolay(
      * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: Record<string, Record<string, unknown>>;
+    resolve?: { [moduleName: string]: Promise<ScopeMap> };
 
     /**
      * Provide additional remark plugins to the default markdown compiler.
