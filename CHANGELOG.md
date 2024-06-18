@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-06-18)
+
+kolay 1.0.3 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#74](https://github.com/universal-ember/kolay/pull/74) Fix types ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-29)
 
 kolay 1.0.2 (patch)
