@@ -35,8 +35,11 @@ export default class ApplicationRoute extends Route {
         kolay: import('kolay'),
       },
       rehypePlugins: [
+        // @shikijs/rehype
         [
           rehypeShikiFromHighlighter,
+          // Options for @shikijs/rehype-
+          // https://shiki.matsu.io/packages/rehype#fine-grained-bundle
           highlighter,
           {
             defaultColor: colorScheme.current === 'dark' ? 'dark' : 'light',
