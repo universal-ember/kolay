@@ -99,6 +99,7 @@
       "./components/logs.js": "./dist/_app_/components/logs.js",
       "./components/page-nav.js": "./dist/_app_/components/page-nav.js",
       "./components/page.js": "./dist/_app_/components/page.js",
+      "./routes/page.js": "./dist/_app_/routes/page.js",
       "./services/kolay/api-docs.js": "./dist/_app_/services/kolay/api-docs.js",
       "./services/kolay/compiler.js": "./dist/_app_/services/kolay/compiler.js",
       "./services/kolay/compiler/compile-state.js": "./dist/_app_/services/kolay/compiler/compile-state.js",
