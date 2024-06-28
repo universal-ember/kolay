@@ -1,20 +1,11 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "1.0.4",
-      "newVersion": "1.0.5",
-      "constraints": [
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        }
-      ],
-      "pkgJSONPath": "./package.json"
+      "oldVersion": "1.0.5"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.5"
+      "oldVersion": "0.0.6"
     }
   },
-  "description": "## Release (2024-06-18)\n\nkolay 1.0.5 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#77](https://github.com/universal-ember/kolay/pull/77) Widen peer range on ember-primitives ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "\n\n\n\n"
 }
