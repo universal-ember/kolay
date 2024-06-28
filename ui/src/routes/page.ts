@@ -49,8 +49,18 @@ export default class KolayPageRoute extends Route {
 
   /**
   * Load the page for the compiler
+  *
+  * This relies on the browser's built in cache.
+  * If the page is already fetched, we don't hit the network again when we try to render it (even if we use fetch to ask for the page)
   */
-  model(path, transition) {
-    console.log({ path, transition });
+  async model({ page }: { page: string }) {
+    /**
+      * page should have .md at the end already
+      */
+    await fetch(`/docs/${page}.broken`)
+  }
+
+  error = (...args) => {
+    console.log(...args);
   }
 }
