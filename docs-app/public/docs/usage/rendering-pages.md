@@ -21,6 +21,7 @@ export default Route(
         <div style="border: 1px solid red; padding: 1rem;">
           {{error}}
         </div>
+        {{(removeLoader)}}
       </:error>
 
       <:success as |prose|>
