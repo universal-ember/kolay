@@ -38,7 +38,9 @@ export default class Selected extends Service {
    *******************************************************************/
 
   @use proseFile = RemoteData<string>(() => `/docs${this.path}.md`);
-  @use proseCompiled = Compiled(() => this.proseFile.value);
+  @use proseCompiled = Compiled(() => {
+    return this.proseFile.value
+  });
 
   /*********************************************************************
    * This is a pattern to help reduce flashes of content during
@@ -62,7 +64,7 @@ export default class Selected extends Service {
   }
 
   get hasError() {
-    return Boolean(this.proseCompiled.error);
+    return Boolean(this.proseCompiled.error) || this.proseFile.status?.toString().match(/^[54]/) ;
   }
   get error() {
     return String(this.proseCompiled.error);
