@@ -21,7 +21,14 @@ module.exports = {
       },
     },
     {
-      files: ['src/browser/**/*'],
+      files: ['**/*.d.ts'],
+      rules: {
+        'n/no-unsupported-features/node-builtins': 'off',
+        'n/no-missing-import': 'off',
+      },
+    },
+    {
+      files: ['src/browser/**/*', '**/*.test.ts'],
       rules: {
         'n/no-unpublished-import': 'off',
         'n/no-missing-import': 'off',

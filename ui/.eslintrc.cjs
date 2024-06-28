@@ -26,6 +26,12 @@ module.exports = {
       },
     },
     {
+      files: ['**/*.d.ts'],
+      rules: {
+        'n/no-unsupported-features/node-builtins': 'off',
+      },
+    },
+    {
       files: ['**/*.cjs'],
       rules: {
         'n/no-unsupported-features': 'off',
