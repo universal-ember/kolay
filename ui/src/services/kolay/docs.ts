@@ -30,7 +30,7 @@ export default class DocsService extends Service {
   @tracked rehypePlugins?: UnifiedPlugin[];
   _docs: Manifest | undefined;
   _eventHandlers = {
-    pageNotFound: () => {
+    pageNotFound: (_attemptedPagePath: string, _reason: NotFoundReason) => {
       this.router.replaceWith('application');
     },
   };
