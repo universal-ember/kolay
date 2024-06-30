@@ -73,21 +73,25 @@ export default class Selected extends Service {
   }
 
   get path(): string | undefined {
-    if (!this.router.currentURL) return firstPath;
-
-    let [path] = this.router.currentURL.split('?');
-    let result = path && path !== '/' ? path : firstPath;
-
-    return result?.replace(/\.md$/, '');
+    return this.pathFromUrl(this.router.currentURL);
   }
 
   get page(): Page | undefined {
     if (!this.path) return;
 
-    return this.#findByPath(this.path);
+    return this.findByPath(this.path);
   }
 
-  #findByPath = (path: string) => {
+  pathFromUrl = (url: string | null) => {
+    if (!url) return firstPath;
+
+    let [path] = url.split('?');
+    let result = path && path !== '/' ? path : firstPath;
+
+    return result?.replace(/\.md$/, '');
+  };
+
+  findByPath = (path: string) => {
     return this.docs.pages.find((page) => page.path === `${path}.md`);
   };
 }
