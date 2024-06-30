@@ -3,6 +3,7 @@ import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
 
 import type ApiDocs from './api-docs';
+import type { NotFoundReason } from './reasons.ts';
 import type Selected from './selected';
 import type { Manifest } from './types';
 import type RouterService from '@ember/routing/router-service';
@@ -28,6 +29,11 @@ export default class DocsService extends Service {
   @tracked remarkPlugins?: UnifiedPlugin[];
   @tracked rehypePlugins?: UnifiedPlugin[];
   _docs: Manifest | undefined;
+  _eventHandlers = {
+    pageNotFound: () => {
+      this.router.replaceWith('application');
+    },
+  };
 
   loadManifest: () => Promise<Manifest> = () =>
     Promise.resolve({
@@ -81,6 +87,33 @@ export default class DocsService extends Service {
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
     rehypePlugins?: UnifiedPlugin[];
+
+    /**
+     * Configuration for what to do when certain events happen.
+     */
+    on?: {
+      /**
+       * When a page is not found, this function will be called, giving
+       * you the opportunity to do your own transition behavior.
+       *
+       * When this function is present, the default transition behavior is
+       * skipped. (which is to `replaceWith` the `application` route.
+       * A use case where you may want to specify this yourself is to
+       * *also* add a toast or flash message to the screen and/or redirect somewhere else.
+       *
+       * To copy the default behavior, your `pageNotFound` function would look like:
+       * ```js
+       * on: {
+       *   pageNotFound: () => this.router.replaceWith('application')
+       * }
+       * ```
+       * Where `this.router` represents the RouterService
+       */
+      pageNotFound?: (
+        attemptedPagePath: string,
+        reason: NotFoundReason,
+      ) => void;
+    };
   }) => {
     let [manifest, apiDocs, resolve] = await Promise.all([
       options.manifest,
@@ -111,6 +144,14 @@ export default class DocsService extends Service {
 
     if (options.rehypePlugins) {
       this.rehypePlugins = options.rehypePlugins;
+    }
+
+    if (options.on?.pageNotFound) {
+      assert(
+        `on.pageNotFound must be a function`,
+        typeof options.on.pageNotFound === 'function',
+      );
+      this._eventHandlers.pageNotFound = options.on.pageNotFound;
     }
 
     this._docs = await this.loadManifest();
@@ -156,15 +197,18 @@ export default class DocsService extends Service {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    let [, /* leading slash */ first] =
-      this.router.currentURL?.split('/') || [];
+    return this.groupForPath(this.router.currentURL);
+  }
+
+  groupForPath = (path?: string | null) => {
+    let [, /* leading slash */ first] = path?.split('/') || [];
 
     if (!first) return 'root';
 
     if (!this.availableGroups.includes(first)) return 'root';
 
     return first;
-  }
+  };
 
   selectGroup = (group: string) => {
     assert(
