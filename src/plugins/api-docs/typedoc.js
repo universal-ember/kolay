@@ -67,7 +67,6 @@ export async function generateTypeDocJSON({ packageName }) {
     tsconfig: tmpTSConfigPath,
     basePath: typeInfo.dir,
     cleanOutputDir: false,
-    includes: typeInfo.dir,
     pretty: false,
     excludeInternal: false,
     skipErrorChecking: true,
