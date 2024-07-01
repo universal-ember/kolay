@@ -51,8 +51,8 @@ export default class Selected extends Service {
    ********************************************************************/
 
   @use prose = keepLatest({
-    value: () => this.proseCompiled.component,
-    when: () => !this.proseCompiled.isReady,
+    value: () => this.hasError ? undefined : this.proseCompiled.component,
+    when: () => !this.isReady,
   });
 
   /**
@@ -60,11 +60,11 @@ export default class Selected extends Service {
    * rendering without extra flashes.
    */
   get isReady() {
-    return this.proseCompiled.isReady;
+    return this.proseCompiled.isReady && !this.hasError;
   }
 
   get hasError() {
-    return Boolean(this.proseCompiled.error) || this.proseFile.status?.toString().match(/^[54]/) ;
+    return Boolean(this.proseCompiled.error) || Boolean(this.proseFile.status?.toString().match(/^[54]/)) ;
   }
   get error() {
     return String(this.proseCompiled.error);

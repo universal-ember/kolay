@@ -54,7 +54,9 @@ export class Page extends Component<{
   <template>
     {{#if this.selected.hasError}}
       {{yield this.selected.error to='error'}}
-    {{else if this.selected.prose}}
+    {{/if}}
+
+    {{#if this.selected.prose}}
       {{yield this.selected.prose to='success'}}
     {{/if}}
   </template>
