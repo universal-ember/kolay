@@ -2,6 +2,7 @@ import Service, { service } from '@ember/service';
 
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
+import { link } from 'reactiveweb/link';
 import { RemoteData } from 'reactiveweb/remote-data';
 
 import { Compiled } from './compiler/reactive.ts';
@@ -25,6 +26,36 @@ import type RouterService from '@ember/routing/router-service';
 
 const firstPath = '/1-get-started/intro.md';
 
+/**
+ * Like an ember-concurrency task,
+ * if we ignore concurrency and only care about the states
+ */
+class MDRequest {
+  constructor(private urlFn: () => string) {}
+
+  @use last = RemoteData<string>(this.urlFn);
+
+  get hasError() {
+    return Boolean(this.last.status?.toString().match(/^[54]/));
+  }
+
+  @use lastSuccessful = keepLatest({
+    value: () => this.last.value,
+    when: () => this.hasError,
+  });
+}
+
+class Prose {
+  constructor(private docFn: () => ( string | null )) {}
+
+  @use last = Compiled(this.docFn);
+
+  @use lastSuccessful = keepLatest({
+    value: () => this.last.component,
+    when: () => !this.last.isReady
+  });
+}
+
 export default class Selected extends Service {
   @service declare router: RouterService;
   @service('kolay/docs') declare docs: DocsService;
@@ -37,10 +68,12 @@ export default class Selected extends Service {
    * be cancelled if it was still pending.
    *******************************************************************/
 
-  @use proseFile = RemoteData<string>(() => `/docs${this.path}.md`);
-  @use proseCompiled = Compiled(() => {
-    return this.proseFile.value
-  });
+  @link request = new MDRequest(() => `/docs${this.path}.md`)
+  @link compiled = new Prose(() => this.request.lastSuccessful)
+
+  get proseCompiled() {
+    return this.compiled.last;
+  }
 
   /*********************************************************************
    * This is a pattern to help reduce flashes of content during
@@ -49,22 +82,20 @@ export default class Selected extends Service {
    * we can, and only swap out the old data when the new data is done loading.
    *
    ********************************************************************/
-
-  @use prose = keepLatest({
-    value: () => this.hasError ? undefined : this.proseCompiled.component,
-    when: () => !this.isReady,
-  });
+  get prose() {
+    return this.compiled.lastSuccessful;
+  }
 
   /**
    * Once this whole thing is "true", we can start
    * rendering without extra flashes.
    */
   get isReady() {
-    return this.proseCompiled.isReady && !this.hasError;
+    return this.proseCompiled.isReady;
   }
 
   get hasError() {
-    return Boolean(this.proseCompiled.error) || Boolean(this.proseFile.status?.toString().match(/^[54]/)) ;
+    return Boolean(this.proseCompiled.error) || this.request.hasError ;
   }
   get error() {
     return String(this.proseCompiled.error);
