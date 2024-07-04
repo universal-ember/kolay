@@ -27,8 +27,8 @@ import type RouterService from '@ember/routing/router-service';
 const firstPath = '/1-get-started/intro.md';
 
 /**
- * Like an ember-concurrency task,
- * if we ignore concurrency and only care about the states
+ * Sort of like an ember-concurrency task...
+ * if we ignore concurrency and only care about the states of the running function
  * (and want automatic invocation based on derivation)
  */
 class MDRequest {
