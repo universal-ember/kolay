@@ -29,6 +29,7 @@ const firstPath = '/1-get-started/intro.md';
 /**
  * Like an ember-concurrency task,
  * if we ignore concurrency and only care about the states
+ * (and want automatic invocation based on derivation)
  */
 class MDRequest {
   constructor(private urlFn: () => string) {}
