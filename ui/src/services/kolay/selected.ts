@@ -47,13 +47,13 @@ class MDRequest {
 }
 
 class Prose {
-  constructor(private docFn: () => ( string | null )) {}
+  constructor(private docFn: () => string | null) {}
 
   @use last = Compiled(this.docFn);
 
   @use lastSuccessful = keepLatest({
     value: () => this.last.component,
-    when: () => !this.last.isReady
+    when: () => !this.last.isReady,
   });
 }
 
@@ -69,8 +69,8 @@ export default class Selected extends Service {
    * be cancelled if it was still pending.
    *******************************************************************/
 
-  @link request = new MDRequest(() => `/docs${this.path}.md`)
-  @link compiled = new Prose(() => this.request.lastSuccessful)
+  @link request = new MDRequest(() => `/docs${this.path}.md`);
+  @link compiled = new Prose(() => this.request.lastSuccessful);
 
   get proseCompiled() {
     return this.compiled.last;
@@ -96,7 +96,7 @@ export default class Selected extends Service {
   }
 
   get hasError() {
-    return Boolean(this.proseCompiled.error) || this.request.hasError ;
+    return Boolean(this.proseCompiled.error) || this.request.hasError;
   }
   get error() {
     return String(this.proseCompiled.error);
