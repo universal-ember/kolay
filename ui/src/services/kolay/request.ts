@@ -36,7 +36,12 @@ export class MDRequest {
   get hasError() {
     if (!this._doesPageExist) return true;
 
-    return (this.last?.status ?? 600) /* No status??? */ >= 400;
+    /**
+     * Can't have an error if we haven't made a request yet
+     */
+    if (!this.last.status) return false;
+
+    return this.last.status >= 400;
   }
 
   /**

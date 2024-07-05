@@ -1,4 +1,5 @@
-import { click, visit } from '@ember/test-helpers';
+import { renderSettled } from '@ember/renderer';
+import { click, settled, visit } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 
@@ -31,6 +32,24 @@ module('Errors', function (hooks) {
       await visit(`/Runtime/docs/api-docs.md`);
 
       assert.dom().doesNotContainText(`Page not found for path`);
+    });
+
+    test('the error does not flash between known pages rendering', async function (assert) {
+      visit(`/Runtime/docs/api-docs.md`);
+
+      await renderSettled();
+      assert.dom('[data-page-error]').doesNotExist();
+
+      await settled();
+      assert.dom('[data-page-error]').doesNotExist();
+
+      visit(`/Runtime/util/logs.md`);
+
+      await renderSettled();
+      assert.dom('[data-page-error]').doesNotExist();
+
+      await settled();
+      assert.dom('[data-page-error]').doesNotExist();
     });
   });
 });
