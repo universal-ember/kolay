@@ -2,19 +2,23 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "1.0.4",
-      "newVersion": "1.0.5",
+      "oldVersion": "1.0.5",
+      "newVersion": "1.0.6",
       "constraints": [
         {
           "impact": "patch",
           "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.5"
+      "oldVersion": "0.0.6"
     }
   },
-  "description": "## Release (2024-06-18)\n\nkolay 1.0.5 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#77](https://github.com/universal-ember/kolay/pull/77) Widen peer range on ember-primitives ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-07-05)\n\nkolay 1.0.6 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#84](https://github.com/universal-ember/kolay/pull/84) Consider 4xx and 5xx status as error instead of trying to render MD ([@rtablada](https://github.com/rtablada))\n\n#### :house: Internal\n* `kolay`\n  * [#86](https://github.com/universal-ember/kolay/pull/86) Fix app watching -- Copy content from #82 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#85](https://github.com/universal-ember/kolay/pull/85) Update more deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#83](https://github.com/universal-ember/kolay/pull/83) Upgrade to pnpm 9 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#81](https://github.com/universal-ember/kolay/pull/81) Update rehype plugins list ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- Ryan Tablada ([@rtablada](https://github.com/rtablada))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
