@@ -11,9 +11,10 @@ export default Route(
   <template>
     <Page>
       <:error as |error|>
-        <div style="border: 1px solid red; padding: 1rem;">
+        <div style="border: 1px solid red; padding: 1rem;" data-page-error>
           {{error}}
         </div>
+        {{(removeLoader)}}
       </:error>
 
       <:success as |Prose|>

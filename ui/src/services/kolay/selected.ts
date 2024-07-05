@@ -2,11 +2,11 @@ import Service, { service } from '@ember/service';
 
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
-import { RemoteData } from 'reactiveweb/remote-data';
+import { link } from 'reactiveweb/link';
 
 import { Compiled } from './compiler/reactive.ts';
+import { MDRequest } from './request.ts';
 
-import type CompilerService from './compiler';
 import type DocsService from './docs';
 import type { Page } from './types';
 import type RouterService from '@ember/routing/router-service';
@@ -25,10 +25,25 @@ import type RouterService from '@ember/routing/router-service';
 
 const firstPath = '/1-get-started/intro.md';
 
+/**
+ * Sort of like an ember-concurrency task...
+ * if we ignore concurrency and only care about the states of the running function
+ * (and want automatic invocation based on derivation)
+ */
+class Prose {
+  constructor(private docFn: () => string | null) {}
+
+  @use last = Compiled(this.docFn);
+
+  @use lastSuccessful = keepLatest({
+    value: () => this.last.component,
+    when: () => !this.last.isReady,
+  });
+}
+
 export default class Selected extends Service {
   @service declare router: RouterService;
   @service('kolay/docs') declare docs: DocsService;
-  @service('kolay/compiler') declare compiler: CompilerService;
 
   /*********************************************************************
    * These load the files from /public and handle loading / error state.
@@ -37,8 +52,12 @@ export default class Selected extends Service {
    * be cancelled if it was still pending.
    *******************************************************************/
 
-  @use proseFile = RemoteData<string>(() => `/docs${this.path}.md`);
-  @use proseCompiled = Compiled(() => this.proseFile.value);
+  @link request = new MDRequest(() => `/docs${this.path}.md`);
+  @link compiled = new Prose(() => this.request.lastSuccessful);
+
+  get proseCompiled() {
+    return this.compiled.last;
+  }
 
   /*********************************************************************
    * This is a pattern to help reduce flashes of content during
@@ -47,11 +66,9 @@ export default class Selected extends Service {
    * we can, and only swap out the old data when the new data is done loading.
    *
    ********************************************************************/
-
-  @use prose = keepLatest({
-    value: () => this.proseCompiled.component,
-    when: () => !this.proseCompiled.isReady,
-  });
+  get prose() {
+    return this.compiled.lastSuccessful;
+  }
 
   /**
    * Once this whole thing is "true", we can start
@@ -62,9 +79,13 @@ export default class Selected extends Service {
   }
 
   get hasError() {
-    return Boolean(this.proseCompiled.error);
+    return Boolean(this.proseCompiled.error) || this.request.hasError;
   }
   get error() {
+    if (!this.page) {
+      return `Page not found for path ${this.path}. (Using group: ${this.docs.currentGroup.name})`;
+    }
+
     return String(this.proseCompiled.error);
   }
 
