@@ -105,6 +105,7 @@
       "./services/kolay/compiler/import-map.js": "./dist/_app_/services/kolay/compiler/import-map.js",
       "./services/kolay/compiler/reactive.js": "./dist/_app_/services/kolay/compiler/reactive.js",
       "./services/kolay/docs.js": "./dist/_app_/services/kolay/docs.js",
+      "./services/kolay/request.js": "./dist/_app_/services/kolay/request.js",
       "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js",
       "./services/kolay/types.js": "./dist/_app_/services/kolay/types.js"
     }

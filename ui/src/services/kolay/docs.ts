@@ -204,6 +204,23 @@ export default class DocsService extends Service {
 
     return group;
   };
+
+/**
+ * Will return false if a url doesn't exist in any group,
+ * or the name of the group that contains the page if the url does exist.
+ */
+  groupForURL = (url: string): false | string => {
+    for (let groupName of this.availableGroups) {
+      let group = this.groupFor(groupName);
+      let page = group.list.find(page => page.path === url);
+
+      if (page) {
+        return groupName;
+      }
+    }
+
+    return false;
+  }
 }
 
 /**

@@ -3,11 +3,10 @@ import Service, { service } from '@ember/service';
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { link } from 'reactiveweb/link';
-import { RemoteData } from 'reactiveweb/remote-data';
 
 import { Compiled } from './compiler/reactive.ts';
+import { MDRequest } from './request.ts';
 
-import type CompilerService from './compiler';
 import type DocsService from './docs';
 import type { Page } from './types';
 import type RouterService from '@ember/routing/router-service';
@@ -31,21 +30,6 @@ const firstPath = '/1-get-started/intro.md';
  * if we ignore concurrency and only care about the states of the running function
  * (and want automatic invocation based on derivation)
  */
-class MDRequest {
-  constructor(private urlFn: () => string) {}
-
-  @use last = RemoteData<string>(this.urlFn);
-
-  get hasError() {
-    return Boolean(this.last.status?.toString().match(/^[54]/));
-  }
-
-  @use lastSuccessful = keepLatest({
-    value: () => this.last.value,
-    when: () => this.hasError,
-  });
-}
-
 class Prose {
   constructor(private docFn: () => string | null) {}
 
@@ -60,7 +44,6 @@ class Prose {
 export default class Selected extends Service {
   @service declare router: RouterService;
   @service('kolay/docs') declare docs: DocsService;
-  @service('kolay/compiler') declare compiler: CompilerService;
 
   /*********************************************************************
    * These load the files from /public and handle loading / error state.
@@ -99,6 +82,10 @@ export default class Selected extends Service {
     return Boolean(this.proseCompiled.error) || this.request.hasError;
   }
   get error() {
+    if (!this.page) {
+      return `Page not found for path ${this.path}. (Using group: ${this.docs.currentGroup.name})`;
+    }
+
     return String(this.proseCompiled.error);
   }
 
