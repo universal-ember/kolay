@@ -28,7 +28,7 @@ module.exports = {
       },
     },
     {
-      files: ['src/browser/**/*', '**/*.test.ts'],
+      files: ['src/browser/**/*', '**/*.test.ts', 'src/plugins/markdown-pages/types.ts'],
       rules: {
         'n/no-unpublished-import': 'off',
         'n/no-missing-import': 'off',
