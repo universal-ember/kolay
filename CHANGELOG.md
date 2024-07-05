@@ -1,5 +1,24 @@
 # Changelog
 
+## Release (2024-07-05)
+
+kolay 1.0.6 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#84](https://github.com/universal-ember/kolay/pull/84) Consider 4xx and 5xx status as error instead of trying to render MD ([@rtablada](https://github.com/rtablada))
+
+#### :house: Internal
+* `kolay`
+  * [#86](https://github.com/universal-ember/kolay/pull/86) Fix app watching -- Copy content from #82 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#85](https://github.com/universal-ember/kolay/pull/85) Update more deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#83](https://github.com/universal-ember/kolay/pull/83) Upgrade to pnpm 9 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#81](https://github.com/universal-ember/kolay/pull/81) Update rehype plugins list ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- Ryan Tablada ([@rtablada](https://github.com/rtablada))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-06-18)
 
 kolay 1.0.5 (patch)
