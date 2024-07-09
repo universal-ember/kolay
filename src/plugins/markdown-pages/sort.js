@@ -3,7 +3,7 @@
  * @returns {unknown[]}
  */
 function uniq(arr) {
-  return arr.filter((v, i, a) => a.indexOf(v) === i);
+  return Array.from(new Set(arr));
 }
 
 /**
