@@ -70,20 +70,20 @@ describe('sortTree', () => {
         name: 'top',
         pages: [
           {
-            name: 'second',
+            name: 'child',
             pages: [
               {
-                path: '/top/second/second',
+                path: '/top/child/second',
                 name: 'second',
                 groupName: 'top',
                 cleanedName: 'second',
               },
-              { name: 'first', path: '/top/second/first', groupName: 'top', cleanedName: 'first' },
+              { name: 'first', path: '/top/child/first', groupName: 'top', cleanedName: 'first' },
             ],
           },
         ],
       },
-      [{ path: 'top/second/meta.jsonc', config: { order: ['first', 'second'] } }]
+      [{ path: 'top/child/meta.jsonc', config: { order: ['first', 'second'] } }]
     );
 
     expect(result.pages.length).toEqual(1);
