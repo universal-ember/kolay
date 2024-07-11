@@ -1,5 +1,21 @@
 # Changelog
 
+## Release (2024-07-11)
+
+kolay 1.1.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#91](https://github.com/universal-ember/kolay/pull/91) Throw Errors When Meta Order Does Not Match Available Pages ([@rtablada](https://github.com/rtablada))
+
+#### :memo: Documentation
+* `kolay`
+  * [#93](https://github.com/universal-ember/kolay/pull/93) Fix setup.md instructions to match the need to pass `this`, and updat… ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- Ryan Tablada ([@rtablada](https://github.com/rtablada))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-07-05)
 
 kolay 1.0.6 (patch)
