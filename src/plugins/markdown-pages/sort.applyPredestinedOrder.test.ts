@@ -21,6 +21,10 @@ describe('applyPredestinedOrder', () => {
     expect(applyPredestinedOrder(['c', 'a'], ['a', 'c'])).deep.equal(['a', 'c']);
   });
 
+  test('it handles index pages as always first', () => {
+    expect(applyPredestinedOrder(['c', 'a', 'index'], ['a', 'c'])).deep.equal(['index', 'a', 'c']);
+  });
+
   test('it errors when the order specifies things that do not exist', () => {
     expect(() => applyPredestinedOrder(['c', 'b', 'a'], ['a', 'c', 'x'])).toThrow(
       'Order configuration specified "x" but it was not found in the list. Pages are ["c","b","a"]'

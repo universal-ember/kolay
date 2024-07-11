@@ -69,7 +69,10 @@ export function betterSort(property) {
  * @returns {Item[]}
  */
 export function applyPredestinedOrder(list, order, find = (x) => x) {
-  let result = [];
+  let indexPage = list.find((x) => find(x) === 'index');
+  let result = indexPage ? [indexPage] : [];
+
+  list = list.filter((a) => a !== indexPage);
 
   let remaining = [...list];
 
