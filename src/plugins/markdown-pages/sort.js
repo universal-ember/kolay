@@ -1,4 +1,20 @@
 /**
+ * @param {unknown[]} arr
+ * @returns {unknown[]}
+ */
+function uniq(arr) {
+  return Array.from(new Set(arr));
+}
+
+/**
+ * @param {string} path
+ * @returns {string}
+ */
+function findPathForJsonc(path) {
+  return path.replace(/\/meta\.jsonc?$/, '');
+}
+
+/**
  * Tutorials (and groups) are all 123-name
  * This is so that we can sort them manually on the file system.
  * However, it's human understanding that 10 comes after 9 and before 11,
@@ -49,21 +65,39 @@ export function betterSort(property) {
  * @param {Item[]} list
  * @param {string[]} order
  * @param {(item: Item) => any} [ find ]
+ * @throws {Error}
  * @returns {Item[]}
  */
 export function applyPredestinedOrder(list, order, find = (x) => x) {
-  let result = [];
+  let indexPage = list.find((x) => find(x) === 'index');
+  let result = indexPage ? [indexPage] : [];
 
-  let remaining = list;
+  list = list.filter((a) => a !== indexPage);
 
-  for (let i = 0; i < Math.max(list.length, order.length); i++) {
+  let remaining = [...list];
+
+  if (uniq(order).length !== order.length)
+    throw new Error(`Order configuration specified duplicate pages:
+Unique: ${JSON.stringify(uniq(order))}
+Order: ${JSON.stringify(order)}
+Actual: ${JSON.stringify(list.map(find))}`);
+
+  if (order.length !== list.length)
+    throw new Error(`Order configuration specified different number of arguments than available pages:
+Order: ${JSON.stringify(order)}
+Actual: ${JSON.stringify(list.map(find))}`);
+
+  for (let i = 0; i < order.length; i++) {
     let current = order[i];
 
-    if (!current) break;
+    if (!current) throw new Error(`Order configuration found an empty string at index ${i}`);
 
     let foundIndex = remaining.findIndex((x) => find(x) === current);
 
-    if (foundIndex < 0) continue;
+    if (foundIndex < 0)
+      throw new Error(
+        `Order configuration specified "${current}" but it was not found in the list. Pages are ${JSON.stringify(list.map(find))}`
+      );
 
     // remove
     let [found] = remaining.splice(foundIndex, 1);
@@ -73,7 +107,11 @@ export function applyPredestinedOrder(list, order, find = (x) => x) {
     result.push(found);
   }
 
-  result.push(...remaining);
+  if (remaining.length > 0) {
+    throw new Error(
+      `Order configuration did not specify all pages. Remaining pages are ${JSON.stringify(remaining.map(find))}`
+    );
+  }
 
   return result;
 }
@@ -93,16 +131,22 @@ export function sortTree(tree, configs, parents = []) {
 
   if (configs.length > 0) {
     let subPath = `${[...parents, tree.name].join('/')}`;
-    let config = configs.filter(Boolean).find((config) => config.path.startsWith(subPath))?.config;
+    let config = configs
+      .filter(Boolean)
+      .find((config) => findPathForJsonc(config.path) === subPath)?.config;
 
     if (!config?.order) {
       return tree;
     }
 
     // Should the name always avoid the extension?
-    let replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) => page.name);
+    try {
+      let replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) => page.name);
 
-    tree.pages = replacementPages;
+      tree.pages = replacementPages;
+    } catch (error) {
+      throw new Error(`Error while sorting tree at ${subPath}.\n${error}`);
+    }
   }
 
   return tree;

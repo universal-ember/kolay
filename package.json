@@ -84,7 +84,8 @@
     "build:declarations": "tsc --declaration",
     "_syncPnpm": "pnpm sync-dependencies-meta-injected",
     "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
-    "test:node": "vitest --run"
+    "test:node": "vitest --run",
+    "test:dev": "vitest dev"
   },
   "peerDependencies": {
     "@ember/test-waiters": "^3.1.0",

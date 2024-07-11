@@ -15,13 +15,19 @@ describe('discover', () => {
 
     expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
       {
-        "first": "/c/c-b.md",
+        "first": "/c/index.md",
         "name": "root",
         "pages": [
           {
-            "first": "/c/c-b.md",
+            "first": "/c/index.md",
             "name": "c",
             "pages": [
+              {
+                "cleanedName": "index",
+                "groupName": "c",
+                "name": "index",
+                "path": "/c/index.md",
+              },
               {
                 "cleanedName": "c b",
                 "groupName": "c",

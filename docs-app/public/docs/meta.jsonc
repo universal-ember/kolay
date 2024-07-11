@@ -1,5 +1,5 @@
 {
   // We want usage to be first, which breaks the
   // default sort order provided by the filesystem: Alphabetical
-  "order": ["usage", "components", "plugins"],
+  "order": ["usage", "plugins"],
 }
