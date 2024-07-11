@@ -2,6 +2,17 @@
 
 ## Release (2024-07-11)
 
+kolay 1.1.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#94](https://github.com/universal-ember/kolay/pull/94) Fix support for referencing modifiers with ember-modifier 4.2 (and ember-modifier 4.1) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-07-11)
+
 kolay 1.1.0 (minor)
 
 #### :rocket: Enhancement
