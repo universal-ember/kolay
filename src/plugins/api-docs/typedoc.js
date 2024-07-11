@@ -42,20 +42,25 @@ export async function generateTypeDocJSON({ packageName }) {
   const extendsTsConfig = require.resolve('@tsconfig/ember/tsconfig.json');
 
   const home = process.cwd();
-
   const homeRequire = createRequire(home);
+  const types = [homeRequire.resolve('ember-source/types/stable/index.d.ts')];
+
+  // const emberModifier = homeRequire.resolve('ember-modifier/package.json');
+  const eModifierEntries = await packageTypes('ember-modifier');
+
+  if (eModifierEntries.types[0]) {
+    let eMIndex = join(eModifierEntries.dir, eModifierEntries.types[0]);
+
+    types.push(eMIndex);
+  }
 
   const tsConfig = {
     extends: extendsTsConfig,
-    // include: [join(typeInfo.dir, '**/*')],
     include: absoluteResolved.map((entry) => dirname(entry)),
     compilerOptions: {
       baseUrl: typeInfo.dir,
       noEmitOnError: false,
-      types: [
-        homeRequire.resolve('ember-source/types/stable/index.d.ts'),
-        homeRequire.resolve('ember-modifier/index.d.ts'),
-      ],
+      types,
     },
   };
 

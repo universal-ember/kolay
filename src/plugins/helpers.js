@@ -43,6 +43,13 @@ export async function packageTypes(packageName) {
 
   let types = extractExports(manifest.exports, 'types');
 
+  /**
+   * Is the package older and specifies typesVersions instead?
+   */
+  if (types.length === 0 && manifest.typesVersions) {
+    types = extractTypesVersions(manifest.typesVersions);
+  }
+
   return {
     manifest,
     dir,
@@ -51,17 +58,62 @@ export async function packageTypes(packageName) {
 }
 
 /**
+ * extracting types versions requires knowledge of which typescript version we're using.
+ * So, instead, we're going to use use the top-most entry in the typesVersion  list.
+ *
+ * Additionally, the result of types _can be_ an array, rather than a string, as required by exports.
+ *
+ * e.g.:
+ *
+ * "typesVersions": {
+ *  [version or range of typescript]: {
+ *    [path pattern]: [files, to, include],
+ *    [path pattern]: "can be a single file"
+ *  }
+ * }
+ *
+ * This structure is much simpler than exports though
+ *
+ * @param {object} typesVersions
+ * @returns {string[]}
+ */
+export function extractTypesVersions(typesVersions) {
+  let first = Object.values(typesVersions)[0];
+
+  if (!first) {
+    return [];
+  }
+
+  return Object.values(first).flat();
+}
+
+/**
  *
  * @param {object} exports
  * @param {string} kind
+ * @param {string[]} conditions
  * @returns {string[]}
  */
-function extractExports(exports, kind) {
+export function extractExports(exports, kind, conditions = []) {
   let result = [];
 
   for (let [key, config] of Object.entries(exports)) {
     if (typeof config === 'object') {
-      result.push(...extractExports(config, kind));
+      if (conditions.length > 0) {
+        let isPathReference = key.startsWith('.');
+        let isKey = key === kind;
+
+        if (!isPathReference && !isKey) {
+          // We have conditions, so let's select one
+          if (conditions.includes(key)) {
+            result.push(...extractExports(config, kind, conditions));
+          }
+
+          continue;
+        }
+      }
+
+      result.push(...extractExports(config, kind, conditions));
       continue;
     }
 
