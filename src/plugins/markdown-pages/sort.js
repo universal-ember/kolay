@@ -107,7 +107,11 @@ Actual: ${JSON.stringify(list.map(find))}`);
     result.push(found);
   }
 
-  result.push(...remaining);
+  if (remaining.length > 0) {
+    throw new Error(
+      `Order configuration did not specify all pages. Remaining pages are ${JSON.stringify(remaining.map(find))}`
+    );
+  }
 
   return result;
 }
