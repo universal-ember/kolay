@@ -100,7 +100,7 @@ import { setupKolay } from "kolay/setup";
 
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
 import { colorScheme, sync } from "ember-primitives/color-scheme";
-import { getHighlighterCore } from "shiki/core";
+import { createHighlighterCore } from "shiki/core";
 import getWasm from "shiki/wasm";
 
 sync();
@@ -109,7 +109,7 @@ import type { Manifest } from "kolay";
 
 export default class ApplicationRoute extends Route {
   async model(): Promise<{ manifest: Manifest }> {
-    const highlighter = await getHighlighterCore({
+    const highlighter = await createHighlighterCore({
       themes: [import("shiki/themes/github-dark.mjs"), import("shiki/themes/github-light.mjs")],
       langs: [
         import("shiki/langs/javascript.mjs"),
@@ -125,7 +125,7 @@ export default class ApplicationRoute extends Route {
       loadWasm: getWasm,
     });
 
-    const manifest = await setupKolay({
+    const manifest = await setupKolay(this, {
       resolve: {
         "ember-primitives": import("ember-primitives"),
         kolay: import("kolay"),
