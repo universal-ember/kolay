@@ -50,6 +50,22 @@ module('Errors', function (hooks) {
 
       await settled();
       assert.dom('[data-page-error]').doesNotExist();
+
+      visit(`/Runtime/docs/api-docs.md#some-hash`);
+
+      await renderSettled();
+      assert.dom('[data-page-error]').doesNotExist();
+
+      await settled();
+      assert.dom('[data-page-error]').doesNotExist();
+
+      visit(`/Runtime/docs/api-docs.md?query-param=value`);
+
+      await renderSettled();
+      assert.dom('[data-page-error]').doesNotExist();
+
+      await settled();
+      assert.dom('[data-page-error]').doesNotExist();
     });
   });
 });
