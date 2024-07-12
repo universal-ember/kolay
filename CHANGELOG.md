@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-07-12)
+
+kolay 1.1.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#96](https://github.com/universal-ember/kolay/pull/96) Fix Hash and other URL oddities: Use URL parsing instead of bespoke regex ([@rtablada](https://github.com/rtablada))
+
+#### Committers: 1
+- Ryan Tablada ([@rtablada](https://github.com/rtablada))
+
 ## Release (2024-07-11)
 
 kolay 1.1.1 (patch)
