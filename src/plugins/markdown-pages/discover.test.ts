@@ -57,6 +57,7 @@ describe('discover', () => {
                     "path": "/c/d/d-b.md",
                   },
                 ],
+                "path": "d",
               },
               {
                 "first": "/c/e/e-b.md",
@@ -75,10 +76,13 @@ describe('discover', () => {
                     "path": "/c/e/e-a.md",
                   },
                 ],
+                "path": "e",
               },
             ],
+            "path": "c",
           },
         ],
+        "path": "root",
       }
     `);
   });
@@ -102,8 +106,10 @@ describe('discover', () => {
                 "path": "/main/index.md",
               },
             ],
+            "path": "main",
           },
         ],
+        "path": "root",
       }
     `);
   });
@@ -115,6 +121,7 @@ describe('discover', () => {
       {
         "name": "root",
         "pages": [],
+        "path": "root",
       }
     `);
   });

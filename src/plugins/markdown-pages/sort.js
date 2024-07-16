@@ -127,10 +127,10 @@ export function sortTree(tree, configs, parents = []) {
     return tree;
   }
 
-  tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.name]));
+  tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.path]));
 
   if (configs.length > 0) {
-    let subPath = `${[...parents, tree.name].join('/')}`;
+    let subPath = `${[...parents, tree.path].join('/')}`;
     let config = configs
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;

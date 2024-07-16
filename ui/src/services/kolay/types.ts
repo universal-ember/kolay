@@ -7,6 +7,7 @@ export interface Manifest {
 }
 
 export interface Collection {
+  path: string;
   name: string;
   first?: string;
   pages: (Collection | Page)[];
