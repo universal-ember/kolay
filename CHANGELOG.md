@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-07-16)
+
+kolay 1.1.3 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#101](https://github.com/universal-ember/kolay/pull/101) Fixes Configs Not Found In Dasherized Paths ([@rtablada](https://github.com/rtablada))
+
+#### Committers: 1
+- Ryan Tablada ([@rtablada](https://github.com/rtablada))
+
 ## Release (2024-07-12)
 
 kolay 1.1.2 (patch)
