@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "1.1.1",
-      "newVersion": "1.1.2",
+      "oldVersion": "1.1.2",
+      "newVersion": "1.1.3",
       "constraints": [
         {
           "impact": "patch",
@@ -13,8 +13,8 @@
       "pkgJSONPath": "./package.json"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.8"
+      "oldVersion": "0.0.9"
     }
   },
-  "description": "## Release (2024-07-12)\n\nkolay 1.1.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#96](https://github.com/universal-ember/kolay/pull/96) Fix Hash and other URL oddities: Use URL parsing instead of bespoke regex ([@rtablada](https://github.com/rtablada))\n\n#### Committers: 1\n- Ryan Tablada ([@rtablada](https://github.com/rtablada))\n"
+  "description": "## Release (2024-07-16)\n\nkolay 1.1.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#101](https://github.com/universal-ember/kolay/pull/101) Fixes Configs Not Found In Dasherized Paths ([@rtablada](https://github.com/rtablada))\n\n#### Committers: 1\n- Ryan Tablada ([@rtablada](https://github.com/rtablada))\n"
 }
