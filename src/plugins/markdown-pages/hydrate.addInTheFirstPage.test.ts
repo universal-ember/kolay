@@ -8,6 +8,7 @@ describe('addInTheFirstPage', () => {
   test('adds in the first page to a shallow object', () => {
     let tree: Collection = {
       name: 'top',
+      path: 'top',
       pages: [
         {
           name: 'foo.md',
@@ -32,6 +33,7 @@ describe('addInTheFirstPage', () => {
             "path": "/top/foo.md",
           },
         ],
+        "path": "top",
       }
     `);
   });
@@ -39,9 +41,11 @@ describe('addInTheFirstPage', () => {
   test('adds in the first page', () => {
     let tree: Collection = {
       name: 'top',
+      path: 'top',
       pages: [
         {
           name: 'mid',
+          path: 'mid',
           pages: [
             {
               name: 'foo.md',
@@ -72,8 +76,10 @@ describe('addInTheFirstPage', () => {
                 "path": "/top/mid/foo.md",
               },
             ],
+            "path": "mid",
           },
         ],
+        "path": "top",
       }
     `);
   });
@@ -81,9 +87,11 @@ describe('addInTheFirstPage', () => {
   test('adds in the index page', () => {
     let tree: Collection = {
       name: 'top',
+      path: 'top',
       pages: [
         {
           name: 'mid',
+          path: 'mid',
           pages: [
             {
               name: 'index.md',
@@ -126,8 +134,10 @@ describe('addInTheFirstPage', () => {
                 "path": "/top/mid/foo.md",
               },
             ],
+            "path": "mid",
           },
         ],
+        "path": "top",
       }
     `);
   });

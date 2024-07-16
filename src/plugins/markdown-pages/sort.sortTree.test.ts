@@ -9,6 +9,7 @@ describe('sortTree', () => {
     let result = sortTree(
       {
         name: 'top',
+        path: 'top',
         pages: [
           {
             path: '/top/second',
@@ -39,6 +40,7 @@ describe('sortTree', () => {
             "path": "/top/first",
           },
         ],
+        "path": "top",
       }
     `);
   });
@@ -47,6 +49,7 @@ describe('sortTree', () => {
     let result = sortTree(
       {
         name: 'top',
+        path: 'top',
         pages: [
           {
             path: '/top/second',
@@ -68,9 +71,11 @@ describe('sortTree', () => {
     let result = sortTree(
       {
         name: 'top',
+        path: 'top',
         pages: [
           {
             name: 'child',
+            path: 'child',
             pages: [
               {
                 path: '/top/child/second',

@@ -8,6 +8,7 @@ describe('prefixPaths', () => {
   test('it works', () => {
     let tree: Collection = {
       name: 'top',
+      path: 'top',
       pages: [
         {
           name: 'foo.md',
@@ -31,6 +32,7 @@ describe('prefixPaths', () => {
             "path": "/prefix/top/foo.md",
           },
         ],
+        "path": "top",
       }
     `);
   });
@@ -38,9 +40,11 @@ describe('prefixPaths', () => {
   test('works on deep objects', () => {
     let tree: Collection = {
       name: 'top',
+      path: 'top',
       pages: [
         {
           name: 'mid',
+          path: 'mid',
           pages: [
             {
               name: 'index.md',
@@ -81,8 +85,10 @@ describe('prefixPaths', () => {
                 "path": "/prefix/top/mid/foo.md",
               },
             ],
+            "path": "mid",
           },
         ],
+        "path": "top",
       }
     `);
   });

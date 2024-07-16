@@ -57,7 +57,7 @@ function cleanSegment(segment) {
  */
 export function build(docs) {
   /** @type {import('./types.ts').Collection} */
-  let result = { name: 'root', pages: [] };
+  let result = { name: 'root', pages: [], path: 'root' };
 
   for (let { mdPath, config } of docs) {
     if (!mdPath.includes('/')) {
@@ -92,6 +92,7 @@ export function build(docs) {
       if (!currentCollection) {
         /** @type {import('./types.ts').Collection} */
         currentCollection = {
+          path: group,
           name: groupName,
           pages: [],
         };

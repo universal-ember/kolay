@@ -20,8 +20,10 @@ describe('build', () => {
                 "path": "/top/nested.md",
               },
             ],
+            "path": "top",
           },
         ],
+        "path": "root",
       }
     `);
   });
@@ -43,8 +45,10 @@ describe('build', () => {
                 "path": "/top-level/nested.md",
               },
             ],
+            "path": "top-level",
           },
         ],
+        "path": "root",
       }
     `);
   });
@@ -76,6 +80,7 @@ describe('build', () => {
                 "path": "/top/nested-sibling.md",
               },
             ],
+            "path": "top",
           },
           {
             "name": "top ",
@@ -87,8 +92,10 @@ describe('build', () => {
                 "path": "/top-2/other.md",
               },
             ],
+            "path": "top-2",
           },
         ],
+        "path": "root",
       }
     `);
   });
@@ -113,10 +120,13 @@ describe('build', () => {
                     "path": "/top/deep/path.md",
                   },
                 ],
+                "path": "deep",
               },
             ],
+            "path": "top",
           },
         ],
+        "path": "root",
       }
     `);
   });
@@ -148,12 +158,16 @@ describe('build', () => {
                         "path": "/top/deep/another/index.md",
                       },
                     ],
+                    "path": "another",
                   },
                 ],
+                "path": "deep",
               },
             ],
+            "path": "top",
           },
         ],
+        "path": "root",
       }
     `);
   });
