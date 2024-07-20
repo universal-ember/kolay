@@ -2,6 +2,8 @@ import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { getIndexPage, isCollection, isIndex } from '../utils.ts';
+
 import type DocsService from '../services/kolay/docs.ts';
 import type { Collection, Page } from '../services/kolay/types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -143,24 +145,6 @@ export class PageNav extends Component<{
       </Pages>
     </nav>
   </template>
-}
-
-function isCollection(x: Page | Collection): x is Collection {
-  return 'pages' in x;
-}
-
-function isIndex(x: Page | Collection) {
-  if (isCollection(x)) return false;
-
-  return x.path.endsWith('index.md');
-}
-
-function getIndexPage(x: Collection): Page | undefined {
-  let page = x.pages.find(isIndex);
-
-  if (page && isCollection(page)) return;
-
-  return page;
 }
 
 const not = (x: unknown) => !x;

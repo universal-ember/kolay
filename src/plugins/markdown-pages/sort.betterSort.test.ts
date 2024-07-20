@@ -90,29 +90,6 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  test('[Tutorial]: properties starting with x are placed at the end', () => {
-    let list: { name: string }[] = [
-      { name: '6-component-patterns' },
-      { name: 'x-10-observation' },
-      { name: '1-introduction' },
-    ];
-    let sorted = list.sort(betterSort('name'));
-
-    expect(sorted).toMatchInlineSnapshot(`
-      [
-        {
-          "name": "1-introduction",
-        },
-        {
-          "name": "6-component-patterns",
-        },
-        {
-          "name": "x-10-observation",
-        },
-      ]
-    `);
-  });
-
   test('if there is a path ending in index.md, it must be first', () => {
     let list: Entry[] = [
       { name: 'b', path: '/c/b.md' },
@@ -137,5 +114,61 @@ describe('addInTheFirstPage', () => {
         },
       ]
     `);
+  });
+
+  describe('From the Tutorial', () => {
+    test('properties starting with x are placed at the end', () => {
+      let list: { name: string }[] = [
+        { name: '6-component-patterns' },
+        { name: 'x-10-observation' },
+        { name: '1-introduction' },
+      ];
+      let sorted = list.sort(betterSort('name'));
+
+      expect(sorted).toMatchInlineSnapshot(`
+      [
+        {
+          "name": "1-introduction",
+        },
+        {
+          "name": "6-component-patterns",
+        },
+        {
+          "name": "x-10-observation",
+        },
+      ]
+    `);
+    });
+
+    test('10 comes after 9, and 11 comes after 10', () => {
+      let list: { name: string }[] = [
+        { name: '12-loading-patterns' },
+        { name: '11-requesting-data' },
+        { name: '8-form-data-controlled' },
+        { name: '99-next-steps' },
+        { name: '1-introduction' },
+      ];
+      let sorted = list.sort(betterSort('name'));
+
+      expect(sorted).toMatchInlineSnapshot(`
+        [
+          {
+            "name": "1-introduction",
+          },
+          {
+            "name": "8-form-data-controlled",
+          },
+          {
+            "name": "11-requesting-data",
+          },
+          {
+            "name": "12-loading-patterns",
+          },
+          {
+            "name": "99-next-steps",
+          },
+        ]
+      `);
+    });
   });
 });
