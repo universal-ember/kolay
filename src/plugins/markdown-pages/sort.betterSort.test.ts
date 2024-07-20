@@ -117,7 +117,6 @@ describe('addInTheFirstPage', () => {
   });
 
   describe('From the Tutorial', () => {
-
     test('properties starting with x are placed at the end', () => {
       let list: { name: string }[] = [
         { name: '6-component-patterns' },
@@ -171,6 +170,5 @@ describe('addInTheFirstPage', () => {
         ]
       `);
     });
-
   });
 });

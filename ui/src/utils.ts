@@ -17,4 +17,3 @@ export function getIndexPage(x: Collection): Page | undefined {
 
   return page;
 }
-
