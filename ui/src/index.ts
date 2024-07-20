@@ -11,6 +11,9 @@ export {
 export { addRoutes } from './router.ts';
 export { Compiled } from './services/kolay/compiler/reactive.ts';
 
+// Utilities
+export * from './utils.ts';
+
 // Types
 export type { default as APIDocsService } from './services/kolay/api-docs.ts';
 export type {
