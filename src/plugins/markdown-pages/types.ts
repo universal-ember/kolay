@@ -7,7 +7,6 @@ export type GatheredDocs = Array<{ mdPath: string; config?: object }>;
 
 export interface MarkdownPagesOptions {
   src?: string | undefined;
-  onlyDirectories?: boolean;
   groups: {
     name: string;
     src: string;
