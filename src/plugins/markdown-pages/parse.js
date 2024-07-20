@@ -82,8 +82,6 @@ export function build(docs) {
     for (let group of groups) {
       groupStack.push(group);
 
-      let groupName = cleanSegment(group);
-
       /** @type {any} */
       let currentCollection = leafestCollection.pages.find(
         (page) => 'pages' in page && page.name === group
@@ -94,17 +92,18 @@ export function build(docs) {
         currentCollection = {
           path: group,
           /**
-           * Needed for sorting, as we sort on name 
-           * 
+           * Since we sort on 'name' (above),
+           * this must be the original group name.
            */
-          // Needed for sorting, as we sort on 'name'.
-          // Historically
           name: group,
-          // the cleaned name, potentially for UI display purposes.
-          // however, the original name is "name" or "path" so 
-          // that could be used in case cleanedName does not fit the needs
-          // of the consuming project.
-          cleanedName: groupName,
+          /**
+           * the cleaned name, potentially for UI display purposes.
+           * however, the original name is "name" or "path" so 
+           * that could be used in case cleanedName does not fit the needs
+           * of the consuming project.
+           */     
+          cleanedName: cleanSegment(group),
+
           pages: [],
         };
 
