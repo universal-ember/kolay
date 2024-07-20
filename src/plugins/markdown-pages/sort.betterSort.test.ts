@@ -1,4 +1,3 @@
-
 import { describe, expect, test } from 'vitest';
 
 import { betterSort } from './sort.js';
@@ -94,8 +93,8 @@ describe('addInTheFirstPage', () => {
   test('[Tutorial]: properties starting with x are placed at the end', () => {
     let list: { name: string }[] = [
       { name: '6-component-patterns' },
-      { name: 'x-10-observation'},
-      { name: '1-introduction'},
+      { name: 'x-10-observation' },
+      { name: '1-introduction' },
     ];
     let sorted = list.sort(betterSort('name'));
 
@@ -112,7 +111,6 @@ describe('addInTheFirstPage', () => {
         },
       ]
     `);
-
   });
 
   test('if there is a path ending in index.md, it must be first', () => {

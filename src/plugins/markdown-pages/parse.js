@@ -98,10 +98,10 @@ export function build(docs) {
           name: group,
           /**
            * the cleaned name, potentially for UI display purposes.
-           * however, the original name is "name" or "path" so 
+           * however, the original name is "name" or "path" so
            * that could be used in case cleanedName does not fit the needs
            * of the consuming project.
-           */     
+           */
           cleanedName: cleanSegment(group),
 
           pages: [],
