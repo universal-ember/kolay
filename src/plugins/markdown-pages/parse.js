@@ -103,7 +103,7 @@ export function build(docs) {
           pages: [],
         };
 
-        preAddCheck(groupStack.join('/'), groupName, leafestCollection);
+        preAddCheck(groupStack.join('/'), group, leafestCollection);
         leafestCollection.pages.push(currentCollection);
       }
 

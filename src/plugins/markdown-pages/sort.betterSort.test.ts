@@ -91,7 +91,7 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  test('properties starting with x are placed at the end', () => {
+  test('[Tutorial]: properties starting with x are placed at the end', () => {
     let list: { name: string }[] = [
       { name: '6-component-patterns' },
       { name: '7-form-data' },
@@ -104,6 +104,9 @@ describe('addInTheFirstPage', () => {
 
     expect(sorted).toMatchInlineSnapshot(`
       [
+        {
+          "name": "1-introduction",
+        },
         {
           "name": "6-component-patterns",
         },
@@ -118,9 +121,6 @@ describe('addInTheFirstPage', () => {
         },
         {
           "name": "x-modifiers",
-        },
-        {
-          "name": "1-introduction",
         },
       ]
     `);
