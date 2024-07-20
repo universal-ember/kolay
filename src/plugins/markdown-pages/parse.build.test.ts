@@ -79,20 +79,14 @@ describe('build', () => {
                 "name": "nested-sibling",
                 "path": "/top/nested-sibling.md",
               },
-            ],
-            "path": "top",
-          },
-          {
-            "name": "top ",
-            "pages": [
               {
                 "cleanedName": "other",
-                "groupName": "top ",
+                "groupName": "top",
                 "name": "other",
                 "path": "/top-2/other.md",
               },
             ],
-            "path": "top-2",
+            "path": "top",
           },
         ],
         "path": "root",
