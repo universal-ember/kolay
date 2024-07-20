@@ -57,7 +57,7 @@ describe('build', () => {
     let result = build([
       { mdPath: 'top/nested.md' },
       { mdPath: 'top/nested-sibling.md' },
-      { mdPath: 'top-2/other.md' },
+      { mdPath: 'top-two/other.md' },
     ]);
 
     expect(result).toMatchInlineSnapshot(`
@@ -79,14 +79,20 @@ describe('build', () => {
                 "name": "nested-sibling",
                 "path": "/top/nested-sibling.md",
               },
-              {
-                "cleanedName": "other",
-                "groupName": "top",
-                "name": "other",
-                "path": "/top-2/other.md",
-              },
             ],
             "path": "top",
+          },
+          {
+            "name": "top two",
+            "pages": [
+              {
+                "cleanedName": "other",
+                "groupName": "top two",
+                "name": "other",
+                "path": "/top-two/other.md",
+              },
+            ],
+            "path": "top-two",
           },
         ],
         "path": "root",
