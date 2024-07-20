@@ -15,7 +15,7 @@ import { betterSort } from './sort.js';
 export async function parse(paths, cwd) {
   let docs = await gather(paths, cwd);
   let unsorted = build(docs);
-  let sorted = deepSort(unsorted);
+  let sorted = deepSort(deepSort(unsorted));
 
   return sorted;
 }
@@ -86,14 +86,20 @@ export function build(docs) {
 
       /** @type {any} */
       let currentCollection = leafestCollection.pages.find(
-        (page) => 'pages' in page && page.name === groupName
+        (page) => 'pages' in page && page.name === group
       );
 
       if (!currentCollection) {
         /** @type {import('./types.ts').Collection} */
         currentCollection = {
           path: group,
-          name: groupName,
+          // Needed for sorting, as we sort on 'name'
+          name: group,
+          // the cleaned name, potentially for UI display purposes.
+          // however, the original name is "name" or "path" so 
+          // that could be used in case cleanedName does not fit the needs
+          // of the consuming project.
+          cleanedName: groupName,
           pages: [],
         };
 
@@ -116,6 +122,7 @@ export function build(docs) {
     let pageInfo = {
       ...config,
       path: `/${mdPath}`,
+      // Removes the file extension
       name: name.replace(/\.\w+$/, ''),
       groupName,
       cleanedName,

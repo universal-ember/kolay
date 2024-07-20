@@ -1,3 +1,4 @@
+
 import { describe, expect, test } from 'vitest';
 
 import { betterSort } from './sort.js';
@@ -88,6 +89,42 @@ describe('addInTheFirstPage', () => {
         },
       ]
     `);
+  });
+
+  test('properties starting with x are placed at the end', () => {
+    let list: { name: string }[] = [
+      { name: '6-component-patterns' },
+      { name: '7-form-data' },
+      { name: 'x-10-observation'},
+      { name: 'x-8-bound-form-controls'},
+      { name: 'x-modifiers'},
+      { name: '1-introduction'},
+    ];
+    let sorted = list.sort(betterSort('name'));
+
+    expect(sorted).toMatchInlineSnapshot(`
+      [
+        {
+          "name": "6-component-patterns",
+        },
+        {
+          "name": "7-form-data",
+        },
+        {
+          "name": "x-10-observation",
+        },
+        {
+          "name": "x-8-bound-form-controls",
+        },
+        {
+          "name": "x-modifiers",
+        },
+        {
+          "name": "1-introduction",
+        },
+      ]
+    `);
+
   });
 
   test('if there is a path ending in index.md, it must be first', () => {
