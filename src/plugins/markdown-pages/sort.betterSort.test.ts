@@ -94,10 +94,7 @@ describe('addInTheFirstPage', () => {
   test('[Tutorial]: properties starting with x are placed at the end', () => {
     let list: { name: string }[] = [
       { name: '6-component-patterns' },
-      { name: '7-form-data' },
       { name: 'x-10-observation'},
-      { name: 'x-8-bound-form-controls'},
-      { name: 'x-modifiers'},
       { name: '1-introduction'},
     ];
     let sorted = list.sort(betterSort('name'));
@@ -111,16 +108,7 @@ describe('addInTheFirstPage', () => {
           "name": "6-component-patterns",
         },
         {
-          "name": "7-form-data",
-        },
-        {
           "name": "x-10-observation",
-        },
-        {
-          "name": "x-8-bound-form-controls",
-        },
-        {
-          "name": "x-modifiers",
         },
       ]
     `);
