@@ -90,6 +90,29 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
+  test('[Tutorial]: properties starting with x are placed at the end', () => {
+    let list: { name: string }[] = [
+      { name: '6-component-patterns' },
+      { name: 'x-10-observation' },
+      { name: '1-introduction' },
+    ];
+    let sorted = list.sort(betterSort('name'));
+
+    expect(sorted).toMatchInlineSnapshot(`
+      [
+        {
+          "name": "1-introduction",
+        },
+        {
+          "name": "6-component-patterns",
+        },
+        {
+          "name": "x-10-observation",
+        },
+      ]
+    `);
+  });
+
   test('if there is a path ending in index.md, it must be first', () => {
     let list: Entry[] = [
       { name: 'b', path: '/c/b.md' },

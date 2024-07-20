@@ -11,6 +11,7 @@ describe('build', () => {
         "name": "root",
         "pages": [
           {
+            "cleanedName": "top",
             "name": "top",
             "pages": [
               {
@@ -36,7 +37,8 @@ describe('build', () => {
         "name": "root",
         "pages": [
           {
-            "name": "top level",
+            "cleanedName": "top level",
+            "name": "top-level",
             "pages": [
               {
                 "cleanedName": "nested",
@@ -65,6 +67,7 @@ describe('build', () => {
         "name": "root",
         "pages": [
           {
+            "cleanedName": "top",
             "name": "top",
             "pages": [
               {
@@ -83,7 +86,8 @@ describe('build', () => {
             "path": "top",
           },
           {
-            "name": "top two",
+            "cleanedName": "top two",
+            "name": "top-two",
             "pages": [
               {
                 "cleanedName": "other",
@@ -108,9 +112,11 @@ describe('build', () => {
         "name": "root",
         "pages": [
           {
+            "cleanedName": "top",
             "name": "top",
             "pages": [
               {
+                "cleanedName": "deep",
                 "name": "deep",
                 "pages": [
                   {
@@ -143,12 +149,15 @@ describe('build', () => {
         "name": "root",
         "pages": [
           {
+            "cleanedName": "top",
             "name": "top",
             "pages": [
               {
+                "cleanedName": "deep",
                 "name": "deep",
                 "pages": [
                   {
+                    "cleanedName": "another",
                     "name": "another",
                     "pages": [
                       {

@@ -45,7 +45,7 @@ export function betterSort(property) {
 
     // Throw things starting with x at the end
     if (aNumStr === 'x') return 1;
-    if (bNumStr === 'x') return 1;
+    if (bNumStr === 'x') return -1;
 
     let aNum = Number(aNumStr);
     let bNum = Number(bNumStr);

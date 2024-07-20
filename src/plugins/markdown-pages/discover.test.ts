@@ -19,6 +19,7 @@ describe('discover', () => {
         "name": "root",
         "pages": [
           {
+            "cleanedName": "c",
             "first": "/c/index.md",
             "name": "c",
             "pages": [
@@ -41,6 +42,7 @@ describe('discover', () => {
                 "path": "/c/c-a.md",
               },
               {
+                "cleanedName": "d",
                 "first": "/c/d/d-a.md",
                 "name": "d",
                 "pages": [
@@ -60,6 +62,7 @@ describe('discover', () => {
                 "path": "d",
               },
               {
+                "cleanedName": "e",
                 "first": "/c/e/e-b.md",
                 "name": "e",
                 "pages": [
@@ -96,6 +99,7 @@ describe('discover', () => {
         "name": "root",
         "pages": [
           {
+            "cleanedName": "main",
             "first": "/main/index.md",
             "name": "main",
             "pages": [
