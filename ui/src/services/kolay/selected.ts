@@ -117,6 +117,6 @@ export default class Selected extends Service {
 // DO NOT DELETE: this is how TypeScript knows how to look up your services.
 declare module '@ember/service' {
   interface Registry {
-    selected: Selected;
+    'kolay/selected': Selected;
   }
 }
