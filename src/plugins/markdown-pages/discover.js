@@ -11,17 +11,18 @@ import { reshape } from './hydrate.js';
  * @typedef {object} Options
  * @property {string | undefined} [ src ]
  * @property {Group[] | undefined} [ groups ]
+ * @property {Group[] | undefined} [ onlyDirectories ]
  *
  * @param {Options} options
  * @return {Promise<import('./types.ts').Manifest>}
  */
-export async function discover({ groups, src }) {
+export async function discover({ groups, src, onlyDirectories }) {
   groups ??= [];
 
   let groupsToLookFor = new Set();
 
   if (src) {
-    groupsToLookFor.add({ name: 'root', src });
+    groupsToLookFor.add({ name: 'root', src, onlyDirectories });
   }
 
   groups.map((group) => groupsToLookFor.add(group));

@@ -12,7 +12,7 @@ const SECRET_INTERNAL_IMPORT = 'kolay/manifest:virtual';
 
 /** @type {(options: import('./types.ts').MarkdownPagesOptions) => import('unplugin').UnpluginOptions} */
 export const markdownPages = (options) => {
-  let { src, dest, name, groups } = options ?? {};
+  let { src, dest, name, groups, onlyDirectories } = options ?? {};
 
   const destination = dest ?? 'kolay-manifest';
 
@@ -43,7 +43,7 @@ export const markdownPages = (options) => {
           `use the 'groups' key.`
       );
 
-      const reshaped = await discover({ src, groups });
+      const reshaped = await discover({ src, groups, onlyDirectories });
 
       if (groups) {
         groups.forEach((group) => {
