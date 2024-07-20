@@ -93,7 +93,12 @@ export function build(docs) {
         /** @type {import('./types.ts').Collection} */
         currentCollection = {
           path: group,
-          // Needed for sorting, as we sort on 'name'
+          /**
+           * Needed for sorting, as we sort on name 
+           * 
+           */
+          // Needed for sorting, as we sort on 'name'.
+          // Historically
           name: group,
           // the cleaned name, potentially for UI display purposes.
           // however, the original name is "name" or "path" so 
