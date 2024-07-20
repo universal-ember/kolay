@@ -2,6 +2,17 @@
 
 ## Release (2024-07-20)
 
+kolay 1.2.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#111](https://github.com/universal-ember/kolay/pull/111) Don't use the workspace protocol for the peer range ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-07-20)
+
 kolay 1.2.0 (minor)
 
 #### :rocket: Enhancement
