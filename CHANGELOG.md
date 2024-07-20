@@ -1,5 +1,18 @@
 # Changelog
 
+## Release (2024-07-20)
+
+kolay 1.1.4 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#106](https://github.com/universal-ember/kolay/pull/106) Allow packages to be unspecified ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#103](https://github.com/universal-ember/kolay/pull/103) Fix implicit sorting (sorting based on file path)  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#105](https://github.com/universal-ember/kolay/pull/105) Make sure to .trim() the group names after cleaning ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-07-16)
 
 kolay 1.1.3 (patch)
