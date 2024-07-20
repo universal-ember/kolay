@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "1.1.2",
-      "newVersion": "1.1.3",
+      "oldVersion": "1.1.3",
+      "newVersion": "1.1.4",
       "constraints": [
         {
           "impact": "patch",
@@ -13,8 +13,8 @@
       "pkgJSONPath": "./package.json"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.9"
+      "oldVersion": "0.0.10"
     }
   },
-  "description": "## Release (2024-07-16)\n\nkolay 1.1.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#101](https://github.com/universal-ember/kolay/pull/101) Fixes Configs Not Found In Dasherized Paths ([@rtablada](https://github.com/rtablada))\n\n#### Committers: 1\n- Ryan Tablada ([@rtablada](https://github.com/rtablada))\n"
+  "description": "## Release (2024-07-20)\n\nkolay 1.1.4 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#106](https://github.com/universal-ember/kolay/pull/106) Allow packages to be unspecified ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#103](https://github.com/universal-ember/kolay/pull/103) Fix implicit sorting (sorting based on file path)  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#105](https://github.com/universal-ember/kolay/pull/105) Make sure to .trim() the group names after cleaning ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
