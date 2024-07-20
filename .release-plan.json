@@ -1,10 +1,14 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "1.1.3",
-      "newVersion": "1.1.4",
+      "impact": "minor",
+      "oldVersion": "1.1.4",
+      "newVersion": "1.2.0",
       "constraints": [
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
         {
           "impact": "patch",
           "reason": "Appears in changelog section :bug: Bug Fix"
@@ -16,5 +20,5 @@
       "oldVersion": "0.0.10"
     }
   },
-  "description": "## Release (2024-07-20)\n\nkolay 1.1.4 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#106](https://github.com/universal-ember/kolay/pull/106) Allow packages to be unspecified ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#103](https://github.com/universal-ember/kolay/pull/103) Fix implicit sorting (sorting based on file path)  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#105](https://github.com/universal-ember/kolay/pull/105) Make sure to .trim() the group names after cleaning ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-07-20)\n\nkolay 1.2.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#109](https://github.com/universal-ember/kolay/pull/109) Add type-narrowing utilities for working with the manifest's tree's pages vs collections ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#107](https://github.com/universal-ember/kolay/pull/107) Widen range on the UI library ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
