@@ -2,6 +2,17 @@
 
 ## Release (2024-07-20)
 
+kolay 1.2.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#113](https://github.com/universal-ember/kolay/pull/113) Fix selected service service-registry entry ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-07-20)
+
 kolay 1.2.1 (patch)
 
 #### :bug: Bug Fix
