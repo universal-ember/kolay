@@ -15,7 +15,7 @@ import { setup } from './setup.js';
 export function combinedPlugins(options) {
   return [
     setup(),
-    apiDocs({ packages: options.packages, dest: options.dest }),
+    apiDocs({ packages: options.packages ?? [], dest: options.dest }),
     markdownPages({ src: options.src, groups: options.groups, dest: options.dest }),
   ];
 }
