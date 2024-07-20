@@ -83,7 +83,7 @@ importers:
         specifier: ^7.7.1
         version: 7.14.1(eslint@8.57.0)(typescript@5.5.2)
       '@universal-ember/kolay-ui':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:ui
       concurrently:
         specifier: ^8.2.2
