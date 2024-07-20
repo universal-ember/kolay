@@ -2,6 +2,21 @@
 
 ## Release (2024-07-20)
 
+kolay 1.2.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#109](https://github.com/universal-ember/kolay/pull/109) Add type-narrowing utilities for working with the manifest's tree's pages vs collections ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#107](https://github.com/universal-ember/kolay/pull/107) Widen range on the UI library ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-07-20)
+
 kolay 1.1.4 (patch)
 
 #### :bug: Bug Fix
