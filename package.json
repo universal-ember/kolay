@@ -132,7 +132,7 @@
     "ember-primitives": "^0.21.0",
     "ember-repl": "^4.1.1",
     "ember-resources": "^7.0.0",
-    "ember-source": "~5.9.0",
+    "ember-source": "~5.10.0",
     "eslint": "^8.56.0",
     "pnpm-sync-dependencies-meta-injected": "^0.0.14",
     "prettier": "^3.1.1",
