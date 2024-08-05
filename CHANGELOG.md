@@ -1,5 +1,10 @@
 # Changelog
 
+
+
+
+
+
 ## Release (2024-07-20)
 
 kolay 1.2.2 (patch)
