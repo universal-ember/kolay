@@ -1,20 +1,11 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "1.2.1",
-      "newVersion": "1.2.2",
-      "constraints": [
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        }
-      ],
-      "pkgJSONPath": "./package.json"
+      "oldVersion": "1.2.2"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.11"
+      "oldVersion": "0.0.12"
     }
   },
-  "description": "## Release (2024-07-20)\n\nkolay 1.2.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#113](https://github.com/universal-ember/kolay/pull/113) Fix selected service service-registry entry ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "\n\n\n\n"
 }
