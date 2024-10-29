@@ -50,17 +50,13 @@
       "types": "./declarations/vite.d.ts",
       "import": "./src/vite.js"
     },
-    "./setup": {
-      "types": "./src/browser/virtual/setup.d.ts",
-      "default": "./src/browser/virtual/empty.js"
-    },
-    "./test-support": {
-      "types": "./src/browser/test-support.d.ts",
-      "default": "./src/browser/test-support.js"
-    },
     "./build/legacy": {
       "types": "./declarations/plugins/legacy/index.d.cts",
       "default": "./src/plugins/legacy/index.cjs"
+    },
+    "./*": {
+      "types": "./src/browser/virtual/*",
+      "default": "./src/does-not-exist/*"
     }
   },
   "files": [
@@ -97,7 +93,7 @@
     "ember-primitives": ">= 0.11.3",
     "ember-repl": "^4.1.1",
     "ember-resources": ">= 7.0.0",
-    "ember-source": ">= 5.7.0",
+    "ember-source": ">= 5.12.0",
     "reactiveweb": ">= 1.2.1",
     "tracked-built-ins": ">= 3.3.0"
   },
@@ -109,7 +105,8 @@
     "json5": "^2.2.3",
     "package-up": "^5.0.0",
     "typedoc": "^0.26.3",
-    "unplugin": "^1.10.2"
+    "unplugin": "^1.10.2",
+    "send": "^1.1.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.0",
@@ -124,6 +121,7 @@
     "@types/common-tags": "^1.8.4",
     "@types/qunit": "^2.19.10",
     "@types/rsvp": "^4.0.9",
+    "@types/send": "^0.17.4",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "@universal-ember/kolay-ui": "workspace:*",
@@ -132,7 +130,7 @@
     "ember-primitives": "^0.21.0",
     "ember-repl": "^4.1.1",
     "ember-resources": "^7.0.0",
-    "ember-source": "~5.9.0",
+    "ember-source": "^5.12.0",
     "eslint": "^8.56.0",
     "pnpm-sync-dependencies-meta-injected": "^0.0.14",
     "prettier": "^3.1.1",

@@ -22,9 +22,13 @@
     "lint:js:fix": "eslint . --fix",
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
-    "start": "concurrently 'ember serve' 'pnpm _syncPnpm --watch' --names 'serve,sync'",
+    "start": "pnpm start:vite",
+    "start:vite": "vite",
+    "start:test": "vite --open /tests/",
+    "start:webpack": "WEBPACK=true pnpm ember serve",
+    "start:sync": "pnpm _syncPnpm --watch",
     "_syncPnpm": "DEBUG=* pnpm sync-dependencies-meta-injected",
-    "test:ember": "ember test"
+    "test:ember": "vite build --mode test && ember test --path dist"
   },
   "devDependencies": {
     "@babel/core": "^7.23.6",
@@ -34,10 +38,13 @@
     "@ember/string": "^3.1.1",
     "@ember/test-helpers": "^3.3.0",
     "@ember/test-waiters": "^3.1.0",
-    "@embroider/broccoli-side-watch": "0.0.2-unstable.ba9fd29",
-    "@embroider/compat": "^3.4.8",
-    "@embroider/core": "^3.4.8",
-    "@embroider/webpack": "^4.0.0",
+    "@embroider/compat": "unstable",
+    "@embroider/test-setup": "unstable",
+    "@embroider/config-meta-loader": "unstable",
+    "@embroider/core": "unstable",
+    "@embroider/macros": "unstable",
+    "@embroider/vite": "unstable",
+    "@embroider/webpack": "unstable",
     "@glimmer/component": "^1.1.2",
     "@glimmer/tracking": "^1.1.2",
     "@glint/core": "^1.3.0",
@@ -45,12 +52,15 @@
     "@glint/environment-ember-template-imports": "^1.3.0",
     "@glint/template": "^1.3.0",
     "@nullvoxpopuli/eslint-configs": "^4.0.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/ember": "^3.0.3",
     "@types/qunit": "^2.19.10",
     "broccoli-asset-rev": "^3.0.0",
+    "@embroider/broccoli-side-watch": "^1.0.1",
     "concurrently": "^8.2.2",
+    "decorator-transforms": "^2.2.2",
     "ember-auto-import": "^2.7.0",
-    "ember-cli": "~5.9.0",
+    "ember-cli": "^5.12.0",
     "ember-cli-app-version": "^7.0.0",
     "ember-cli-babel": "^8.2.0",
     "ember-cli-clean-css": "^3.0.0",
@@ -62,9 +72,9 @@
     "ember-page-title": "^8.1.0",
     "ember-primitives": "^0.21.0",
     "ember-qunit": "^8.0.2",
-    "ember-resolver": "^12.0.1",
+    "ember-resolver": "^13.0.2",
     "ember-resources": "^7.0.0",
-    "ember-source": "~5.9.0",
+    "ember-source": "^5.12.0",
     "ember-template-imports": "^4.0.0",
     "ember-template-lint": "^6.0.0",
     "ember-welcome-page": "^7.0.2",
@@ -86,6 +96,7 @@
     "stylelint-prettier": "^5.0.0",
     "tracked-built-ins": "^3.3.0",
     "typescript": "^5.3.3",
+    "vite": "^5.1.3",
     "webpack": "^5.90.3"
   },
   "engines": {
@@ -93,6 +104,14 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "ember-addon": {
+    "type": "app",
+    "version": 2
+  },
+  "exports": {
+    "./tests/*": "./tests/*",
+    "./*": "./app/*"
   },
   "volta": {
     "extends": "../package.json"
