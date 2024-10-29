@@ -32,9 +32,10 @@ export default {
     // not everything in publicEntrypoints necessarily needs to go here.
     addon.appReexports([
       'components/**/*.js',
-      'helpers/**/*.js',
-      'modifiers/**/*.js',
-      'services/**/*.js',
+      'services/kolay/api-docs.js',
+      'services/kolay/docs.js',
+      'services/kolay/selected.js',
+      'services/kolay/compiler.js',
     ]),
 
     // Follow the V2 Addon rules about dependencies. Your code can import from

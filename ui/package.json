@@ -101,13 +101,8 @@
       "./components/page.js": "./dist/_app_/components/page.js",
       "./services/kolay/api-docs.js": "./dist/_app_/services/kolay/api-docs.js",
       "./services/kolay/compiler.js": "./dist/_app_/services/kolay/compiler.js",
-      "./services/kolay/compiler/compile-state.js": "./dist/_app_/services/kolay/compiler/compile-state.js",
-      "./services/kolay/compiler/import-map.js": "./dist/_app_/services/kolay/compiler/import-map.js",
-      "./services/kolay/compiler/reactive.js": "./dist/_app_/services/kolay/compiler/reactive.js",
       "./services/kolay/docs.js": "./dist/_app_/services/kolay/docs.js",
-      "./services/kolay/request.js": "./dist/_app_/services/kolay/request.js",
-      "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js",
-      "./services/kolay/types.js": "./dist/_app_/services/kolay/types.js"
+      "./services/kolay/selected.js": "./dist/_app_/services/kolay/selected.js"
     }
   },
   "peerDependencies": {
