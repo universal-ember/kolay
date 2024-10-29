@@ -2,6 +2,17 @@
 
 ## Release (2024-10-29)
 
+kolay 1.2.4 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#131](https://github.com/universal-ember/kolay/pull/131) Bump min-version of ui ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-10-29)
+
 kolay 1.2.3 (patch)
 
 #### :bug: Bug Fix
