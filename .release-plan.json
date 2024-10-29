@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "1.2.1",
-      "newVersion": "1.2.2",
+      "oldVersion": "1.2.2",
+      "newVersion": "1.2.3",
       "constraints": [
         {
           "impact": "patch",
@@ -13,8 +13,8 @@
       "pkgJSONPath": "./package.json"
     },
     "@universal-ember/kolay-ui": {
-      "oldVersion": "0.0.11"
+      "oldVersion": "0.0.12"
     }
   },
-  "description": "## Release (2024-07-20)\n\nkolay 1.2.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#113](https://github.com/universal-ember/kolay/pull/113) Fix selected service service-registry entry ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-10-29)\n\nkolay 1.2.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#129](https://github.com/universal-ember/kolay/pull/129) Fix exports in UI package ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
