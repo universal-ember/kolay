@@ -40,6 +40,35 @@ export const apiDocs = (options) => {
 
   return {
     name,
+
+    vite: {
+      configureServer(server) {
+        return () => {
+          server.middlewares.use(async (req, res, next) => {
+            if (req.originalUrl && req.originalUrl.length > 1) {
+              const assetUrl = req.originalUrl.split('?')[0];
+
+              const pkg = options.packages.find((pkgName) => {
+                let dest = '/' + getDest(pkgName);
+
+                return dest === assetUrl;
+              });
+
+              if (pkg) {
+                let data = await generateTypeDocJSON({ packageName: pkg });
+
+                res.setHeader('content-type', 'application/json');
+
+                return res.end(JSON.stringify(data));
+              }
+            }
+
+            return next();
+          });
+        };
+      },
+    },
+
     /**
      * 1. generate typedoc config
      * 2. given the

@@ -10,6 +10,12 @@ module.exports = {
   overrides: [
     ...config.overrides,
     {
+      files: ['rollup.config.mjs'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+    {
       files: ['**/*.gts'],
       plugins: ['ember'],
       parser: 'ember-eslint-parser',

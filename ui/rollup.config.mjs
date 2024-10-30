@@ -1,8 +1,9 @@
-import { babel } from '@rollup/plugin-babel';
-import copy from 'rollup-plugin-copy';
 import { Addon } from '@embroider/addon-dev/rollup';
+
+import { babel } from '@rollup/plugin-babel';
 import { execaCommand } from 'execa';
 import { fixBadDeclarationOutput } from 'fix-bad-declaration-output';
+import copy from 'rollup-plugin-copy';
 
 const addon = new Addon({
   srcDir: 'src',
