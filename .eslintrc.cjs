@@ -2,8 +2,27 @@
 
 const { configs } = require('@nullvoxpopuli/eslint-configs');
 
+const path = require('path');
 const node = configs.node();
 const ember = configs.ember();
+
+function within(folder, configs) {
+  return configs.map((config) => {
+    if ('files' in config) {
+      let files = Array.isArray(config.files) ? config.files : [config.files];
+      return {
+        ...config,
+        files: files.map((filePattern) => {
+          return path.join(folder, filePattern);
+        }),
+      };
+    }
+
+    // We probably shouldn't hit this,
+    // everything should have files.
+    return config;
+  });
+}
 
 module.exports = {
   root: true,
@@ -45,40 +64,42 @@ module.exports = {
      * Browser-land
      ********************************
      */
-    ...ember.overrides,
-    {
-      files: ['rollup.config.mjs'],
-      rules: {
-        'no-console': 'off',
+    within('browser', [
+      ...ember.overrides,
+      {
+        files: ['rollup.config.mjs'],
+        rules: {
+          'no-console': 'off',
+        },
       },
-    },
-    {
-      files: ['**/*.gts'],
-      plugins: ['ember'],
-      parser: 'ember-eslint-parser',
-    },
-    {
-      files: ['**/*.gjs'],
-      plugins: ['ember'],
-      parser: 'ember-eslint-parser',
-    },
-    {
-      files: ['**/*.ts', '**/*.gts'],
-      rules: {
-        '@typescript-eslint/no-explicit-any': 'off',
+      {
+        files: ['**/*.gts'],
+        plugins: ['ember'],
+        parser: 'ember-eslint-parser',
       },
-    },
-    {
-      files: ['**/*.d.ts'],
-      rules: {
-        'n/no-unsupported-features/node-builtins': 'off',
+      {
+        files: ['**/*.gjs'],
+        plugins: ['ember'],
+        parser: 'ember-eslint-parser',
       },
-    },
-    {
-      files: ['**/*.cjs'],
-      rules: {
-        'n/no-unsupported-features': 'off',
+      {
+        files: ['**/*.ts', '**/*.gts'],
+        rules: {
+          '@typescript-eslint/no-explicit-any': 'off',
+        },
       },
-    },
-  ],
+      {
+        files: ['**/*.d.ts'],
+        rules: {
+          'n/no-unsupported-features/node-builtins': 'off',
+        },
+      },
+      {
+        files: ['**/*.cjs'],
+        rules: {
+          'n/no-unsupported-features': 'off',
+        },
+      },
+    ]),
+  ].flat(),
 };

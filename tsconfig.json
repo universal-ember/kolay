@@ -1,17 +1,50 @@
 {
-  "extends": ["@tsconfig/strictest", "@tsconfig/node20"],
   "include": ["src/**/*"],
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"]
   },
   "exclude": ["docs-app", "declarations"],
   "compilerOptions": {
+    // Glint doesn't support Array extends.
+    // https://github.com/typed-ember/glint/issues/672
+    
+    // @tsconfig/strictest
+    "strict": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    "isolatedModules": true,
+
+    "checkJs": true,
+
+    "esModuleInterop": true,
+    "skipLibCheck": true
+    
+    // @tsconfig/node22
+     "lib": ["es2023"],
+    "module": "node16",
+    "target": "es2022",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node16"
+
+
+    // My options
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    // type-checking / declarations only
-    // emit declarations
     "emitDeclarationOnly": true,
     "declarationDir": "declarations",
     "declaration": true,
+    "types": ["./docs-app/node_modules/ember-source/types/stable"]
   }
 }
