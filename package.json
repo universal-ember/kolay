@@ -20,6 +20,9 @@
   "license": "MIT",
   "author": "NullVoxPopuli",
   "type": "module",
+  "imports": {
+    "#types": "./src/types.ts"
+  },
   "exports": {
     ".": {
       "types": "./dist/browser/index.d.ts",
@@ -32,11 +35,11 @@
       "default": "./dist/browser/components.js"
     },
     "./build": {
-      "types": "./declarations/plugins/index.d.ts",
-      "import": "./src/plugins/index.js"
+      "types": "./declarations/build/plugins/index.d.ts",
+      "import": "./src/build/plugins/index.js"
     },
     "./build/types": {
-      "types": "./declarations/plugins/types.d.ts",
+      "types": "./declarations/build/plugins/types.d.ts",
       "import": "./src/browser/virtual/empty.js"
     },
     "./private/samples": {

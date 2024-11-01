@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { prefixPaths } from './hydrate.js';
 
-import type { Collection } from './types.ts';
+import type { Collection } from '#types';
 
 describe('prefixPaths', () => {
   test('it works', () => {

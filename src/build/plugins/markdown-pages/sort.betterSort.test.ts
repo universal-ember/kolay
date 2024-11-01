@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { betterSort } from './sort.js';
 
-import type { Page } from './types.ts';
+import type { Page } from '#types';
 
 type Entry = Pick<Page, 'name' | 'path'>;
 

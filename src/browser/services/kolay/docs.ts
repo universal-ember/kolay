@@ -2,9 +2,9 @@ import { cached, tracked } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
 
+import type { Manifest } from '../../../types.ts';
 import type ApiDocs from './api-docs.ts';
 import type Selected from './selected.ts';
-import type { Manifest } from './types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { UnifiedPlugin } from 'ember-repl';
 

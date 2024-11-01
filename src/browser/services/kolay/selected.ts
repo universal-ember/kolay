@@ -7,8 +7,8 @@ import { link } from 'reactiveweb/link';
 import { Compiled } from './compiler/reactive.ts';
 import { MDRequest } from './request.ts';
 
+import type { Page } from '../../../types.ts';
 import type DocsService from './docs.ts';
-import type { Page } from './types.ts';
 import type RouterService from '@ember/routing/router-service';
 
 /**

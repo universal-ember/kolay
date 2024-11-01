@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { addInTheFirstPage } from './hydrate.js';
 
-import type { Collection } from './types.ts';
+import type { Collection } from '#types';
 
 describe('addInTheFirstPage', () => {
   test('adds in the first page to a shallow object', () => {

@@ -26,7 +26,7 @@ export class MDRequest {
   /**
    * TODO: use a private property when we move to spec-decorators
    */
-  @use last = RemoteData<string>(this.urlFn);
+  @use last = RemoteData<string>(() => this.urlFn());
 
   @use lastSuccessful = keepLatest({
     value: () => this.#lastValue,

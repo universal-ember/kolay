@@ -13,7 +13,7 @@ import { reshape } from './hydrate.js';
  * @property {Group[] | undefined} [ groups ]
  *
  * @param {Options} options
- * @return {Promise<import('./types.ts').Manifest>}
+ * @return {Promise<import('../../../types.ts').Manifest>}
  */
 export async function discover({ groups, src }) {
   groups ??= [];

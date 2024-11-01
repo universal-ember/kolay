@@ -1,4 +1,4 @@
-import type { Collection, Page } from './services/kolay/types.ts';
+import type { Collection, Page } from '../types.ts';
 
 export function isCollection(x: Page | Collection): x is Collection {
   return 'pages' in x;
