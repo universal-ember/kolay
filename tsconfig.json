@@ -1,8 +1,8 @@
 {
-  "include": ["src/**/*"],
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"]
   },
+  "include": ["src/**/*"],
   "exclude": ["docs-app", "declarations"],
   "compilerOptions": {
     // Glint doesn't support Array extends.
