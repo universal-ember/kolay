@@ -23,17 +23,17 @@
 
     "isolatedModules": true,
 
-    "checkJs": true,
+    // "checkJs": true,
 
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    // "esModuleInterop": true,
+    // "skipLibCheck": true,
     
     // @tsconfig/node22
-    "lib": ["es2023"],
+    // "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
 
-    "strict": true,
+    // "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node16",
