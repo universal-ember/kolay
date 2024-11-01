@@ -25,12 +25,12 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/browser/index.d.ts",
+      "types": "./declarations/browser/index.d.ts",
       "import": "./dist/browser/index.js",
       "default": "./dist/browser/index.js"
     },
     "./components": {
-      "types": "./dist/browser/components.d.ts",
+      "types": "./declarations/browser/components.d.ts",
       "import": "./dist/browser/components.js",
       "default": "./dist/browser/components.js"
     },
@@ -43,19 +43,18 @@
       "import": "./src/browser/virtual/empty.js"
     },
     "./private/samples": {
-      "types": "./src/browser/private/samples.d.ts",
-      "default": "./src/browser/private/samples.js"
+      "types": "./declarations/browser/private/samples/index.d.ts"
     },
     "./webpack": {
-      "types": "./declarations/webpack.d.ts",
+      "types": "./declarations/build/webpack.d.ts",
       "import": "./src/build/webpack.js"
     },
     "./vite": {
-      "types": "./declarations/vite.d.ts",
+      "types": "./declarations/build/vite.d.ts",
       "import": "./src/build/vite.js"
     },
     "./build/legacy": {
-      "types": "./declarations/plugins/legacy/index.d.cts",
+      "types": "./declarations/build/plugins/legacy/index.d.cts",
       "default": "./src/build/plugins/legacy/index.cjs"
     },
     "./*": {
