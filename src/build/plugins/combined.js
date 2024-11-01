@@ -13,7 +13,7 @@ import { setup } from './setup.js';
  * @param {Options} options
  * @type {import('unplugin').UnpluginFactory<Options>}
  */
-export function combinedPlugins(options, meta) {
+export function combinedPlugins(options) {
   return [
     setup(),
     apiDocs({ packages: options.packages ?? [], dest: options.dest }),
