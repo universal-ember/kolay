@@ -7,8 +7,8 @@ import { link } from 'reactiveweb/link';
 import { Compiled } from './compiler/reactive.ts';
 import { MDRequest } from './request.ts';
 
-import type DocsService from './docs';
-import type { Page } from './types';
+import type DocsService from './docs.ts';
+import type { Page } from './types.ts';
 import type RouterService from '@ember/routing/router-service';
 
 /**
@@ -33,7 +33,7 @@ const firstPath = '/1-get-started/intro.md';
 class Prose {
   constructor(private docFn: () => string | null) {}
 
-  @use last = Compiled(this.docFn);
+  @use last = Compiled(() => this.docFn());
 
   @use lastSuccessful = keepLatest({
     value: () => this.last.component,

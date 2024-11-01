@@ -3,6 +3,7 @@
 const { configs } = require('@nullvoxpopuli/eslint-configs');
 
 const path = require('path');
+
 const node = configs.node();
 const ember = configs.ember();
 
@@ -10,6 +11,7 @@ function within(folder, configs) {
   return configs.map((config) => {
     if ('files' in config) {
       let files = Array.isArray(config.files) ? config.files : [config.files];
+
       return {
         ...config,
         files: files.map((filePattern) => {
@@ -57,6 +59,8 @@ module.exports = {
       rules: {
         'n/no-unpublished-import': 'off',
         'n/no-missing-import': 'off',
+        'n/no-unsupported-features': 'off',
+        'n/no-unsupported-features/node-builtins': 'off',
       },
     },
     /**

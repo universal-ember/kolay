@@ -5,7 +5,7 @@ import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { RemoteData } from 'reactiveweb/remote-data';
 
-import type DocsService from './docs';
+import type DocsService from './docs.ts';
 
 export const OUTPUT_PREFIX = `/docs/`;
 export const OUTPUT_PREFIX_REGEX = /^\/docs\//;

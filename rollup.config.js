@@ -43,6 +43,8 @@ export default {
       babelHelpers: 'bundled',
     }),
 
+    addon.keepAssets('**/*.css'),
+
     // Ensure that .gjs files are properly integrated as Javascript
     addon.gjs(),
 

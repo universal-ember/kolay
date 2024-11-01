@@ -27,7 +27,7 @@ Documentation system for the the `@universal-ember` family of projects.
 ## Install[^type-module]
 
 ```bash
-pnpm add kolay @universal-ember/kolay-ui
+pnpm add kolay
 ```
 
 ### Use Markdown

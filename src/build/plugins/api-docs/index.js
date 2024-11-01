@@ -38,6 +38,9 @@ export const apiDocs = (options) => {
     return `${options.dest ?? 'docs'}/${pkgName.replace('/', '__')}.json`;
   }
 
+  /**
+   * @type {import('unplugin').JsPluginExtended}
+   */
   return {
     name,
 

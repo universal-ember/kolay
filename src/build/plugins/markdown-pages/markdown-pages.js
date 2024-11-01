@@ -11,7 +11,11 @@ import { discover } from './discover.js';
 
 const SECRET_INTERNAL_IMPORT = 'kolay/manifest:virtual';
 
-/** @type {(options: import('./types.ts').MarkdownPagesOptions) => import('unplugin').UnpluginOptions} */
+/**
+ *
+ * @param {import('./types.ts').MarkdownPagesOptions} options
+ * @return {import('unplugin').UnpluginOptions}
+ * */
 export const markdownPages = (options) => {
   let { src, dest, name, groups } = options ?? {};
 
@@ -37,9 +41,16 @@ export const markdownPages = (options) => {
    */
   let server;
 
+  /**
+   * @type {import('unplugin').UnpluginOptions}
+   */
   return {
     name: 'kolay:markdown-docs',
+    /**
+     * @type {import('vite').Plugin}
+     */
     vite: {
+      name: 'kolay:markdown-docs(vite)',
       handleHotUpdate({ file, server }) {
         if (file.endsWith('.json') || file.endsWith('.md') || file.endsWith('.jsonc')) {
           server.ws.send({

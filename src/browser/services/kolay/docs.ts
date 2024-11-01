@@ -2,9 +2,9 @@ import { cached, tracked } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
 
-import type ApiDocs from './api-docs';
-import type Selected from './selected';
-import type { Manifest } from './types';
+import type ApiDocs from './api-docs.ts';
+import type Selected from './selected.ts';
+import type { Manifest } from './types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { UnifiedPlugin } from 'ember-repl';
 
@@ -121,7 +121,7 @@ export default class DocsService extends Service {
   get docs() {
     assert(
       `Docs' manifest was not loaded. Be sure to call setup() before accessing anything on the docs service.`,
-      this._docs,
+      this._docs
     );
 
     return this._docs;
@@ -156,8 +156,7 @@ export default class DocsService extends Service {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    let [, /* leading slash */ first] =
-      this.router.currentURL?.split('/') || [];
+    let [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
 
     if (!first) return 'root';
 
@@ -169,7 +168,7 @@ export default class DocsService extends Service {
   selectGroup = (group: string) => {
     assert(
       `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
-      this.availableGroups.includes(group),
+      this.availableGroups.includes(group)
     );
 
     if (group === 'root') {
@@ -199,7 +198,7 @@ export default class DocsService extends Service {
 
     assert(
       `Could not find group in manifest under the name ${groupName}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
-      group,
+      group
     );
 
     return group;
@@ -226,9 +225,7 @@ export default class DocsService extends Service {
 /**
  * RSVP.hash, but native
  */
-async function promiseHash<T>(obj?: {
-  [key: string]: Promise<T>;
-}): Promise<{ [key: string]: T }> {
+async function promiseHash<T>(obj?: { [key: string]: Promise<T> }): Promise<{ [key: string]: T }> {
   let result: Record<string, T> = {};
 
   if (!obj) {
@@ -243,10 +240,7 @@ async function promiseHash<T>(obj?: {
     promises.push(promise);
   }
 
-  assert(
-    `Something went wrong when resolving a promise Hash`,
-    keys.length === promises.length,
-  );
+  assert(`Something went wrong when resolving a promise Hash`, keys.length === promises.length);
 
   let resolved = await Promise.all(promises);
 
@@ -255,10 +249,7 @@ async function promiseHash<T>(obj?: {
     let resolvedValue = resolved[i];
 
     assert(`Missing key for index ${i}`, key);
-    assert(
-      `Resolved value for key ${key} is not an object`,
-      typeof resolvedValue === 'object',
-    );
+    assert(`Resolved value for key ${key} is not an object`, typeof resolvedValue === 'object');
 
     result[key] = resolvedValue;
   }

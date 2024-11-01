@@ -1,5 +1,5 @@
-export type { Collection, Manifest, Page } from '@universal-ember/kolay-ui/services/kolay/types';
-import type { Collection, Page } from '@universal-ember/kolay-ui/services/kolay/types';
+export type { Collection, Manifest, Page } from '../../../browser/services/kolay/types.ts';
+import type { Collection, Page } from '../../../browser/services/kolay/types.ts';
 
 export type Node = Page | Collection;
 

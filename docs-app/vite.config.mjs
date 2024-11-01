@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
         groups: [
           {
             name: "Runtime",
-            src: "./node_modules/@universal-ember/kolay-ui/docs",
+            src: "./node_modules/kolay/docs",
           },
         ],
         packages: ["kolay", "ember-primitives", "ember-resources"],
@@ -55,7 +55,7 @@ export default defineConfig(({ mode }) => {
         ignored: [
           "!**/node_modules/**",
           (p) => {
-            return p.includes("node_modules") && !p.includes("@universal-ember/kolay-ui");
+            return p.includes("node_modules") && !p.includes("kolay");
           },
         ],
       },

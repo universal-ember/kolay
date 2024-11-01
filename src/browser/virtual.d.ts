@@ -36,7 +36,7 @@ declare module 'kolay/api-docs:virtual' {
  * - the nesting / grouping / library association of those files
  */
 declare module 'kolay/manifest:virtual' {
-  import type { Manifest } from '@universal-ember/kolay-ui/services/kolay/types';
+  import type { Manifest } from 'kolay/types';
 
   /**
    * Loads the list and tree data for the discovered pages from the markdownDocs plugin

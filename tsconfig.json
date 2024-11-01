@@ -29,7 +29,7 @@
     "skipLibCheck": true,
     
     // @tsconfig/node22
-     "lib": ["es2023"],
+    "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
 
@@ -40,12 +40,22 @@
 
 
     // My options
+    "rootDir": "./src",
+    "allowJs": true,
+    "checkJs": false, // too hard right -- revisit later
+    "lib": ["es2023", "dom"],
     "allowImportingTsExtensions": true,
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
     "emitDeclarationOnly": true,
     "declarationDir": "declarations",
     "declaration": true,
-    "types": ["./docs-app/node_modules/ember-source/types/stable"]
+    // Compat
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "./docs-app/node_modules/ember-source/types/stable",
+      "unplugin",
+      "@glimmer/component"
+    ]
   }
 }
