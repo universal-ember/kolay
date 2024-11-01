@@ -1,3 +1,6 @@
+// Glint broke glint-directives... _but_ this file is a mess anyway
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { hash } from '@ember/helper';
 
 import { Compiled } from '../services/kolay/compiler/reactive.ts';

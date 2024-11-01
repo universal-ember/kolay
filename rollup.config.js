@@ -65,7 +65,7 @@ export default {
          * README: https://github.com/NullVoxPopuli/fix-bad-declaration-output
          */
         console.log('Fixing types');
-        await fixBadDeclarationOutput('declarations/**/*.d.ts', [
+        await fixBadDeclarationOutput('declarations/browser/**/*.d.ts', [
           ['TypeScript#56571', { types: 'all' }],
           'Glint#628',
           'Glint#697',
