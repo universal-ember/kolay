@@ -25,7 +25,12 @@ export default {
     // up your addon's public API. Also make sure your package.json#exports
     // is aligned to the config here.
     // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
-    addon.publicEntrypoints(['browser/**/*.js']),
+    addon.publicEntrypoints([
+      'browser/*.js',
+      'browser/components/**/*.js',
+      'browser/services/**/*.js',
+      'browser/typedoc/**/*.js',
+    ]),
 
     // Follow the V2 Addon rules about dependencies. Your code can import from
     // `dependencies` and `peerDependencies` as well as standard Ember-provided
@@ -43,7 +48,7 @@ export default {
       babelHelpers: 'bundled',
     }),
 
-    addon.keepAssets('**/*.css'),
+    addon.keepAssets(['**/*.css']),
 
     // Ensure that .gjs files are properly integrated as Javascript
     addon.gjs(),
@@ -65,7 +70,7 @@ export default {
          * README: https://github.com/NullVoxPopuli/fix-bad-declaration-output
          */
         console.log('Fixing types');
-        await fixBadDeclarationOutput('declarations/browser/**/*.d.ts', [
+        await fixBadDeclarationOutput('declarations/browser/components/**/*.d.ts', [
           ['TypeScript#56571', { types: 'all' }],
           'Glint#628',
           'Glint#697',
