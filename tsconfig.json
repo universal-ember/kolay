@@ -26,7 +26,7 @@
     "checkJs": true,
 
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
     
     // @tsconfig/node22
      "lib": ["es2023"],
@@ -36,11 +36,12 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16"
+    "moduleResolution": "node16",
 
 
     // My options
     "allowImportingTsExtensions": true,
+    "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
     "emitDeclarationOnly": true,
     "declarationDir": "declarations",

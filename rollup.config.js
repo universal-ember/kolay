@@ -1,12 +1,12 @@
-import { Addon } from "@embroider/addon-dev/rollup";
+import { Addon } from '@embroider/addon-dev/rollup';
 
-import { babel } from "@rollup/plugin-babel";
-import { execaCommand } from "execa";
-import { fixBadDeclarationOutput } from "fix-bad-declaration-output";
+import { babel } from '@rollup/plugin-babel';
+import { execaCommand } from 'execa';
+import { fixBadDeclarationOutput } from 'fix-bad-declaration-output';
 
 const addon = new Addon({
-  srcDir: "src",
-  destDir: "dist",
+  srcDir: 'src',
+  destDir: 'dist',
 });
 
 export default {
@@ -25,7 +25,7 @@ export default {
     // up your addon's public API. Also make sure your package.json#exports
     // is aligned to the config here.
     // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
-    addon.publicEntrypoints(["browser/**/*.js"]),
+    addon.publicEntrypoints(['browser/**/*.js']),
 
     // Follow the V2 Addon rules about dependencies. Your code can import from
     // `dependencies` and `peerDependencies` as well as standard Ember-provided
@@ -39,41 +39,36 @@ export default {
     // By default, this will load the actual babel config from the file
     // babel.config.json.
     babel({
-      extensions: [".js", ".gjs", ".gts", ".ts"],
-      babelHelpers: "bundled",
+      extensions: ['.js', '.gjs', '.gts', '.ts'],
+      babelHelpers: 'bundled',
     }),
 
     // Ensure that .gjs files are properly integrated as Javascript
     addon.gjs(),
 
-    // addons are allowed to contain imports of .css files, which we want rollup
-    // to leave alone and keep in the published output.
-    addon.keepAssets(["**/*.css"]),
-
     // Remove leftover build artifacts when starting a new build.
     addon.clean(),
 
-    // Copy Readme and License into published package
     {
-      name: "Build Declarations",
+      name: 'Build Declarations',
       closeBundle: async () => {
         /**
          * Generate the types (these include /// <reference types="ember-source/types"
          * but our consumers may not be using those, or have a new enough ember-source that provides them.
          */
-        console.log("Building types");
-        await execaCommand(`pnpm glint --declaration`, { stdio: "inherit" });
+        console.log('Building types');
+        await execaCommand(`pnpm glint --declaration`, { stdio: 'inherit' });
         /**
          * https://github.com/microsoft/TypeScript/issues/56571#
          * README: https://github.com/NullVoxPopuli/fix-bad-declaration-output
          */
-        console.log("Fixing types");
-        await fixBadDeclarationOutput("declarations/**/*.d.ts", [
-          ["TypeScript#56571", { types: "all" }],
-          "Glint#628",
-          "Glint#697",
+        console.log('Fixing types');
+        await fixBadDeclarationOutput('declarations/**/*.d.ts', [
+          ['TypeScript#56571', { types: 'all' }],
+          'Glint#628',
+          'Glint#697',
         ]);
-        console.log("⚠️ Dangerously (but neededly) fixed bad declaration output from typescript");
+        console.log('⚠️ Dangerously (but neededly) fixed bad declaration output from typescript');
       },
     },
   ],

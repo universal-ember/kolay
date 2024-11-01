@@ -1,12 +1,10 @@
 import type { setupKolay as setup } from './virtual/setup.d.ts';
 import type Owner from '@ember/owner';
-import type QUnit from 'qunit';
+import type { NestedHooks } from 'ember-qunit';
 
 type Options = Parameters<typeof setup>[1];
 
-type NestedHooks = Parameters<NonNullable<Parameters<QUnit['module']>[1]>>[0];
-
-export function setupKolay(hooks:NestedHooks, config: () => Promise<Options>): void {
+export function setupKolay(hooks: NestedHooks, config: () => Promise<Options>): void {
   hooks.beforeEach(async function () {
     let docs = this.owner.lookup('service:kolay/docs');
 
@@ -22,7 +20,7 @@ export function setupKolay(hooks:NestedHooks, config: () => Promise<Options>): v
  * @param {{ owner: { lookup: (registryName: string) => any }}} context
  */
 export function selectGroup(context: object, groupName = 'root'): void {
-  let docs = ( context as { owner: Owner }).owner.lookup('service:kolay/docs');
+  let docs = (context as { owner: Owner }).owner.lookup('service:kolay/docs');
 
   docs.selectGroup(groupName);
 }
