@@ -1,13 +1,17 @@
 {
   "extends": ["@tsconfig/strictest", "@tsconfig/node20"],
   "include": ["src/**/*"],
-  "exclude": ["docs-app", "declarations", "ui"],
+  "glint": {
+    "environment": ["ember-loose", "ember-template-imports"]
+  },
+  "exclude": ["docs-app", "declarations"],
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     // type-checking / declarations only
     // emit declarations
     "emitDeclarationOnly": true,
     "declarationDir": "declarations",
-    "declaration": true
+    "declaration": true,
   }
 }

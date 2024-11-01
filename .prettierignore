@@ -1,8 +1,9 @@
 node_modules/
+coverage/
 declarations/
 dist/
 dist-typedoc/
 *.yaml
 *.md
 docs-app/
-ui/
+.lint-todo/

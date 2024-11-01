@@ -3,3 +3,7 @@ dist/
 dist-typedoc/
 declarations/
 .turbo/
+
+# npm/pnpm/yarn pack output
+*.tgz
+.eslintcache
