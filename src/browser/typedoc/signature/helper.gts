@@ -98,12 +98,7 @@ export const HelperSignature: TOC<{
     package: string;
   };
 }> = <template>
-  <Load
-    @package={{@package}}
-    @module={{@module}}
-    @name={{@name}}
-    as |declaration|
-  >
+  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration|>
     {{#let (getSignature declaration) as |info|}}
       {{#if (globalThis.Array.isArray info)}}
         {{#each info as |signature|}}

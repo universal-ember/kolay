@@ -122,14 +122,10 @@ section {
   margin-top: 0.5rem;
 }
 
-.typedoc__component-signature__block
-  .typedoc__declaration-name
-  + .typedoc__reference {
+.typedoc__component-signature__block .typedoc__declaration-name + .typedoc__reference {
   margin-bottom: -0.25rem;
 }
-.typedoc__component-signature__block
-  > .typedoc__property
-  .typedoc__declaration-children {
+.typedoc__component-signature__block > .typedoc__property .typedoc__declaration-children {
   display: grid;
   gap: 0.5rem;
 }
@@ -266,7 +262,7 @@ section {
   gap: 0.25rem;
 }
 .typedoc__union__type::before {
-  content: '|';
+  content: "|";
 }
 .typedoc__union .typedoc__union__type:first-child::before {
   display: none;

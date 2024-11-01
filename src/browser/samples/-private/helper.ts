@@ -25,7 +25,7 @@ export const helperLikeB = ((...args: unknown[]) => {
 export const plainHelperC = (
   a: number,
   b: number,
-  options?: { optional?: boolean; required: boolean },
+  options?: { optional?: boolean; required: boolean }
 ) => {
   /* ... */
   console.log(a, b, options);

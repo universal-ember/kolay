@@ -3,9 +3,7 @@ import { resource, resourceFactory } from 'ember-resources';
 import type Compiler from '../compiler.ts';
 import type { CompileState } from './compile-state.ts';
 
-export function Compiled(
-  textFn: string | null | (() => string | null),
-): CompileState {
+export function Compiled(textFn: string | null | (() => string | null)): CompileState {
   return resource(({ owner }) => {
     let compiler = owner.lookup('service:kolay/compiler') as Compiler;
 

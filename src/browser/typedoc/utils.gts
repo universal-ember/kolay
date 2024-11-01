@@ -1,15 +1,15 @@
-import Component from "@glimmer/component";
-import { assert } from "@ember/debug";
-import { service } from "@ember/service";
+import Component from '@glimmer/component';
+import { assert } from '@ember/debug';
+import { service } from '@ember/service';
 
-import { trackedFunction } from "reactiveweb/function";
+import { trackedFunction } from 'reactiveweb/function';
 
-import type APIDocsService from "../services/kolay/api-docs.ts";
-import type { TOC } from "@ember/component/template-only";
-import type { DeclarationReflection } from "typedoc";
+import type APIDocsService from '../services/kolay/api-docs.ts';
+import type { TOC } from '@ember/component/template-only';
+import type { DeclarationReflection } from 'typedoc';
 
 export function findChildDeclaration(info: DeclarationReflection, name: string) {
-  return info.children?.find((child) => child.variant === "declaration" && child.name === name);
+  return info.children?.find((child) => child.variant === 'declaration' && child.name === name);
 }
 
 export const infoFor = (data: DeclarationReflection, module: string, name: string) => {
@@ -18,8 +18,8 @@ export const infoFor = (data: DeclarationReflection, module: string, name: strin
   assert(
     `Could not find module by name: ${module}. Available modules in this set of api docs are: ${data.children
       ?.map((child) => child.name)
-      .join(", ")}`,
-    moduleType,
+      .join(', ')}`,
+    moduleType
   );
 
   let found = moduleType?.children?.find((grandChild) => grandChild.name === name);
@@ -35,7 +35,7 @@ export const Query: TOC<{
     {{#if info}}
       {{yield info}}
     {{else}}
-      {{yield to="notFound"}}
+      {{yield to='notFound'}}
     {{/if}}
   {{/let}}
 </template>;
@@ -55,7 +55,7 @@ export class Load extends Component<{
   };
   Blocks: { default: [DeclarationReflection, any] };
 }> {
-  @service("kolay/api-docs") declare apiDocs: APIDocsService;
+  @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
   /**
    * TODO: move this to the service and dedupe requests

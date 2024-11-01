@@ -52,10 +52,9 @@ const LogList: TOC<{
 
   {{! prettier-ignore-start }}
   <style>
-    .kolay__log-list__scroll { position: relative; overflow: auto; max-height:
-    10rem; filter: invert(1); .kolay__log-list__level { display: flex; gap:
-    0.5rem; } .kolay__log-list__time { border-right: 1px solid; padding-right:
-    0.5rem; } }
+    .kolay__log-list__scroll { position: relative; overflow: auto; max-height: 10rem; filter:
+    invert(1); .kolay__log-list__level { display: flex; gap: 0.5rem; } .kolay__log-list__time {
+    border-right: 1px solid; padding-right: 0.5rem; } }
   </style>
   {{! prettier-ignore-end }}
 </template>;
@@ -66,9 +65,7 @@ export class Logs extends Component {
   constructor(owner: Owner, args: any) {
     super(owner, args);
 
-    registerDestructor(this, () =>
-      LEVELS.forEach((level) => (console[level] = original[level])),
-    );
+    registerDestructor(this, () => LEVELS.forEach((level) => (console[level] = original[level])));
 
     for (let level of LEVELS) {
       console[level] = (...messageParts) => {
@@ -98,9 +95,8 @@ export class Logs extends Component {
     </div>
     {{! prettier-ignore-start }}
     <style>
-      .kolay__in-viewport__logs { position: fixed; bottom: 0; left: 0; right: 0;
-      padding: 0.5rem; border: 1px solid gray; background: currentColor; filter:
-      invert(1); }
+      .kolay__in-viewport__logs { position: fixed; bottom: 0; left: 0; right: 0; padding: 0.5rem;
+      border: 1px solid gray; background: currentColor; filter: invert(1); }
     </style>
     {{! prettier-ignore-end }}
   </template>

@@ -21,9 +21,7 @@ export class CompileState {
 
   then = (
     ...args: [
-      | ((value: ComponentLike) => ComponentLike | PromiseLike<ComponentLike>)
-      | null
-      | undefined,
+      ((value: ComponentLike) => ComponentLike | PromiseLike<ComponentLike>) | null | undefined,
     ]
   ) => this.#promise.then(...args);
 

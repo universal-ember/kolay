@@ -78,10 +78,7 @@ export class GroupNav extends Component<{
       <ul>
         {{#each this.groups as |group|}}
           <li>
-            <a
-              href={{group.value}}
-              class={{if (this.isActive group.value) this.activeClass}}
-            >
+            <a href={{group.value}} class={{if (this.isActive group.value) this.activeClass}}>
 
               {{#if (has-block)}}
                 {{yield group.text}}

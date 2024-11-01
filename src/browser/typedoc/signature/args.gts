@@ -5,8 +5,7 @@ import type { DeclarationReflection } from 'typedoc';
 
 const not = (x: unknown) => !x;
 
-const isComponent = (kind: 'component' | 'modifier' | 'helper') =>
-  kind === 'component';
+const isComponent = (kind: 'component' | 'modifier' | 'helper') => kind === 'component';
 
 /**
  * Only components' args are prefixed with a `@`,
@@ -20,10 +19,7 @@ export const Args: TOC<{
     {{#each (listifyArgs @info) as |child|}}
       <span class='typedoc__{{@kind}}-signature__arg'>
         <span class='typedoc__{{@kind}}-signature__arg-info'>
-          <pre class='typedoc__name'>{{if
-              (isComponent @kind)
-              '@'
-            }}{{child.name}}</pre>
+          <pre class='typedoc__name'>{{if (isComponent @kind) '@'}}{{child.name}}</pre>
           {{#if (isIntrinsic child.type)}}
             <Type @info={{child.type}} />
           {{else if (isNamedTuple child)}}

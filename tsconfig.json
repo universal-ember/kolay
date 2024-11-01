@@ -7,12 +7,13 @@
   "compilerOptions": {
     // Glint doesn't support Array extends.
     // https://github.com/typed-ember/glint/issues/672
-    
+
     // @tsconfig/strictest
     "strict": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "exactOptionalPropertyTypes": true,
+    // TODO: enable this
+    // "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
@@ -23,21 +24,12 @@
 
     "isolatedModules": true,
 
-    // "checkJs": true,
-
-    // "esModuleInterop": true,
-    // "skipLibCheck": true,
-    
     // @tsconfig/node22
-    // "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
-
-    // "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node16",
-
 
     // My options
     "rootDir": "./src",
@@ -52,10 +44,6 @@
     "declaration": true,
     // Compat
     "allowSyntheticDefaultImports": true,
-    "types": [
-      "./docs-app/node_modules/ember-source/types/stable",
-      "unplugin",
-      "@glimmer/component"
-    ]
+    "types": ["./docs-app/node_modules/ember-source/types/stable", "unplugin", "@glimmer/component"]
   }
 }

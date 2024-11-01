@@ -4,8 +4,8 @@ import { service } from '@ember/service';
 
 import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
+import type { Collection, Page } from '../../types.ts';
 import type DocsService from '../services/kolay/docs.ts';
-import type { Collection, Page } from '../services/kolay/types.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
@@ -179,9 +179,7 @@ const Pages: TOC<{
                       collection=page
                       index=(hash
                         page=indexPage
-                        Link=(component
-                          PageLink item=indexPage activeClass=@activeClass
-                        )
+                        Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
                     to='collection'
@@ -202,9 +200,7 @@ const Pages: TOC<{
     </ul>
   {{else}}
     {{yield
-      (hash
-        page=@item Link=(component PageLink item=@item activeClass=@activeClass)
-      )
+      (hash page=@item Link=(component PageLink item=@item activeClass=@activeClass))
       to='page'
     }}
   {{/if}}
@@ -233,10 +229,9 @@ class PageLink extends Component<{
   }
 
   <template>
-    <a
-      href={{@item.path}}
-      class={{if this.isActive this.activeClass}}
-      ...attributes
-    >{{yield @item this.isActive}}</a>
+    <a href={{@item.path}} class={{if this.isActive this.activeClass}} ...attributes>{{yield
+        @item
+        this.isActive
+      }}</a>
   </template>
 }

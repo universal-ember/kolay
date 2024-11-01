@@ -9,10 +9,7 @@ function getSignatureType(info: any) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
-  if (
-    info.type?.type === 'reference' &&
-    info.type?.typeArguments?.[0]?.type === 'reflection'
-  ) {
+  if (info.type?.type === 'reference' && info.type?.typeArguments?.[0]?.type === 'reflection') {
     return info.type.typeArguments[0].declaration;
   }
 
@@ -50,10 +47,7 @@ function getSignatureType(info: any) {
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
     let extendedType = info.extendedTypes?.[0];
 
-    if (
-      extendedType?.type === 'reference' &&
-      extendedType?.package === 'ember-modifier'
-    ) {
+    if (extendedType?.type === 'reference' && extendedType?.package === 'ember-modifier') {
       let typeArg = extendedType.typeArguments?.[0];
 
       if (typeArg?.type === 'reflection') {
@@ -99,12 +93,7 @@ export const ModifierSignature: TOC<{
     package: string;
   };
 }> = <template>
-  <Load
-    @package={{@package}}
-    @module={{@module}}
-    @name={{@name}}
-    as |declaration|
-  >
+  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration|>
     {{#let (getSignature declaration) as |info|}}
       <Element @kind='modifier' @info={{info.Element}} />
       <Args @kind='modifier' @info={{info.Args}} />

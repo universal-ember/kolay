@@ -5,10 +5,7 @@ import { Comment } from '../renderer.gts';
 import type { TOC } from '@ember/component/template-only';
 
 const mdnElement = (typeName: string) => {
-  let element = typeName
-    .replace('HTML', '')
-    .replace('Element', '')
-    .toLowerCase();
+  let element = typeName.replace('HTML', '').replace('Element', '').toLowerCase();
 
   return `https://developer.mozilla.org/en-US/docs/Web/HTML/Element/${element}`;
 };
@@ -20,10 +17,7 @@ export const Element: TOC<{
     <h3 class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
       <span class='typedoc__name'>{{@info.name}}</span>
       <span class='typedoc__{{@kind}}-signature__element-type'>
-        <ExternalLink
-          href={{mdnElement @info.type.name}}
-          class='typedoc__type-link'
-        >
+        <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
           {{@info.type.name}}
           ➚
         </ExternalLink>
