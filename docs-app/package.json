@@ -40,18 +40,18 @@
     "@ember/test-waiters": "^3.1.0",
     "@embroider/broccoli-side-watch": "^1.0.1",
     "@embroider/compat": "unstable",
-    "@embroider/config-meta-loader": "1.0.1-unstable.9f1e74e",
-    "@embroider/core": "^3.4.19",
+    "@embroider/config-meta-loader": "unstable",
+    "@embroider/core": "unstable",
     "@embroider/macros": "unstable",
     "@embroider/test-setup": "unstable",
     "@embroider/vite": "unstable",
     "@embroider/webpack": "unstable",
     "@glimmer/component": "^2.0.0",
     "@glimmer/tracking": "^1.1.2",
-    "@glint/core": "1.4.1-unstable.e45fffc",
-    "@glint/environment-ember-loose": "1.4.1-unstable.e45fffc",
-    "@glint/environment-ember-template-imports": "1.4.1-unstable.e45fffc",
-    "@glint/template": "1.4.1-unstable.e45fffc",
+    "@glint/core": "unstable",
+    "@glint/environment-ember-loose": "unstable",
+    "@glint/environment-ember-template-imports": "unstable",
+    "@glint/template": "unstable",
     "@nullvoxpopuli/eslint-configs": "^4.3.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/ember": "^3.0.3",
@@ -115,6 +115,11 @@
   },
   "volta": {
     "extends": "../package.json"
+  },
+  "dependenciesMeta": {
+    "kolay": {
+      "injected": true
+    }
   },
   "dependencies": {
     "@shikijs/rehype": "^1.1.7",

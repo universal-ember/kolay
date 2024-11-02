@@ -51,14 +51,14 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: optimizeOpts,
     server: {
       port: 4200,
-      watch: {
-        // ignored: [
-        //   "!**/node_modules/**",
-        //   (p) => {
-        //     return p.includes("node_modules") && !p.includes("kolay/dist");
-        //   },
-        // ],
-      },
+      // watch: {
+      // ignored: [
+      //   "!**/node_modules/**",
+      //   (p) => {
+      //     return p.includes("node_modules") && !p.includes("kolay/dist");
+      //   },
+      // ],
+      // },
     },
     build: {
       sourcemap: "inline",
