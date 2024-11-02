@@ -23,11 +23,6 @@ export default defineConfig(({ mode }) => {
   return {
     resolve: {
       extensions,
-      alias: {
-        "ember-template-compiler": import.meta.resolve(
-          "ember-source/dist/ember-template-compiler.js",
-        ),
-      },
     },
     plugins: [
       kolay({
@@ -44,7 +39,7 @@ export default defineConfig(({ mode }) => {
       templateTag(),
       scripts(),
       resolver(),
-      compatPrebuild(),
+      // compatPrebuild(),
       assets(),
       contentFor(),
 
