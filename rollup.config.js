@@ -29,6 +29,7 @@ export default {
       'browser/*.js',
       'browser/components/**/*.js',
       'browser/services/**/*.js',
+      'browser/samples/**/*.js',
       'browser/typedoc/**/*.js',
     ]),
 

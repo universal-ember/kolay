@@ -43,7 +43,8 @@
       "import": "./src/browser/virtual/empty.js"
     },
     "./private/samples": {
-      "types": "./declarations/browser/samples/-private/index.d.ts"
+      "types": "./declarations/browser/samples/-private/index.d.ts",
+      "import": "./dist/browser/samples/-private/index.js"
     },
     "./webpack": {
       "types": "./declarations/build/webpack.d.ts",
