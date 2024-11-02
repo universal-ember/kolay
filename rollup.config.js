@@ -14,7 +14,7 @@ export default {
   // You can augment this if you need to.
   output: {
     ...addon.output(),
-    preserveModules: true,
+    // preserveModules: true,
     hoistTransitiveImports: false,
   },
   plugins: [
@@ -29,7 +29,7 @@ export default {
       '*.js',
       'typedoc/index.js',
       'components/**/*.js',
-      'services/**/*.js',
+      'services/kolay/{api-docs,compiler,docs,selected}.js',
       'typedoc/**/*.js',
     ]),
 
