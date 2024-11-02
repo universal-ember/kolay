@@ -78,7 +78,7 @@
     "lint:js:fix": "eslint . --fix",
     "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
     "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
-    "lint:types": "tsc --noEmit --emitDeclarationOnly false",
+    "lint:types": "glint --noEmit --emitDeclarationOnly false",
     "lint:package": "publint",
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
@@ -214,6 +214,7 @@
     },
     "overrides": {
       "@ember/test-waiters": "^3.1.0",
+      "@glimmer/component": "^2.0.0",
       "webpack": "^5.90.3",
       "ember-repl": "^4.1.1"
     }

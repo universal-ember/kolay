@@ -1,7 +1,7 @@
 ## Install[^type-module]
 
 ```bash
-pnpm add kolay 
+pnpm add kolay
 ```
 
 ## Setup
