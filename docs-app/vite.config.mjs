@@ -52,12 +52,12 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 4200,
       watch: {
-        ignored: [
-          "!**/node_modules/**",
-          (p) => {
-            return p.includes("node_modules") && !p.includes("kolay");
-          },
-        ],
+        // ignored: [
+        //   "!**/node_modules/**",
+        //   (p) => {
+        //     return p.includes("node_modules") && !p.includes("kolay/dist");
+        //   },
+        // ],
       },
     },
     build: {

@@ -2,7 +2,7 @@
 
 ```hbs live no-shadow
 <CommentQuery
-  @module='src/browser/re-exports'
+  @module='declarations/browser/index'
   @name='CommentQuery'
   @package='kolay'
 />
@@ -14,7 +14,7 @@ API Reference generated via:
 
 ```hbs live no-shadow preview below
 <APIDocs
-  @module='src/browser/re-exports'
+  @module='declarations/browser/index'
   @name='CommentQuery'
   @package='kolay'
 />

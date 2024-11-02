@@ -236,10 +236,10 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
-      "./services/kolay/api-docs.js": "./src/_app_/services/kolay/api-docs.js",
-      "./services/kolay/compiler.js": "./src/_app_/services/kolay/compiler.js",
-      "./services/kolay/docs.js": "./src/_app_/services/kolay/docs.js",
-      "./services/kolay/selected.js": "./src/_app_/services/kolay/selected.js"
+      "./services/kolay/api-docs.js": "./dist/browser/services/kolay/api-docs.js",
+      "./services/kolay/compiler.js": "./dist/browser/services/kolay/compiler.js",
+      "./services/kolay/docs.js": "./dist/browser/services/kolay/docs.js",
+      "./services/kolay/selected.js": "./dist/browser/services/kolay/selected.js"
     }
   },
   "packageManager": "pnpm@9.12.3",
