@@ -8,7 +8,7 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 
 ```hbs live no-shadow
 <ComponentSignature
-  @module='declarations/browser/index'
+  @module='declarations/browser'
   @name='HelperSignature'
   @package='kolay'
 />
