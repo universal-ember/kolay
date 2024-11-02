@@ -62,6 +62,9 @@
       "types": "./declarations/build/plugins/legacy/index.d.cts",
       "default": "./src/build/plugins/legacy/index.cjs"
     },
+    "./browser/app-re-exports/*": {
+      "default": "./src/browser/app-re-exports/*"
+    },
     "./*": {
       "types": "./src/browser/virtual/*",
       "default": "./src/browser/virtual/*"
@@ -236,10 +239,10 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
-      "./services/kolay/api-docs.js": "./dist/browser/services/kolay/api-docs.js",
-      "./services/kolay/compiler.js": "./dist/browser/services/kolay/compiler.js",
-      "./services/kolay/docs.js": "./dist/browser/services/kolay/docs.js",
-      "./services/kolay/selected.js": "./dist/browser/services/kolay/selected.js"
+      "./services/kolay/api-docs.js": "./src/browser/app-re-exports/services/kolay/api-docs.js",
+      "./services/kolay/compiler.js": "./src/browser/app-re-exports/services/kolay/compiler.js",
+      "./services/kolay/docs.js": "./src/browser/app-re-export/services/kolay/docs.js",
+      "./services/kolay/selected.js": "./src/browser/app-re-export/services/kolay/selected.js"
     }
   },
   "packageManager": "pnpm@9.12.3",
