@@ -230,10 +230,11 @@
       "@embroider/test-setup": "unstable",
       "@embroider/vite": "unstable",
       "@embroider/webpack": "unstable",
-      "@glint/core": "1.4.1-unstable.e45fffc",
-      "@glint/environment-ember-loose": "1.4.1-unstable.e45fffc",
-      "@glint/environment-ember-template-imports": "1.4.1-unstable.e45fffc",
-      "@glint/template": "1.4.1-unstable.e45fffc",
+      "@glint/core": "unstable",
+      "@glint/environment-ember-loose": "unstable",
+      "@glint/environment-ember-template-imports": "unstable",
+      "@glint/template": "unstable",
+      "ember-source": "6.1.0-alpha.5",
       "webpack": "^5.90.3",
       "ember-repl": "^4.3.2"
     }
@@ -250,10 +251,10 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
-      "./services/kolay/api-docs.js": "./src/browser/app-re-exports/services/kolay/api-docs.js",
-      "./services/kolay/compiler.js": "./src/browser/app-re-exports/services/kolay/compiler.js",
-      "./services/kolay/docs.js": "./src/browser/app-re-export/services/kolay/docs.js",
-      "./services/kolay/selected.js": "./src/browser/app-re-export/services/kolay/selected.js"
+      "./services/kolay/api-docs.js": "./src/browser/app-re-exports/api-docs.js",
+      "./services/kolay/compiler.js": "./src/browser/app-re-exports/compiler.js",
+      "./services/kolay/docs.js": "./src/browser/app-re-exports/docs.js",
+      "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
     }
   },
   "packageManager": "pnpm@9.12.3",

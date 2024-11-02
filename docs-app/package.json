@@ -74,7 +74,7 @@
     "ember-qunit": "^8.0.2",
     "ember-resolver": "^13.0.2",
     "ember-resources": "^7.0.3",
-    "ember-source": "^5.12.0",
+    "ember-source": "6.1.0-alpha.5",
     "ember-template-imports": "^4.0.0",
     "ember-template-lint": "^6.0.0",
     "ember-welcome-page": "^7.0.2",
@@ -115,11 +115,6 @@
   },
   "volta": {
     "extends": "../package.json"
-  },
-  "dependenciesMeta": {
-    "kolay": {
-      "injected": true
-    }
   },
   "dependencies": {
     "@shikijs/rehype": "^1.1.7",

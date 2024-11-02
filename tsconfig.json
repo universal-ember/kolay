@@ -33,8 +33,6 @@
 
     // My options
     "rootDir": "./src",
-    "module": "node16",
-    "moduleResolution": "node16",
     "allowJs": true,
     "checkJs": false, // too hard right -- revisit later
     "lib": ["es2023", "dom"],
