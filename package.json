@@ -26,12 +26,10 @@
   "exports": {
     ".": {
       "types": "./declarations/browser/index.d.ts",
-      "import": "./dist/browser/index.js",
       "default": "./dist/browser/index.js"
     },
     "./components": {
       "types": "./declarations/browser/components.d.ts",
-      "import": "./dist/browser/components.js",
       "default": "./dist/browser/components.js"
     },
     "./build": {
@@ -43,8 +41,7 @@
       "import": "./src/browser/virtual/empty.js"
     },
     "./private/samples": {
-      "types": "./declarations/browser/samples/-private/index.d.ts",
-      "import": "./dist/browser/samples/-private/index.js"
+      "types": "./declarations/browser/samples/-private/index.d.ts"
     },
     "./webpack": {
       "types": "./declarations/build/webpack.d.ts",

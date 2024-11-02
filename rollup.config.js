@@ -5,8 +5,8 @@ import { execaCommand } from 'execa';
 import { fixBadDeclarationOutput } from 'fix-bad-declaration-output';
 
 const addon = new Addon({
-  srcDir: 'src',
-  destDir: 'dist',
+  srcDir: 'src/browser',
+  destDir: 'dist/browser',
 });
 
 export default {
@@ -14,8 +14,8 @@ export default {
   // You can augment this if you need to.
   output: {
     ...addon.output(),
-    // Handy tool to debug brittle module cycles
-    // preserveModules: true,
+    preserveModules: true,
+    hostTransitiveImports: false,
   },
   plugins: [
     // These are the modules that users should be able to import from your
@@ -26,11 +26,11 @@ export default {
     // is aligned to the config here.
     // See https://github.com/embroider-build/embroider/blob/main/docs/v2-faq.md#how-can-i-define-the-public-exports-of-my-addon
     addon.publicEntrypoints([
-      'browser/*.js',
-      'browser/components/**/*.js',
-      'browser/services/**/*.js',
-      'browser/samples/**/*.js',
-      'browser/typedoc/**/*.js',
+      '*.js',
+      'typedoc/index.js',
+      'components/**/*.js',
+      'services/**/*.js',
+      'typedoc/**/*.js',
     ]),
 
     // Follow the V2 Addon rules about dependencies. Your code can import from
@@ -49,11 +49,10 @@ export default {
       babelHelpers: 'bundled',
     }),
 
-    addon.keepAssets(['**/*.css']),
-
     // Ensure that .gjs files are properly integrated as Javascript
     addon.gjs(),
 
+    addon.keepAssets(['**/*.css']),
     // Remove leftover build artifacts when starting a new build.
     addon.clean(),
 
@@ -71,11 +70,14 @@ export default {
          * README: https://github.com/NullVoxPopuli/fix-bad-declaration-output
          */
         console.log('Fixing types');
-        await fixBadDeclarationOutput('declarations/browser/{components,samples}/**/*.d.ts', [
-          ['TypeScript#56571', { types: 'all' }],
-          'Glint#628',
-          'Glint#697',
-        ]);
+        await fixBadDeclarationOutput(
+          [
+            'declarations/browser/samples/**/*',
+            'declarations/browser/components/**/*',
+            'declarations/browser/components.*',
+          ],
+          [['TypeScript#56571', { types: 'all' }], 'Glint#628', 'Glint#697']
+        );
         console.log('⚠️ Dangerously (but neededly) fixed bad declaration output from typescript');
       },
     },
