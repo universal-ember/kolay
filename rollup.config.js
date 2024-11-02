@@ -15,7 +15,7 @@ export default {
   output: {
     ...addon.output(),
     preserveModules: true,
-    hostTransitiveImports: false,
+    hoistTransitiveImports: false,
   },
   plugins: [
     // These are the modules that users should be able to import from your
@@ -70,13 +70,10 @@ export default {
          * README: https://github.com/NullVoxPopuli/fix-bad-declaration-output
          */
         console.log('Fixing types');
+
         await fixBadDeclarationOutput(
-          [
-            'declarations/browser/samples/**/*',
-            'declarations/browser/components/**/*',
-            'declarations/browser/components.*',
-          ],
-          [['TypeScript#56571', { types: 'all' }], 'Glint#628', 'Glint#697']
+          ['./declarations/browser/**/*', '!./declarations/browser/virtual/**/*'],
+          [['TypeScript#56571', { types: 'all' }]]
         );
         console.log('⚠️ Dangerously (but neededly) fixed bad declaration output from typescript');
       },

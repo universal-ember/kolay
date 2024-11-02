@@ -26,11 +26,18 @@
   "exports": {
     ".": {
       "types": "./declarations/browser/index.d.ts",
+      "import": "./dist/browser/index.js",
       "default": "./dist/browser/index.js"
     },
     "./components": {
       "types": "./declarations/browser/components.d.ts",
+      "import": "./dist/browser/components.js",
       "default": "./dist/browser/components.js"
+    },
+    "./services/*": {
+      "types": "./declarations/browser/services/*.d.ts",
+      "import": "./dist/browser/services/*.js",
+      "default": "./dist/browser/services/*.js"
     },
     "./build": {
       "types": "./declarations/build/plugins/index.d.ts",
@@ -228,7 +235,12 @@
     "version": 2,
     "type": "addon",
     "main": "addon-main.cjs",
-    "app-js": {}
+    "app-js": {
+      "./services/kolay/api-docs.js": "./src/_app_/services/kolay/api-docs.js",
+      "./services/kolay/compiler.js": "./src/_app_/services/kolay/compiler.js",
+      "./services/kolay/docs.js": "./src/_app_/services/kolay/docs.js",
+      "./services/kolay/selected.js": "./src/_app_/services/kolay/selected.js"
+    }
   },
   "packageManager": "pnpm@9.12.3",
   "volta": {
