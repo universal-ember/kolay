@@ -43,7 +43,7 @@
       "import": "./src/browser/virtual/empty.js"
     },
     "./private/samples": {
-      "types": "./declarations/browser/private/samples/index.d.ts"
+      "types": "./declarations/browser/samples/-private/index.d.ts"
     },
     "./webpack": {
       "types": "./declarations/build/webpack.d.ts",
@@ -59,7 +59,7 @@
     },
     "./*": {
       "types": "./src/browser/virtual/*",
-      "default": "./src/does-not-exist/*"
+      "default": "./src/browser/virtual/*"
     }
   },
   "files": [
