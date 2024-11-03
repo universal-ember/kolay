@@ -30,6 +30,11 @@ const aliasPlugin = {
       path: args.path,
       external: true,
     }));
+
+    build.onResolve({ filter: /ember-template-compiler$/ }, (args) => ({
+      path: "ember-source/dist/ember-template-compiler",
+      external: true,
+    }));
   },
 };
 

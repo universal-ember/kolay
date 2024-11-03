@@ -237,9 +237,6 @@
       "ember-source": "^5.12.0",
       "webpack": "^5.90.3",
       "ember-repl": "4.3.2"
-    },
-    "patchedDependencies": {
-      "ember-repl": "patches/ember-repl.patch"
     }
   },
   "publishConfig": {
