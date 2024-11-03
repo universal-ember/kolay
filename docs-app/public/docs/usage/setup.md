@@ -1,4 +1,4 @@
-## Install[^type-module]
+## Install
 
 ```bash
 pnpm add kolay

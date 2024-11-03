@@ -23,7 +23,7 @@
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "start": "pnpm start:vite",
-    "start:vite": "EMBROIDER_FORCED_V2_PACKAGES=ember-source,docs-app,ember-repl vite",
+    "start:vite": "vite",
     "start:test": "pnpm start:vite --open /tests/",
     "start:webpack": "WEBPACK=true pnpm ember serve",
     "start:sync": "pnpm _syncPnpm --watch",
@@ -74,7 +74,7 @@
     "ember-qunit": "^8.0.2",
     "ember-resolver": "^13.0.2",
     "ember-resources": "^7.0.3",
-    "ember-source": "6.1.0-alpha.5",
+    "ember-source": "^5.12.0",
     "ember-template-imports": "^4.0.0",
     "ember-template-lint": "^6.0.0",
     "ember-welcome-page": "^7.0.2",
@@ -97,6 +97,7 @@
     "tracked-built-ins": "^3.3.0",
     "typescript": "^5.3.3",
     "vite": "^5.1.3",
+    "vite-plugin-wasm": "^3.3.0",
     "webpack": "^5.90.3"
   },
   "engines": {
