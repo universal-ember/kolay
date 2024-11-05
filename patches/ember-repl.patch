@@ -1,0 +1,14 @@
+diff --git a/dist/compile/formats/gjs/index.js b/dist/compile/formats/gjs/index.js
+index c01c9ace959c3f13aabda370f419f362761e1e66..6f478c8c737bf7012991d3025fbf7a0d03f04aea 100644
+--- a/dist/compile/formats/gjs/index.js
++++ b/dist/compile/formats/gjs/index.js
+@@ -74,7 +74,8 @@ async function preprocess(input, name) {
+   });
+ }
+ async function transform(intermediate, name, options = {}) {
+-  let babel = await import('@babel/standalone');
++  let babel = (await import('@babel/standalone')).default;
++  console.log(babel);
+   return babel.transform(intermediate, {
+     filename: `${name}.js`,
+     plugins: [

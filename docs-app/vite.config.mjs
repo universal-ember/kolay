@@ -16,10 +16,6 @@ import wasm from "vite-plugin-wasm";
 
 const extensions = [".mjs", ".gjs", ".js", ".mts", ".gts", ".ts", ".hbs", ".json"];
 
-const optimizeOpts = optimizeDeps();
-
-optimizeOpts.esbuildOptions.target = "esnext";
-
 const aliasPlugin = {
   name: "env",
   setup(build) {
@@ -35,21 +31,24 @@ const aliasPlugin = {
       path: "ember-source/dist/ember-template-compiler",
       external: true,
     }));
+
+    build.onResolve({ filter: /content-tag$/ }, () => ({
+      path: "content-tag",
+      external: true,
+    }));
   },
 };
 
-const o = optimizeDeps();
-
-o.esbuildOptions.target = "esnext";
-o.esbuildOptions.plugins.splice(0, 0, aliasPlugin);
+const optimization = optimizeDeps();
 
 export default defineConfig(({ mode }) => {
   return {
     resolve: {
       extensions,
     },
+    // assetsInclude: ["**/*.wasm"],
     plugins: [
-      wasm(),
+      // wasm(),
       kolay({
         src: "public/docs",
         groups: [
@@ -73,8 +72,23 @@ export default defineConfig(({ mode }) => {
         extensions,
       }),
     ],
-    optimizeDeps: o,
+    optimizeDeps: {
+      ...optimization,
+      esbuildOptions: {
+        ...optimization.esbuildOptions,
+        target: "esnext",
+        plugins: [aliasPlugin, ...optimization.esbuildOptions.plugins],
+      },
+    },
+    esbuild: {
+      supported: {
+        "top-level-await": true,
+      },
+    },
     server: {
+      mimeTypes: {
+        "application/wasm": ["wasm"],
+      },
       port: 4200,
       // watch: {
       // ignored: [
