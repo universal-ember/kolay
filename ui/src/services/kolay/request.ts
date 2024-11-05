@@ -6,6 +6,7 @@ import { keepLatest } from 'reactiveweb/keep-latest';
 import { RemoteData } from 'reactiveweb/remote-data';
 
 import type DocsService from './docs';
+import { getOwner } from '@ember/owner';
 
 export const OUTPUT_PREFIX = `/docs/`;
 export const OUTPUT_PREFIX_REGEX = /^\/docs\//;
@@ -22,6 +23,11 @@ export class MDRequest {
   constructor(private urlFn: () => string) {}
 
   @service('kolay/docs') declare docs: DocsService;
+
+  get config() {
+    // @ts-ignore
+    return getOwner(this).resolveRegistration('config:environment')
+  }
 
   /**
    * TODO: use a private property when we move to spec-decorators
@@ -50,7 +56,9 @@ export class MDRequest {
   @cached
   private get _doesPageExist() {
     let url = this.urlFn();
-    let pagePath = url.replace(OUTPUT_PREFIX_REGEX, '/');
+    let pagePath = url
+      .slice(this.config.rootURL.length - 1)
+      .replace(OUTPUT_PREFIX_REGEX, '/');
     let group = this.docs.groupForURL(pagePath);
 
     return Boolean(group);

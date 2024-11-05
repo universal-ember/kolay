@@ -38,10 +38,15 @@ export const apiDocs = (options) => {
     return `${options.dest ?? 'docs'}/${pkgName.replace('/', '__')}.json`;
   }
 
+  let baseUrl = '/';
+
   return {
     name,
 
     vite: {
+      configResolved(resolvedConfig) {
+        baseUrl = resolvedConfig.base;
+      },
       configureServer(server) {
         return () => {
           server.middlewares.use(async (req, res, next) => {
@@ -49,7 +54,7 @@ export const apiDocs = (options) => {
               const assetUrl = req.originalUrl.split('?')[0];
 
               const pkg = options.packages.find((pkgName) => {
-                let dest = '/' + getDest(pkgName);
+                let dest = baseUrl + getDest(pkgName);
 
                 return dest === assetUrl;
               });
@@ -100,7 +105,7 @@ export const apiDocs = (options) => {
           export const loadApiDocs = {
             ${options.packages
               .map((name) => {
-                return `'${name}': () => fetch('/${getDest(name)}'),`;
+                return `'${name}': () => fetch('${baseUrl}${getDest(name)}'),`;
               })
               .join('\n  ')}
           };

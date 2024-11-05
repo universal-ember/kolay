@@ -36,6 +36,7 @@ export const markdownPages = (options) => {
    * @type {import('vite').ViteDevServer}
    */
   let server;
+  let baseUrl = '/';
 
   return {
     name: 'kolay:markdown-docs',
@@ -48,6 +49,9 @@ export const markdownPages = (options) => {
           });
         }
       },
+      configResolved(resolvedConfig) {
+        baseUrl = resolvedConfig.base;
+      },
       configureServer(s) {
         server = s;
 
@@ -56,16 +60,16 @@ export const markdownPages = (options) => {
             if (req.originalUrl && req.originalUrl.length > 1) {
               const assetUrl = req.originalUrl.split('?')[0] || '';
 
-              if (assetUrl === `/${destination}/${name}`) {
-                const reshaped = await discover({ src, groups });
+              if (assetUrl === `${baseUrl}${destination}/${name}`) {
+                const reshaped = await discover({ src, groups, baseUrl });
 
                 res.setHeader('content-type', 'application/json');
 
                 return res.end(JSON.stringify(reshaped, null, 2));
               }
 
-              if (groups && assetUrl.startsWith('/docs')) {
-                const groupName = assetUrl.split('/')[2];
+              if (groups && assetUrl.slice(baseUrl.length - 1).startsWith('/docs')) {
+                const groupName = assetUrl.slice(baseUrl.length - 1).split('/')[2];
                 const g = groups.find((group) => {
                   // discover mutates the groups array
                   if (group.name === 'root') return;
@@ -98,7 +102,7 @@ export const markdownPages = (options) => {
 
       if (server) return;
 
-      const reshaped = await discover({ src, groups });
+      const reshaped = await discover({ src, groups, baseUrl });
 
       if (groups) {
         groups.forEach((group) => {
@@ -142,7 +146,7 @@ export const markdownPages = (options) => {
       importPath: SECRET_INTERNAL_IMPORT,
       content: stripIndent`
           export const load = async () => {
-            let request = await fetch('/${fileName}', {
+            let request = await fetch('${baseUrl || '/'}${fileName}', {
               headers: {
                 Accept: 'application/json',
               },
