@@ -20,7 +20,6 @@ overrides:
   '@glint/template': unstable
   ember-source: ^5.12.0
   webpack: ^5.90.3
-  ember-repl: 4.3.2
 
 packageExtensionsChecksum: ad075fa7f4ae4d75e3fe6c91b7b594c2
 
@@ -64,8 +63,8 @@ importers:
         specifier: ^0.25.0
         version: 0.25.0(dli62liatbtx3sppmf55qx3qlq)
       ember-repl:
-        specifier: 4.3.3
-        version: 4.3.3(@babel/core@7.26.0)(@glimmer/compiler@0.92.4)(@glimmer/component@2.0.0)(@glimmer/syntax@0.92.3)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(reactiveweb@1.3.0(@babel/core@7.26.0)(@ember/test-waiters@3.1.0)(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(webpack@5.96.1)
+        specifier: 4.3.4
+        version: 4.3.4(@babel/core@7.26.0)(@glimmer/compiler@0.92.4)(@glimmer/component@2.0.0)(@glimmer/syntax@0.92.3)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(reactiveweb@1.3.0(@babel/core@7.26.0)(@ember/test-waiters@3.1.0)(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(webpack@5.96.1)
       ember-resources:
         specifier: ^7.0.3
         version: 7.0.3(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))
@@ -251,8 +250,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@babel/core@7.26.0)(@ember/test-helpers@4.0.4(@babel/core@7.26.0)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(webpack@5.96.1)
       ember-repl:
-        specifier: 4.3.3
-        version: 4.3.3(@babel/core@7.26.0)(@glimmer/compiler@0.92.4)(@glimmer/component@2.0.0)(@glimmer/syntax@0.92.3)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(reactiveweb@1.3.0(@babel/core@7.26.0)(@ember/test-waiters@3.1.0)(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(webpack@5.96.1)
+        specifier: 4.3.4
+        version: 4.3.4(@babel/core@7.26.0)(@glimmer/compiler@0.92.4)(@glimmer/component@2.0.0)(@glimmer/syntax@0.92.3)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(reactiveweb@1.3.0(@babel/core@7.26.0)(@ember/test-waiters@3.1.0)(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(webpack@5.96.1)
       ember-route-template:
         specifier: ^1.0.3
         version: 1.0.3
@@ -300,8 +299,8 @@ importers:
         specifier: unstable
         version: 3.4.16-unstable.c51ca2b(@glint/template@1.4.1-unstable.e45fffc)
       '@embroider/macros':
-        specifier: ^1.16.9
-        version: 1.16.9(@glint/template@1.4.1-unstable.e45fffc)
+        specifier: unstable
+        version: 1.16.7-unstable.c51ca2b(@glint/template@1.4.1-unstable.e45fffc)
       '@embroider/test-setup':
         specifier: unstable
         version: 4.0.1-unstable.c51ca2b(@embroider/compat@3.6.2-unstable.c51ca2b(@embroider/core@3.4.16-unstable.c51ca2b(@glint/template@1.4.1-unstable.e45fffc))(@glint/template@1.4.1-unstable.e45fffc))(@embroider/core@3.4.16-unstable.c51ca2b(@glint/template@1.4.1-unstable.e45fffc))(@embroider/webpack@4.0.6-unstable.c51ca2b(@embroider/core@3.4.16-unstable.c51ca2b(@glint/template@1.4.1-unstable.e45fffc))(webpack@5.96.1))
@@ -1227,15 +1226,6 @@ packages:
 
   '@embroider/macros@1.16.7-unstable.c51ca2b':
     resolution: {integrity: sha512-YnuNwCYzm9V+a1z5mAVJuryuaBcJb9MNF+3G79ZN83UnXgR1TqTcTUmahuRqzpd5D5aSctU//QYZTrGWP/0xkw==}
-    engines: {node: 12.* || 14.* || >= 16}
-    peerDependencies:
-      '@glint/template': unstable
-    peerDependenciesMeta:
-      '@glint/template':
-        optional: true
-
-  '@embroider/macros@1.16.9':
-    resolution: {integrity: sha512-AUrmHQdixczIU3ouv/+HzWxwYVsw/NwssZxAQnXfBDJ3d3/CRtAvGRu3JhY6OT3AAPFwfa2WT66tB5jeAa7r5g==}
     engines: {node: 12.* || 14.* || >= 16}
     peerDependencies:
       '@glint/template': unstable
@@ -4236,8 +4226,8 @@ packages:
       ember-source: ^5.12.0
       qunit: ^2.13.0
 
-  ember-repl@4.3.3:
-    resolution: {integrity: sha512-1jfsh9tFYUtClGucJ70PEVJNGtI/H78mnjWaQuPjYWJE6Eaj+unTc9ziNW3prMI52xhvAJGFRV5ehbIwTYMJgA==}
+  ember-repl@4.3.4:
+    resolution: {integrity: sha512-fGPMP6BiKmsOwdDX3nv0HwzJOmDNKLSCOql5HxRWkCJxdVN2DwuFQY88Q2srAw/JSRLCqUnPgxf3zKLSTnP/Ig==}
     peerDependencies:
       '@glimmer/compiler': '>= 0.86.0'
       '@glimmer/syntax': '>= 0.86.0'
@@ -10269,21 +10259,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@embroider/macros@1.16.9(@glint/template@1.4.1-unstable.e45fffc)':
-    dependencies:
-      '@embroider/shared-internals': 2.8.1
-      assert-never: 1.3.0
-      babel-import-util: 2.1.1
-      ember-cli-babel: 7.26.11
-      find-up: 5.0.0
-      lodash: 4.17.21
-      resolve: 1.22.8
-      semver: 7.6.3
-    optionalDependencies:
-      '@glint/template': 1.4.1-unstable.e45fffc
-    transitivePeerDependencies:
-      - supports-color
-
   '@embroider/reverse-exports@0.1.1-unstable.c51ca2b':
     dependencies:
       resolve.exports: 2.0.2
@@ -14083,7 +14058,7 @@ snapshots:
       - '@glint/template'
       - supports-color
 
-  ember-repl@4.3.3(@babel/core@7.26.0)(@glimmer/compiler@0.92.4)(@glimmer/component@2.0.0)(@glimmer/syntax@0.92.3)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(reactiveweb@1.3.0(@babel/core@7.26.0)(@ember/test-waiters@3.1.0)(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(webpack@5.96.1):
+  ember-repl@4.3.4(@babel/core@7.26.0)(@glimmer/compiler@0.92.4)(@glimmer/component@2.0.0)(@glimmer/syntax@0.92.3)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1))(reactiveweb@1.3.0(@babel/core@7.26.0)(@ember/test-waiters@3.1.0)(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.e45fffc)(ember-source@5.12.0(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.e45fffc)(rsvp@4.8.5)(webpack@5.96.1)))(webpack@5.96.1):
     dependencies:
       '@babel/helper-plugin-utils': 7.25.9
       '@babel/standalone': 7.26.2
