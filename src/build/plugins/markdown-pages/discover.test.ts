@@ -9,9 +9,11 @@ import { discover } from './discover.js';
 
 const fixtures = path.join(__dirname, '../../../fixtures');
 
+
 describe('discover', () => {
   test('it works', async () => {
-    let result = await discover({ src: path.join(fixtures, 'discover') });
+    let fixturePath = path.join(fixtures, 'discover');
+    let result = await discover({ src: fixturePath });
 
     expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
       {
