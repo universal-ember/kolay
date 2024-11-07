@@ -33,8 +33,7 @@
       "default": "./dist/browser/components.js"
     },
     "./types": {
-      "types": "./declarations/types.d.ts",
-      "default": "./dist/types.js"
+      "types": "./declarations/types.d.ts"
     },
     "./services/*": {
       "types": "./declarations/browser/services/*.d.ts",
