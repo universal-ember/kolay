@@ -3,6 +3,7 @@
   "tsconfig": "./tsconfig.typedoc.json",
   "entryPoints": [
     "./declarations/index.d.ts",
+    "./declarations/types.d.ts",
     "./declarations/vite.d.ts",
     "./declarations/webpack.d.ts",
     "./declarations/plugins/index.d.ts",
