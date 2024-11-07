@@ -16,7 +16,7 @@ module('<ModifierSignature>', function (hooks) {
       <template>
         <ModifierSignature
           @package="kolay"
-          @module="src/browser/re-exports"
+          @module="declarations/browser"
           @name="ModifierSignature"
         />
       </template>
@@ -34,7 +34,7 @@ module('<ModifierSignature>', function (hooks) {
     await render(
       <template>
         <ModifierSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="ModifierSignatureA"
           @package="kolay"
         />
@@ -55,7 +55,7 @@ module('<ModifierSignature>', function (hooks) {
     await render(
       <template>
         <ModifierSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="functionModifierA"
           @package="kolay"
         />
@@ -76,7 +76,7 @@ module('<ModifierSignature>', function (hooks) {
     await render(
       <template>
         <ModifierSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="functionModifierB"
           @package="kolay"
         />
@@ -97,7 +97,7 @@ module('<ModifierSignature>', function (hooks) {
     await render(
       <template>
         <ModifierSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="functionModifierC"
           @package="kolay"
         />

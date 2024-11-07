@@ -3,13 +3,14 @@
   "tsconfig": "./tsconfig.typedoc.json",
   "entryPoints": [
     "./declarations/index.d.ts",
+    "./declarations/types.d.ts",
     "./declarations/vite.d.ts",
     "./declarations/webpack.d.ts",
     "./declarations/plugins/index.d.ts",
     "./declarations/plugins/types.d.ts",
-    "./src/browser/components.d.ts",
-    "./src/browser/test-support.d.ts",
-    "./src/browser/private/samples.d.ts"
+    "./declarations/browser/components.d.ts",
+    "./declarations/browser/test-support.d.ts",
+    "./declarations/browser/private/samples.d.ts"
   ],
   "exclude": ["node_modules"],
   "cleanOutputDir": true,

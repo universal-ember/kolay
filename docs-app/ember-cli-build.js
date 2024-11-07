@@ -27,7 +27,7 @@ module.exports = async function (defaults) {
       app: (() => {
         let sideWatch = require('@embroider/broccoli-side-watch');
 
-        let paths = ['kolay', '@universal-ember/kolay-ui'].map((libraryName) => {
+        let paths = ['kolay'].map((libraryName) => {
           let entry = require.resolve(libraryName);
           let { packageJson, path: packageJsonPath } = readPackageUpSync({ cwd: entry });
           let packagePath = path.dirname(packageJsonPath);
@@ -56,7 +56,7 @@ module.exports = async function (defaults) {
       enableTypeScriptTransform: true,
     },
     autoImport: {
-      watchedDependencies: ['kolay', '@universal-ember/kolay-ui'],
+      watchedDependencies: ['kolay'],
     },
   });
 

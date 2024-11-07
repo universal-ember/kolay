@@ -1,6 +1,7 @@
 node_modules/
 declarations/
 dist/
+coverage/
 dist-typedoc/
 *.yaml
 *.md

@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index 1816c26cb13f6362911cf0e9b7b18d81f485bc1b..875602cce402017be908c1ae88ce15719bd88165 100644
+--- a/package.json
++++ b/package.json
+@@ -14,7 +14,7 @@
+         "types": "./index.d.ts",
+         "default": "./pkg/standalone.js"
+       },
+-      "default": {
++      "node": {
+         "types": "./index.d.cts",
+         "default": "./pkg/node.cjs"
+       }

@@ -1,7 +1,7 @@
 {
   "name": "kolay",
   "version": "1.2.4",
-  "description": "",
+  "description": "The runtime compiled documentation tool. Scale to any size with flat build cost.",
   "keywords": [
     "documentation",
     "docs",
@@ -10,138 +10,171 @@
     "build",
     "plugin",
     "plugins",
-    "ember"
+    "ember",
+    "ember-addon"
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:universal-ember/kolay.git"
+    "url": "git+https://github.com/universal-ember/kolay.git"
   },
   "license": "MIT",
   "author": "NullVoxPopuli",
   "type": "module",
+  "imports": {
+    "#types": "./src/types.ts"
+  },
   "exports": {
     ".": {
-      "types": "./src/browser/re-exports.d.ts",
-      "import": "./src/browser/re-exports.js",
-      "default": "./src/browser/re-exports.js"
+      "types": "./declarations/browser/index.d.ts",
+      "default": "./dist/browser/index.js"
     },
     "./components": {
-      "types": "./src/browser/components.d.ts",
-      "import": "./src/browser/components.js",
-      "default": "./src/browser/components.js"
+      "types": "./declarations/browser/components.d.ts",
+      "default": "./dist/browser/components.js"
+    },
+    "./types": {
+      "types": "./declarations/types.d.ts"
+    },
+    "./services/*": {
+      "types": "./declarations/browser/services/*.d.ts",
+      "import": "./dist/browser/services/*.js",
+      "default": "./dist/browser/services/*.js"
     },
     "./build": {
-      "types": "./declarations/plugins/index.d.ts",
-      "import": "./src/plugins/index.js"
-    },
-    "./build/types": {
-      "types": "./declarations/plugins/types.d.ts",
-      "import": "./src/browser/virtual/empty.js"
+      "types": "./declarations/build/plugins/index.d.ts",
+      "import": "./src/build/plugins/index.js"
     },
     "./private/samples": {
-      "types": "./src/browser/private/samples.d.ts",
-      "default": "./src/browser/private/samples.js"
+      "types": "./declarations/browser/samples/-private/index.d.ts"
     },
     "./webpack": {
-      "types": "./declarations/webpack.d.ts",
-      "import": "./src/webpack.js"
+      "types": "./declarations/build/webpack.d.ts",
+      "import": "./src/build/webpack.js"
     },
     "./vite": {
-      "types": "./declarations/vite.d.ts",
-      "import": "./src/vite.js"
+      "types": "./declarations/build/vite.d.ts",
+      "import": "./src/build/vite.js"
     },
     "./build/legacy": {
-      "types": "./declarations/plugins/legacy/index.d.cts",
-      "default": "./src/plugins/legacy/index.cjs"
+      "types": "./declarations/build/plugins/legacy/index.d.cts",
+      "default": "./src/build/plugins/legacy/index.cjs"
+    },
+    "./browser/app-re-exports/*": {
+      "default": "./src/browser/app-re-exports/*"
     },
     "./*": {
       "types": "./src/browser/virtual/*",
-      "default": "./src/does-not-exist/*"
+      "default": "./src/browser/virtual/*"
     }
   },
   "files": [
+    "addon-main.cjs",
     "src",
+    "docs",
+    "dist",
     "declarations"
   ],
   "scripts": {
-    "prepack": "pnpm build:declarations",
+    "prepack": "pnpm build",
     "fix": "pnpm lint:fix && pnpm --filter docs-app lint:fix",
     "lint": "pnpm turbo _:lint",
     "lint:fix": "pnpm turbo _:lint:fix",
     "lint:js": "eslint .",
     "lint:js:fix": "eslint . --fix",
-    "lint:types": "tsc --noEmit --emitDeclarationOnly false",
+    "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
+    "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
+    "lint:types": "glint --noEmit --emitDeclarationOnly false",
     "lint:package": "publint",
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:published-types": "attw --pack",
     "start:all": "concurrently 'pnpm --filter ./ui start' 'pnpm --filter ./docs-app start' --names ui,docs",
-    "build": "(cd ui && pnpm build) && pnpm prepack",
-    "build:declarations": "tsc --declaration",
+    "build": "rollup --config",
     "_syncPnpm": "pnpm sync-dependencies-meta-injected",
+    "start": "concurrently 'pnpm:start:*'",
+    "start:browser": "rollup --config --watch",
     "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
     "test:node": "vitest --run",
     "test:dev": "vitest dev"
   },
   "peerDependencies": {
-    "@ember/test-waiters": "^3.1.0",
-    "@glimmer/component": ">= 1.1.2",
-    "@glimmer/tracking": ">= 1.1.2",
-    "@glint/template": ">= 1.3.0",
-    "@universal-ember/kolay-ui": ">= 0.0.13",
-    "ember-modifier": ">= 4.1.0",
-    "ember-primitives": ">= 0.11.3",
-    "ember-repl": "^4.1.1",
-    "ember-resources": ">= 7.0.0",
-    "ember-source": ">= 5.12.0",
-    "reactiveweb": ">= 1.2.1",
-    "tracked-built-ins": ">= 3.3.0"
+    "@glint/template": "unstable",
+    "ember-source": "^5.12.0"
   },
   "dependencies": {
+    "@ember/test-waiters": "^3.1.0",
+    "@embroider/addon-shim": "1.9.0",
+    "@glimmer/component": "^2.0.0",
+    "@glimmer/tracking": ">= 1.1.2",
     "@tsconfig/ember": "^3.0.3",
     "@zamiell/typedoc-plugin-not-exported": "^0.3.0",
     "common-tags": "^1.8.2",
+    "decorator-transforms": "^2.0.0",
+    "ember-modifier": ">= 4.1.0",
+    "ember-primitives": "^0.25.0",
+    "ember-repl": "4.3.4",
+    "ember-resources": "^7.0.3",
     "globby": "^14.0.0",
     "json5": "^2.2.3",
     "package-up": "^5.0.0",
+    "reactiveweb": ">= 1.2.1",
+    "send": "^1.1.0",
+    "tracked-built-ins": ">= 3.3.0",
     "typedoc": "^0.26.3",
-    "unplugin": "^1.10.2",
-    "send": "^1.1.0"
+    "unplugin": "^1.10.2"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.0",
+    "@arethetypeswrong/cli": "^0.16.4",
+    "@babel/core": "^7.23.6",
+    "@babel/eslint-parser": "^7.23.3",
+    "@babel/plugin-transform-typescript": "^7.23.6",
+    "@babel/preset-typescript": "^7.23.3",
+    "@babel/runtime": "^7.17.0",
     "@ember/test-waiters": "^3.1.0",
-    "@glimmer/component": "^1.1.2",
+    "@embroider/addon-dev": "6.0.1",
+    "@glimmer/component": "^2.0.0",
     "@glimmer/tracking": "^1.1.2",
-    "@glint/core": "^1.3.0",
-    "@glint/template": "^1.3.0",
-    "@nullvoxpopuli/eslint-configs": "^4.0.0",
-    "@tsconfig/node20": "^20.1.2",
-    "@tsconfig/strictest": "^2.0.3",
+    "@glint/core": "unstable",
+    "@glint/environment-ember-loose": "unstable",
+    "@glint/environment-ember-template-imports": "unstable",
+    "@glint/template": "unstable",
+    "@nullvoxpopuli/eslint-configs": "^4.3.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "@types/common-tags": "^1.8.4",
     "@types/qunit": "^2.19.10",
     "@types/rsvp": "^4.0.9",
     "@types/send": "^0.17.4",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
-    "@universal-ember/kolay-ui": "workspace:*",
+    "babel-plugin-ember-template-compilation": "^2.3.0",
     "concurrently": "^8.2.2",
     "ember-modifier": "^4.2.0",
     "ember-primitives": "^0.21.0",
-    "ember-repl": "^4.1.1",
+    "ember-qunit": "^8.0.2",
     "ember-resources": "^7.0.0",
     "ember-source": "^5.12.0",
-    "eslint": "^8.56.0",
+    "ember-template-lint": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-ember": "^12.0.0",
+    "eslint-plugin-n": "^17.3.1",
+    "eslint-plugin-prettier": "^5.0.1",
+    "execa": "^9.3.0",
+    "fix-bad-declaration-output": "^1.1.4",
     "pnpm-sync-dependencies-meta-injected": "^0.0.14",
     "prettier": "^3.1.1",
+    "prettier-plugin-ember-template-tag": "^2.0.0",
     "publint": "^0.2.7",
+    "qunit": "^2.20.0",
     "reactiveweb": "^1.2.1",
     "release-plan": "^0.9.0",
+    "rollup": "^4.17.0",
     "tracked-built-ins": "^3.3.0",
-    "turbo": "^1.13.3",
+    "turbo": "^2.2.3",
     "typescript": "^5.3.3",
+    "unified": "^11.0.4",
     "vite": "^5.3.2",
-    "vitest": "^1.5.2",
+    "vitest": "^2.1.4",
     "webpack": "^5.90.3"
   },
   "engines": {
@@ -174,11 +207,6 @@
         "peerDependencies": {
           "ember-source": "*"
         }
-      },
-      "@universal-ember/kolay-ui": {
-        "peerDependencies": {
-          "ember-source": "*"
-        }
       }
     },
     "peerDependencyRules": {
@@ -190,12 +218,46 @@
     },
     "overrides": {
       "@ember/test-waiters": "^3.1.0",
-      "webpack": "^5.90.3",
-      "ember-repl": "^4.1.1"
+      "@glimmer/component": "^2.0.0",
+      "@embroider/compat": "unstable",
+      "@embroider/config-meta-loader": "unstable",
+      "@embroider/core": "unstable",
+      "@embroider/macros": "unstable",
+      "@embroider/test-setup": "unstable",
+      "@embroider/vite": "unstable",
+      "@embroider/webpack": "unstable",
+      "@glint/core": "unstable",
+      "@glint/environment-ember-loose": "unstable",
+      "@glint/environment-ember-template-imports": "unstable",
+      "@glint/template": "unstable",
+      "ember-source": "^5.12.0",
+      "webpack": "^5.90.3"
+    },
+    "patchedDependencies": {
+      "content-tag@2.0.2": "patches/content-tag@2.0.2.patch"
     }
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./services/kolay/api-docs.js": "./src/browser/app-re-exports/api-docs.js",
+      "./services/kolay/compiler.js": "./src/browser/app-re-exports/compiler.js",
+      "./services/kolay/docs.js": "./src/browser/app-re-exports/docs.js",
+      "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
+    }
+  },
+  "packageManager": "pnpm@9.12.3",
   "volta": {
     "node": "20.18.0",
-    "pnpm": "9.12.2"
+    "pnpm": "9.12.3"
   }
 }

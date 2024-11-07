@@ -13,7 +13,7 @@ module('<APIDocs>', function (hooks) {
   test('it works', async function (assert) {
     await render(
       <template>
-        <APIDocs @package="kolay" @module="src/browser/re-exports" @name="Manifest" />
+        <APIDocs @package="kolay" @module="declarations/browser" @name="Manifest" />
       </template>
     );
 

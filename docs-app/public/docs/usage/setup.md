@@ -1,10 +1,8 @@
-## Install[^type-module]
+## Install
 
 ```bash
-pnpm add kolay @universal-ember/kolay-ui
+pnpm add kolay
 ```
-
-[^type-module]: `@universal-ember/kolay-ui` is only needed because due to a temporary technical problem. Once the ember ecosystem has broader `package.json#type=module` support for its own ember using libraries, `@universal-ember/kolay-ui` can be removed and there will only be `kolay`. Note that `package.json#type=module` support is already working and has worked for a good number of years for non-Ember libraries.
 
 ## Setup
 

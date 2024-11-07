@@ -61,7 +61,8 @@ jobs:
       - uses: wyvox/action@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm turbo _:lint
+      - run: pnpm build
+      - run: pnpm lint
 
   ##############################################################
 
@@ -75,6 +76,7 @@ jobs:
       - uses: wyvox/action@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm build
       - run: pnpm turbo test:node
 
   browser_tests:
@@ -87,4 +89,5 @@ jobs:
       - uses: wyvox/action@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm build
       - run: pnpm turbo test:ember
