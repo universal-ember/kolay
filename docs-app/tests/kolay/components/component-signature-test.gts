@@ -53,7 +53,11 @@ module('<ComponentSignature>', function (hooks) {
   test('class:inline', async function (assert) {
     await render(
       <template>
-        <ComponentSignature @module="declarations/browser/samples/-private" @name="ClassA" @package="kolay" />
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassA"
+          @package="kolay"
+        />
       </template>
     );
 
@@ -71,7 +75,11 @@ module('<ComponentSignature>', function (hooks) {
   skip('class:reference', async function (assert) {
     await render(
       <template>
-        <ComponentSignature @module="declarations/browser/samples/-private" @name="ClassB" @package="kolay" />
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassB"
+          @package="kolay"
+        />
       </template>
     );
 

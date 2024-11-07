@@ -46,8 +46,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       extensions,
       alias: {
-        'ember-template-compiler': 'ember-source/dist/ember-template-compiler'
-      }
+        "ember-template-compiler": "ember-source/dist/ember-template-compiler",
+      },
     },
     // assetsInclude: ["**/*.wasm"],
     plugins: [

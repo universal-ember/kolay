@@ -14,11 +14,7 @@ module('<HelperSignature>', function (hooks) {
     // This is not supported
     await render(
       <template>
-        <HelperSignature
-          @package="kolay"
-          @module="declarations/browser"
-          @name="HelperSignature"
-        />
+        <HelperSignature @package="kolay" @module="declarations/browser" @name="HelperSignature" />
       </template>
     );
 

@@ -22,6 +22,7 @@ module.exports = configFor([
 
   // Supporting / internal
   forFiles('*.js', node.modules.js),
+  forFiles('{vite,vitest}.config.ts', node.modules.ts),
 
   // Overrides
   forFiles('*.{gts,ts}', {

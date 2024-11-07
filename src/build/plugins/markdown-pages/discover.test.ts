@@ -9,7 +9,6 @@ import { discover } from './discover.js';
 
 const fixtures = path.join(__dirname, '../../../fixtures');
 
-
 describe('discover', () => {
   test('it works', async () => {
     let fixturePath = path.join(fixtures, 'discover');
