@@ -1,5 +1,18 @@
 # Changelog
 
+## Release (2024-11-07)
+
+kolay 2.0.0 (major)
+
+#### :boom: Breaking Change
+* `kolay`
+  * [#134](https://github.com/universal-ember/kolay/pull/134) A proper single library -- a v2.1 addon.  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#132](https://github.com/universal-ember/kolay/pull/132) Vite ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 2
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-10-29)
 
 kolay 1.2.4 (patch)

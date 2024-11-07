@@ -1,6 +1,6 @@
 {
   "name": "kolay",
-  "version": "1.2.4",
+  "version": "2.0.0",
   "description": "The runtime compiled documentation tool. Scale to any size with flat build cost.",
   "keywords": [
     "documentation",
