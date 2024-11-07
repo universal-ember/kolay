@@ -10,6 +10,6 @@ This components provides a `<nav>` for the currently selected `group` (or the de
 <ComponentSignature
   @package='kolay'
   @name='PageNav'
-  @module='src/browser/components'
+  @module='declarations/browser/components'
 />
 ```

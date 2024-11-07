@@ -31,7 +31,7 @@ export interface ModifierSignatureA {
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='ModifierSignatureA'
   @package='kolay'
 />
@@ -64,7 +64,7 @@ export const functionModifierC: ModifierLike<{
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='functionModifierC'
   @package='kolay'
 />
@@ -95,7 +95,7 @@ export const functionModifierA = modifier<{
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='functionModifierA'
   @package='kolay'
 />
@@ -120,7 +120,7 @@ export const functionModifierB = modifier(
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='functionModifierB'
   @package='kolay'
 />

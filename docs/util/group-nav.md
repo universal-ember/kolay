@@ -10,6 +10,6 @@ This components provides a `<nav>` for the configured `groups` from your build c
 <ComponentSignature
   @package='kolay'
   @name='GroupNav'
-  @module='src/browser/components'
+  @module='declarations/browser/components'
 />
 ```

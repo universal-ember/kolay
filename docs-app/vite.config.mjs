@@ -27,7 +27,7 @@ const aliasPlugin = {
       external: true,
     }));
 
-    build.onResolve({ filter: /ember-template-compiler$/ }, () => ({
+    build.onResolve({ filter: /ember-template-compiler/ }, () => ({
       path: "ember-source/dist/ember-template-compiler",
       external: true,
     }));
@@ -45,6 +45,9 @@ export default defineConfig(({ mode }) => {
   return {
     resolve: {
       extensions,
+      alias: {
+        'ember-template-compiler': 'ember-source/dist/ember-template-compiler'
+      }
     },
     // assetsInclude: ["**/*.wasm"],
     plugins: [

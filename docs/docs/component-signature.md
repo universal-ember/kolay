@@ -36,7 +36,7 @@ export interface SignatureA {
 
 ```hbs live no-shadow preview below
 <ComponentSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='SignatureA'
   @package='kolay'
 />
@@ -64,7 +64,7 @@ export class ClassA extends Component<{
 
 ```hbs live no-shadow preview below
 <ComponentSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='ClassA'
   @package='kolay'
 />
@@ -81,7 +81,7 @@ export class ClassB extends Component<SignatureA> {}
 
 ```hbs live no-shadow
 <ComponentSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='ClassB'
   @package='kolay'
 />
@@ -98,7 +98,7 @@ export const TemplateOnlyC: TOC<SignatureA> = <template>...</template>;
 
 ```hbs live no-shadow
 <ComponentSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='TemplateOnlyC'
   @package='kolay'
 />
@@ -126,7 +126,7 @@ export const TemplateOnlyD: TOC<{
 
 ```hbs live no-shadow preview below
 <ComponentSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='TemplateOnlyD'
   @package='kolay'
 />

@@ -32,7 +32,7 @@ export function plainHelperA(first: number, second: number): number {
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='plainHelperA'
   @package='kolay'
 />
@@ -59,7 +59,7 @@ export const helperLikeB = ((...args: unknown[]) => {
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='helperLikeB'
   @package='kolay'
 />
@@ -83,7 +83,7 @@ export const plainHelperC = (
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='plainHelperC'
   @package='kolay'
 />
@@ -108,7 +108,7 @@ export class ClassHelperD extends Helper<{
 
 ```hbs live no-shadow
 <HelperSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='classHelperD'
   @package='kolay'
 />
@@ -135,7 +135,7 @@ export class classHelperE extends Helper<ESignature> {
 
 ```hbs live no-shadow
 <HelperSignature
-  @module='src/browser/private/samples'
+  @module='declarations/browser/samples/-private'
   @name='classHelperE'
   @package='kolay'
 />

@@ -13,7 +13,7 @@ module('<CommentQuery>', function (hooks) {
   test('it works', async function (assert) {
     await render(
       <template>
-        <CommentQuery @package="kolay" @module="src/browser/re-exports" @name="CommentQuery" />
+        <CommentQuery @package="kolay" @module="declarations/browser" @name="CommentQuery" />
       </template>
     );
 

@@ -15,7 +15,7 @@ module('<ComponentSignature>', function (hooks) {
       <template>
         <ComponentSignature
           @package="kolay"
-          @module="src/browser/re-exports"
+          @module="declarations/browser"
           @name="ComponentSignature"
         />
       </template>
@@ -33,7 +33,7 @@ module('<ComponentSignature>', function (hooks) {
     await render(
       <template>
         <ComponentSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="SignatureA"
           @package="kolay"
         />
@@ -53,7 +53,7 @@ module('<ComponentSignature>', function (hooks) {
   test('class:inline', async function (assert) {
     await render(
       <template>
-        <ComponentSignature @module="src/browser/private/samples" @name="ClassA" @package="kolay" />
+        <ComponentSignature @module="declarations/browser/samples/-private" @name="ClassA" @package="kolay" />
       </template>
     );
 
@@ -71,7 +71,7 @@ module('<ComponentSignature>', function (hooks) {
   skip('class:reference', async function (assert) {
     await render(
       <template>
-        <ComponentSignature @module="src/browser/private/samples" @name="ClassB" @package="kolay" />
+        <ComponentSignature @module="declarations/browser/samples/-private" @name="ClassB" @package="kolay" />
       </template>
     );
 
@@ -89,7 +89,7 @@ module('<ComponentSignature>', function (hooks) {
     await render(
       <template>
         <ComponentSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="TemplateOnlyC"
           @package="kolay"
         />
@@ -110,7 +110,7 @@ module('<ComponentSignature>', function (hooks) {
     await render(
       <template>
         <ComponentSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="TemplateOnlyD"
           @package="kolay"
         />

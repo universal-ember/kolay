@@ -27,7 +27,7 @@ return require("@embroider/compat").compatBuild(app, Webpack, {
 ```
 
 ```hbs live no-shadow
-<APIDocs @package="kolay" @module="declarations/build/plugins/types" @name="Options" />
+<APIDocs @package="kolay" @module="declarations/types" @name="Options" />
 ```
 
 ## Conventions

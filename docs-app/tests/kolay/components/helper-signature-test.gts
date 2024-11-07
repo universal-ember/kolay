@@ -16,7 +16,7 @@ module('<HelperSignature>', function (hooks) {
       <template>
         <HelperSignature
           @package="kolay"
-          @module="src/browser/re-exports"
+          @module="declarations/browser"
           @name="HelperSignature"
         />
       </template>
@@ -34,7 +34,7 @@ module('<HelperSignature>', function (hooks) {
     await render(
       <template>
         <HelperSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="plainHelperA"
           @package="kolay"
         />
@@ -51,7 +51,7 @@ module('<HelperSignature>', function (hooks) {
     await render(
       <template>
         <HelperSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="helperLikeB"
           @package="kolay"
         />
@@ -70,7 +70,7 @@ module('<HelperSignature>', function (hooks) {
     await render(
       <template>
         <HelperSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="plainHelperC"
           @package="kolay"
         />
@@ -90,7 +90,7 @@ module('<HelperSignature>', function (hooks) {
     await render(
       <template>
         <HelperSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="classHelperD"
           @package="kolay"
         />
@@ -109,7 +109,7 @@ module('<HelperSignature>', function (hooks) {
     await render(
       <template>
         <HelperSignature
-          @module="src/browser/private/samples"
+          @module="declarations/browser/samples/-private"
           @name="classHelperE"
           @package="kolay"
         />

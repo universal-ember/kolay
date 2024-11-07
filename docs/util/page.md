@@ -10,6 +10,6 @@ This component is for rendering the page for the currently selected document, de
 <ComponentSignature
   @package='kolay'
   @name='Page'
-  @module='src/browser/components'
+  @module='declarations/browser/components'
 />
 ```
