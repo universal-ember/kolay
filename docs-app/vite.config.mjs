@@ -12,7 +12,7 @@ import {
 import { babel } from "@rollup/plugin-babel";
 import { kolay } from "kolay/vite";
 import { defineConfig } from "vite";
-import wasm from "vite-plugin-wasm";
+// import wasm from "vite-plugin-wasm";
 
 const extensions = [".mjs", ".gjs", ".js", ".mts", ".gts", ".ts", ".hbs", ".json"];
 

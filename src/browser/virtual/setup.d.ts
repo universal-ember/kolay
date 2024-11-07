@@ -1,4 +1,4 @@
-import type { Manifest } from '../services/kolay/types.ts';
+import type { Manifest } from '#types';
 
 interface ResolveMap {
   [moduleName: string]: ScopeMap;
