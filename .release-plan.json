@@ -1,17 +1,17 @@
 {
   "solution": {
     "kolay": {
-      "impact": "major",
-      "oldVersion": "1.2.4",
-      "newVersion": "2.0.0",
+      "impact": "patch",
+      "oldVersion": "2.0.0",
+      "newVersion": "2.0.1",
       "constraints": [
         {
-          "impact": "major",
-          "reason": "Appears in changelog section :boom: Breaking Change"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-11-07)\n\nkolay 2.0.0 (major)\n\n#### :boom: Breaking Change\n* `kolay`\n  * [#134](https://github.com/universal-ember/kolay/pull/134) A proper single library -- a v2.1 addon.  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#132](https://github.com/universal-ember/kolay/pull/132) Vite ([@patricklx](https://github.com/patricklx))\n\n#### Committers: 2\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-11-10)\n\nkolay 2.0.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#138](https://github.com/universal-ember/kolay/pull/138) Fix publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
