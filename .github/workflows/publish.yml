@@ -48,8 +48,8 @@ jobs:
         with:
           # This creates an .npmrc that reads the NODE_AUTH_TOKEN environment variable
           node-registry-url: "https://registry.npmjs.org"
-      - name: npm publish
-        run: pnpm release-plan publish --singlePackage=kolay
+      - run: pnpm build
+      - run: pnpm release-plan publish --singlePackage=kolay
 
         env:
           GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
