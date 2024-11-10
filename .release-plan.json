@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "2.0.0",
-      "newVersion": "2.0.1",
+      "oldVersion": "2.0.1",
+      "newVersion": "2.0.2",
       "constraints": [
         {
           "impact": "patch",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-11-10)\n\nkolay 2.0.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#138](https://github.com/universal-ember/kolay/pull/138) Fix publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-11-10)\n\nkolay 2.0.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#140](https://github.com/universal-ember/kolay/pull/140) Fix publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
