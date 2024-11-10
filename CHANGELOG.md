@@ -2,6 +2,17 @@
 
 ## Release (2024-11-10)
 
+kolay 2.0.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#140](https://github.com/universal-ember/kolay/pull/140) Fix publish ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-11-10)
+
 kolay 2.0.1 (patch)
 
 #### :bug: Bug Fix
