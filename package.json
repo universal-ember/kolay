@@ -75,6 +75,7 @@
     "declarations"
   ],
   "scripts": {
+    "prepare": "pnpm build",
     "prepack": "pnpm build",
     "fix": "pnpm lint:fix && pnpm --filter docs-app lint:fix",
     "lint": "pnpm turbo _:lint",
