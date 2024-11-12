@@ -6,6 +6,7 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "declaration": false,
+    "declarationMap": false,
     "noEmitOnError": false,
     "paths": {
       "docs-app/tests/*": ["./tests/*"],

@@ -32,6 +32,10 @@
       "types": "./declarations/browser/components.d.ts",
       "default": "./dist/browser/components.js"
     },
+    "./test-support": {
+      "types": "./declarations/browser/test-support.d.ts",
+      "default": "./dist/browser/test-support.js"
+    },
     "./types": {
       "types": "./declarations/types.d.ts"
     },
@@ -63,8 +67,7 @@
       "default": "./src/browser/app-re-exports/*"
     },
     "./setup": {
-      "types": "./src/browser/virtual/setup.d.ts",
-      "default": "./src/browser/virtual/empty.js"
+      "types": "./src/browser/virtual/setup.d.ts"
     },
     "./*": {
       "types": "./src/browser/virtual/*",
