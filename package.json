@@ -62,9 +62,13 @@
     "./browser/app-re-exports/*": {
       "default": "./src/browser/app-re-exports/*"
     },
+    "./setup": {
+      "types": "./src/browser/virtual/setup.d.ts",
+      "default": "./src/browser/virtual/empty.js"
+    },
     "./*": {
       "types": "./src/browser/virtual/*",
-      "default": "./src/browser/virtual/*"
+      "default": "./src/browser/virtual/empty.js"
     }
   },
   "files": [
