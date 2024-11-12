@@ -8,10 +8,13 @@ import {
   scripts,
   templateTag,
 } from "@embroider/vite";
+import { createRequire } from "node:module";
 
 import { babel } from "@rollup/plugin-babel";
 import { kolay } from "kolay/vite";
 import { defineConfig } from "vite";
+
+const require = createRequire(import.meta.url);
 // import wasm from "vite-plugin-wasm";
 
 const extensions = [".mjs", ".gjs", ".js", ".mts", ".gts", ".ts", ".hbs", ".json"];
@@ -28,8 +31,7 @@ const aliasPlugin = {
     }));
 
     build.onResolve({ filter: /ember-template-compiler/ }, () => ({
-      path: "ember-source/dist/ember-template-compiler",
-      external: true,
+      path: require.resolve("ember-source/dist/ember-template-compiler"),
     }));
 
     build.onResolve({ filter: /content-tag$/ }, () => ({
