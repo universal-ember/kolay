@@ -113,7 +113,7 @@
     "decorator-transforms": "^2.0.0",
     "ember-modifier": ">= 4.1.0",
     "ember-primitives": "^0.25.0",
-    "ember-repl": "4.3.4",
+    "ember-repl": "5.0.1",
     "ember-resources": "^7.0.3",
     "globby": "^14.0.0",
     "json5": "^2.2.3",
@@ -234,9 +234,7 @@
       "ember-source": "^5.12.0",
       "webpack": "^5.90.3"
     },
-    "patchedDependencies": {
-      "content-tag@2.0.2": "patches/content-tag@2.0.2.patch"
-    }
+    "patchedDependencies": {}
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
