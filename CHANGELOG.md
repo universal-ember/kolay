@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-11-12)
+
+kolay 2.1.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#142](https://github.com/universal-ember/kolay/pull/142) Upgrade ember-repl ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-11-10)
 
 kolay 2.0.2 (patch)
