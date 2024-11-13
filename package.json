@@ -66,10 +66,12 @@
     "./browser/app-re-exports/*": {
       "default": "./src/browser/app-re-exports/*"
     },
-    "./virtual": "./src/browser/virtual/references.d.ts",
+    "./virtual": {
+      "types": "./src/browser/virtual/references.d.ts"
+    },
     "./*": {
       "types": "./src/browser/virtual/*",
-      "default": "./src/browser/virtual/empty.js"
+      "default": "./src/browser/virtual/*.js"
     }
   },
   "files": [
