@@ -1,17 +1,17 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "2.0.2",
-      "newVersion": "2.1.0",
+      "impact": "patch",
+      "oldVersion": "2.1.0",
+      "newVersion": "2.1.1",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-11-12)\n\nkolay 2.1.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#142](https://github.com/universal-ember/kolay/pull/142) Upgrade ember-repl ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-11-13)\n\nkolay 2.1.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#144](https://github.com/universal-ember/kolay/pull/144) Add types for kolay/setup ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }

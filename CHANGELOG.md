@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-11-13)
+
+kolay 2.1.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#144](https://github.com/universal-ember/kolay/pull/144) Add types for kolay/setup ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-11-12)
 
 kolay 2.1.0 (minor)
