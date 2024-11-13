@@ -14,3 +14,9 @@ export const loadApiDocs = new Proxy(
 );
 
 export const load = () => Promise.resolve({});
+
+export const setup = () => {
+  throw new Error(`runtime implementation should not be seen. The build has failed`);
+};
+
+export const setupKolay = setup;

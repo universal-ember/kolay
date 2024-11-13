@@ -39,6 +39,11 @@ export const apiDocs = (options) => {
   }
 
   /**
+   * @type {Map<string, Promise>}
+   */
+  let cache = new Map();
+
+  /**
    * @type {import('unplugin').JsPluginExtended}
    */
   return {
@@ -58,7 +63,14 @@ export const apiDocs = (options) => {
               });
 
               if (pkg) {
-                let data = await generateTypeDocJSON({ packageName: pkg });
+                let seen = cache.get(pkg);
+
+                if (!seen) {
+                  seen = generateTypeDocJSON({ packageName: pkg });
+                  cache.set(pkg, seen);
+                }
+
+                let data = await seen;
 
                 res.setHeader('content-type', 'application/json');
 
@@ -79,7 +91,14 @@ export const apiDocs = (options) => {
     async buildEnd() {
       await Promise.all(
         options.packages.map(async (pkgName) => {
-          let data = await generateTypeDocJSON({ packageName: pkgName });
+          let seen = cache.get(pkgName);
+
+          if (!seen) {
+            seen = generateTypeDocJSON({ packageName: pkgName });
+            cache.set(pkgName, seen);
+          }
+
+          let data = await seen;
 
           if (data) {
             let dest = getDest(pkgName);

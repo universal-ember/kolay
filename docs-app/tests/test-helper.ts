@@ -7,7 +7,8 @@ import Application from 'docs-app/app';
 import config from 'docs-app/config/environment';
 
 export function start() {
-  setApplication(Application.create(config.APP));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setApplication(Application.create(config.APP as any /* wrong ?*/));
 
   setup(QUnit.assert);
 

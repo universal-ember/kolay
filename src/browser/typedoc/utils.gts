@@ -47,6 +47,8 @@ function isDeclarationReflection(info: unknown): info is DeclarationReflection {
 
 const stringify = (x: unknown) => String(x);
 
+const cache = new Map<string, Promise<any>>();
+
 export class Load extends Component<{
   Args: {
     module: string;
@@ -67,10 +69,24 @@ export class Load extends Component<{
       throw new Error(`A @package must be specified to load.`);
     }
 
-    let req = await this.apiDocs.load(pkg);
-    let json = await req.json();
+    let seen = cache.get(pkg);
 
-    return json;
+    if (seen) {
+      return seen;
+    }
+
+    let loadNew = async () => {
+      let req = await this.apiDocs.load(pkg);
+      let json = await req.json();
+
+      return json;
+    };
+
+    seen = loadNew();
+
+    cache.set(pkg, seen);
+
+    return seen;
   });
 
   <template>
