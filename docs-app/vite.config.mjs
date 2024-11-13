@@ -25,7 +25,7 @@ const aliasPlugin = {
     // Intercept import paths called "env" so esbuild doesn't attempt
     // to map them to a file system location. Tag them with the "env-ns"
     // namespace to reserve them for this plugin.
-    build.onResolve({ filter: /^kolay.*:virtual/ }, (args) => ({
+    build.onResolve({ filter: /^kolay.*:virtual$/ }, (args) => ({
       path: args.path,
       external: true,
     }));
