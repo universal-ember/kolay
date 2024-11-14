@@ -15,24 +15,6 @@ There are two areas of configuration needed: buildtime, and runtime[^runtime-opt
 import `kolay/vite`
 
 ```js
-const { kolay } = await import("kolay/webpack");
-
-return require("@embroider/compat").compatBuild(app, Webpack, {
-  /* ... */
-  packagerOptions: {
-    webpackConfig: {
-      devtool: "source-map",
-      plugins: [
-        kolay({
-          src: "public/docs",
-          // Generate API docs from JSDoc
-          packages: ["kolay"],
-        }),
-      ],
-    },
-  },
-});
-
 import { kolay } from "kolay/vite";
 
 const aliasPlugin = {
