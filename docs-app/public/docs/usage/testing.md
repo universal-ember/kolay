@@ -9,10 +9,7 @@ import { setupKolay } from "kolay/test-support";
 
 module("my test group", function (hooks) {
   setupRenderingTest(hooks);
-  setupKolay(hooks, async () => ({
-    apiDocs: await import("kolay/api-docs:virtual"),
-    manifest: await import("kolay/manifest:virtual"),
-  }));
+  setupKolay(hooks);
 
   test("self", async function (assert) {
     // ...
