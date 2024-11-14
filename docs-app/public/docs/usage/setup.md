@@ -10,9 +10,9 @@ There are two areas of configuration needed: buildtime, and runtime[^runtime-opt
 
 [^runtime-optional]: The runtime components are optional and if you don't import them, they will not be included in your app. However, since links generated from markdown use vanilla `<a>` tags, you'll probably want at least `@properLinks` from `ember-primitives`.
 
-### Build: Embroider + Webpack
+### Build: Vite 
 
-import `kolay/webpack`
+import `kolay/vite`
 
 ```js
 const { kolay } = await import("kolay/webpack");
@@ -32,26 +32,85 @@ return require("@embroider/compat").compatBuild(app, Webpack, {
     },
   },
 });
+
+import { kolay } from "kolay/vite";
+
+const aliasPlugin = {
+  name: "env",
+  setup(build) {
+    // Bug in esbuild that tries to resolve virtual imports
+    build.onResolve({ filter: /^kolay.*:virtual$/ }, (args) => ({
+      path: args.path,
+      external: true,
+    }));
+
+    // Temporary aliasing until Ember 6.1
+    build.onResolve({ filter: /ember-template-compiler/ }, () => ({
+      path: require.resolve("ember-source/dist/ember-template-compiler"),
+    }));
+  },
+};
+
+const optimization = optimizeDeps();
+
+export default defineConfig(({ mode }) => {
+  return {
+    resolve: {
+      extensions,
+      // Temporary aliasing until Ember 6.1
+      alias: {
+        "ember-template-compiler": "ember-source/dist/ember-template-compiler",
+      },
+    },
+    plugins: [
+      kolay({
+        // This is your main docs in "this" app.
+        src: "public/docs",
+        // Generate API Docs for packages listed here
+        packages: ["kolay"],
+      }),
+      // ...
+    ],
+    optimizeDeps: {
+      ...optimization,
+      esbuildOptions: {
+        ...optimization.esbuildOptions,
+        target: "esnext",
+        plugins: [aliasPlugin, ...optimization.esbuildOptions.plugins],
+      },
+    },
+    esbuild: {
+      supported: {
+        "top-level-await": true,
+      },
+    },
+    server: {
+      mimeTypes: {
+        "application/wasm": ["wasm"],
+      },
+      port: 4200,
+    },
+  };
+});
+
+// ...
 ```
 
 You can create docs for multiple libraries at once:
 
 ```js
-devtool: 'source-map',
-plugins: [
-  kolay({
-    src: 'public/docs',
-    groups: [
-      {
-        name: 'Runtime',
-        src: '../ui/docs',
-      },
-    ],
-    // Generate API docs from JSDoc
-    // NOTE: these must all be declared in your projects package.json
-    packages: ['kolay', 'ember-primitives', 'ember-resources'],
-  }),
-],
+kolay({
+  src: 'public/docs',
+  groups: [
+    {
+      name: 'Runtime',
+      src: '../ui/docs',
+    },
+  ],
+  // Generate API docs from JSDoc
+  // NOTE: these must all be declared in your projects package.json
+  packages: ['kolay', 'ember-primitives', 'ember-resources'],
+}),
 ```
 
 This is useful for monorepos where they may be scaling to large teams and many packages could end up being added quickly. In a traditionally compiled app, this may cause build times to slow down over time. Since many docs' sites are deployed continuously, that is wasted time and money spent on building things that may not be looked at all that often (we all wish folks looked at docs more!).
