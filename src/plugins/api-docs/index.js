@@ -97,7 +97,7 @@ export const apiDocs = (options) => {
     },
     ...virtualFile({
       importPath: SECRET_INTERNAL_IMPORT,
-      content: stripIndent`
+      get content() { return stripIndent`
           export const packageNames = [
             ${options.packages.map((raw) => `'${raw}',`).join('\n  ')}
           ];
@@ -109,7 +109,7 @@ export const apiDocs = (options) => {
               })
               .join('\n  ')}
           };
-        `,
+        `},
     }),
   };
 };

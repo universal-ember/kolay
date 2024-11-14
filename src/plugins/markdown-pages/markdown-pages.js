@@ -144,7 +144,7 @@ export const markdownPages = (options) => {
 
     ...virtualFile({
       importPath: SECRET_INTERNAL_IMPORT,
-      content: stripIndent`
+      get content() { return stripIndent`
           export const load = async () => {
             let request = await fetch('${baseUrl || '/'}${fileName}', {
               headers: {
@@ -154,7 +154,7 @@ export const markdownPages = (options) => {
             let json = await request.json();
             return json;
           }
-        `,
+        `},
     }),
   };
 };

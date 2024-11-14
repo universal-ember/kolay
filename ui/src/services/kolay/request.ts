@@ -1,4 +1,5 @@
 import { cached } from '@glimmer/tracking';
+import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
 
 import { use } from 'ember-resources';
@@ -6,7 +7,6 @@ import { keepLatest } from 'reactiveweb/keep-latest';
 import { RemoteData } from 'reactiveweb/remote-data';
 
 import type DocsService from './docs';
-import { getOwner } from '@ember/owner';
 
 export const OUTPUT_PREFIX = `/docs/`;
 export const OUTPUT_PREFIX_REGEX = /^\/docs\//;
