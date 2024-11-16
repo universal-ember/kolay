@@ -74,6 +74,7 @@ export async function generateTypeDocJSON({ packageName }) {
     cleanOutputDir: false,
     pretty: false,
     excludeInternal: false,
+    excludeExternals: true,
     skipErrorChecking: true,
     plugin: ['@zamiell/typedoc-plugin-not-exported'],
   });
