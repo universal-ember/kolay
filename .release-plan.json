@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "2.1.0",
-      "newVersion": "2.1.1",
+      "oldVersion": "2.1.1",
+      "newVersion": "2.1.2",
       "constraints": [
         {
           "impact": "patch",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-11-13)\n\nkolay 2.1.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#144](https://github.com/universal-ember/kolay/pull/144) Add types for kolay/setup ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-11-16)\n\nkolay 2.1.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#146](https://github.com/universal-ember/kolay/pull/146) exclude externals ([@patricklx](https://github.com/patricklx))\n\n#### Committers: 1\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n"
 }
