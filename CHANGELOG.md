@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-11-16)
+
+kolay 2.1.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#146](https://github.com/universal-ember/kolay/pull/146) exclude externals ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2024-11-13)
 
 kolay 2.1.1 (patch)
