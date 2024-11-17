@@ -238,7 +238,7 @@
       "@glint/environment-ember-loose": "unstable",
       "@glint/environment-ember-template-imports": "unstable",
       "@glint/template": "unstable",
-      "ember-source": "^5.12.0",
+      "ember-source": "^6.0.0",
       "webpack": "^5.90.3"
     },
     "patchedDependencies": {}
