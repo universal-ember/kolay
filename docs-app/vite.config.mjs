@@ -1,13 +1,4 @@
-import {
-  assets,
-  compatPrebuild,
-  contentFor,
-  hbs,
-  optimizeDeps,
-  resolver,
-  scripts,
-  templateTag,
-} from "@embroider/vite";
+import { ember, extensions } from "@embroider/vite";
 import { createRequire } from "node:module";
 
 import { babel } from "@rollup/plugin-babel";
@@ -16,8 +7,6 @@ import { defineConfig } from "vite";
 
 const require = createRequire(import.meta.url);
 // import wasm from "vite-plugin-wasm";
-
-const extensions = [".mjs", ".gjs", ".js", ".mts", ".gts", ".ts", ".hbs", ".json"];
 
 const aliasPlugin = {
   name: "env",
@@ -41,18 +30,14 @@ const aliasPlugin = {
   },
 };
 
-const optimization = optimizeDeps();
-
 export default defineConfig(({ mode }) => {
   return {
     resolve: {
       extensions,
-      alias: {
-        "ember-template-compiler": "ember-source/dist/ember-template-compiler",
-      },
     },
     // assetsInclude: ["**/*.wasm"],
     plugins: [
+      ember(),
       // wasm(),
       kolay({
         src: "public/docs",
@@ -64,27 +49,11 @@ export default defineConfig(({ mode }) => {
         ],
         packages: ["kolay", "ember-primitives", "ember-resources"],
       }),
-      hbs(),
-      templateTag(),
-      scripts(),
-      resolver(),
-      compatPrebuild(),
-      assets(),
-      contentFor(),
-
       babel({
         babelHelpers: "runtime",
         extensions,
       }),
     ],
-    optimizeDeps: {
-      ...optimization,
-      esbuildOptions: {
-        ...optimization.esbuildOptions,
-        target: "esnext",
-        plugins: [aliasPlugin, ...optimization.esbuildOptions.plugins],
-      },
-    },
     esbuild: {
       supported: {
         "top-level-await": true,
@@ -94,30 +63,6 @@ export default defineConfig(({ mode }) => {
       mimeTypes: {
         "application/wasm": ["wasm"],
       },
-      port: 4200,
-      // watch: {
-      // ignored: [
-      //   "!**/node_modules/**",
-      //   (p) => {
-      //     return p.includes("node_modules") && !p.includes("kolay/dist");
-      //   },
-      // ],
-      // },
-    },
-    build: {
-      sourcemap: "inline",
-      target: "esnext",
-      outDir: "dist",
-      rollupOptions: {
-        input: {
-          main: "index.html",
-          ...(shouldBuildTests(mode) ? { tests: "tests/index.html" } : undefined),
-        },
-      },
     },
   };
 });
-
-function shouldBuildTests(mode) {
-  return mode !== "production" || process.env.FORCE_BUILD_TESTS;
-}

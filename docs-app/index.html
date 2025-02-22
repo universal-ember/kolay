@@ -12,8 +12,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
     />
-    <link integrity="" rel="stylesheet" href="/@embroider/virtual/vendor.css" />
-    <link integrity="" rel="stylesheet" href="/assets/docs-app.css" />
+    <link integrity="" rel="stylesheet" href="./app/styles/app.css" />
 
     {{content-for "head-footer"}}
 
@@ -43,8 +42,8 @@
 
     <script src="/@embroider/virtual/vendor.js"></script>
     <script type="module">
-      import Application from "./app/app";
-      import environment from "./app/config/environment";
+      import Application from "./app/app.ts";
+      import environment from "./app/config.ts";
 
       Application.create(environment.APP);
     </script>

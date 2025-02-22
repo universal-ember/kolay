@@ -8,11 +8,23 @@
     "declaration": false,
     "declarationMap": false,
     "noEmitOnError": false,
+    "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
+
+    // stylistic
+    "noPropertyAccessFromIndexSignature": false,
     "paths": {
       "docs-app/tests/*": ["./tests/*"],
       "docs-app/*": ["./app/*"],
       "*": ["./types/*"]
-    }
+    },
+
+    "types": [
+      "ember-source/types",
+      "kolay/virtual",
+      "vite/client",
+      "vitest/importMeta"
+    ]
   },
   "include": ["./app/**/*", "./tests/**/*", "./types/**/*"]
 }

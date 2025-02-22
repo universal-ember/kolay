@@ -1,6 +1,6 @@
 import EmberRouter from '@ember/routing/router';
 
-import config from 'docs-app/config/environment';
+import config from './config.ts';
 import { properLinks } from 'ember-primitives/proper-links';
 import { addRoutes } from 'kolay';
 

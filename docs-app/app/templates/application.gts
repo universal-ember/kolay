@@ -3,7 +3,7 @@ import 'ember-mobile-menu/themes/android';
 import { on } from '@ember/modifier';
 
 import { pascalCase, sentenceCase } from 'change-case';
-import ENV from 'docs-app/config/environment';
+import ENV from '#config';
 // @ts-expect-error no types for the mobile-menu
 import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
