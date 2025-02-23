@@ -1,4 +1,5 @@
 import PageTitleService from 'ember-page-title/services/page-title';
+import { registry as kolayRegistry } from 'kolay';
 
 import Router from './router.ts';
 
@@ -26,6 +27,7 @@ const resolverRegistry = {
 };
 
 export const registry = {
-  ...resolverRegistry,
   [`${appName}/services/page-title`]: PageTitleService,
+  ...resolverRegistry,
+  ...kolayRegistry(appName),
 };

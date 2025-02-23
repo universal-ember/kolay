@@ -3,8 +3,8 @@ import Route from '@ember/routing/route';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 import { colorScheme, sync } from 'ember-primitives/color-scheme';
 import { setupKolay } from 'kolay/setup';
-import { getHighlighterCore } from 'shiki/core';
-import getWasm from 'shiki/wasm';
+import { createHighlighterCore } from 'shiki/core';
+import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 
 sync();
 
@@ -12,7 +12,8 @@ import type { Manifest } from 'kolay';
 
 export default class ApplicationRoute extends Route {
   async model(): Promise<{ manifest: Manifest }> {
-    const highlighter = await getHighlighterCore({
+    console.log('start loading');
+    const highlighter = await createHighlighterCore({
       themes: [import('shiki/themes/github-dark.mjs'), import('shiki/themes/github-light.mjs')],
       langs: [
         import('shiki/langs/javascript.mjs'),
@@ -26,7 +27,7 @@ export default class ApplicationRoute extends Route {
         import('shiki/langs/handlebars.mjs'),
         import('shiki/langs/jsonc.mjs'),
       ],
-      loadWasm: getWasm,
+      engine: createOnigurumaEngine(() => import('shiki/wasm')),
     });
 
     const manifest = await setupKolay(this, {
@@ -52,6 +53,7 @@ export default class ApplicationRoute extends Route {
       ],
     });
 
+    console.log(manifest);
     return { manifest };
   }
 }
