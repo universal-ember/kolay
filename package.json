@@ -28,9 +28,6 @@
       "types": "./declarations/browser/index.d.ts",
       "default": "./dist/browser/index.js"
     },
-    "./setup": {
-      "default": "./dist/browser/index.js"
-    },
     "./components": {
       "types": "./declarations/browser/components.d.ts",
       "default": "./dist/browser/components.js"

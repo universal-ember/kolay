@@ -31,7 +31,6 @@ const aliasPlugin = {
   },
 };
 
-const templateCompiler = `${process.cwd()}/node_modules/ember-source/dist/ember-template-compiler.js`;
 const validator = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/validator/index.js`;
 const tracking = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/index.js`;
 const eUtil = `${process.cwd()}/node_modules/@embroider/util/addon/index.js`;
@@ -45,8 +44,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       extensions,
       alias: {
-        // 'ember-template-compiler': templateCompiler,
-        // 'ember-template-compiler': 'ember-source/dist/ember-template-compiler.js',
         '@glimmer/validator': validator,
         '@glimmer/tracking/primitives/cache': cache,
         '@glimmer/tracking': tracking,
