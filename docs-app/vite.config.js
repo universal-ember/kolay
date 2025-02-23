@@ -1,15 +1,15 @@
-import { ember, extensions } from "@embroider/vite";
-import { createRequire } from "node:module";
+import { ember, extensions } from '@embroider/vite';
+import { createRequire } from 'node:module';
 
-import { babel } from "@rollup/plugin-babel";
-import { kolay } from "kolay/vite";
-import { defineConfig } from "vite";
+import { babel } from '@rollup/plugin-babel';
+import { kolay } from 'kolay/vite';
+import { defineConfig } from 'vite';
 
 const require = createRequire(import.meta.url);
 // import wasm from "vite-plugin-wasm";
 
 const aliasPlugin = {
-  name: "env",
+  name: 'env',
   setup(build) {
     // Intercept import paths called "env" so esbuild doesn't attempt
     // to map them to a file system location. Tag them with the "env-ns"
@@ -20,11 +20,11 @@ const aliasPlugin = {
     }));
 
     build.onResolve({ filter: /ember-template-compiler/ }, () => ({
-      path: require.resolve("ember-source/dist/ember-template-compiler"),
+      path: require.resolve('ember-source/dist/ember-template-compiler'),
     }));
 
     build.onResolve({ filter: /content-tag$/ }, () => ({
-      path: "content-tag",
+      path: 'content-tag',
       external: true,
     }));
   },
@@ -40,29 +40,29 @@ export default defineConfig(({ mode }) => {
       ember(),
       // wasm(),
       kolay({
-        src: "public/docs",
+        src: 'public/docs',
         groups: [
           {
-            name: "Runtime",
-            src: "./node_modules/kolay/docs",
+            name: 'Runtime',
+            src: './node_modules/kolay/docs',
           },
         ],
-        packages: ["kolay", "ember-primitives", "ember-resources"],
+        packages: ['kolay', 'ember-primitives', 'ember-resources'],
       }),
       babel({
-        babelHelpers: "runtime",
+        babelHelpers: 'runtime',
         extensions,
       }),
     ],
-    esbuild: {
-      supported: {
-        "top-level-await": true,
-      },
-    },
-    server: {
-      mimeTypes: {
-        "application/wasm": ["wasm"],
-      },
-    },
+    // esbuild: {
+    //   supported: {
+    //     "top-level-await": true,
+    //   },
+    // },
+    // server: {
+    //   mimeTypes: {
+    //     "application/wasm": ["wasm"],
+    //   },
+    // },
   };
 });

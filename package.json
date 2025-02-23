@@ -158,7 +158,7 @@
     "concurrently": "^8.2.2",
     "ember-modifier": "^4.2.0",
     "ember-primitives": "^0.21.0",
-    "ember-qunit": "^8.0.2",
+    "ember-qunit": "^9.0.1",
     "ember-resources": "^7.0.0",
     "ember-source": "^5.12.0",
     "ember-template-lint": "^6.0.0",
@@ -225,21 +225,16 @@
       ]
     },
     "overrides": {
-      "@ember/test-waiters": "^3.1.0",
+      "@ember/test-waiters": "^4.0.0",
       "@glimmer/component": "^2.0.0",
-      "@embroider/compat": "unstable",
-      "@embroider/config-meta-loader": "unstable",
-      "@embroider/core": "unstable",
-      "@embroider/macros": "unstable",
-      "@embroider/test-setup": "unstable",
-      "@embroider/vite": "unstable",
-      "@embroider/webpack": "unstable",
+      "@embroider/core": "alpha",
+      "@embroider/macros": "alpha",
+      "@embroider/vite": "alpha",
       "@glint/core": "unstable",
       "@glint/environment-ember-loose": "unstable",
       "@glint/environment-ember-template-imports": "unstable",
       "@glint/template": "unstable",
-      "ember-source": "^5.12.0",
-      "webpack": "^5.90.3"
+      "ember-source": "^6.4.0-alpha.3"
     },
     "patchedDependencies": {}
   },

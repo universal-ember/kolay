@@ -133,7 +133,7 @@ Here is what this site does
 - additional `resolve` entries for code blocks to pull from
 
 ```ts
-// app/routes/application.ts
+// routes/application.ts
 import Route from "@ember/routing/route";
 import { setupKolay } from "kolay/setup";
 

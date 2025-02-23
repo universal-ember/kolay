@@ -13,18 +13,11 @@
 
     // stylistic
     "noPropertyAccessFromIndexSignature": false,
-    "paths": {
-      "docs-app/tests/*": ["./tests/*"],
-      "docs-app/*": ["./app/*"],
-      "*": ["./types/*"]
-    },
-
     "types": [
       "ember-source/types",
       "kolay/virtual",
       "vite/client",
       "vitest/importMeta"
     ]
-  },
-  "include": ["./app/**/*", "./tests/**/*", "./types/**/*"]
+  }
 }
