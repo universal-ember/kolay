@@ -106,8 +106,8 @@
     "test:dev": "vitest dev"
   },
   "peerDependencies": {
-    "@glint/template": "unstable",
-    "ember-source": "^5.12.0"
+    "@glint/template": "*",
+    "ember-source": ">= 5.12.0"
   },
   "dependencies": {
     "@ember/test-waiters": "^3.1.0",
@@ -256,9 +256,9 @@
       "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
     }
   },
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@10.4.1",
   "volta": {
-    "node": "20.18.0",
-    "pnpm": "9.12.3"
+    "node": "22.14.0",
+    "pnpm": "10.4.1"
   }
 }
