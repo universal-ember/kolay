@@ -12,7 +12,6 @@ import type { Manifest } from 'kolay';
 
 export default class ApplicationRoute extends Route {
   async model(): Promise<{ manifest: Manifest }> {
-    console.log('start loading');
     const highlighter = await createHighlighterCore({
       themes: [import('shiki/themes/github-dark.mjs'), import('shiki/themes/github-light.mjs')],
       langs: [
@@ -53,7 +52,6 @@ export default class ApplicationRoute extends Route {
       ],
     });
 
-    console.log(manifest);
     return { manifest };
   }
 }
