@@ -14,10 +14,10 @@ const aliasPlugin = {
     // Intercept import paths called "env" so esbuild doesn't attempt
     // to map them to a file system location. Tag them with the "env-ns"
     // namespace to reserve them for this plugin.
-    build.onResolve({ filter: /^kolay.*:virtual$/ }, (args) => ({
-      path: args.path,
-      external: true,
-    }));
+    // build.onResolve({ filter: /^kolay.*:virtual$/ }, (args) => ({
+    //   path: args.path,
+    //   external: true,
+    // }));
 
     build.onResolve({ filter: /ember-template-compiler/ }, () => ({
       path: require.resolve('ember-source/dist/ember-template-compiler'),
@@ -30,6 +30,7 @@ const aliasPlugin = {
   },
 };
 
+const templateCompiler = `${process.cwd()}/node_modules/ember-source/dist/ember-template-compiler.js`;
 const validator = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/validator/index.js`;
 const tracking = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/index.js`;
 const eUtil = `${process.cwd()}/node_modules/@embroider/util/addon/index.js`;
@@ -37,9 +38,14 @@ const cache = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer
 
 export default defineConfig(({ mode }) => {
   return {
+    build: {
+      target: ['esnext'],
+    },
     resolve: {
       extensions,
       alias: {
+        // 'ember-template-compiler': templateCompiler,
+        // 'ember-template-compiler': 'ember-source/dist/ember-template-compiler.js',
         '@glimmer/validator': validator,
         '@glimmer/tracking/primitives/cache': cache,
         '@glimmer/tracking': tracking,
@@ -65,11 +71,12 @@ export default defineConfig(({ mode }) => {
         extensions,
       }),
     ],
-    // esbuild: {
-    //   supported: {
-    //     "top-level-await": true,
-    //   },
-    // },
+    optimizeDeps: {
+      esbuildOptions: {
+        target: 'esnext',
+        // plugins: [aliasPlugin],
+      },
+    },
     // server: {
     //   mimeTypes: {
     //     "application/wasm": ["wasm"],
