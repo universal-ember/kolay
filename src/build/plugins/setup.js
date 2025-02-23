@@ -44,16 +44,16 @@ export const setup = () => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, manifest] = await Promise.all([
-              import('kolay/api-docs:virtual'),
-              import('kolay/manifest:virtual'),
-            ]);
-
-            await docs.setup({
-              apiDocs,
-              manifest,
-              ...options,
-            });
+            // let [apiDocs, manifest] = await Promise.all([
+            //   import('kolay/api-docs:virtual'),
+            //   import('kolay/manifest:virtual'),
+            // ]);
+            //
+            // await docs.setup({
+            //   apiDocs,
+            //   manifest,
+            //   ...options,
+            // });
 
             return docs.manifest;
           }

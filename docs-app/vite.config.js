@@ -1,5 +1,6 @@
 import { ember, extensions } from '@embroider/vite';
 import { createRequire } from 'node:module';
+import info from 'unplugin-info/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import { kolay } from 'kolay/vite';
@@ -54,6 +55,7 @@ export default defineConfig(({ mode }) => {
     },
     // assetsInclude: ["**/*.wasm"],
     plugins: [
+      info(),
       ember(),
       // wasm(),
       kolay({

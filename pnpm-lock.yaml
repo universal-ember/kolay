@@ -351,6 +351,9 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
+      unplugin-info:
+        specifier: ^1.2.1
+        version: 1.2.1(esbuild@0.24.2)(rollup@4.34.8)(vite@6.1.1(@types/node@22.13.5)(terser@5.39.0)(yaml@2.7.0))
       vite:
         specifier: ^6.1.1
         version: 6.1.1(@types/node@22.13.5)(terser@5.39.0)(yaml@2.7.0)
@@ -1526,6 +1529,12 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@kwsites/file-exists@1.1.1':
+    resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
+
+  '@kwsites/promise-deferred@1.1.1':
+    resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
   '@lint-todo/utils@13.1.1':
     resolution: {integrity: sha512-F5z53uvRIF4dYfFfJP3a2Cqg+4P1dgJchJsFnsZE0eZp0LK8X7g2J0CsJHRgns+skpXOlM7n5vFGwkWCWj8qJg==}
@@ -3757,6 +3766,12 @@ packages:
   get-tsconfig@4.10.0:
     resolution: {integrity: sha512-kGzZ3LWWQcGIAmg6iWvXn0ei6WDtV26wzHRMwDSzmAbcXrTEXxHy6IehI6/4eT6VRKyMP1eF1VqwrVUmE/LR7A==}
 
+  git-up@7.0.0:
+    resolution: {integrity: sha512-ONdIrbBCFusq1Oy0sC71F5azx8bVkvtZtMJAsv+a6lz5YAmbNnLD6HAB4gptHZVLPR8S2/kVN6Gab7lryq5+lQ==}
+
+  git-url-parse@15.0.0:
+    resolution: {integrity: sha512-5reeBufLi+i4QD3ZFftcJs9jC26aULFLBU23FeKM/b1rI0K6ofIeAblmDVO7Ht22zTDE9+CkJ3ZVb0CgJmz3UQ==}
+
   github-changelog@1.1.0:
     resolution: {integrity: sha512-fz8/boBLR/lzYviRVKPcq/GBcf4wyzDpLUtZY+nZ6YVfaWvOMQ0BHRQpTw7ekIx1591Tmoa2gwkWmNOJJ8ZBeA==}
     engines: {node: 12.* || 14.* || >= 16}
@@ -4156,6 +4171,9 @@ packages:
   is-shared-array-buffer@1.0.4:
     resolution: {integrity: sha512-ISWac8drv4ZGfwKl5slpHG9OwPNty4jOWPRIhBpxOoD+hqITiwuipOQ2bNthAzwA3B4fIjO4Nln74N0S9byq8A==}
     engines: {node: '>= 0.4'}
+
+  is-ssh@1.4.1:
+    resolution: {integrity: sha512-JNeu1wQsHjyHgn9NcWTaXq6zWSR6hqE0++zhfZlkFBbScNkyvxCdeV8sRkSBaeLKxmbpR21brail63ACNxJ0Tg==}
 
   is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
@@ -5014,8 +5032,14 @@ packages:
     resolution: {integrity: sha512-TXfryirbmq34y8QBwgqCVLi+8oA3oWx2eAnSn62ITyEhEYaWRlVZ2DvMM9eZbMs/RfxPu/PK/aBLyGj4IrqMHw==}
     engines: {node: '>=18'}
 
+  parse-path@7.0.1:
+    resolution: {integrity: sha512-6ReLMptznuuOEzLoGEa+I1oWRSj2Zna5jLWC+l6zlfAI4dbbSaIES29ThzuPkbhNahT65dWzfoZEO6cfJw2Ksg==}
+
   parse-static-imports@1.1.0:
     resolution: {integrity: sha512-HlxrZcISCblEV0lzXmAHheH/8qEkKgmqkdxyHTPbSqsTUV8GzqmN1L+SSti+VbNPfbBO3bYLPHDiUs2avbAdbA==}
+
+  parse-url@8.1.0:
+    resolution: {integrity: sha512-xDvOoLU5XRrcOZvnI6b8zA6n9O9ejNk/GExuz1yBuWUGn9KA97GI6HTs6u02wKara1CeVmZhH+0TZFdWScR89w==}
 
   parse5-htmlparser2-tree-adapter@6.0.1:
     resolution: {integrity: sha512-qPuWvbLgvDGilKc5BoicRovlT4MtYT6JfJyBOMDsKoiT+GiuP5qyrPCnR9HcPECIJJmZh5jRndyNThnhhb/vlA==}
@@ -5265,6 +5289,9 @@ packages:
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+
+  protocols@2.0.2:
+    resolution: {integrity: sha512-hHVTzba3wboROl0/aWRRG9dMytgH6ow//STBZh43l/wQgmMhYhOFi0EHWAPtoCz9IAUymsyP0TSBHkhgMEGNnQ==}
 
   publint@0.3.6:
     resolution: {integrity: sha512-f6mQw/RsX8GiUaUliYWJsivveYuwIozFLe4wCWE3NGj3vBamr816pxQGN0ycVwFIoTnIeqIJb9wsN7XAS8wRCA==}
@@ -5690,6 +5717,9 @@ packages:
 
   silent-error@1.1.1:
     resolution: {integrity: sha512-n4iEKyNcg4v6/jpb3c0/iyH2G1nzUNl7Gpqtn/mHIJK9S/q/7MCfoO4rwVOoO59qPFIc0hVHvMbiOJ0NdtxKKw==}
+
+  simple-git@3.27.0:
+    resolution: {integrity: sha512-ivHoFS9Yi9GY49ogc6/YAi3Fl9ROnF4VyubNylgCkA+RVqLaKWnDSzXOVzya8csELIaWaYNutsEuAhZrtOjozA==}
 
   simple-html-tokenizer@0.5.11:
     resolution: {integrity: sha512-C2WEK/Z3HoSFbYq8tI7ni3eOo/NneSPRoPpcM7WdLjFOArFuyXEjAoCdOC3DgMfRyziZQ1hCNR4mrNdWEvD0og==}
@@ -6258,6 +6288,33 @@ packages:
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
+
+  unplugin-info@1.2.1:
+    resolution: {integrity: sha512-NwssEGmXCBYnGE3i9UhhK1nva1GF8EU21mBGmGZQVOYZwmNHOs+wcwgGnHsmc1nX4PkVQTLiawaLQBeP6HJKkA==}
+    peerDependencies:
+      '@nuxt/kit': ^3
+      '@nuxt/schema': ^3
+      esbuild: '*'
+      rollup: ^2 || ^3 || ^4
+      vite: '>=3.2.7'
+      webpack: ^4 || ^5
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@nuxt/schema':
+        optional: true
+      esbuild:
+        optional: true
+      rollup:
+        optional: true
+      vite:
+        optional: true
+      webpack:
+        optional: true
+
+  unplugin@1.16.1:
+    resolution: {integrity: sha512-4/u/j4FrCKdi17jaxuJA0jClGxB1AvU2hw/IuayPc4ay1XGaJs/rbb4v5WKwAjNifjmXK9PIFyuPiaK8azyR9w==}
+    engines: {node: '>=14.0.0'}
 
   unplugin@2.2.0:
     resolution: {integrity: sha512-m1ekpSwuOT5hxkJeZGRxO7gXbXT3gF26NjQ7GdVHoLoF8/nopLcd/QfPigpCy7i51oFHiRJg/CyHhj4vs2+KGw==}
@@ -8104,6 +8161,14 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@kwsites/file-exists@1.1.1':
+    dependencies:
+      debug: 4.4.0(supports-color@9.4.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@kwsites/promise-deferred@1.1.1': {}
 
   '@lint-todo/utils@13.1.1':
     dependencies:
@@ -11179,6 +11244,15 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  git-up@7.0.0:
+    dependencies:
+      is-ssh: 1.4.1
+      parse-url: 8.1.0
+
+  git-url-parse@15.0.0:
+    dependencies:
+      git-up: 7.0.0
+
   github-changelog@1.1.0:
     dependencies:
       '@manypkg/get-packages': 2.2.2
@@ -11660,6 +11734,10 @@ snapshots:
   is-shared-array-buffer@1.0.4:
     dependencies:
       call-bound: 1.0.3
+
+  is-ssh@1.4.1:
+    dependencies:
+      protocols: 2.0.2
 
   is-stream@2.0.1: {}
 
@@ -12723,7 +12801,15 @@ snapshots:
 
   parse-ms@4.0.0: {}
 
+  parse-path@7.0.1:
+    dependencies:
+      protocols: 2.0.2
+
   parse-static-imports@1.1.0: {}
+
+  parse-url@8.1.0:
+    dependencies:
+      parse-path: 7.0.1
 
   parse5-htmlparser2-tree-adapter@6.0.1:
     dependencies:
@@ -12923,6 +13009,8 @@ snapshots:
   property-information@7.0.0: {}
 
   proto-list@1.2.4: {}
+
+  protocols@2.0.2: {}
 
   publint@0.3.6:
     dependencies:
@@ -13485,6 +13573,14 @@ snapshots:
   silent-error@1.1.1:
     dependencies:
       debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
+
+  simple-git@3.27.0:
+    dependencies:
+      '@kwsites/file-exists': 1.1.1
+      '@kwsites/promise-deferred': 1.1.1
+      debug: 4.4.0(supports-color@9.4.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -14091,6 +14187,24 @@ snapshots:
   universalify@0.1.2: {}
 
   universalify@2.0.1: {}
+
+  unplugin-info@1.2.1(esbuild@0.24.2)(rollup@4.34.8)(vite@6.1.1(@types/node@22.13.5)(terser@5.39.0)(yaml@2.7.0)):
+    dependencies:
+      ci-info: 4.1.0
+      git-url-parse: 15.0.0
+      simple-git: 3.27.0
+      unplugin: 1.16.1
+    optionalDependencies:
+      esbuild: 0.24.2
+      rollup: 4.34.8
+      vite: 6.1.1(@types/node@22.13.5)(terser@5.39.0)(yaml@2.7.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  unplugin@1.16.1:
+    dependencies:
+      acorn: 8.14.0
+      webpack-virtual-modules: 0.6.2
 
   unplugin@2.2.0:
     dependencies:

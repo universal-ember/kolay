@@ -1,9 +1,9 @@
 import 'ember-mobile-menu/themes/android';
 
+import { sha } from '~build/git';
 import { on } from '@ember/modifier';
 
 import { pascalCase, sentenceCase } from 'change-case';
-import ENV from '#config';
 // @ts-expect-error no types for the mobile-menu
 import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
@@ -49,7 +49,7 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
 
 export default Route(
   <template>
-    {{pageTitle ENV.APP.shortVersion}}
+    {{pageTitle sha}}
 
     <MenuWrapper as |mmw|>
       <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
@@ -136,7 +136,7 @@ export default Route(
 
 function nameFor(x: Page) {
   // We defined componentName via json file
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   if ('componentName' in x) {
     return `${x.componentName}`;
   }

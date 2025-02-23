@@ -17,7 +17,8 @@
       "ember-source/types",
       "kolay/virtual",
       "vite/client",
-      "vitest/importMeta"
+      "vitest/importMeta",
+      "unplugin-info/client"
     ]
   }
 }
