@@ -41,9 +41,10 @@ export async function generateTypeDocJSON({ packageName }) {
   const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
   const extendsTsConfig = require.resolve('@tsconfig/ember/tsconfig.json');
 
-  const home = process.cwd();
-  const homeRequire = createRequire(home);
+  // const home = process.cwd();
+  // const homeRequire = createRequire(home);
   const types = [
+    'ember-source/types',
     // homeRequire.resolve('ember-source/types/stable/index.d.ts')
   ];
 

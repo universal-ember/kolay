@@ -69,13 +69,7 @@ const LogList: TOC<{
   {{! prettier-ignore-end }}
 </template>;
 
-interface Signature {
-  Args: {};
-  Blocks: {};
-  Element: null;
-}
-
-export class Logs extends Component<Signature> {
+export class Logs extends Component {
   logs = new TrackedArray<Log>();
 
   constructor(...args: ConstructorParameters<typeof Component>) {
