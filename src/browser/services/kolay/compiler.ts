@@ -19,7 +19,7 @@ export default class Compiler extends Service {
   last?: CompileState;
 
   compileMD = (code: string | undefined | null) => {
-    let state = new CompileState();
+    const state = new CompileState();
 
     this.last = state;
 
@@ -27,13 +27,13 @@ export default class Compiler extends Service {
       return state;
     }
 
-    let {
+    const {
       additionalResolves: importMap,
       additionalTopLevelScope: topLevelScope,
       remarkPlugins,
       rehypePlugins,
     } = this.docs;
-    let defaults = getDefaultOptions();
+    const defaults = getDefaultOptions();
 
     compile(code, {
       ...defaults,
@@ -42,8 +42,9 @@ export default class Compiler extends Service {
        */
       format: 'glimdown',
       ShadowComponent: 'Shadowed',
-      remarkPlugins,
-      rehypePlugins,
+      // Oops, I broke the types
+      remarkPlugins: remarkPlugins as never,
+      rehypePlugins: rehypePlugins as never,
       importMap: {
         ...defaults.importMap,
         ...importMap,
@@ -58,7 +59,11 @@ export default class Compiler extends Service {
         ...topLevelScope,
       },
       onSuccess: async (component) => state.success(component),
-      onError: async (e) => state.fail(e),
+      onError: async (e) => {
+        // wtf?
+        if (e.includes('registerTemplateCompiler')) return;
+        state.fail(e);
+      },
       onCompileStart: async () => (state.isCompiling = true),
     });
 

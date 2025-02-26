@@ -7,9 +7,9 @@ type NestedHooks = Parameters<typeof setupTest>[0];
 
 export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>): void {
   hooks.beforeEach(async function () {
-    let docs = this.owner.lookup('service:kolay/docs');
+    const docs = this.owner.lookup('service:kolay/docs');
 
-    let userConfig = config ? await config() : {};
+    const userConfig = config ? await config() : {};
 
     // TODO: figure this out later
     await docs.setup(userConfig as any);
@@ -22,7 +22,7 @@ export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>):
  * @param {{ owner: { lookup: (registryName: string) => any }}} context
  */
 export function selectGroup(context: object, groupName = 'root'): void {
-  let docs = (context as { owner: Owner }).owner.lookup('service:kolay/docs');
+  const docs = (context as { owner: Owner }).owner.lookup('service:kolay/docs');
 
   docs.selectGroup(groupName);
 }

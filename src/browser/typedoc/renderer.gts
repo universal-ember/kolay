@@ -90,7 +90,7 @@ const join = (lines: string[]) => lines.join('\n');
 const text = (lines: { text: string }[]) => lines.map((line) => line.text);
 
 export function isGlimmerComponent(info: DeclarationReference) {
-  let extended = (info as any)?.extendedTypes?.[0];
+  const extended = (info as any)?.extendedTypes?.[0];
 
   if (!extended) return false;
 

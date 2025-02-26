@@ -96,9 +96,9 @@ export default class Selected extends Service {
   get path(): string | undefined {
     if (!this.router.currentURL) return firstPath;
 
-    let url = new URL(this.router.currentURL, window.location.origin);
-    let path = url.pathname;
-    let result = path && path !== '/' ? path : firstPath;
+    const url = new URL(this.router.currentURL, window.location.origin);
+    const path = url.pathname;
+    const result = path && path !== '/' ? path : firstPath;
 
     return result?.replace(/\.md$/, '');
   }

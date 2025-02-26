@@ -1,8 +1,17 @@
-const { babelCompatSupport, templateCompatSupport } = require('@embroider/compat/babel');
+const { buildMacros } = require('@embroider/macros/babel');
+
+const macros = buildMacros();
 
 module.exports = {
   plugins: [
-    ['@babel/plugin-transform-typescript', { allowDeclareFields: true }],
+    [
+      '@babel/plugin-transform-typescript',
+      {
+        allExtensions: true,
+        onlyRemoveTypeImports: true,
+        allowDeclareFields: true,
+      },
+    ],
     [
       'babel-plugin-ember-template-compilation',
       {
@@ -12,7 +21,7 @@ module.exports = {
           'ember-cli-htmlbars-inline-precompile',
           'htmlbars-inline-precompile',
         ],
-        transforms: [...templateCompatSupport()],
+        transforms: [...macros.templateMacros],
       },
     ],
     [
@@ -31,7 +40,7 @@ module.exports = {
         regenerator: false,
       },
     ],
-    ...babelCompatSupport(),
+    ...macros.babelMacros,
   ],
 
   generatorOpts: {

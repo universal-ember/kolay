@@ -12,6 +12,7 @@ export { addRoutes } from './router.ts';
 export { Compiled } from './services/kolay/compiler/reactive.ts';
 
 // Utilities
+export { registry } from './service-registry.ts';
 export * from './utils.ts';
 
 // Types

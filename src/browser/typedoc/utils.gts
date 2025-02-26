@@ -13,7 +13,7 @@ export function findChildDeclaration(info: DeclarationReflection, name: string) 
 }
 
 export const infoFor = (data: DeclarationReflection, module: string, name: string) => {
-  let moduleType = data.children?.find((child) => child.name === module);
+  const moduleType = data.children?.find((child) => child.name === module);
 
   assert(
     `Could not find module by name: ${module}. Available modules in this set of api docs are: ${data.children
@@ -22,9 +22,9 @@ export const infoFor = (data: DeclarationReflection, module: string, name: strin
     moduleType
   );
 
-  let found = moduleType?.children?.find((grandChild) => grandChild.name === name);
+  const found = moduleType?.children?.find((grandChild) => grandChild.name === name);
 
-  return found as DeclarationReflection | undefined;
+  return found;
 };
 
 export const Query: TOC<{
@@ -63,7 +63,7 @@ export class Load extends Component<{
    * TODO: move this to the service and dedupe requests
    */
   request = trackedFunction(this, async () => {
-    let { package: pkg } = this.args;
+    const { package: pkg } = this.args;
 
     if (!pkg) {
       throw new Error(`A @package must be specified to load.`);
@@ -75,9 +75,9 @@ export class Load extends Component<{
       return seen;
     }
 
-    let loadNew = async () => {
-      let req = await this.apiDocs.load(pkg);
-      let json = await req.json();
+    const loadNew = async () => {
+      const req = await this.apiDocs.load(pkg);
+      const json = await req.json();
 
       return json;
     };

@@ -151,6 +151,13 @@ export const markdownPages = (options) => {
 
     ...virtualFile({
       importPath: SECRET_INTERNAL_IMPORT,
+      // content: stripIndent`
+      //     export const load = async () => {
+      //       let jsonModule = await import('kolay/manifest:${fileName}', { assert: { type: 'json' }});
+      //       let json = jsonModule.default;
+      //       return json;
+      //     }
+      //   `,
       content: stripIndent`
           export const load = async () => {
             let request = await fetch('/${fileName}', {

@@ -4,7 +4,7 @@ import { extractTypesVersions } from './helpers.js';
 
 describe('extractExports', () => {
   test('it works', () => {
-    let result = extractTypesVersions({
+    const result = extractTypesVersions({
       '*': {
         '*': ['declarations/index.d.ts'],
       },
@@ -18,7 +18,7 @@ describe('extractExports', () => {
   });
 
   test('it includes multiple paths', () => {
-    let result = extractTypesVersions({
+    const result = extractTypesVersions({
       '*': {
         '*': ['declarations/index.d.ts'],
         'something/*': ['declarations/something/index.d.ts'],

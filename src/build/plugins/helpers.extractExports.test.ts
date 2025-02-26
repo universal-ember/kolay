@@ -5,7 +5,7 @@ import { extractExports } from './helpers.js';
 describe('extractExports', () => {
   describe('default', () => {
     test('no "default" is specified', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           '.': {
             types: 'declarations/index.d.ts',
@@ -20,7 +20,7 @@ describe('extractExports', () => {
     });
 
     test('it works on .', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           '.': {
             types: 'declarations/index.d.ts',
@@ -38,7 +38,7 @@ describe('extractExports', () => {
     });
 
     test('it works on globs', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           '.': {
             types: 'declarations/index.d.ts',
@@ -62,7 +62,7 @@ describe('extractExports', () => {
   });
   describe('types', () => {
     test('no types are specified', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           '.': {
             default: 'dist/index.d.ts',
@@ -77,7 +77,7 @@ describe('extractExports', () => {
     });
 
     test('it works on .', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           '.': {
             types: 'declarations/index.d.ts',
@@ -95,7 +95,7 @@ describe('extractExports', () => {
     });
 
     test('it works on globs', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           '.': {
             types: 'declarations/index.d.ts',
@@ -118,7 +118,7 @@ describe('extractExports', () => {
     });
 
     test('it works out of order', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           './*': {
             types: 'declarations/*.d.ts',
@@ -141,7 +141,7 @@ describe('extractExports', () => {
     });
 
     test('it works on nested conditions', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           './*': {
             development: {
@@ -171,7 +171,7 @@ describe('extractExports', () => {
     });
 
     test('when conditions are specified', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           './*': {
             development: {
@@ -201,7 +201,7 @@ describe('extractExports', () => {
     });
 
     test('when multiple conditions are specified', () => {
-      let result = extractExports(
+      const result = extractExports(
         {
           './*': {
             development: {

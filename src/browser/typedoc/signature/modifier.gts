@@ -45,10 +45,10 @@ function getSignatureType(info: any) {
   }
 
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
-    let extendedType = info.extendedTypes?.[0];
+    const extendedType = info.extendedTypes?.[0];
 
     if (extendedType?.type === 'reference' && extendedType?.package === 'ember-modifier') {
-      let typeArg = extendedType.typeArguments?.[0];
+      const typeArg = extendedType.typeArguments?.[0];
 
       if (typeArg?.type === 'reflection') {
         return typeArg.declaration;
@@ -63,7 +63,7 @@ function getSignatureType(info: any) {
 }
 
 function getSignature(info: any) {
-  let type = getSignatureType(info);
+  const type = getSignatureType(info);
 
   if (!type) {
     console.warn('Could not finde signature');

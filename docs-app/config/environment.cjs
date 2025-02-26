@@ -1,7 +1,5 @@
 'use strict';
 
-const { gitRef } = require('kolay/build/legacy');
-
 module.exports = function (environment) {
   const ENV = {
     modulePrefix: 'docs-app',
@@ -19,8 +17,6 @@ module.exports = function (environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-      version: `Docs :: ${gitRef()} :: ${new Date()}`,
-      shortVersion: `Docs :: ${gitRef()}`,
     },
   };
 

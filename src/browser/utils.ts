@@ -11,7 +11,7 @@ export function isIndex(x: Page | Collection) {
 }
 
 export function getIndexPage(x: Collection): Page | undefined {
-  let page = x.pages.find(isIndex);
+  const page = x.pages.find(isIndex);
 
   if (page && isCollection(page)) return;
 

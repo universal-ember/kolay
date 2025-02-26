@@ -6,7 +6,7 @@ import type { Collection } from '#types';
 
 describe('addInTheFirstPage', () => {
   test('adds in the first page to a shallow object', () => {
-    let tree: Collection = {
+    const tree: Collection = {
       name: 'top',
       path: 'top',
       pages: [
@@ -39,7 +39,7 @@ describe('addInTheFirstPage', () => {
   });
 
   test('adds in the first page', () => {
-    let tree: Collection = {
+    const tree: Collection = {
       name: 'top',
       path: 'top',
       pages: [
@@ -85,7 +85,7 @@ describe('addInTheFirstPage', () => {
   });
 
   test('adds in the index page', () => {
-    let tree: Collection = {
+    const tree: Collection = {
       name: 'top',
       path: 'top',
       pages: [

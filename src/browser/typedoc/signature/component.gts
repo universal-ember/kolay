@@ -19,14 +19,14 @@ import type { DeclarationReflection } from 'typedoc';
 function findReferenceByFilename(name: string, fileName: string, info: any): any {
   if (!info.children) return;
 
-  for (let child of info.children) {
+  for (const child of info.children) {
     if (child.sources[0].fileName === fileName) {
       return child;
     }
 
     if (!child.children) continue;
 
-    let isRelevant = child.children.find(
+    const isRelevant = child.children.find(
       (grandChild: any) => grandChild.sources[0].fileName === fileName
     );
 
@@ -34,7 +34,7 @@ function findReferenceByFilename(name: string, fileName: string, info: any): any
       return isRelevant;
     }
 
-    let grand = findReferenceByFilename(name, fileName, child);
+    const grand = findReferenceByFilename(name, fileName, child);
 
     if (grand) return grand;
   }
@@ -52,10 +52,10 @@ function getSignatureType(info: DeclarationReflection, doc: any) {
    * export class Foo extends Component<{ signature here }> { ... }
    */
   if (info.variant === 'declaration' && 'extendedTypes' in info) {
-    let extendedType = info.extendedTypes?.[0];
+    const extendedType = info.extendedTypes?.[0];
 
     if (extendedType?.type === 'reference' && extendedType?.package === '@glimmer/component') {
-      let typeArg = extendedType.typeArguments?.[0];
+      const typeArg = extendedType.typeArguments?.[0];
 
       if (typeArg?.type === 'reflection') {
         return typeArg.declaration;
@@ -81,7 +81,7 @@ function getSignatureType(info: DeclarationReflection, doc: any) {
 }
 
 function getSignature(info: DeclarationReflection, doc: any) {
-  let type = getSignatureType(info, doc);
+  const type = getSignatureType(info, doc);
 
   if (!type) {
     console.warn('Could not finde signature');

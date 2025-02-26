@@ -3,7 +3,7 @@
 The way this the docs app for Kolay renders pages looks like this:
 
 ```gjs
-// app/templates/page.gjs
+// templates/page.gjs
 import Route from "ember-route-template";
 import { Page } from "kolay/components";
 
@@ -64,7 +64,10 @@ const page = `
   </fieldset>
 
   <style>
-    fieldset { border: 1px solid #ccc; padding: 1rem; }
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 1rem;
+    }
   </style>
 </template>
 ```

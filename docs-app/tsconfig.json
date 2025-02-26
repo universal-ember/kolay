@@ -8,11 +8,17 @@
     "declaration": false,
     "declarationMap": false,
     "noEmitOnError": false,
-    "paths": {
-      "docs-app/tests/*": ["./tests/*"],
-      "docs-app/*": ["./app/*"],
-      "*": ["./types/*"]
-    }
-  },
-  "include": ["./app/**/*", "./tests/**/*", "./types/**/*"]
+    "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
+
+    // stylistic
+    "noPropertyAccessFromIndexSignature": false,
+    "types": [
+      "ember-source/types",
+      "kolay/virtual",
+      "vite/client",
+      "vitest/importMeta",
+      "unplugin-info/client"
+    ]
+  }
 }

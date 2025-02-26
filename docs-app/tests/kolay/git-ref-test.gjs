@@ -15,7 +15,7 @@ module('gitRef()', function () {
 
       assert.ok(title.includes('Docs'));
       assert.ok(title.includes(' :: '));
-      assert.strictEqual(title.length, 'Docs :: '.length - 1 + 8);
+      assert.strictEqual(title.length, 'Docs :: '.length + 10);
     });
   });
 });

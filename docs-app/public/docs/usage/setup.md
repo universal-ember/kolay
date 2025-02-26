@@ -10,7 +10,7 @@ There are two areas of configuration needed: buildtime, and runtime[^runtime-opt
 
 [^runtime-optional]: The runtime components are optional and if you don't import them, they will not be included in your app. However, since links generated from markdown use vanilla `<a>` tags, you'll probably want at least `@properLinks` from `ember-primitives`.
 
-### Build: Vite 
+### Build: Vite
 
 import `kolay/vite`
 
@@ -133,7 +133,7 @@ Here is what this site does
 - additional `resolve` entries for code blocks to pull from
 
 ```ts
-// app/routes/application.ts
+// routes/application.ts
 import Route from "@ember/routing/route";
 import { setupKolay } from "kolay/setup";
 

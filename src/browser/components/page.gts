@@ -48,7 +48,7 @@ export class Page extends Component<{
      * </template>
      * ```
      */
-    success: [prose: ComponentLike<{}>];
+    success: [prose: ComponentLike];
   };
 }> {
   <template>

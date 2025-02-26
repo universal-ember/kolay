@@ -6,16 +6,11 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    {{content-for "head"}}
-
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
     />
-    <link integrity="" rel="stylesheet" href="/@embroider/virtual/vendor.css" />
-    <link integrity="" rel="stylesheet" href="/assets/docs-app.css" />
-
-    {{content-for "head-footer"}}
+    <link integrity="" rel="stylesheet" href="./src/styles/app.css" />
 
     <style>
       #kolay__loading {
@@ -39,12 +34,10 @@
     </style>
   </head>
   <body>
-    {{content-for "body"}}
-
     <script src="/@embroider/virtual/vendor.js"></script>
     <script type="module">
-      import Application from "./app/app";
-      import environment from "./app/config/environment";
+      import Application from "./src/app.ts";
+      import environment from "./src/config.ts";
 
       Application.create(environment.APP);
     </script>
@@ -53,7 +46,5 @@
       Kolay
       <div aria-busy="true"></div>
     </div>
-
-    {{content-for "body-footer"}}
   </body>
 </html>

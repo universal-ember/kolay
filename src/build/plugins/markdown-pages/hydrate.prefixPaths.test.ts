@@ -38,7 +38,7 @@ describe('prefixPaths', () => {
   });
 
   test('works on deep objects', () => {
-    let tree: Collection = {
+    const tree: Collection = {
       name: 'top',
       path: 'top',
       pages: [
