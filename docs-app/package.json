@@ -29,7 +29,8 @@
     "start:test": "pnpm start:vite --open /tests/",
     "start:sync": "pnpm _syncPnpm --watch",
     "_syncPnpm": "DEBUG=* pnpm sync-dependencies-meta-injected",
-    "test:ember": "vite build --mode test && ember test --path dist"
+    "test:ember": "vite build --mode test && pnpm dist:ember:test",
+    "dist:ember:test": "ember test --path dist --config-file ./testem.cjs"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
