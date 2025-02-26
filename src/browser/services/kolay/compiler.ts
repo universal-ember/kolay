@@ -42,8 +42,9 @@ export default class Compiler extends Service {
        */
       format: 'glimdown',
       ShadowComponent: 'Shadowed',
-      remarkPlugins,
-      rehypePlugins,
+      // Oops, I broke the types
+      remarkPlugins: remarkPlugins as never,
+      rehypePlugins: rehypePlugins as never,
       importMap: {
         ...defaults.importMap,
         ...importMap,
