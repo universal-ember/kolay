@@ -6,7 +6,6 @@ import { Scroller } from 'ember-primitives/components/scroller';
 import { TrackedArray } from 'tracked-built-ins';
 
 import type { TOC } from '@ember/component/template-only';
-import type Owner from '@ember/owner';
 
 const original = {
   log: console.log,
@@ -70,11 +69,17 @@ const LogList: TOC<{
   {{! prettier-ignore-end }}
 </template>;
 
-export class Logs extends Component<{ Element: null }> {
+interface Signature {
+  Args: {};
+  Blocks: {};
+  Element: null;
+}
+
+export class Logs extends Component<Signature> {
   logs = new TrackedArray<Log>();
 
-  constructor(owner: Owner, args: unknown) {
-    super(owner, args);
+  constructor(...args: ConstructorParameters<typeof Component>) {
+    super(...args);
 
     registerDestructor(this, () => LEVELS.forEach((level) => (console[level] = original[level])));
 

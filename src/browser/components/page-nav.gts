@@ -210,7 +210,7 @@ class PageLink extends Component<{
   Element: HTMLAnchorElement;
   Args: {
     item: Page;
-    activeClass?: string;
+    activeClass?: string | undefined;
   };
   Blocks: { default: [page: Page, isActive: boolean] };
 }> {

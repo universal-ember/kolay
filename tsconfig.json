@@ -1,4 +1,5 @@
 {
+  "extends": "@tsconfig/strictest",
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"]
   },
@@ -7,21 +8,6 @@
   "compilerOptions": {
     // Glint doesn't support Array extends.
     // https://github.com/typed-ember/glint/issues/672
-
-    // @tsconfig/strictest
-    "strict": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-    // TODO: enable this
-    // "exactOptionalPropertyTypes": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-
     "isolatedModules": true,
 
     // @tsconfig/node22
