@@ -1,35 +1,9 @@
-import { ember, extensions } from '@embroider/vite';
-import { createRequire } from 'node:module';
+import { ember, extensions, classicEmberSupport } from '@embroider/vite';
 import info from 'unplugin-info/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import { kolay } from 'kolay/vite';
 import { defineConfig } from 'vite';
-
-const require = createRequire(import.meta.url);
-// import wasm from "vite-plugin-wasm";
-
-const aliasPlugin = {
-  name: 'env',
-  setup(build) {
-    // Intercept import paths called "env" so esbuild doesn't attempt
-    // to map them to a file system location. Tag them with the "env-ns"
-    // namespace to reserve them for this plugin.
-    // build.onResolve({ filter: /^kolay.*:virtual$/ }, (args) => ({
-    //   path: args.path,
-    //   external: true,
-    // }));
-
-    build.onResolve({ filter: /ember-template-compiler/ }, () => ({
-      path: require.resolve('ember-source/dist/ember-template-compiler'),
-    }));
-
-    build.onResolve({ filter: /content-tag$/ }, () => ({
-      path: 'content-tag',
-      external: true,
-    }));
-  },
-};
 
 const validator = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/validator/index.js`;
 const tracking = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/index.js`;
@@ -50,11 +24,10 @@ export default defineConfig(({ mode }) => {
         '@embroider/util': eUtil,
       },
     },
-    // assetsInclude: ["**/*.wasm"],
     plugins: [
       info(),
+      classicEmberSupport(),
       ember(),
-      // wasm(),
       kolay({
         src: 'public/docs',
         groups: [
@@ -78,10 +51,5 @@ export default defineConfig(({ mode }) => {
         target: 'esnext',
       },
     },
-    // server: {
-    //   mimeTypes: {
-    //     "application/wasm": ["wasm"],
-    //   },
-    // },
   };
 });
