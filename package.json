@@ -1,0 +1,265 @@
+{
+  "name": "kolay",
+  "version": "3.0.0",
+  "description": "The runtime compiled documentation tool. Scale to any size with flat build cost.",
+  "keywords": [
+    "documentation",
+    "docs",
+    "docgen",
+    "generator",
+    "build",
+    "plugin",
+    "plugins",
+    "ember",
+    "ember-addon"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/universal-ember/kolay.git"
+  },
+  "license": "MIT",
+  "author": "NullVoxPopuli",
+  "type": "module",
+  "imports": {
+    "#types": "./src/types.ts"
+  },
+  "exports": {
+    ".": {
+      "types": "./declarations/browser/index.d.ts",
+      "default": "./dist/browser/index.js"
+    },
+    "./components": {
+      "types": "./declarations/browser/components.d.ts",
+      "default": "./dist/browser/components.js"
+    },
+    "./test-support": {
+      "types": "./declarations/browser/test-support.d.ts",
+      "default": "./dist/browser/test-support.js"
+    },
+    "./types": {
+      "types": "./declarations/types.d.ts"
+    },
+    "./services/*": {
+      "types": "./declarations/browser/services/*.d.ts",
+      "import": "./dist/browser/services/*.js",
+      "default": "./dist/browser/services/*.js"
+    },
+    "./build": {
+      "types": "./declarations/build/plugins/index.d.ts",
+      "import": "./src/build/plugins/index.js"
+    },
+    "./private/samples": {
+      "types": "./declarations/browser/samples/-private/index.d.ts"
+    },
+    "./webpack": {
+      "types": "./declarations/build/webpack.d.ts",
+      "import": "./src/build/webpack.js"
+    },
+    "./vite": {
+      "types": "./declarations/build/vite.d.ts",
+      "import": "./src/build/vite.js"
+    },
+    "./build/legacy": {
+      "types": "./declarations/build/plugins/legacy/index.d.cts",
+      "default": "./src/build/plugins/legacy/index.cjs"
+    },
+    "./browser/app-re-exports/*": {
+      "default": "./src/browser/app-re-exports/*"
+    },
+    "./virtual": {
+      "types": "./src/browser/virtual/references.d.ts"
+    },
+    "./*": {
+      "types": "./src/browser/virtual/*",
+      "default": "./src/browser/virtual/*.js"
+    }
+  },
+  "files": [
+    "addon-main.cjs",
+    "src",
+    "docs",
+    "dist",
+    "declarations"
+  ],
+  "scripts": {
+    "prepare": "pnpm build",
+    "fix": "pnpm lint:fix && pnpm --filter docs-app lint:fix",
+    "lint": "pnpm turbo _:lint",
+    "lint:fix": "pnpm turbo _:lint:fix",
+    "lint:js": "eslint ./src",
+    "lint:js:fix": "eslint ./src --fix",
+    "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
+    "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
+    "lint:types": "glint",
+    "lint:package": "publint",
+    "lint:prettier": "prettier . --check",
+    "lint:prettier:fix": "prettier . --write",
+    "lint:published-types": "attw --pack",
+    "start:all": "concurrently 'pnpm --filter ./ui start' 'pnpm --filter ./docs-app start' --names ui,docs",
+    "build": "rollup --config",
+    "_syncPnpm": "pnpm sync-dependencies-meta-injected",
+    "start": "concurrently 'pnpm:start:*'",
+    "start:browser": "rollup --config --watch",
+    "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
+    "test:node": "vitest --run",
+    "test:dev": "vitest dev"
+  },
+  "peerDependencies": {
+    "@glint/template": "*",
+    "ember-source": "*"
+  },
+  "dependencies": {
+    "@ember/test-waiters": "^4.0.0",
+    "@embroider/addon-shim": "1.9.0",
+    "@glimmer/component": "^2.0.0",
+    "@glimmer/tracking": ">= 1.1.2",
+    "@glint/template": "1.4.1-unstable.0e0d936",
+    "@tsconfig/ember": "^3.0.9",
+    "@zamiell/typedoc-plugin-not-exported": "^0.3.0",
+    "common-tags": "^1.8.2",
+    "decorator-transforms": "^2.3.0",
+    "ember-modifier": ">= 4.1.0",
+    "ember-primitives": "^0.27.2",
+    "ember-repl": "5.0.1",
+    "ember-resources": "^7.0.3",
+    "ember-source": "6.4.0-alpha.3",
+    "globby": "^14.1.0",
+    "json5": "^2.2.3",
+    "package-up": "^5.0.0",
+    "reactiveweb": "^1.4.0",
+    "send": "^1.1.0",
+    "tracked-built-ins": "^4.0.0",
+    "typedoc": "^0.27.8",
+    "unplugin": "^2.2.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@babel/core": "^7.26.9",
+    "@babel/plugin-transform-typescript": "^7.26.8",
+    "@babel/preset-typescript": "^7.26.0",
+    "@babel/runtime": "^7.26.9",
+    "@ember/test-waiters": "^4.0.0",
+    "@embroider/addon-dev": "7.1.1",
+    "@glimmer/component": "^2.0.0",
+    "@glimmer/tracking": "^1.1.2",
+    "@glint/core": "1.4.1-unstable.0e0d936",
+    "@glint/environment-ember-loose": "1.4.1-unstable.0e0d936",
+    "@glint/environment-ember-template-imports": "1.4.1-unstable.0e0d936",
+    "@glint/template": "unstable",
+    "@nullvoxpopuli/eslint-configs": "^5.0.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@tsconfig/node-lts": "^22.0.1",
+    "@tsconfig/strictest": "^2.0.5",
+    "@types/common-tags": "^1.8.4",
+    "@types/qunit": "^2.19.12",
+    "@types/rsvp": "^4.0.9",
+    "@types/send": "^0.17.4",
+    "babel-plugin-ember-template-compilation": "^2.3.0",
+    "concurrently": "^9.1.2",
+    "ember-modifier": "^4.2.0",
+    "ember-primitives": "^0.21.0",
+    "ember-qunit": "^9.0.1",
+    "ember-resources": "^7.0.0",
+    "ember-source": "6.4.0-alpha.3",
+    "ember-template-lint": "^6.1.0",
+    "eslint": "^9.21.0",
+    "execa": "^9.5.2",
+    "fix-bad-declaration-output": "^1.1.4",
+    "globals": "^16.0.0",
+    "pnpm-sync-dependencies-meta-injected": "^0.0.14",
+    "prettier": "^3.5.2",
+    "prettier-plugin-ember-template-tag": "^2.0.4",
+    "publint": "^0.3.6",
+    "qunit": "^2.24.1",
+    "reactiveweb": "^1.2.1",
+    "release-plan": "^0.13.1",
+    "rollup": "^4.34.8",
+    "tracked-built-ins": "^3.3.0",
+    "turbo": "^2.4.2",
+    "typescript": "^5.7.3",
+    "unified": "^11.0.5",
+    "vite": "^6.1.1",
+    "vitest": "^3.0.6"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "pnpm": {
+    "packageExtensions": {
+      "ember-repl": {
+        "peerDependencies": {
+          "reactiveweb": "*",
+          "ember-source": "*"
+        }
+      },
+      "ember-async-data": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "ember-primitives": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "ember-resources": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      },
+      "ember-cached-decorator-polyfill": {
+        "peerDependencies": {
+          "ember-source": "*"
+        }
+      }
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/core",
+        "webpack",
+        "rsvp"
+      ]
+    },
+    "overrides": {
+      "@ember/test-waiters": "^4.0.0",
+      "@glimmer/component": "^2.0.0",
+      "@embroider/core": "alpha",
+      "@embroider/macros": "alpha",
+      "@embroider/vite": "alpha",
+      "@glimmer/validator": ">= 0.92.0",
+      "@glint/core": "unstable",
+      "@glint/environment-ember-loose": "unstable",
+      "@glint/environment-ember-template-imports": "unstable",
+      "@glint/template": "unstable",
+      "@ember/render-modifier": "^2.1.0",
+      "ember-repl": "5.0.1",
+      "ember-source": "6.4.0-alpha.3"
+    },
+    "patchedDependencies": {
+      "ember-repl": "patches/ember-repl.patch"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./services/kolay/api-docs.js": "./src/browser/app-re-exports/api-docs.js",
+      "./services/kolay/compiler.js": "./src/browser/app-re-exports/compiler.js",
+      "./services/kolay/docs.js": "./src/browser/app-re-exports/docs.js",
+      "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
+    }
+  },
+  "packageManager": "pnpm@10.4.1",
+  "volta": {
+    "node": "22.14.0",
+    "pnpm": "10.4.1"
+  }
+}
