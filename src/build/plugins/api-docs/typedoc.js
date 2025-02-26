@@ -43,7 +43,9 @@ export async function generateTypeDocJSON({ packageName }) {
 
   const home = process.cwd();
   const homeRequire = createRequire(home);
-  const types = [homeRequire.resolve('ember-source/types/stable/index.d.ts')];
+  const types = [
+    // homeRequire.resolve('ember-source/types/stable/index.d.ts')
+  ];
 
   // const emberModifier = homeRequire.resolve('ember-modifier/package.json');
   const eModifierEntries = await packageTypes('ember-modifier');
