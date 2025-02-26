@@ -9,7 +9,7 @@ import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 import { GroupNav, PageNav } from 'kolay/components';
 
-import { sha } from '~build/git';
+import { abbreviatedSha } from '~build/git';
 
 import type { TOC } from '@ember/component/template-only';
 import type { Page } from 'kolay';
@@ -50,7 +50,7 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
 
 export default Route(
   <template>
-    {{pageTitle sha}}
+    {{pageTitle "Docs :: " abbreviatedSha}}
 
     <MenuWrapper as |mmw|>
       <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
