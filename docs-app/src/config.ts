@@ -13,7 +13,7 @@ const ENV = {
   APP: {
     // Here you can pass flags/options to your application instance
     // when it is created
-  },
+  } as { autoboot?: boolean; rootElement?: string },
 };
 
 export default ENV;

@@ -1,6 +1,6 @@
+import PageTitleService from 'ember-page-title/services/page-title';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import PageTitleService from 'ember-page-title/services/page-title';
 import ResizeService from 'ember-resize-observer-service/services/resize-observer';
 import { registry as kolayRegistry } from 'kolay';
 
