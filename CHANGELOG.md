@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-02-26)
+
+kolay 3.0.0 (major)
+
+#### :boom: Breaking Change
+* `kolay`
+  * [#154](https://github.com/universal-ember/kolay/pull/154) Upgrade vite infra ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-11-16)
 
 kolay 2.1.2 (patch)
