@@ -59,7 +59,11 @@ export default class Compiler extends Service {
         ...topLevelScope,
       },
       onSuccess: async (component) => state.success(component),
-      onError: async (e) => state.fail(e),
+      onError: async (e) => {
+        // wtf?
+        if (e.includes('registerTemplateCompiler')) return;
+        state.fail(e);
+      },
       onCompileStart: async () => (state.isCompiling = true),
     });
 

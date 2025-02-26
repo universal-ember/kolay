@@ -13,17 +13,8 @@ export function start() {
   setup(QUnit.assert);
   setupEmberOnerrorValidation();
 
-  // window.addEventListener('error', (e) => {
-  //   e.preventDefault();
-  //
-  //   return false;
-  // });
-  //
-  // window.addEventListener('unhandledrejection', (e) => {
-  //   e.preventDefault();
-  //
-  //   return false;
-  // });
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  QUnit.config.ignoreGlobalErrors = true;
   qunitStart();
 }
