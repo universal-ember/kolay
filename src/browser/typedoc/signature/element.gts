@@ -5,7 +5,7 @@ import { Comment } from '../renderer.gts';
 import type { TOC } from '@ember/component/template-only';
 
 const mdnElement = (typeName: string) => {
-  let element = typeName.replace('HTML', '').replace('Element', '').toLowerCase();
+  const element = typeName.replace('HTML', '').replace('Element', '').toLowerCase();
 
   return `https://developer.mozilla.org/en-US/docs/Web/HTML/Element/${element}`;
 };

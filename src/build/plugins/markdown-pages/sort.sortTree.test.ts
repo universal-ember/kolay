@@ -6,7 +6,7 @@ const expect = throwingExpect.soft;
 
 describe('sortTree', () => {
   test('does nothing with no configs', () => {
-    let result = sortTree(
+    const result = sortTree(
       {
         name: 'top',
         path: 'top',
@@ -46,7 +46,7 @@ describe('sortTree', () => {
   });
 
   test('sorts the pages based on a config', () => {
-    let result = sortTree(
+    const result = sortTree(
       {
         name: 'top',
         path: 'top',
@@ -68,7 +68,7 @@ describe('sortTree', () => {
   });
 
   test('sorts deeply nested pages', () => {
-    let result = sortTree(
+    const result = sortTree(
       {
         name: 'top',
         path: 'top',

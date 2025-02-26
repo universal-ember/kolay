@@ -26,7 +26,7 @@ function getSignature(info: DeclarationReflection) {
    * export class MyHelper extends ...
    */
   if (Array.isArray(info.extendedTypes) && info.extendedTypes.length > 0) {
-    let firstExtended = info.extendedTypes[0];
+    const firstExtended = info.extendedTypes[0];
 
     /**
      * import Helper from '@ember/component/helper';

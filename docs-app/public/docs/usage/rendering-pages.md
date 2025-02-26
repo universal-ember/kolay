@@ -64,7 +64,10 @@ const page = `
   </fieldset>
 
   <style>
-    fieldset { border: 1px solid #ccc; padding: 1rem; }
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 1rem;
+    }
   </style>
 </template>
 ```

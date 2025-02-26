@@ -221,7 +221,7 @@ class PageLink extends Component<{
   }
 
   get isActive() {
-    let subPath = this.args.item.path;
+    const subPath = this.args.item.path;
 
     if (subPath === '/') return false;
 

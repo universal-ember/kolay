@@ -8,12 +8,12 @@ type Entry = Pick<Page, 'name' | 'path'>;
 
 describe('addInTheFirstPage', () => {
   test('sorts on a property', () => {
-    let list: Entry[] = [
+    const list: Entry[] = [
       { name: 'b', path: '/b.md' },
       { name: 'c', path: '/c.md' },
       { name: 'a', path: '/a.md' },
     ];
-    let sorted = list.sort(betterSort('name'));
+    const sorted = list.sort(betterSort('name'));
 
     expect(sorted).toMatchInlineSnapshot(`
       [
@@ -34,12 +34,12 @@ describe('addInTheFirstPage', () => {
   });
 
   test('sorts on a property by number prefix', () => {
-    let list: Entry[] = [
+    const list: Entry[] = [
       { name: '09-b', path: '/b.md' },
       { name: '11-c', path: '/c.md' },
       { name: '10-a', path: '/a.md' },
     ];
-    let sorted = list.sort(betterSort('name'));
+    const sorted = list.sort(betterSort('name'));
 
     expect(sorted).toMatchInlineSnapshot(`
       [
@@ -60,13 +60,13 @@ describe('addInTheFirstPage', () => {
   });
 
   test('properties starting with x are placed at the end', () => {
-    let list: Entry[] = [
+    const list: Entry[] = [
       { name: '09-b', path: '/b.md' },
       { name: '11-c', path: '/c.md' },
       { name: 'x-a', path: '/a.md' },
       { name: 'x-11-c', path: '/c.md' },
     ];
-    let sorted = list.sort(betterSort('name'));
+    const sorted = list.sort(betterSort('name'));
 
     expect(sorted).toMatchInlineSnapshot(`
       [
@@ -91,12 +91,12 @@ describe('addInTheFirstPage', () => {
   });
 
   test('if there is a path ending in index.md, it must be first', () => {
-    let list: Entry[] = [
+    const list: Entry[] = [
       { name: 'b', path: '/c/b.md' },
       { name: 'c', path: '/c/index.md' },
       { name: 'a', path: '/c/a.md' },
     ];
-    let sorted = list.sort(betterSort('name'));
+    const sorted = list.sort(betterSort('name'));
 
     expect(sorted).toMatchInlineSnapshot(`
       [
@@ -118,12 +118,12 @@ describe('addInTheFirstPage', () => {
 
   describe('From the Tutorial', () => {
     test('properties starting with x are placed at the end', () => {
-      let list: { name: string }[] = [
+      const list: { name: string }[] = [
         { name: '6-component-patterns' },
         { name: 'x-10-observation' },
         { name: '1-introduction' },
       ];
-      let sorted = list.sort(betterSort('name'));
+      const sorted = list.sort(betterSort('name'));
 
       expect(sorted).toMatchInlineSnapshot(`
       [
@@ -141,14 +141,14 @@ describe('addInTheFirstPage', () => {
     });
 
     test('10 comes after 9, and 11 comes after 10', () => {
-      let list: { name: string }[] = [
+      const list: { name: string }[] = [
         { name: '12-loading-patterns' },
         { name: '11-requesting-data' },
         { name: '8-form-data-controlled' },
         { name: '99-next-steps' },
         { name: '1-introduction' },
       ];
-      let sorted = list.sort(betterSort('name'));
+      const sorted = list.sort(betterSort('name'));
 
       expect(sorted).toMatchInlineSnapshot(`
         [

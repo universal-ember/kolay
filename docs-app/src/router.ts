@@ -1,8 +1,9 @@
 import EmberRouter from '@ember/routing/router';
 
-import config from './config.ts';
 import { properLinks } from 'ember-primitives/proper-links';
 import { addRoutes } from 'kolay';
+
+import config from './config.ts';
 
 @properLinks
 export default class Router extends EmberRouter {

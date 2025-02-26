@@ -19,7 +19,7 @@ export default class Compiler extends Service {
   last?: CompileState;
 
   compileMD = (code: string | undefined | null) => {
-    let state = new CompileState();
+    const state = new CompileState();
 
     this.last = state;
 
@@ -27,13 +27,13 @@ export default class Compiler extends Service {
       return state;
     }
 
-    let {
+    const {
       additionalResolves: importMap,
       additionalTopLevelScope: topLevelScope,
       remarkPlugins,
       rehypePlugins,
     } = this.docs;
-    let defaults = getDefaultOptions();
+    const defaults = getDefaultOptions();
 
     compile(code, {
       ...defaults,

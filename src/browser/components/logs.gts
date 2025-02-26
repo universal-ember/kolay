@@ -20,7 +20,7 @@ type Levels = keyof typeof original;
 
 const LEVELS = Object.keys(original) as Levels[];
 
-let formatter = new Intl.DateTimeFormat('en-GB', {
+const formatter = new Intl.DateTimeFormat('en-GB', {
   hour: 'numeric',
   minute: 'numeric',
   second: 'numeric',
@@ -52,28 +52,40 @@ const LogList: TOC<{
 
   {{! prettier-ignore-start }}
   <style>
-    .kolay__log-list__scroll { position: relative; overflow: auto; max-height: 10rem; filter:
-    invert(1); .kolay__log-list__level { display: flex; gap: 0.5rem; } .kolay__log-list__time {
-    border-right: 1px solid; padding-right: 0.5rem; } }
+    .kolay__log-list__scroll {
+      position: relative;
+      overflow: auto;
+      max-height: 10rem;
+      filter: invert(1);
+      .kolay__log-list__level {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .kolay__log-list__time {
+        border-right: 1px solid;
+        padding-right: 0.5rem;
+      }
+    }
   </style>
   {{! prettier-ignore-end }}
 </template>;
 
-export class Logs extends Component {
+export class Logs extends Component<{ Element: null }> {
   logs = new TrackedArray<Log>();
 
-  constructor(owner: Owner, args: any) {
+  constructor(owner: Owner, args: unknown) {
     super(owner, args);
 
     registerDestructor(this, () => LEVELS.forEach((level) => (console[level] = original[level])));
 
-    for (let level of LEVELS) {
+    for (const level of LEVELS) {
       console[level] = (...messageParts) => {
         // If our thing fails, we want the normal
         // log to still happen, just in case.
         // Makes debugging easier
         original[level](...messageParts);
 
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         (async () => {
           // We need to await here, so
           // we don't break {{log thing}} usage
@@ -95,8 +107,16 @@ export class Logs extends Component {
     </div>
     {{! prettier-ignore-start }}
     <style>
-      .kolay__in-viewport__logs { position: fixed; bottom: 0; left: 0; right: 0; padding: 0.5rem;
-      border: 1px solid gray; background: currentColor; filter: invert(1); }
+      .kolay__in-viewport__logs {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.5rem;
+        border: 1px solid gray;
+        background: currentColor;
+        filter: invert(1);
+      }
     </style>
     {{! prettier-ignore-end }}
   </template>

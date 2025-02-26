@@ -1,6 +1,5 @@
 import 'ember-mobile-menu/themes/android';
 
-import { sha } from '~build/git';
 import { on } from '@ember/modifier';
 
 import { pascalCase, sentenceCase } from 'change-case';
@@ -9,6 +8,8 @@ import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 import { GroupNav, PageNav } from 'kolay/components';
+
+import { sha } from '~build/git';
 
 import type { TOC } from '@ember/component/template-only';
 import type { Page } from 'kolay';

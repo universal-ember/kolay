@@ -4,7 +4,7 @@ import { build } from './parse.js';
 
 describe('build', () => {
   test('shallow path', () => {
-    let result = build([{ mdPath: 'top/nested.md' }]);
+    const result = build([{ mdPath: 'top/nested.md' }]);
 
     expect(result).toMatchInlineSnapshot(`
       {
@@ -30,7 +30,7 @@ describe('build', () => {
   });
 
   test('hypehenated group', () => {
-    let result = build([{ mdPath: 'top-level/nested.md' }]);
+    const result = build([{ mdPath: 'top-level/nested.md' }]);
 
     expect(result).toMatchInlineSnapshot(`
       {
@@ -56,7 +56,7 @@ describe('build', () => {
   });
 
   test('multiple shallow paths', () => {
-    let result = build([
+    const result = build([
       { mdPath: 'top/nested.md' },
       { mdPath: 'top/nested-sibling.md' },
       { mdPath: 'top-two/other.md' },
@@ -105,7 +105,7 @@ describe('build', () => {
   });
 
   test('a deep path', () => {
-    let result = build([{ mdPath: 'top/deep/path.md' }]);
+    const result = build([{ mdPath: 'top/deep/path.md' }]);
 
     expect(result).toMatchInlineSnapshot(`
       {
@@ -138,7 +138,7 @@ describe('build', () => {
   });
 
   test('a deep path with an index.md', () => {
-    let result = build([
+    const result = build([
       {
         mdPath: 'top/deep/another/index.md',
       },

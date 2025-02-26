@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import ResizeService from 'ember-resize-observer-service/services/resize-observer';
 import PageTitleService from 'ember-page-title/services/page-title';
+import ResizeService from 'ember-resize-observer-service/services/resize-observer';
 import { registry as kolayRegistry } from 'kolay';
 
 import Router from './router.ts';
@@ -35,5 +35,3 @@ export const registry = {
   ...resolverRegistry,
   ...kolayRegistry(appName),
 };
-
-console.log(registry);

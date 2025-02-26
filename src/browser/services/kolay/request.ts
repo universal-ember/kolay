@@ -49,9 +49,9 @@ export class MDRequest {
    */
   @cached
   private get _doesPageExist() {
-    let url = this.urlFn();
-    let pagePath = url.replace(OUTPUT_PREFIX_REGEX, '/');
-    let group = this.docs.groupForURL(pagePath);
+    const url = this.urlFn();
+    const pagePath = url.replace(OUTPUT_PREFIX_REGEX, '/');
+    const group = this.docs.groupForURL(pagePath);
 
     return Boolean(group);
   }

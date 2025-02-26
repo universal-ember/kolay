@@ -49,6 +49,7 @@
     "@glint/environment-ember-loose": "unstable",
     "@glint/environment-ember-template-imports": "unstable",
     "@glint/template": "unstable",
+    "@nullvoxpopuli/eslint-configs": "^5.0.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/ember": "^3.0.9",
     "@types/qunit": "^2.19.10",

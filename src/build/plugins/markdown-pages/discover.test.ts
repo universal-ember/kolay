@@ -11,8 +11,8 @@ const fixtures = path.join(__dirname, '../../../fixtures');
 
 describe('discover', () => {
   test('it works', async () => {
-    let fixturePath = path.join(fixtures, 'discover');
-    let result = await discover({ src: fixturePath });
+    const fixturePath = path.join(fixtures, 'discover');
+    const result = await discover({ src: fixturePath });
 
     expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
       {
@@ -92,7 +92,7 @@ describe('discover', () => {
   });
 
   test('it works with a tiny set of docs', async () => {
-    let result = await discover({ src: path.join(fixtures, 'discover-tiny') });
+    const result = await discover({ src: path.join(fixtures, 'discover-tiny') });
 
     expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
       {
@@ -120,7 +120,7 @@ describe('discover', () => {
   });
 
   test('it works with a folder that does not exist', async () => {
-    let result = await discover({ src: path.join(fixtures, '---does-not-exist---') });
+    const result = await discover({ src: path.join(fixtures, '---does-not-exist---') });
 
     expect(result.groups[0]?.tree).toMatchInlineSnapshot(`
       {
@@ -132,7 +132,7 @@ describe('discover', () => {
   });
 
   test('it can work on only groups', async () => {
-    let result = await discover({
+    const result = await discover({
       groups: [
         {
           name: 'Group 1',
@@ -146,7 +146,7 @@ describe('discover', () => {
   });
 
   test('it adds in a group by name', async () => {
-    let result = await discover({
+    const result = await discover({
       src: path.join(fixtures, 'discover-tiny'),
       groups: [
         {

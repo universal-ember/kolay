@@ -1,8 +1,8 @@
-import { ember, extensions, classicEmberSupport } from '@embroider/vite';
-import info from 'unplugin-info/vite';
+import { classicEmberSupport, ember, extensions } from '@embroider/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import { kolay } from 'kolay/vite';
+import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 
 const validator = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/validator/index.js`;
@@ -10,7 +10,7 @@ const tracking = `${process.cwd()}/node_modules/ember-source/dist/packages/@glim
 const eUtil = `${process.cwd()}/node_modules/@embroider/util/addon/index.js`;
 const cache = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/primitives/cache.js`;
 
-export default defineConfig(({ mode }) => {
+export default defineConfig((/* { mode } */) => {
   return {
     build: {
       target: ['esnext'],

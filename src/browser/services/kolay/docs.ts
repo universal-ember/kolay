@@ -82,7 +82,7 @@ export default class DocsService extends Service {
      */
     rehypePlugins?: UnifiedPlugin[];
   }) => {
-    let [manifest, apiDocs, resolve] = await Promise.all([
+    const [manifest, apiDocs, resolve] = await Promise.all([
       options.manifest,
       options.apiDocs,
       promiseHash(options.resolve),
@@ -156,7 +156,7 @@ export default class DocsService extends Service {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    let [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
+    const [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
 
     if (!first) return 'root';
 
@@ -181,7 +181,7 @@ export default class DocsService extends Service {
   };
 
   get availableGroups() {
-    let groups = this.manifest?.groups ?? [];
+    const groups = this.manifest?.groups ?? [];
 
     return groups.map((group) => group.name);
   }
@@ -192,9 +192,9 @@ export default class DocsService extends Service {
   }
 
   groupFor = (groupName: string) => {
-    let groups = this.manifest?.groups ?? [];
+    const groups = this.manifest?.groups ?? [];
 
-    let group = groups.find((group) => group.name === groupName);
+    const group = groups.find((group) => group.name === groupName);
 
     assert(
       `Could not find group in manifest under the name ${groupName}. The available groups are: ${groups.map((group) => group.name).join(', ')}`,
@@ -209,9 +209,9 @@ export default class DocsService extends Service {
    * or the name of the group that contains the page if the url does exist.
    */
   groupForURL = (url: string): false | string => {
-    for (let groupName of this.availableGroups) {
-      let group = this.groupFor(groupName);
-      let page = group.list.find((page) => page.path === url);
+    for (const groupName of this.availableGroups) {
+      const group = this.groupFor(groupName);
+      const page = group.list.find((page) => page.path === url);
 
       if (page) {
         return groupName;
@@ -226,27 +226,27 @@ export default class DocsService extends Service {
  * RSVP.hash, but native
  */
 async function promiseHash<T>(obj?: { [key: string]: Promise<T> }): Promise<{ [key: string]: T }> {
-  let result: Record<string, T> = {};
+  const result: Record<string, T> = {};
 
   if (!obj) {
     return result;
   }
 
-  let keys: string[] = [];
-  let promises = [];
+  const keys: string[] = [];
+  const promises = [];
 
-  for (let [key, promise] of Object.entries(obj)) {
+  for (const [key, promise] of Object.entries(obj)) {
     keys.push(key);
     promises.push(promise);
   }
 
   assert(`Something went wrong when resolving a promise Hash`, keys.length === promises.length);
 
-  let resolved = await Promise.all(promises);
+  const resolved = await Promise.all(promises);
 
   for (let i = 0; i < resolved.length; i++) {
-    let key = keys[i];
-    let resolvedValue = resolved[i];
+    const key = keys[i];
+    const resolvedValue = resolved[i];
 
     assert(`Missing key for index ${i}`, key);
     assert(`Resolved value for key ${key} is not an object`, typeof resolvedValue === 'object');

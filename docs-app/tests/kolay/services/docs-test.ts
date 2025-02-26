@@ -8,9 +8,9 @@ module('@service(Docs)', function (hooks) {
   setupKolay(hooks);
 
   test('No duplicates in available Groups', async function (assert) {
-    let docs = this.owner.lookup('service:kolay/docs');
+    const docs = this.owner.lookup('service:kolay/docs');
 
-    let groups = docs.availableGroups;
+    const groups = docs.availableGroups;
 
     assert.strictEqual(groups.length, new Set(groups).size);
   });

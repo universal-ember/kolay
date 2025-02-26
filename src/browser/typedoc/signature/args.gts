@@ -51,7 +51,7 @@ function listifyArgs(info: DeclarationReflection): any[] {
    */
   if ('children' in info && Array.isArray(info.children)) {
     if (info.children.length <= 2) {
-      let flattened = flattenArgs(info.children);
+      const flattened = flattenArgs(info.children);
 
       if (flattened.length > 0) {
         return flattened;
@@ -65,17 +65,16 @@ function listifyArgs(info: DeclarationReflection): any[] {
     return listifyArgs(info.type.declaration);
   }
 
-  // eslint-disable-next-line no-console
   console.warn('unhandled', info);
 
   return [];
 }
 
 function flattenArgs(args: any[]): any[] {
-  let named = args.find((x) => x.name === 'Named');
-  let positional = args.find((x) => x.name === 'Positional');
+  const named = args.find((x) => x.name === 'Named');
+  const positional = args.find((x) => x.name === 'Positional');
 
-  let result = [];
+  const result = [];
 
   if (positional) {
     result.push(positional.type?.elements);
