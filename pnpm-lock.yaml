@@ -16,6 +16,7 @@ overrides:
   '@glint/environment-ember-template-imports': unstable
   '@glint/template': unstable
   '@ember/render-modifier': ^2.1.0
+  ember-repl: 5.0.1
   ember-source: 6.4.0-alpha.3
 
 packageExtensionsChecksum: sha256-I4/i17OOf0WifUwpGYE/KCRs9xMfb6hiQlSpKvR/tsk=

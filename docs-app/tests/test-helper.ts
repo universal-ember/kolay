@@ -13,5 +13,17 @@ export function start() {
   setup(QUnit.assert);
   setupEmberOnerrorValidation();
 
+  // window.addEventListener('error', (e) => {
+  //   e.preventDefault();
+  //
+  //   return false;
+  // });
+  //
+  // window.addEventListener('unhandledrejection', (e) => {
+  //   e.preventDefault();
+  //
+  //   return false;
+  // });
+
   qunitStart();
 }
