@@ -16,15 +16,10 @@ overrides:
   '@glint/environment-ember-template-imports': unstable
   '@glint/template': unstable
   '@ember/render-modifier': ^2.1.0
-  ember-repl: 5.0.1
+  ember-repl: 6.0.0
   ember-source: 6.4.0-alpha.3
 
 packageExtensionsChecksum: sha256-I4/i17OOf0WifUwpGYE/KCRs9xMfb6hiQlSpKvR/tsk=
-
-patchedDependencies:
-  ember-repl:
-    hash: 53b1a665a9e31cade7a7be94bb5b6ba38d9affed1fe31b3525a0159cdc90145f
-    path: patches/ember-repl.patch
 
 importers:
 
@@ -50,7 +45,7 @@ importers:
         version: 3.0.9
       '@zamiell/typedoc-plugin-not-exported':
         specifier: ^0.3.0
-        version: 0.3.0(typedoc@0.27.8(typescript@5.7.3))
+        version: 0.3.0(typedoc@0.27.9(typescript@5.7.3))
       common-tags:
         specifier: ^1.8.2
         version: 1.8.2
@@ -64,8 +59,8 @@ importers:
         specifier: ^0.27.2
         version: 0.27.2(@babel/core@7.26.9)(@ember/test-helpers@5.1.0(@babel/core@7.26.9)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/environment-ember-loose@1.4.1-unstable.0e0d936(@glimmer/component@2.0.0)(@glint/template@1.4.1-unstable.0e0d936)(ember-modifier@4.2.0(@babel/core@7.26.9)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))))(@glint/template@1.4.1-unstable.0e0d936)(ember-modifier@4.2.0(@babel/core@7.26.9)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))(ember-resources@7.0.3(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))
       ember-repl:
-        specifier: 5.0.1
-        version: 5.0.1(patch_hash=53b1a665a9e31cade7a7be94bb5b6ba38d9affed1fe31b3525a0159cdc90145f)(@babel/core@7.26.9)(@glimmer/compiler@0.94.8)(@glimmer/component@2.0.0)(@glimmer/syntax@0.94.7)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))(reactiveweb@1.4.0(@babel/core@7.26.9)(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))
+        specifier: 6.0.0
+        version: 6.0.0(@babel/core@7.26.9)(@glimmer/compiler@0.94.8)(@glimmer/component@2.0.0)(@glimmer/syntax@0.94.7)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))(reactiveweb@1.4.0(@babel/core@7.26.9)(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))
       ember-resources:
         specifier: ^7.0.3
         version: 7.0.3(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))
@@ -91,8 +86,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@babel/core@7.26.9)
       typedoc:
-        specifier: ^0.27.8
-        version: 0.27.8(typescript@5.7.3)
+        specifier: ^0.27.9
+        version: 0.27.9(typescript@5.7.3)
       unplugin:
         specifier: ^2.2.0
         version: 2.2.0
@@ -233,8 +228,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0(@babel/core@7.26.9)(@ember/test-helpers@5.1.0(@babel/core@7.26.9)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))
       ember-repl:
-        specifier: 5.0.1
-        version: 5.0.1(patch_hash=53b1a665a9e31cade7a7be94bb5b6ba38d9affed1fe31b3525a0159cdc90145f)(@babel/core@7.26.9)(@glimmer/compiler@0.94.8)(@glimmer/component@2.0.0)(@glimmer/syntax@0.94.7)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))(reactiveweb@1.4.0(@babel/core@7.26.9)(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))
+        specifier: 6.0.0
+        version: 6.0.0(@babel/core@7.26.9)(@glimmer/compiler@0.94.8)(@glimmer/component@2.0.0)(@glimmer/syntax@0.94.7)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))(reactiveweb@1.4.0(@babel/core@7.26.9)(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)))
       ember-route-template:
         specifier: ^1.0.3
         version: 1.0.3
@@ -3852,12 +3847,12 @@ packages:
       ember-source: 6.4.0-alpha.3
       qunit: ^2.13.0
 
-  ember-repl@5.0.1:
-    resolution: {integrity: sha512-MllCv+S/ZTBIA13DE+YBTI62WtMTfREl2QTvcXa63liyJ4Rl/5hzFPIKBY9N6iSnZ839CXuiU3DUvmgku9mpUg==}
+  ember-repl@6.0.0:
+    resolution: {integrity: sha512-2VoZkbke09+cxrNsTsG74wTlN7Ro8JUOYGQy6ODcpQlEzRvs+e0C6g4+mX65rd14pLOwQKZeMILuJQvnZKp1bw==}
     peerDependencies:
       '@glimmer/compiler': '>= 0.86.0'
       '@glimmer/syntax': '>= 0.86.0'
-      '@glint/template': 1.4.1-unstable.ff9ea6c
+      '@glint/template': 1.4.1-unstable.0e0d936
       ember-source: 6.4.0-alpha.3
       reactiveweb: '*'
       webpack: '>= 5.92.0'
@@ -7729,12 +7724,12 @@ packages:
   typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
 
-  typedoc@0.27.8:
-    resolution: {integrity: sha512-q0/2TUunNEDmWkn23ULKGXieK8cgGuAmBUXC/HcZ/rgzMI9Yr4Nq3in1K1vT1NZ9zx6M78yTk3kmIPbwJgK5KA==}
+  typedoc@0.27.9:
+    resolution: {integrity: sha512-/z585740YHURLl9DN2jCWe6OW7zKYm6VoQ93H0sxZ1cwHQEQrUn5BJrEnkWhfzUdyO+BLGjnKUZ9iz9hKloFDw==}
     engines: {node: '>= 18'}
     hasBin: true
     peerDependencies:
-      typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x
+      typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x
 
   typesafe-path@0.2.2:
     resolution: {integrity: sha512-OJabfkAg1WLZSqJAJ0Z6Sdt3utnbzr/jh+NAHoyWHJe8CMSy79Gm085094M9nvTPy22KzTVn5Zq5mbapCI/hPA==}
@@ -8075,10 +8070,10 @@ packages:
       jsdom:
         optional: true
 
-  volar-service-typescript@0.0.62:
-    resolution: {integrity: sha512-p7MPi71q7KOsH0eAbZwPBiKPp9B2+qrdHAd6VY5oTo9BUXatsOAdakTm9Yf0DUj6uWBAaOT01BSeVOPwucMV1g==}
+  volar-service-typescript@0.0.60:
+    resolution: {integrity: sha512-QDGC66exWZMH6fs93M6XFIBMxDObxgV9q1XENII7vGzvW5KqikYG4f06AO+MWsHmAna8cI+X28xITb0SzzB0Yw==}
     peerDependencies:
-      '@volar/language-service': ~2.4.0
+      '@volar/language-service': ~2.4.0-alpha.19
     peerDependenciesMeta:
       '@volar/language-service':
         optional: true
@@ -9828,7 +9823,7 @@ snapshots:
       silent-error: 1.1.1
       typescript: 5.7.3
       uuid: 8.3.2
-      volar-service-typescript: 0.0.62(@volar/language-service@2.4.11)
+      volar-service-typescript: 0.0.60(@volar/language-service@2.4.11)
       vscode-languageserver-protocol: 3.17.5
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
@@ -10852,9 +10847,9 @@ snapshots:
 
   '@xmldom/xmldom@0.8.10': {}
 
-  '@zamiell/typedoc-plugin-not-exported@0.3.0(typedoc@0.27.8(typescript@5.7.3))':
+  '@zamiell/typedoc-plugin-not-exported@0.3.0(typedoc@0.27.9(typescript@5.7.3))':
     dependencies:
-      typedoc: 0.27.8(typescript@5.7.3)
+      typedoc: 0.27.9(typescript@5.7.3)
 
   '@zkochan/which@2.0.3':
     dependencies:
@@ -12815,7 +12810,7 @@ snapshots:
       - '@glint/template'
       - supports-color
 
-  ember-repl@5.0.1(patch_hash=53b1a665a9e31cade7a7be94bb5b6ba38d9affed1fe31b3525a0159cdc90145f)(@babel/core@7.26.9)(@glimmer/compiler@0.94.8)(@glimmer/component@2.0.0)(@glimmer/syntax@0.94.7)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))(reactiveweb@1.4.0(@babel/core@7.26.9)(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))):
+  ember-repl@6.0.0(@babel/core@7.26.9)(@glimmer/compiler@0.94.8)(@glimmer/component@2.0.0)(@glimmer/syntax@0.94.7)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))(reactiveweb@1.4.0(@babel/core@7.26.9)(@ember/test-waiters@4.0.0(@glint/template@1.4.1-unstable.0e0d936))(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.0e0d936)(ember-source@6.4.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5))):
     dependencies:
       '@babel/helper-plugin-utils': 7.26.5
       '@babel/standalone': 7.26.9
@@ -17706,7 +17701,7 @@ snapshots:
     dependencies:
       is-typedarray: 1.0.0
 
-  typedoc@0.27.8(typescript@5.7.3):
+  typedoc@0.27.9(typescript@5.7.3):
     dependencies:
       '@gerrit0/mini-shiki': 1.27.2
       lunr: 2.3.9
@@ -18054,7 +18049,7 @@ snapshots:
       - tsx
       - yaml
 
-  volar-service-typescript@0.0.62(@volar/language-service@2.4.11):
+  volar-service-typescript@0.0.60(@volar/language-service@2.4.11):
     dependencies:
       path-browserify: 1.0.1
       semver: 7.7.1
