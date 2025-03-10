@@ -28,6 +28,27 @@ export class Page extends Component<{
      * ```
      */
     error: [error: string];
+
+    /**
+     * Before the document is compiled (or errored), this block will be active.
+     *
+     * Example:
+     *
+     * ```gjs
+     * import { Page } from 'kolay/components';
+     *
+     * <template>
+     *   <Page>
+     *     <:pending>
+     *        Loading State
+     *     </:pending>
+     *     <:success></:success>
+     *   </Page>
+     * </template>
+     * ```
+     */
+    pending: [];
+
     /**
      * If compilation of the active page was successful, the `<:success>` black
      * will be active, and will pass the component reference to the caller.
@@ -54,6 +75,10 @@ export class Page extends Component<{
   <template>
     {{#if this.selected.hasError}}
       {{yield this.selected.error to='error'}}
+    {{/if}}
+
+    {{#if this.selected.isPending}}
+      {{yield to='pending'}}
     {{/if}}
 
     {{#if this.selected.prose}}
