@@ -78,6 +78,10 @@ export default class Selected extends Service {
     return this.proseCompiled.isReady;
   }
 
+  get isPending() {
+    return !this.isReady;
+  }
+
   get hasError() {
     return Boolean(this.proseCompiled.error) || this.request.hasError;
   }
