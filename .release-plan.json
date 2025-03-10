@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "minor",
-      "oldVersion": "3.0.0",
-      "newVersion": "3.1.0",
+      "oldVersion": "3.1.0",
+      "newVersion": "3.2.0",
       "constraints": [
         {
           "impact": "minor",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-03-10)\n\nkolay 3.1.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#161](https://github.com/universal-ember/kolay/pull/161) Add `<:pending>` block to the `<Page>` component ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-03-10)\n\nkolay 3.2.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#163](https://github.com/universal-ember/kolay/pull/163) Upgrade ember-repl ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }

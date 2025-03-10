@@ -2,6 +2,17 @@
 
 ## Release (2025-03-10)
 
+kolay 3.2.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#163](https://github.com/universal-ember/kolay/pull/163) Upgrade ember-repl ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-03-10)
+
 kolay 3.1.0 (minor)
 
 #### :rocket: Enhancement
