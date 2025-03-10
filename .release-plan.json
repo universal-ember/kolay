@@ -1,17 +1,17 @@
 {
   "solution": {
     "kolay": {
-      "impact": "major",
-      "oldVersion": "2.1.2",
-      "newVersion": "3.0.0",
+      "impact": "minor",
+      "oldVersion": "3.0.0",
+      "newVersion": "3.1.0",
       "constraints": [
         {
-          "impact": "major",
-          "reason": "Appears in changelog section :boom: Breaking Change"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-02-26)\n\nkolay 3.0.0 (major)\n\n#### :boom: Breaking Change\n* `kolay`\n  * [#154](https://github.com/universal-ember/kolay/pull/154) Upgrade vite infra ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-03-10)\n\nkolay 3.1.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#161](https://github.com/universal-ember/kolay/pull/161) Add `<:pending>` block to the `<Page>` component ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
