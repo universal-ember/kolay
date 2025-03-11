@@ -5,10 +5,10 @@ import { kolay } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 
-const validator = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/validator/index.js`;
-const tracking = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/index.js`;
-const eUtil = `${process.cwd()}/node_modules/@embroider/util/addon/index.js`;
-const cache = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/primitives/cache.js`;
+// const validator = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/validator/index.js`;
+// const tracking = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/index.js`;
+// const eUtil = `${process.cwd()}/node_modules/@embroider/util/addon/index.js`;
+// const cache = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer/tracking/primitives/cache.js`;
 
 export default defineConfig((/* { mode } */) => {
   return {
@@ -17,12 +17,12 @@ export default defineConfig((/* { mode } */) => {
     },
     resolve: {
       extensions,
-      alias: {
-        '@glimmer/validator': validator,
-        '@glimmer/tracking/primitives/cache': cache,
-        '@glimmer/tracking': tracking,
-        '@embroider/util': eUtil,
-      },
+      // alias: {
+      //   '@glimmer/validator': validator,
+      //   '@glimmer/tracking/primitives/cache': cache,
+      //   '@glimmer/tracking': tracking,
+      //   '@embroider/util': eUtil,
+      // },
     },
     plugins: [
       info(),
