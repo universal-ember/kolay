@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-03-23)
+
+kolay 3.2.1 (patch)
+
+#### :memo: Documentation
+* `kolay`
+  * [#170](https://github.com/universal-ember/kolay/pull/170) Add instructions for TS ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-03-10)
 
 kolay 3.2.0 (minor)

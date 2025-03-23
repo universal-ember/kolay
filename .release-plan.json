@@ -1,17 +1,17 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "3.1.0",
-      "newVersion": "3.2.0",
+      "impact": "patch",
+      "oldVersion": "3.2.0",
+      "newVersion": "3.2.1",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :memo: Documentation"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-03-10)\n\nkolay 3.2.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#163](https://github.com/universal-ember/kolay/pull/163) Upgrade ember-repl ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-03-23)\n\nkolay 3.2.1 (patch)\n\n#### :memo: Documentation\n* `kolay`\n  * [#170](https://github.com/universal-ember/kolay/pull/170) Add instructions for TS ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
