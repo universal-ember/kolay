@@ -255,9 +255,9 @@
       "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
     }
   },
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.6.5",
   "volta": {
     "node": "22.14.0",
-    "pnpm": "10.4.1"
+    "pnpm": "10.6.5"
   }
 }
