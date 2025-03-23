@@ -188,3 +188,22 @@ export default class ApplicationRoute extends Route {
   }
 }
 ```
+
+### TypeScript
+
+Relevant typescript types can be installed via your tsconfig.json's compilerOptions.types,.
+
+```js
+{
+  "compilerOptions": {
+    // ... other options
+    "types": [
+      "vite/client",
+      "@embroider/core/virtual",
+      "ember-source/types",
+      //  add this 👇
+      "kolay/virtual"
+    ]
+  }
+}
+```
