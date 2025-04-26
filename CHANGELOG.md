@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2025-04-26)
+
+kolay 3.3.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#172](https://github.com/universal-ember/kolay/pull/172) Support non-monorepos by allowing '.' for an entry in the 'packages' list of the build plugin ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* `kolay`
+  * [#170](https://github.com/universal-ember/kolay/pull/170) Add instructions for TS ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-03-10)
 
 kolay 3.2.0 (minor)
