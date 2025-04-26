@@ -27,9 +27,15 @@ export const INTERNAL_PREFIX = `\0`;
  * @param {string} packageName
  */
 export async function packageTypes(packageName) {
-  let entryPath = require.resolve(packageName, {
-    paths: [process.cwd()],
-  });
+  let entryPath = '<not set>';
+
+  if (packageName === '.') {
+    entryPath = '.';
+  } else {
+    entryPath = require.resolve(packageName, {
+      paths: [process.cwd()],
+    });
+  }
 
   let manifestPath = await packageUp({ cwd: entryPath });
 
