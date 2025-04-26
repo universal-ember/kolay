@@ -6,16 +6,6 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { DeclarationReflection } from 'typedoc';
 
-// function lookupReference(reference: any, info: any) {
-//   let id = reference.target;
-//   let lookup = info.symbolIdMap[id];
-
-//   let fileName = lookup?.sourceFileName;
-//   let name = lookup?.qualifiedName;
-
-//   return findReferenceByFilename(name, fileName, info);
-// }
-
 function findReferenceByFilename(name: string, fileName: string, info: any): any {
   if (!info.children) return;
 
@@ -113,6 +103,7 @@ export const ComponentSignature: TOC<{
   };
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration doc|>
+    {{log "ComponentSignature" declaration doc}}
     {{#let (getSignature declaration doc) as |info|}}
       <Element @kind='component' @info={{info.Element}} />
       <Args @kind='component' @info={{info.Args}} />

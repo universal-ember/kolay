@@ -3,33 +3,33 @@ import { assert } from '@ember/debug';
 import { service } from '@ember/service';
 
 import { trackedFunction } from 'reactiveweb/function';
+import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
 
 import type APIDocsService from '../services/kolay/api-docs.ts';
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection } from 'typedoc';
+import type { DeclarationReflection, Reflection } from 'typedoc';
+
 
 export function findChildDeclaration(info: DeclarationReflection, name: string) {
   return info.children?.find((child) => child.variant === 'declaration' && child.name === name);
 }
 
-export const infoFor = (data: DeclarationReflection, module: string, name: string) => {
-  const moduleType = data.children?.find((child) => child.name === module);
+export const infoFor = (project: ProjectReflection, module: string, name: string): Reflection | undefined => {
+  const moduleDoc = project.getChildByName(module);
 
   assert(
-    `Could not find module by name: ${module}. Available modules in this set of api docs are: ${data.children
-      ?.map((child) => child.name)
-      .join(', ')}`,
-    moduleType
+    `Could not find module by name: ${module}. Make sure that the d.ts file is present in the generated api docs.`,
+    moduleDoc
   );
 
-  const found = moduleType?.children?.find((grandChild) => grandChild.name === name);
+  const found = moduleDoc.getChildByName(name);
 
   return found;
 };
 
 export const Query: TOC<{
-  Args: { module: string; name: string; info: DeclarationReflection };
-  Blocks: { default: [DeclarationReflection]; notFound: [] };
+  Args: { module: string; name: string; info: ProjectReflection };
+  Blocks: { default: [Reflection]; notFound: [] };
 }> = <template>
   {{#let (infoFor @info @module @name) as |info|}}
     {{#if info}}
@@ -40,13 +40,9 @@ export const Query: TOC<{
   {{/let}}
 </template>;
 
-function isDeclarationReflection(info: unknown): info is DeclarationReflection {
-  return true;
-}
-
 const stringify = (x: unknown) => String(x);
 
-const cache = new Map<string, Promise<any>>();
+const cache = new Map<string, Promise<ProjectReflection>>();
 
 export class Load extends Component<{
   Args: {
@@ -54,7 +50,7 @@ export class Load extends Component<{
     name: string;
     package: string;
   };
-  Blocks: { default: [DeclarationReflection, any] };
+  Blocks: { default: [Reflection, ProjectReflection] };
 }> {
   @service('kolay/api-docs') declare apiDocs: APIDocsService;
 
@@ -74,11 +70,18 @@ export class Load extends Component<{
       return seen;
     }
 
-    const loadNew = async () => {
+    const loadNew = async (): Promise<ProjectReflection> => {
       const req = await this.apiDocs.load(pkg);
       const json = await req.json();
 
-      return json;
+      const logger = new ConsoleLogger();
+      const deserializer = new Deserializer(logger);
+      const project = deserializer.reviveProject('API Docs', json, {
+        projectRoot: '/',
+        registry: new FileRegistry(),
+      });
+
+      return project;
     };
 
     seen = loadNew();
@@ -99,11 +102,9 @@ export class Load extends Component<{
 
     {{#if this.request.value}}
       <section>
-        {{#if (isDeclarationReflection this.request.value)}}
-          <Query @info={{this.request.value}} @module={{@module}} @name={{@name}} as |type|>
-            {{yield type this.request.value}}
-          </Query>
-        {{/if}}
+        <Query @info={{this.request.value}} @module={{@module}} @name={{@name}} as |type|>
+          {{yield type this.request.value}}
+        </Query>
       </section>
     {{/if}}
   </template>
