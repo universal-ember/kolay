@@ -40,7 +40,6 @@ export const Query: TOC<{
   {{/let}}
 </template>;
 
-// @ts-expect-error TODO
 function isDeclarationReflection(info: unknown): info is DeclarationReflection {
   return true;
 }

@@ -72,6 +72,8 @@ export const apiDocs = (options) => {
 
                 let data = await seen;
 
+                console.log(data);
+
                 res.setHeader('content-type', 'application/json');
 
                 return res.end(JSON.stringify(data));
