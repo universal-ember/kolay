@@ -2,15 +2,7 @@
   "$schema": "https://typedoc.org/schema.json",
   "tsconfig": "./tsconfig.typedoc.json",
   "entryPoints": [
-    "./declarations/index.d.ts",
-    "./declarations/types.d.ts",
-    "./declarations/vite.d.ts",
-    "./declarations/webpack.d.ts",
-    "./declarations/plugins/index.d.ts",
-    "./declarations/plugins/types.d.ts",
-    "./declarations/browser/components.d.ts",
-    "./declarations/browser/test-support.d.ts",
-    "./declarations/browser/private/samples.d.ts"
+    "./declarations/**"
   ],
   "exclude": ["node_modules"],
   "cleanOutputDir": true,
@@ -22,5 +14,5 @@
   "pretty": true,
   "excludeInternal": false,
   "skipErrorChecking": true,
-  "plugin": ["@zamiell/typedoc-plugin-not-exported"]
+  "plugin": []
 }

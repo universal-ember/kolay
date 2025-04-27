@@ -3,9 +3,12 @@ import { Load } from '../utils.gts';
 import { Args, getArgs } from './args.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection } from 'typedoc';
+import type {  Reflection } from 'typedoc';
 
-function getSignature(info: DeclarationReflection) {
+function getSignature(info: Reflection) {
+  console.log(info);
+
+
   /**
    * export const Foo: HelperLike<{...}>
    */

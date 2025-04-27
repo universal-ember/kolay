@@ -33,9 +33,6 @@ importers:
       '@glint/template':
         specifier: 1.4.1-unstable.d17c1f1
         version: 1.4.1-unstable.d17c1f1
-      '@zamiell/typedoc-plugin-not-exported':
-        specifier: ^0.3.0
-        version: 0.3.0(typedoc@0.28.0-beta.2(typescript@5.8.2))
       common-tags:
         specifier: ^1.8.2
         version: 1.8.2
@@ -2395,11 +2392,6 @@ packages:
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
     engines: {node: '>=10.0.0'}
-
-  '@zamiell/typedoc-plugin-not-exported@0.3.0':
-    resolution: {integrity: sha512-StHJp28ianqpEVRYWnelFp52FfeV8q3sSg+g/1iVz0R6CCwAyBUkHCp1t9MgV09atQY/RymF72uQ7J9cMsLRWw==}
-    peerDependencies:
-      typedoc: '>=0.26.2'
 
   '@zkochan/which@2.0.3':
     resolution: {integrity: sha512-C1ReN7vt2/2O0fyTsx5xnbQuxBrmG5NMSbcIkPKCCfCTJgpZBsuRYzFXHj3nVq8vTfK7vxHUmzfCpSHgO7j4rg==}
@@ -11085,10 +11077,6 @@ snapshots:
   '@vscode/l10n@0.0.18': {}
 
   '@xmldom/xmldom@0.8.10': {}
-
-  '@zamiell/typedoc-plugin-not-exported@0.3.0(typedoc@0.28.0-beta.2(typescript@5.8.2))':
-    dependencies:
-      typedoc: 0.28.0-beta.2(typescript@5.8.2)
 
   '@zkochan/which@2.0.3':
     dependencies:

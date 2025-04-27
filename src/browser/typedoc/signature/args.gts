@@ -17,6 +17,7 @@ export const Args: TOC<{
   {{#if @info}}
     <h3 class='typedoc__heading'>Arguments</h3>
     {{#each (listifyArgs @info) as |child|}}
+    {{log 'child' child}}
       <span class='typedoc__{{@kind}}-signature__arg'>
         <span class='typedoc__{{@kind}}-signature__arg-info'>
           <pre class='typedoc__name'>{{if (isComponent @kind) '@'}}{{child.name}}</pre>
@@ -90,7 +91,9 @@ function flattenArgs(args: any[]): any[] {
 /**
  * Returns args for either a function or signature
  */
-export function getArgs(info: any) {
+export function getArgs(info?: DeclarationReflection | DeclarationReflection[]) {
+  if (!info) return [];
+
   if ('parameters' in info) {
     return info.parameters;
   }

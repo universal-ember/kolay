@@ -1,6 +1,8 @@
 import { Addon } from '@embroider/addon-dev/rollup';
 
 import { babel } from '@rollup/plugin-babel';
+import { execaCommand } from 'execa';
+import { fixBadDeclarationOutput } from 'fix-bad-declaration-output';
 
 const addon = new Addon({
   srcDir: 'src/browser',
@@ -27,7 +29,12 @@ export default {
     }),
 
     addon.gjs(),
-    addon.declarations('declarations'),
+    // the declarations plugin needs to detect Glint @ 2, and not do extension stripping on the imports
+    // addon.declarations('declarations'),
+    {
+      name: 'Build Declarations',
+      closeBundle: async () => await execaCommand(`pnpm glint`, { stdio: 'inherit' });
+    },
     addon.keepAssets(['**/*.css']),
     addon.clean(),
   ],

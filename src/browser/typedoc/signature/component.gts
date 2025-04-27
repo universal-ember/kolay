@@ -1,10 +1,11 @@
+import { isDeclarationReference, isReference } from '../narrowing';
 import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
 import { Args } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection } from 'typedoc';
+import type { Reflection } from 'typedoc';
 
 function findReferenceByFilename(name: string, fileName: string, info: any): any {
   if (!info.children) return;
@@ -30,18 +31,18 @@ function findReferenceByFilename(name: string, fileName: string, info: any): any
   }
 }
 
-function getSignatureType(info: DeclarationReflection, doc: any) {
+function getSignatureType(info: Reflection, doc: any) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
-  if (info.type?.type === 'reference' && info.type?.typeArguments?.[0]?.type === 'reflection') {
-    return info.type.typeArguments[0].declaration;
-  }
+  if (isDeclarationReference(info)) {
+    if (isReference(info.type) && info.type?.typeArguments?.[0]?.type === 'reflection') {
+      return info.type.typeArguments[0].declaration;
+    }
 
-  /**
-   * export class Foo extends Component<{ signature here }> { ... }
-   */
-  if (info.variant === 'declaration' && 'extendedTypes' in info) {
+    /**
+     * export class Foo extends Component<{ signature here }> { ... }
+     */
     const extendedType = info.extendedTypes?.[0];
 
     if (extendedType?.type === 'reference' && extendedType?.package === '@glimmer/component') {
@@ -70,7 +71,7 @@ function getSignatureType(info: DeclarationReflection, doc: any) {
   return info;
 }
 
-function getSignature(info: DeclarationReflection, doc: any) {
+function getSignature(info: Reflection, doc: any) {
   const type = getSignatureType(info, doc);
 
   if (!type) {
@@ -103,7 +104,6 @@ export const ComponentSignature: TOC<{
   };
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration doc|>
-    {{log "ComponentSignature" declaration doc}}
     {{#let (getSignature declaration doc) as |info|}}
       <Element @kind='component' @info={{info.Element}} />
       <Args @kind='component' @info={{info.Args}} />

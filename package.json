@@ -115,7 +115,6 @@
     "@glimmer/component": "^2.0.0",
     "@glimmer/tracking": ">= 1.1.2",
     "@glint/template": "1.4.1-unstable.d17c1f1",
-    "@zamiell/typedoc-plugin-not-exported": "^0.3.0",
     "common-tags": "^1.8.2",
     "decorator-transforms": "^2.3.0",
     "ember-modifier": ">= 4.1.0",

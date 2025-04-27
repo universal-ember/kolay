@@ -4,6 +4,7 @@ dist-typedoc/
 declarations/
 .turbo/
 .log/
+.vscode/
 
 # npm/pnpm/yarn pack output
 *.tgz
