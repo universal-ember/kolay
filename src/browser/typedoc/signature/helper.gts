@@ -1,19 +1,20 @@
+import { isDeclarationReference } from '../narrowing';
 import { Type } from '../renderer.gts';
 import { Load } from '../utils.gts';
 import { Args, getArgs } from './args.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type {  Reflection } from 'typedoc';
+import type { Reflection } from 'typedoc';
 
 function getSignature(info: Reflection) {
-  console.log(info);
-
+  if (!isDeclarationReference(info)) {
+    return;
+  }
 
   /**
    * export const Foo: HelperLike<{...}>
    */
   if (
-    info.variant === 'declaration' &&
     info.type?.type === 'reference' &&
     info.type?.package === '@glint/template' &&
     info.type?.name === 'HelperLike' &&
