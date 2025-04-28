@@ -7,9 +7,24 @@ type NestedHooks = Parameters<typeof setupTest>[0];
 
 export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>): void {
   hooks.beforeEach(async function () {
+    const docs = this.owner.lookup('service:kolay/docs');
+
     const userConfig = config ? await config() : {};
 
-    await setup(this, userConfig as any);
+    const [apiDocs, manifest] = await Promise.all([
+      import('kolay/api-docs:virtual'),
+      import('kolay/manifest:virtual'),
+    ]);
+
+    await docs.setup({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      apiDocs,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      manifest,
+      ...userConfig,
+    });
   });
 }
 

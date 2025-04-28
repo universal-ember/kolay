@@ -87,6 +87,14 @@ function getSignature(info: Reflection, project: ProjectReflection) {
   }
 
   /**
+   * alt
+   * export function(...): return;
+   */
+  if (info.type && 'declaration' in info.type && info.type.declaration?.signatures) {
+    return info.type.declaration.signatures;
+  }
+
+  /**
    * export interface Signature { ... }
    */
   return info;
