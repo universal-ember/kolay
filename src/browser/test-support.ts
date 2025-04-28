@@ -11,8 +11,20 @@ export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>):
 
     const userConfig = config ? await config() : {};
 
-    // TODO: figure this out later
-    await docs.setup(userConfig as any);
+    const [apiDocs, manifest] = await Promise.all([
+      import('kolay/api-docs:virtual'),
+      import('kolay/manifest:virtual'),
+    ]);
+
+    await docs.setup({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      apiDocs,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      manifest,
+      ...userConfig,
+    });
   });
 }
 

@@ -17,7 +17,7 @@ export const setup = () => {
           import { assert } from '@ember/debug';
 
           export async function setupKolay(context, options) {
-            let owner = getOwner(context);
+            let owner = getOwner(context) ?? context.owner;
 
             assert(
               \`Expected owner to exist on the passed context, \`

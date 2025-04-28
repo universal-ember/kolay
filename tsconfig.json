@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/strictest",
+  "extends": "@ember/library-tsconfig",
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"]
   },
@@ -30,6 +30,6 @@
     "declaration": true,
     // Compat
     "allowSyntheticDefaultImports": true,
-    "types": ["./docs-app/node_modules/ember-source/types/stable", "unplugin", "@glimmer/component"]
+    "types": ["./docs-app/node_modules/ember-source/types/stable", "unplugin"]
   }
 }

@@ -73,9 +73,10 @@ export class ClassA extends Component<{
 </fieldset>
 
 <fieldset>
-  <summary>Reference (not currently supported)</summary>
+  <summary>Reference</summary>
 
 ```gts
+export interface SignatureA {}
 export class ClassB extends Component<SignatureA> {}
 ```
 
@@ -90,9 +91,10 @@ export class ClassB extends Component<SignatureA> {}
 </fieldset>
 
 <fieldset>
-  <summary>TemplateOnly w/ Reference (not currently supported)</summary>
+  <summary>TemplateOnly w/ Reference</summary>
 
 ```gts
+export interface SignatureA { ... }
 export const TemplateOnlyC: TOC<SignatureA> = <template>...</template>;
 ```
 

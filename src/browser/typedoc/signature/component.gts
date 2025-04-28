@@ -1,75 +1,58 @@
+import { isReference } from '../narrowing.ts';
 import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
 import { Args } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection } from 'typedoc';
+import type { ProjectReflection, Reflection } from 'typedoc';
 
-// function lookupReference(reference: any, info: any) {
-//   let id = reference.target;
-//   let lookup = info.symbolIdMap[id];
-
-//   let fileName = lookup?.sourceFileName;
-//   let name = lookup?.qualifiedName;
-
-//   return findReferenceByFilename(name, fileName, info);
-// }
-
-function findReferenceByFilename(name: string, fileName: string, info: any): any {
-  if (!info.children) return;
-
-  for (const child of info.children) {
-    if (child.sources[0].fileName === fileName) {
-      return child;
-    }
-
-    if (!child.children) continue;
-
-    const isRelevant = child.children.find(
-      (grandChild: any) => grandChild.sources[0].fileName === fileName
-    );
-
-    if (isRelevant) {
-      return isRelevant;
-    }
-
-    const grand = findReferenceByFilename(name, fileName, child);
-
-    if (grand) return grand;
-  }
-}
-
-function getSignatureType(info: DeclarationReflection, doc: any) {
+function getSignatureType(info: Reflection, project: ProjectReflection) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
-  if (info.type?.type === 'reference' && info.type?.typeArguments?.[0]?.type === 'reflection') {
-    return info.type.typeArguments[0].declaration;
-  }
+  if (info.isDeclaration()) {
+    if (isReference(info.type) && info.type?.typeArguments?.[0]?.type === 'reflection') {
+      return info.type.typeArguments[0].declaration;
+    }
 
-  /**
-   * export class Foo extends Component<{ signature here }> { ... }
-   */
-  if (info.variant === 'declaration' && 'extendedTypes' in info) {
+    /**
+     * export class Foo extends Component<{ signature here }> { ... }
+     */
     const extendedType = info.extendedTypes?.[0];
 
     if (extendedType?.type === 'reference' && extendedType?.package === '@glimmer/component') {
       const typeArg = extendedType.typeArguments?.[0];
 
-      if (typeArg?.type === 'reflection') {
-        return typeArg.declaration;
-      }
-
-      if (typeArg?.type === 'reference') {
-        if ('symbolIdMap' in doc) {
-          // This is hard, maybe typedoc has a util?
-          return findReferenceByFilename(
-            typeArg.name,
-            (extendedType as any).target.sourceFileName,
-            doc
-          );
+      if (typeArg) {
+        if (typeArg?.type === 'reflection') {
+          return typeArg.declaration;
         }
+
+        /**
+         * export interface Signature { ... }
+         *
+         * export class Foo extends Component<Signature>
+         */
+        if ('_target' in typeArg) {
+          const id = (typeArg as any)._target;
+
+          return project.getReflectionById(id);
+        }
+      }
+    }
+
+    /**
+     * export interface Signature { ... }
+     * export const Foo: TOC<Signature> = <template> ... </template>
+     */
+    if (info.type?.type === 'reference') {
+      const typeArg = info.type?.typeArguments?.[0];
+
+      if (typeArg && '_target' in typeArg) {
+        const id = (typeArg as any)._target;
+
+        return project.getReflectionById(id);
       }
     }
   }
@@ -80,8 +63,8 @@ function getSignatureType(info: DeclarationReflection, doc: any) {
   return info;
 }
 
-function getSignature(info: DeclarationReflection, doc: any) {
-  const type = getSignatureType(info, doc);
+function getSignature(info: Reflection, project: ProjectReflection) {
+  const type = getSignatureType(info, project);
 
   if (!type) {
     console.warn('Could not finde signature');
@@ -112,8 +95,8 @@ export const ComponentSignature: TOC<{
     package: string;
   };
 }> = <template>
-  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration doc|>
-    {{#let (getSignature declaration doc) as |info|}}
+  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
+    {{#let (getSignature declaration project) as |info|}}
       <Element @kind='component' @info={{info.Element}} />
       <Args @kind='component' @info={{info.Args}} />
       <Blocks @info={{info.Blocks}} />

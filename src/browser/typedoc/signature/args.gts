@@ -1,7 +1,7 @@
 import { Comment, isIntrinsic, isNamedTuple, Type } from '../renderer.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection } from 'typedoc';
+import type { DeclarationReflection, Reflection, SignatureReflection } from 'typedoc';
 
 const not = (x: unknown) => !x;
 
@@ -90,7 +90,11 @@ function flattenArgs(args: any[]): any[] {
 /**
  * Returns args for either a function or signature
  */
-export function getArgs(info: any) {
+export function getArgs(
+  info?: Reflection | SignatureReflection | DeclarationReflection | DeclarationReflection[]
+) {
+  if (!info) return [];
+
   if ('parameters' in info) {
     return info.parameters;
   }

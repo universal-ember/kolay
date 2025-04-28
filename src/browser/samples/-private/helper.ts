@@ -41,7 +41,7 @@ export class classHelperD extends Helper<{
   /* ... */
 }
 
-interface ESignature {
+export interface ESignature {
   Args: {
     Named: { optional?: boolean };
     Positional: [first: string, second?: string];

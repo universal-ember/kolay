@@ -1,16 +1,9 @@
 {
-  "extends": "@tsconfig/ember/tsconfig.json",
+  "extends": "@ember/app-tsconfig",
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"]
   },
   "compilerOptions": {
-    "skipLibCheck": true,
-    "declaration": false,
-    "declarationMap": false,
-    "noEmitOnError": false,
-    "allowImportingTsExtensions": true,
-    "allowArbitraryExtensions": true,
-
     // stylistic
     "noPropertyAccessFromIndexSignature": false,
     "types": [

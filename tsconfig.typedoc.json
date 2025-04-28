@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/ember",
+  "extends": "@ember/library-tsconfig",
   "include": ["./declarations/**/*", "./src/browser/**/*"],
   "compilerOptions": {
     "baseUrl": ".",

@@ -39,7 +39,7 @@ export async function generateTypeDocJSON({ packageName }) {
 
   const typedoc = await import('typedoc');
   const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
-  const extendsTsConfig = require.resolve('@tsconfig/ember/tsconfig.json');
+  const extendsTsConfig = require.resolve('@ember/app-tsconfig/tsconfig.json');
 
   // const home = process.cwd();
   // const homeRequire = createRequire(home);
@@ -70,7 +70,6 @@ export async function generateTypeDocJSON({ packageName }) {
   await writeFile(tmpTSConfigPath, JSON.stringify(tsConfig, null, 2));
 
   const typedocApp = await typedoc.Application.bootstrapWithPlugins({
-    // entryPoints: resolvedEntries,
     entryPoints: absoluteResolved,
     tsconfig: tmpTSConfigPath,
     basePath: typeInfo.dir,
@@ -79,7 +78,9 @@ export async function generateTypeDocJSON({ packageName }) {
     excludeInternal: false,
     excludeExternals: true,
     skipErrorChecking: true,
-    plugin: ['@zamiell/typedoc-plugin-not-exported'],
+    // All types to be referenced in docs must be exported.
+    // This plugin does not work with the latest typedoc
+    // plugin: ['@zamiell/typedoc-plugin-not-exported'],
   });
 
   const project = await typedocApp.convert();
