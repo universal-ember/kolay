@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
 import { service } from '@ember/service';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { trackedFunction } from 'reactiveweb/function';
 import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
@@ -91,7 +92,7 @@ export class Load extends Component<{
       return project;
     };
 
-    seen = loadNew();
+    seen = waitForPromise(loadNew());
 
     cache.set(pkg, seen);
 

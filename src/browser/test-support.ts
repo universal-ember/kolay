@@ -7,12 +7,9 @@ type NestedHooks = Parameters<typeof setupTest>[0];
 
 export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>): void {
   hooks.beforeEach(async function () {
-    const docs = this.owner.lookup('service:kolay/docs');
-
     const userConfig = config ? await config() : {};
 
-    // TODO: figure this out later
-    await docs.setup(userConfig as any);
+    await setup(this, userConfig as any);
   });
 }
 

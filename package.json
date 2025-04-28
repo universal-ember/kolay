@@ -96,7 +96,6 @@
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:published-types": "attw --pack",
-    "start:all": "concurrently 'pnpm --filter ./ui start' 'pnpm --filter ./docs-app start' --names ui,docs",
     "build": "rollup --config",
     "_syncPnpm": "pnpm sync-dependencies-meta-injected",
     "start": "concurrently 'pnpm:start:*'",
