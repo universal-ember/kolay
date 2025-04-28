@@ -90,7 +90,9 @@ function flattenArgs(args: any[]): any[] {
 /**
  * Returns args for either a function or signature
  */
-export function getArgs(info?: Reflection | SignatureReflection | DeclarationReflection | DeclarationReflection[]) {
+export function getArgs(
+  info?: Reflection | SignatureReflection | DeclarationReflection | DeclarationReflection[]
+) {
   if (!info) return [];
 
   if ('parameters' in info) {

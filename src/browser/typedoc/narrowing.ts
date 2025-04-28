@@ -1,4 +1,4 @@
-import type {  ReferenceType } from 'typedoc';
+import type { ReferenceType } from 'typedoc';
 
 interface HasType {
   type: string;

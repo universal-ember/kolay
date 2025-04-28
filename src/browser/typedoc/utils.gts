@@ -9,7 +9,6 @@ import type APIDocsService from '../services/kolay/api-docs.ts';
 import type { TOC } from '@ember/component/template-only';
 import type { Reflection } from 'typedoc';
 
-
 export function findChildDeclaration(info: Reflection, name: string) {
   if (!info.isDeclaration()) {
     return;
@@ -18,7 +17,11 @@ export function findChildDeclaration(info: Reflection, name: string) {
   return info.children?.find((child) => child.variant === 'declaration' && child.name === name);
 }
 
-export const infoFor = (project: ProjectReflection, module: string, name: string): Reflection | undefined => {
+export const infoFor = (
+  project: ProjectReflection,
+  module: string,
+  name: string
+): Reflection | undefined => {
   const moduleDoc = project.getChildByName(module);
 
   assert(

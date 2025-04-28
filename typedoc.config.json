@@ -1,9 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "tsconfig": "./tsconfig.typedoc.json",
-  "entryPoints": [
-    "./declarations/**"
-  ],
+  "entryPoints": ["./declarations/**"],
   "exclude": ["node_modules"],
   "cleanOutputDir": true,
   "compilerOptions": {

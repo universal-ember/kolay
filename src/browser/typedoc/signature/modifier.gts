@@ -6,7 +6,8 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { ProjectReflection, Reflection } from 'typedoc';
 
-function getSignatureType(info: Reflection, project: ProjectReflection) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getSignatureType(info: Reflection, _project: ProjectReflection) {
   if (!info.isDeclaration()) {
     return info;
   }
@@ -47,8 +48,9 @@ function getSignatureType(info: Reflection, project: ProjectReflection) {
       Array.isArray(info.type?.typeArguments) &&
       info.type.typeArguments.length > 0
     ) {
-      let typeArg = info.type?.typeArguments[0];
-      if (typeArg && 'declaration' in typeArg) { {
+      const typeArg = info.type?.typeArguments[0];
+
+      if (typeArg && 'declaration' in typeArg) {
         return typeArg.declaration;
       }
     }
@@ -72,8 +74,8 @@ function getSignatureType(info: Reflection, project: ProjectReflection) {
   return info;
 }
 
-function getSignature(info: any) {
-  const type = getSignatureType(info);
+function getSignature(info: Reflection, project: ProjectReflection) {
+  const type = getSignatureType(info, project);
 
   if (!type) {
     console.warn('Could not finde signature');
