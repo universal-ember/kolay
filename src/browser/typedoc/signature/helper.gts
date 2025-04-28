@@ -1,13 +1,12 @@
-import { isDeclarationReference } from '../narrowing';
 import { Type } from '../renderer.gts';
 import { Load } from '../utils.gts';
 import { Args, getArgs } from './args.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { Reflection } from 'typedoc';
+import type { ProjectReflection, Reflection } from 'typedoc';
 
-function getSignature(info: Reflection) {
-  if (!isDeclarationReference(info)) {
+function getSignature(info: Reflection, project: ProjectReflection) {
+  if (!info.isDeclaration()) {
     return;
   }
 
@@ -47,6 +46,37 @@ function getSignature(info: Reflection) {
     ) {
       return firstExtended.typeArguments[0].declaration;
     }
+
+    /**
+     * import Helper from '@ember/component/helper';
+     * But the types for the helper are not present
+     *
+     * export class MyHelper extends Helper<{...}>
+     */
+    if (
+      firstExtended?.type === 'reference' &&
+      Array.isArray(firstExtended.typeArguments) &&
+      firstExtended.typeArguments[0]
+    ) {
+      const firstTypeArg = firstExtended.typeArguments[0];
+
+      if ('declaration' in firstTypeArg) {
+        return firstTypeArg.declaration;
+      }
+
+      /**
+       * import Helper from '@ember/component/helper';
+       *
+       * export interface Signature { ... }
+       *
+       * export class MyHelper extends Helper<Signature>
+       */
+      if ('_target' in firstTypeArg && '_project' in firstTypeArg) {
+        const id = (firstTypeArg as any)._target;
+
+        return project.getReflectionById(id);
+      }
+    }
   }
 
   /**
@@ -63,6 +93,8 @@ function getSignature(info: Reflection) {
 }
 
 function getReturn(info: any) {
+  if (!info) return;
+
   if (info.variant === 'signature') {
     return info.type;
   }
@@ -102,9 +134,9 @@ export const HelperSignature: TOC<{
     package: string;
   };
 }> = <template>
-  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration|>
-    {{#let (getSignature declaration) as |info|}}
-      {{#if (globalThis.Array.isArray info)}}
+  <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
+    {{#let (getSignature declaration project) as |info|}}
+      {{#if (Array.isArray info)}}
         {{#each info as |signature|}}
           <Args @kind='helper' @info={{getArgs signature}} />
           <Return @info={{getReturn signature}} />

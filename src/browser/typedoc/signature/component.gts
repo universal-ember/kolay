@@ -1,4 +1,4 @@
-import { isDeclarationReference, isReference } from '../narrowing';
+import { isReference } from '../narrowing.ts';
 import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
 import { Args } from './args.gts';
@@ -35,8 +35,8 @@ function getSignatureType(info: Reflection, doc: any) {
   /**
    * export const Foo: TOC<{ signature here }> = <template> ... </template>
    */
-  if (isDeclarationReference(info)) {
-    if (isReference(info.type) && info.type?.typeArguments?.[0]?.type === 'reflection') {
+  if (info.isDeclaration()) {
+    if ( isReference(info.type) && info.type?.typeArguments?.[0]?.type === 'reflection') {
       return info.type.typeArguments[0].declaration;
     }
 

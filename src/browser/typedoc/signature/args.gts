@@ -1,7 +1,7 @@
 import { Comment, isIntrinsic, isNamedTuple, Type } from '../renderer.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection, SignatureReflection } from 'typedoc';
+import type { DeclarationReflection, Reflection, SignatureReflection } from 'typedoc';
 
 const not = (x: unknown) => !x;
 
@@ -17,7 +17,6 @@ export const Args: TOC<{
   {{#if @info}}
     <h3 class='typedoc__heading'>Arguments</h3>
     {{#each (listifyArgs @info) as |child|}}
-    {{log 'child' child}}
       <span class='typedoc__{{@kind}}-signature__arg'>
         <span class='typedoc__{{@kind}}-signature__arg-info'>
           <pre class='typedoc__name'>{{if (isComponent @kind) '@'}}{{child.name}}</pre>
@@ -91,7 +90,7 @@ function flattenArgs(args: any[]): any[] {
 /**
  * Returns args for either a function or signature
  */
-export function getArgs(info?: SignatureReflection | DeclarationReflection | DeclarationReflection[]) {
+export function getArgs(info?: Reflection | SignatureReflection | DeclarationReflection | DeclarationReflection[]) {
   if (!info) return [];
 
   if ('parameters' in info) {

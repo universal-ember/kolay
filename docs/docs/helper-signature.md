@@ -92,7 +92,7 @@ export const plainHelperC = (
 </fieldset>
 
 <fieldset>
-  <summary>class-based classic Helper, inline Signature (not currently supported)</summary>
+  <summary>class-based classic Helper, inline Signature</summary>
 
 ```ts
 export class ClassHelperD extends Helper<{
@@ -117,10 +117,11 @@ export class ClassHelperD extends Helper<{
 </fieldset>
 
 <fieldset>
-  <summary>class-based classic Helper, referenced Signature (not currently supported)</summary>
+  <summary>class-based classic Helper, referenced Signature</summary>
 
 ```ts
-interface ESignature {
+// NOTE: the interface must be exported
+export interface ESignature {
   Args: {
     Named: { optional?: boolean };
     Positional: [first: string, second?: string];
