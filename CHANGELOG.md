@@ -2,6 +2,22 @@
 
 ## Release (2025-04-28)
 
+* kolay 3.5.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#173](https://github.com/universal-ember/kolay/pull/173) Update typedoc, support all ways of specifying signatures on Components, and Helpers ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `kolay`
+  * [#175](https://github.com/universal-ember/kolay/pull/175) Prepare Release ([@github-actions[bot]](https://github.com/apps/github-actions))
+
+#### Committers: 2
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [@github-actions[bot]](https://github.com/apps/github-actions)
+
+## Release (2025-04-28)
+
 * kolay 3.4.0 (minor)
 
 #### :rocket: Enhancement
