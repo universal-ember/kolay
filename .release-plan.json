@@ -2,20 +2,17 @@
   "solution": {
     "kolay": {
       "impact": "minor",
-      "oldVersion": "3.2.0",
-      "newVersion": "3.3.0",
+      "oldVersion": "3.3.0",
+      "newVersion": "3.4.0",
+      "tagName": "latest",
       "constraints": [
         {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :memo: Documentation"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-04-26)\n\nkolay 3.3.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#172](https://github.com/universal-ember/kolay/pull/172) Support non-monorepos by allowing '.' for an entry in the 'packages' list of the build plugin ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* `kolay`\n  * [#170](https://github.com/universal-ember/kolay/pull/170) Add instructions for TS ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-04-28)\n\n* kolay 3.4.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#173](https://github.com/universal-ember/kolay/pull/173) Update typedoc, support all ways of specifying signatures on Components, and Helpers ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
