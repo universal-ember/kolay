@@ -1,5 +1,5 @@
 import { render } from '@ember/test-helpers';
-import { module, skip, test } from 'qunit';
+import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
 import { ComponentSignature } from 'kolay';
