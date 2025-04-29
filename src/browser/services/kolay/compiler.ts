@@ -1,4 +1,5 @@
 import Service, { service } from '@ember/service';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { Shadowed } from 'ember-primitives/components/shadowed';
 import { compile } from 'ember-repl';
@@ -35,16 +36,15 @@ export default class Compiler extends Service {
     } = this.docs;
     const defaults = getDefaultOptions();
 
-    compile(code, {
+    const promise = compile(code, {
       ...defaults,
       /**
        * Documentation can only be in markdown.
        */
       format: 'glimdown',
       ShadowComponent: 'Shadowed',
-      // Oops, I broke the types
-      remarkPlugins: remarkPlugins as never,
-      rehypePlugins: rehypePlugins as never,
+      remarkPlugins: remarkPlugins,
+      rehypePlugins: rehypePlugins,
       importMap: {
         ...defaults.importMap,
         ...importMap,
@@ -66,6 +66,8 @@ export default class Compiler extends Service {
       },
       onCompileStart: async () => (state.isCompiling = true),
     });
+
+    waitForPromise(promise);
 
     return state;
   };
