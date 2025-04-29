@@ -1,4 +1,5 @@
 import { Addon } from '@embroider/addon-dev/rollup';
+import fs from 'node:fs/promises';
 
 import { babel } from '@rollup/plugin-babel';
 import { execaCommand } from 'execa';
@@ -20,7 +21,7 @@ export default {
       'typedoc/index.js',
       'components/**/*.js',
       'services/kolay/{api-docs,compiler,docs,selected}.js',
-      'typedoc/**/*.{js,css}',
+      'typedoc/**/*.js',
     ]),
     babel({
       extensions: ['.js', '.gjs', '.gts', '.ts'],
@@ -32,7 +33,15 @@ export default {
     // addon.declarations('declarations'),
     {
       name: 'Build Declarations',
-      closeBundle: async () => await execaCommand(`pnpm glint`, { stdio: 'inherit' }),
+      closeBundle: async () => {
+        await execaCommand(`pnpm glint`, { stdio: 'inherit' });
+
+        // https://github.com/embroider-build/embroider/issues/2461
+        let contents = await fs.readFile('dist/browser/typedoc/index.js');
+        let fixed = contents.toString().replace(`'./styles2.css'`, `'./styles.css'`);
+
+        await fs.writeFile('dist/browser/typedoc/index.js', fixed);
+      },
     },
     addon.keepAssets(['**/styles.css']),
     addon.clean(),
