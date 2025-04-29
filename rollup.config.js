@@ -20,7 +20,7 @@ export default {
       'typedoc/index.js',
       'components/**/*.js',
       'services/kolay/{api-docs,compiler,docs,selected}.js',
-      'typedoc/**/*.js',
+      'typedoc/**/*.{js,css}',
     ]),
     babel({
       extensions: ['.js', '.gjs', '.gts', '.ts'],
@@ -34,7 +34,7 @@ export default {
       name: 'Build Declarations',
       closeBundle: async () => await execaCommand(`pnpm glint`, { stdio: 'inherit' }),
     },
-    addon.keepAssets(['**/*.css']),
+    addon.keepAssets(['**/styles.css']),
     addon.clean(),
   ],
 };
