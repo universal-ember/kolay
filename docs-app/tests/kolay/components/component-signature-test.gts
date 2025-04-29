@@ -1,5 +1,5 @@
 import { render } from '@ember/test-helpers';
-import { module, skip, test } from 'qunit';
+import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
 import { ComponentSignature } from 'kolay';
@@ -72,7 +72,7 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText(':namedBlockB');
   });
 
-  skip('class:reference', async function (assert) {
+  test('class:reference', async function (assert) {
     await render(
       <template>
         <ComponentSignature
@@ -93,7 +93,7 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText(':namedBlockB');
   });
 
-  skip('template-only:reference', async function (assert) {
+  test('template-only:reference', async function (assert) {
     await render(
       <template>
         <ComponentSignature
@@ -134,5 +134,23 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText(':default');
     assert.dom().containsText(':namedBlockA');
     assert.dom().containsText(':namedBlockB');
+  });
+
+  test('null Element', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="NullElement"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('Element:hehe');
+    assert.dom().containsText('null');
+    assert.dom().doesNotContainText('Arguments');
+    assert.dom().doesNotContainText('Blocks');
   });
 });

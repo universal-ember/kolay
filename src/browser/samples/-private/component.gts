@@ -16,6 +16,13 @@ export interface SignatureA {
   };
 }
 
+export interface NullElement {
+  /**
+   * Element:hehe
+   */
+  Element: null;
+}
+
 export class ClassA extends Component<{
   Element: HTMLDivElement;
   Args: {

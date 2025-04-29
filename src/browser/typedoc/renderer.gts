@@ -4,6 +4,7 @@
 import { hash } from '@ember/helper';
 
 import { Compiled } from '../services/kolay/compiler/reactive.ts';
+import { isLiteral } from './narrowing.ts';
 import { Load } from './utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -231,15 +232,6 @@ const isUnion = (x: SomeType | undefined): x is UnionType => {
 
   return x.type === 'union';
 };
-const isLiteral = (x: SomeType | undefined): x is UnionType => {
-  if (!x) return false;
-  if (typeof x !== 'object') return false;
-  if (x === null) return false;
-  if (!('type' in x)) return false;
-
-  return x.type === 'literal';
-};
-
 // function typeArg(info: DeclarationReference) {
 //   let extended = info?.extendedTypes?.[0]
 
