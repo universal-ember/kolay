@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-04-29)
+
+* kolay 3.5.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#177](https://github.com/universal-ember/kolay/pull/177) Fix getChildByName usage per https://github.com/TypeStrong/typedoc/discussions/2948 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-04-28)
 
 * kolay 3.5.0 (minor)
