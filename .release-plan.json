@@ -1,22 +1,18 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "3.4.0",
-      "newVersion": "3.5.0",
+      "impact": "patch",
+      "oldVersion": "3.5.0",
+      "newVersion": "3.5.1",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        },
-        {
           "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-04-28)\n\n* kolay 3.5.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#173](https://github.com/universal-ember/kolay/pull/173) Update typedoc, support all ways of specifying signatures on Components, and Helpers ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `kolay`\n  * [#175](https://github.com/universal-ember/kolay/pull/175) Prepare Release ([@github-actions[bot]](https://github.com/apps/github-actions))\n\n#### Committers: 2\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n- [@github-actions[bot]](https://github.com/apps/github-actions)\n"
+  "description": "## Release (2025-04-29)\n\n* kolay 3.5.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#177](https://github.com/universal-ember/kolay/pull/177) Fix getChildByName usage per https://github.com/TypeStrong/typedoc/discussions/2948 ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
