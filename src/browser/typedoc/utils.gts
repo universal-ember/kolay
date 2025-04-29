@@ -23,14 +23,14 @@ export const infoFor = (
   module: string,
   name: string
 ): Reflection | undefined => {
-  const moduleDoc = project.getChildByName(module);
+  const moduleDoc = project.getChildByName([module]);
 
   assert(
     `Could not find module by name: ${module}. Make sure that the d.ts file is present in the generated api docs.`,
     moduleDoc
   );
 
-  const found = moduleDoc.getChildByName(name);
+  const found = moduleDoc.getChildByName([name]);
 
   return found;
 };
