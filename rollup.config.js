@@ -36,11 +36,25 @@ export default {
       closeBundle: async () => {
         await execaCommand(`pnpm glint`, { stdio: 'inherit' });
 
-        // https://github.com/embroider-build/embroider/issues/2461
-        let contents = await fs.readFile('dist/browser/typedoc/index.js');
-        let fixed = contents.toString().replace(`'./styles2.css'`, `'./styles.css'`);
+        const deleteStyles2 = async () => {
+          await fs.rm('dist/browser/typedoc/styles2.css');
+          await fs.rm('dist/browser/typedoc/styles2.css.map');
+        };
 
-        await fs.writeFile('dist/browser/typedoc/index.js', fixed);
+        const updateFile = async (file, search, replace) => {
+          // https://github.com/embroider-build/embroider/issues/2461
+          let contents = await fs.readFile(file);
+          let fixed = contents.toString().replace(search, replace);
+
+          await fs.writeFile(file, fixed);
+        };
+
+        await Promise.all([
+          updateFile('dist/browser/typedoc/index.js', `'./styles2.css'`, `'./styles.css'`),
+          // This doesn't exist in source, but rollup.. just puts it here..
+          updateFile('dist/browser/index.js', `'./typedoc/styles2.css'`, `'./typedoc/styles.css'`),
+          deleteStyles2(),
+        ]);
       },
     },
     addon.keepAssets(['**/styles.css']),
