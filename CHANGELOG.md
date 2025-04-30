@@ -2,6 +2,17 @@
 
 ## Release (2025-04-30)
 
+* kolay 3.5.5 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#185](https://github.com/universal-ember/kolay/pull/185) Remove unused  files in dist ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-04-30)
+
 * kolay 3.5.4 (patch)
 
 #### :bug: Bug Fix
