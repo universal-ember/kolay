@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "3.5.2",
-      "newVersion": "3.5.3",
+      "oldVersion": "3.5.3",
+      "newVersion": "3.5.4",
       "tagName": "latest",
       "constraints": [
         {
@@ -14,5 +14,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-04-29)\n\n* kolay 3.5.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#181](https://github.com/universal-ember/kolay/pull/181) Fix styles output ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-04-30)\n\n* kolay 3.5.4 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#183](https://github.com/universal-ember/kolay/pull/183) Manually fix CSS ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
