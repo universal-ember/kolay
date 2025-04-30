@@ -41,6 +41,8 @@ export default {
         let fixed = contents.toString().replace(`'./styles2.css'`, `'./styles.css'`);
 
         await fs.writeFile('dist/browser/typedoc/index.js', fixed);
+        await fs.rm('dist/browser/typedoc/styles2.css');
+        await fs.rm('dist/browser/typedoc/styles2.css.map');
       },
     },
     addon.keepAssets(['**/styles.css']),
