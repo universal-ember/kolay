@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-04-30)
+
+* kolay 3.5.4 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#183](https://github.com/universal-ember/kolay/pull/183) Manually fix CSS ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-04-29)
 
 * kolay 3.5.3 (patch)
