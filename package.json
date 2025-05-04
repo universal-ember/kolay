@@ -175,7 +175,7 @@
     "reactiveweb": "^1.2.1",
     "release-plan": "^0.16.0",
     "rollup": "^4.40.0",
-    "tracked-built-ins": "^3.3.0",
+    "tracked-built-ins": "^4.0.0",
     "turbo": "^2.5.2",
     "typescript": "^5.7.3",
     "unified": "^11.0.5",
