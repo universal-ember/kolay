@@ -27,9 +27,6 @@ importers:
       '@glimmer/component':
         specifier: ^2.0.0
         version: 2.0.0
-      '@glimmer/tracking':
-        specifier: '>= 1.1.2'
-        version: 1.1.2
       '@glint/template':
         specifier: 1.4.1-unstable.d17c1f1
         version: 1.4.1-unstable.d17c1f1
@@ -51,9 +48,6 @@ importers:
       ember-resources:
         specifier: ^7.0.3
         version: 7.0.3(@glimmer/component@2.0.0)(@glimmer/tracking@1.1.2)(@glint/template@1.4.1-unstable.d17c1f1)(ember-source@6.5.0-alpha.6(@glimmer/component@2.0.0)(rsvp@4.8.5))
-      ember-source:
-        specifier: 6.5.0-alpha.6
-        version: 6.5.0-alpha.6(@glimmer/component@2.0.0)(rsvp@4.8.5)
       globby:
         specifier: ^14.1.0
         version: 14.1.0
@@ -148,6 +142,9 @@ importers:
       ember-qunit:
         specifier: ^9.0.1
         version: 9.0.1(@ember/test-helpers@5.2.1(@babel/core@7.26.10)(@glint/template@1.4.1-unstable.d17c1f1)(ember-source@6.5.0-alpha.6(@glimmer/component@2.0.0)(rsvp@4.8.5)))(@glint/template@1.4.1-unstable.d17c1f1)(ember-source@6.5.0-alpha.6(@glimmer/component@2.0.0)(rsvp@4.8.5))(qunit@2.24.1)
+      ember-source:
+        specifier: 6.5.0-alpha.6
+        version: 6.5.0-alpha.6(@glimmer/component@2.0.0)(rsvp@4.8.5)
       ember-template-lint:
         specifier: ^7.2.0
         version: 7.2.0(@babel/core@7.26.10)
