@@ -82,30 +82,27 @@
     "declarations"
   ],
   "scripts": {
-    "prepare": "pnpm build",
-    "prepack": "pnpm build",
+    "_syncPnpm": "pnpm sync-dependencies-meta-injected",
+    "build": "rollup --config",
     "fix": "pnpm lint:fix && pnpm --filter docs-app lint:fix",
     "lint": "pnpm turbo _:lint",
     "lint:fix": "pnpm turbo _:lint:fix",
-    "lint:js": "eslint ./src",
-    "lint:js:fix": "eslint ./src --fix",
     "lint:hbs": "ember-template-lint . --no-error-on-unmatched-pattern",
     "lint:hbs:fix": "ember-template-lint . --fix --no-error-on-unmatched-pattern",
-    "lint:types": "glint",
+    "lint:js": "eslint ./src",
+    "lint:js:fix": "eslint ./src --fix",
     "lint:package": "publint",
     "lint:prettier": "prettier . --check",
     "lint:prettier:fix": "prettier . --write",
     "lint:published-types": "attw --pack",
-    "build": "rollup --config",
-    "_syncPnpm": "pnpm sync-dependencies-meta-injected",
+    "lint:types": "glint",
+    "prepack": "pnpm build",
+    "prepare": "pnpm build",
     "start": "concurrently 'pnpm:start:*'",
     "start:browser": "rollup --config --watch",
     "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
-    "test:node": "vitest --run",
-    "test:dev": "vitest dev"
-  },
-  "peerDependencies": {
-    "@glint/template": "*"
+    "test:dev": "vitest dev",
+    "test:node": "vitest --run"
   },
   "dependencies": {
     "@ember/test-waiters": "^4.0.0",
@@ -178,18 +175,44 @@
     "vite": "^6.3.3",
     "vitest": "^3.1.2"
   },
+  "peerDependencies": {
+    "@glint/template": "*"
+  },
+  "packageManager": "pnpm@10.4.1",
   "engines": {
     "node": ">= 18"
   },
+  "volta": {
+    "node": "22.15.0",
+    "pnpm": "10.4.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/core",
+        "webpack",
+        "rsvp"
+      ]
+    },
+    "overrides": {
+      "@ember/render-modifier": "^2.1.0",
+      "@ember/test-waiters": "^4.0.0",
+      "@glimmer/component": "^2.0.0",
+      "@glimmer/validator": ">= 0.92.0",
+      "ember-repl": "6.0.0",
+      "ember-source": "6.5.0-alpha.6"
+    },
     "packageExtensions": {
-      "ember-repl": {
+      "ember-async-data": {
         "peerDependencies": {
-          "reactiveweb": "*",
           "ember-source": "*"
         }
       },
-      "ember-async-data": {
+      "ember-cached-decorator-polyfill": {
         "peerDependencies": {
           "ember-source": "*"
         }
@@ -199,36 +222,18 @@
           "ember-source": "*"
         }
       },
+      "ember-repl": {
+        "peerDependencies": {
+          "ember-source": "*",
+          "reactiveweb": "*"
+        }
+      },
       "ember-resources": {
         "peerDependencies": {
           "ember-source": "*"
         }
-      },
-      "ember-cached-decorator-polyfill": {
-        "peerDependencies": {
-          "ember-source": "*"
-        }
       }
-    },
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "@babel/core",
-        "webpack",
-        "rsvp"
-      ]
-    },
-    "overrides": {
-      "@ember/test-waiters": "^4.0.0",
-      "@glimmer/component": "^2.0.0",
-      "@glimmer/validator": ">= 0.92.0",
-      "@ember/render-modifier": "^2.1.0",
-      "ember-repl": "6.0.0",
-      "ember-source": "6.5.0-alpha.6"
     }
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
   },
   "ember": {
     "edition": "octane"
@@ -243,10 +248,5 @@
       "./services/kolay/docs.js": "./src/browser/app-re-exports/docs.js",
       "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
     }
-  },
-  "packageManager": "pnpm@10.4.1",
-  "volta": {
-    "node": "22.15.0",
-    "pnpm": "10.4.1"
   }
 }
