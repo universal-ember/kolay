@@ -1,0 +1,1 @@
+/* empty file to trick typescript into generating declarations with a matching folder structure to src. do not delete */
