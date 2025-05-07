@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-05-07)
+
+* kolay 3.5.6 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#187](https://github.com/universal-ember/kolay/pull/187) Remove unneeded peerDependencies (provided by ember-source virtualDeps) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-04-30)
 
 * kolay 3.5.5 (patch)

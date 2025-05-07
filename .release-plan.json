@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "3.5.4",
-      "newVersion": "3.5.5",
+      "oldVersion": "3.5.5",
+      "newVersion": "3.5.6",
       "tagName": "latest",
       "constraints": [
         {
@@ -14,5 +14,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-04-30)\n\n* kolay 3.5.5 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#185](https://github.com/universal-ember/kolay/pull/185) Remove unused  files in dist ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-05-07)\n\n* kolay 3.5.6 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#187](https://github.com/universal-ember/kolay/pull/187) Remove unneeded peerDependencies (provided by ember-source virtualDeps) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
