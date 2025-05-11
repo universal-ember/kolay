@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "3.6.0",
-      "newVersion": "3.6.1",
+      "oldVersion": "3.6.1",
+      "newVersion": "3.6.2",
       "tagName": "latest",
       "constraints": [
         {
@@ -14,5 +14,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-05-11)\n\n* kolay 3.6.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#192](https://github.com/universal-ember/kolay/pull/192) Bump ember-primitives ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-05-11)\n\n* kolay 3.6.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#194](https://github.com/universal-ember/kolay/pull/194) Fix release ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
