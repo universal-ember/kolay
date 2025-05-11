@@ -2,6 +2,17 @@
 
 ## Release (2025-05-11)
 
+* kolay 3.6.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#194](https://github.com/universal-ember/kolay/pull/194) Fix release ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-05-11)
+
 * kolay 3.6.1 (patch)
 
 #### :bug: Bug Fix
