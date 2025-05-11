@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2025-05-11)
+
+* kolay 3.6.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#191](https://github.com/universal-ember/kolay/pull/191) Update deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `kolay`
+  * [#189](https://github.com/universal-ember/kolay/pull/189) Update release-plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-05-07)
 
 * kolay 3.5.6 (patch)
