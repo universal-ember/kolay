@@ -2,6 +2,17 @@
 
 ## Release (2025-05-11)
 
+* kolay 3.6.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#192](https://github.com/universal-ember/kolay/pull/192) Bump ember-primitives ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-05-11)
+
 * kolay 3.6.0 (minor)
 
 #### :rocket: Enhancement

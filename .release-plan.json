@@ -1,22 +1,18 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "3.5.6",
-      "newVersion": "3.6.0",
+      "impact": "patch",
+      "oldVersion": "3.6.0",
+      "newVersion": "3.6.1",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        },
-        {
           "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-05-11)\n\n* kolay 3.6.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#191](https://github.com/universal-ember/kolay/pull/191) Update deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `kolay`\n  * [#189](https://github.com/universal-ember/kolay/pull/189) Update release-plan ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-05-11)\n\n* kolay 3.6.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#192](https://github.com/universal-ember/kolay/pull/192) Bump ember-primitives ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
