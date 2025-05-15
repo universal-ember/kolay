@@ -149,7 +149,7 @@ module('<ComponentSignature>', function (hooks) {
 
     // Temporary -- need to figure out what async thing doesn't have a waiter
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    await waitUntil(() => this.element?.textContent?.includes('Element:hehe'));
+    await waitUntil(() => (this as any).element?.textContent?.includes('Element:hehe'));
     assert.dom().containsText('Element');
     assert.dom().containsText('Element:hehe');
     assert.dom().containsText('null');
