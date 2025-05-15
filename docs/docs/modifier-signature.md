@@ -7,11 +7,7 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 ## API Reference
 
 ```hbs live no-shadow
-<ComponentSignature
-  @module='declarations/browser'
-  @name='ModifierSignature'
-  @package='kolay'
-/>
+<ComponentSignature @module="declarations/browser" @name="ModifierSignature" @package="kolay" />
 ```
 
 ## Supported Signatures
@@ -31,9 +27,9 @@ export interface ModifierSignatureA {
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='declarations/browser/samples/-private'
-  @name='ModifierSignatureA'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="ModifierSignatureA"
+  @package="kolay"
 />
 ```
 
@@ -43,7 +39,7 @@ export interface ModifierSignatureA {
   <summary>function modifier, ModifierLike</summary>
 
 ```ts
-import { ModifierLike } from '@glint/template';
+import { ModifierLike } from "@glint/template";
 
 export const functionModifierC: ModifierLike<{
   Element: HTMLDivElement;
@@ -52,11 +48,7 @@ export const functionModifierC: ModifierLike<{
     Named: { invert?: boolean };
   };
 }> = modifier(
-  (
-    element: HTMLDivElement,
-    positional: [x: number, y: number],
-    named: { invert?: boolean },
-  ) => {
+  (element: HTMLDivElement, positional: [x: number, y: number], named: { invert?: boolean }) => {
     /* ... */
   },
 );
@@ -64,9 +56,9 @@ export const functionModifierC: ModifierLike<{
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='declarations/browser/samples/-private'
-  @name='functionModifierC'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="functionModifierC"
+  @package="kolay"
 />
 ```
 
@@ -82,22 +74,16 @@ export const functionModifierA = modifier<{
     Positional: [x: number, y: number];
     Named: { invert?: boolean };
   };
-}>(
-  (
-    element: HTMLDivElement,
-    positional: [x: number, y: number],
-    named: { invert?: boolean },
-  ) => {
-    /* ... */
-  },
-);
+}>((element: HTMLDivElement, positional: [x: number, y: number], named: { invert?: boolean }) => {
+  /* ... */
+});
 ```
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='declarations/browser/samples/-private'
-  @name='functionModifierA'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="functionModifierA"
+  @package="kolay"
 />
 ```
 
@@ -108,11 +94,7 @@ export const functionModifierA = modifier<{
 
 ```ts
 export const functionModifierB = modifier(
-  (
-    element: HTMLDivElement,
-    positional: [x: number, y: number],
-    named: { invert?: boolean },
-  ) => {
+  (element: HTMLDivElement, positional: [x: number, y: number], named: { invert?: boolean }) => {
     /* ... */
   },
 );
@@ -120,9 +102,9 @@ export const functionModifierB = modifier(
 
 ```hbs live no-shadow preview below
 <ModifierSignature
-  @module='declarations/browser/samples/-private'
-  @name='functionModifierB'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="functionModifierB"
+  @package="kolay"
 />
 ```
 

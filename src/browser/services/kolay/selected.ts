@@ -48,7 +48,7 @@ export default class Selected extends Service {
 
   get config() {
     // @ts-ignore
-    return getOwner(this).resolveRegistration('config:environment')
+    return getOwner(this).resolveRegistration('config:environment');
   }
 
   /*********************************************************************

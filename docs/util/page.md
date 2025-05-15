@@ -7,9 +7,5 @@ This component is for rendering the page for the currently selected document, de
 ## API Reference
 
 ```hbs live no-shadow
-<ComponentSignature
-  @package='kolay'
-  @name='Page'
-  @module='declarations/browser/components'
-/>
+<ComponentSignature @package="kolay" @name="Page" @module="declarations/browser/components" />
 ```

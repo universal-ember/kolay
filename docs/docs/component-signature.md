@@ -7,11 +7,7 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 ## API Reference
 
 ```hbs live no-shadow
-<ComponentSignature
-  @module='declarations/browser'
-  @name='ComponentSignature'
-  @package='kolay'
-/>
+<ComponentSignature @module="declarations/browser" @name="ComponentSignature" @package="kolay" />
 ```
 
 ## Supported Signatures
@@ -36,9 +32,9 @@ export interface SignatureA {
 
 ```hbs live no-shadow preview below
 <ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='SignatureA'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="SignatureA"
+  @package="kolay"
 />
 ```
 
@@ -64,9 +60,9 @@ export class ClassA extends Component<{
 
 ```hbs live no-shadow preview below
 <ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='ClassA'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="ClassA"
+  @package="kolay"
 />
 ```
 
@@ -82,9 +78,9 @@ export class ClassB extends Component<SignatureA> {}
 
 ```hbs live no-shadow
 <ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='ClassB'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="ClassB"
+  @package="kolay"
 />
 ```
 
@@ -100,9 +96,9 @@ export const TemplateOnlyC: TOC<SignatureA> = <template>...</template>;
 
 ```hbs live no-shadow
 <ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='TemplateOnlyC'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="TemplateOnlyC"
+  @package="kolay"
 />
 ```
 
@@ -128,9 +124,9 @@ export const TemplateOnlyD: TOC<{
 
 ```hbs live no-shadow preview below
 <ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='TemplateOnlyD'
-  @package='kolay'
+  @module="declarations/browser/samples/-private"
+  @name="TemplateOnlyD"
+  @package="kolay"
 />
 ```
 

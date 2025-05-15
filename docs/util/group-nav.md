@@ -7,9 +7,5 @@ This components provides a `<nav>` for the configured `groups` from your build c
 ## API Reference
 
 ```hbs live no-shadow
-<ComponentSignature
-  @package='kolay'
-  @name='GroupNav'
-  @module='declarations/browser/components'
-/>
+<ComponentSignature @package="kolay" @name="GroupNav" @module="declarations/browser/components" />
 ```
