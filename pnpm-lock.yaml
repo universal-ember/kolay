@@ -5,10 +5,10 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  '@ember/render-modifier': ^2.1.0
   '@ember/test-waiters': ^4.0.0
   '@glimmer/component': ^2.0.0
   '@glimmer/validator': '>= 0.92.0'
-  '@ember/render-modifier': ^2.1.0
   ember-repl: 6.0.0
   ember-source: 6.5.0-alpha.6
 
@@ -344,6 +344,9 @@ importers:
       eslint:
         specifier: ^9.26.0
         version: 9.26.0(jiti@2.4.2)
+      loader.js:
+        specifier: ^4.7.0
+        version: 4.7.0
       pnpm-sync-dependencies-meta-injected:
         specifier: ^0.0.14
         version: 0.0.14
@@ -6064,6 +6067,9 @@ packages:
   loader-utils@2.0.4:
     resolution: {integrity: sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==}
     engines: {node: '>=8.9.0'}
+
+  loader.js@4.7.0:
+    resolution: {integrity: sha512-9M2KvGT6duzGMgkOcTkWb+PR/Q2Oe54df/tLgHGVmFpAmtqJ553xJh6N63iFYI2yjo2PeJXbS5skHi/QpJq4vA==}
 
   locate-path@2.0.0:
     resolution: {integrity: sha512-NCI2kiDkyR7VeEKm27Kda/iQHyKJe1Bu0FlTbYp3CqJu+9IFe9bLyAjMxf5ZDDbEg+iMPzB5zYyUTSm8wVTKmA==}
@@ -16435,6 +16441,8 @@ snapshots:
       big.js: 5.2.2
       emojis-list: 3.0.0
       json5: 2.2.3
+
+  loader.js@4.7.0: {}
 
   locate-path@2.0.0:
     dependencies:

@@ -1,4 +1,4 @@
-import { render } from '@ember/test-helpers';
+import { render, waitUntil } from '@ember/test-helpers';
 import { module, skip, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
@@ -36,7 +36,9 @@ module('<HelperSignature>', function (hooks) {
         />
       </template>
     );
-
+    // Temporary -- need to figure out what async thing doesn't have a waiter
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    await waitUntil(() => (this as any).element.textContent.includes('the first argument'));
     assert.dom().doesNotContainText('Element');
     assert.dom().containsText('the first argument');
     assert.dom().containsText('the second argument');

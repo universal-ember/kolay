@@ -40,6 +40,7 @@ export const markdownPages = (options) => {
    * @type {import('vite').ViteDevServer}
    */
   let server;
+  let baseUrl = '/';
 
   /**
    * @type {import('unplugin').UnpluginOptions}
@@ -59,6 +60,9 @@ export const markdownPages = (options) => {
           });
         }
       },
+      configResolved(resolvedConfig) {
+        baseUrl = resolvedConfig.base;
+      },
       configureServer(s) {
         server = s;
 
@@ -67,7 +71,7 @@ export const markdownPages = (options) => {
             if (req.originalUrl && req.originalUrl.length > 1) {
               const assetUrl = req.originalUrl.split('?')[0] || '';
 
-              if (assetUrl === `/${destination}/${name}`) {
+              if (assetUrl === `${baseUrl}${destination}/${name}`) {
                 const reshaped = await discover({ src, groups });
 
                 res.setHeader('content-type', 'application/json');
@@ -75,8 +79,8 @@ export const markdownPages = (options) => {
                 return res.end(JSON.stringify(reshaped, null, 2));
               }
 
-              if (groups && assetUrl.startsWith('/docs')) {
-                const groupName = assetUrl.split('/')[2];
+              if (groups && assetUrl.slice(baseUrl.length - 1).startsWith('/docs')) {
+                const groupName = assetUrl.slice(baseUrl.length - 1).split('/')[2];
                 const g = groups.find((group) => {
                   // discover mutates the groups array
                   if (group.name === 'root') return;
@@ -109,7 +113,7 @@ export const markdownPages = (options) => {
 
       if (server) return;
 
-      const reshaped = await discover({ src, groups });
+      const reshaped = await discover({ src, groups, baseUrl });
 
       if (groups) {
         groups.forEach((group) => {
@@ -151,9 +155,10 @@ export const markdownPages = (options) => {
 
     ...virtualFile({
       importPath: SECRET_INTERNAL_IMPORT,
-      content: stripIndent`
+      get content() {
+        return stripIndent`
           export const load = async () => {
-            let request = await fetch('/${fileName}', {
+            let request = await fetch('${baseUrl || '/'}${fileName}', {
               headers: {
                 Accept: 'application/json',
               },
@@ -161,7 +166,8 @@ export const markdownPages = (options) => {
             let json = await request.json();
             return json;
           }
-        `,
+        `;
+      },
     }),
   };
 };

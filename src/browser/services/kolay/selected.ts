@@ -1,3 +1,4 @@
+import { getOwner } from '@ember/owner';
 import Service, { service } from '@ember/service';
 
 import { use } from 'ember-resources';
@@ -9,6 +10,7 @@ import { MDRequest } from './request.ts';
 
 import type { Page } from '../../../types.ts';
 import type DocsService from './docs.ts';
+import type ApplicationInstance from '@ember/application/instance';
 import type RouterService from '@ember/routing/router-service';
 
 /**
@@ -45,6 +47,10 @@ export default class Selected extends Service {
   @service declare router: RouterService;
   @service('kolay/docs') declare docs: DocsService;
 
+  get rootURL() {
+    return (getOwner(this) as ApplicationInstance).router.rootURL;
+  }
+
   /*********************************************************************
    * These load the files from /public and handle loading / error state.
    *
@@ -52,7 +58,7 @@ export default class Selected extends Service {
    * be cancelled if it was still pending.
    *******************************************************************/
 
-  @link request = new MDRequest(() => `/docs${this.path}.md`);
+  @link request = new MDRequest(() => `${this.rootURL}docs${this.path}.md`);
   @link compiled = new Prose(() => this.request.lastSuccessful);
 
   get proseCompiled() {

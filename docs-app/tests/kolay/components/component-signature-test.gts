@@ -1,4 +1,4 @@
-import { render } from '@ember/test-helpers';
+import { render, waitUntil } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
@@ -147,6 +147,9 @@ module('<ComponentSignature>', function (hooks) {
       </template>
     );
 
+    // Temporary -- need to figure out what async thing doesn't have a waiter
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    await waitUntil(() => (this as any).element?.textContent?.includes('Element:hehe'));
     assert.dom().containsText('Element');
     assert.dom().containsText('Element:hehe');
     assert.dom().containsText('null');

@@ -7,6 +7,6 @@ module('All Links', function (hooks) {
   setupApplicationTest(hooks);
 
   test('are visitable without error', async function () {
-    await visitAllLinks();
+    await visitAllLinks(async () => new Promise((resolve) => setTimeout(resolve, 250)));
   });
 });
