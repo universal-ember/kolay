@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-05-15)
+
+* kolay 3.7.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#196](https://github.com/universal-ember/kolay/pull/196) support custom base url for vite ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2025-05-11)
 
 * kolay 3.6.2 (patch)

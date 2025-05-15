@@ -1,18 +1,18 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "3.6.1",
-      "newVersion": "3.6.2",
+      "impact": "minor",
+      "oldVersion": "3.6.2",
+      "newVersion": "3.7.0",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-05-11)\n\n* kolay 3.6.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#194](https://github.com/universal-ember/kolay/pull/194) Fix release ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-05-15)\n\n* kolay 3.7.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#196](https://github.com/universal-ember/kolay/pull/196) support custom base url for vite ([@patricklx](https://github.com/patricklx))\n\n#### Committers: 1\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n"
 }
