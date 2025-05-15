@@ -1,5 +1,7 @@
 import './setup-inspector.ts';
+
 import Application from '@ember/application';
+
 import Resolver from 'ember-resolver';
 
 import config from './config.ts';

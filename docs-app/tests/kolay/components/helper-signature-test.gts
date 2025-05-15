@@ -36,6 +36,8 @@ module('<HelperSignature>', function (hooks) {
         />
       </template>
     );
+    // Temporary -- need to figure out what async thing doesn't have a waiter
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     await waitUntil(() => this.element.textContent.includes('the first argument'));
     assert.dom().doesNotContainText('Element');
     assert.dom().containsText('the first argument');

@@ -1,10 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import Ember from 'ember';
+import * as destroyable from '@glimmer/destroyable';
+import * as reference from '@glimmer/reference';
 import * as runtime from '@glimmer/runtime';
 import * as tracking from '@glimmer/tracking';
 import * as validator from '@glimmer/validator';
-import * as reference from '@glimmer/reference';
-import * as destroyable from '@glimmer/destroyable';
 import { RSVP } from '@ember/-internals/runtime';
+
 import config from './config';
 
 window.define('@glimmer/tracking', () => tracking);
