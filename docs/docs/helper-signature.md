@@ -7,7 +7,11 @@ This, along with the other API doc-related components, are powered by [TypeDoc](
 ## API Reference
 
 ```hbs live no-shadow
-<ComponentSignature @module="declarations/browser" @name="HelperSignature" @package="kolay" />
+<ComponentSignature
+  @module='declarations/browser'
+  @name='HelperSignature'
+  @package='kolay'
+/>
 ```
 
 ## Supported Signatures
@@ -28,9 +32,9 @@ export function plainHelperA(first: number, second: number): number {
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module="declarations/browser/samples/-private"
-  @name="plainHelperA"
-  @package="kolay"
+  @module='declarations/browser/samples/-private'
+  @name='plainHelperA'
+  @package='kolay'
 />
 ```
 
@@ -40,7 +44,7 @@ export function plainHelperA(first: number, second: number): number {
   <summary>Plain Function, cast as HelperLike</summary>
 
 ```ts
-import type { HelperLike } from "@glint/template";
+import type { HelperLike } from '@glint/template';
 
 export const helperLikeB = ((...args: unknown[]) => {
   /* ... */
@@ -55,9 +59,9 @@ export const helperLikeB = ((...args: unknown[]) => {
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module="declarations/browser/samples/-private"
-  @name="helperLikeB"
-  @package="kolay"
+  @module='declarations/browser/samples/-private'
+  @name='helperLikeB'
+  @package='kolay'
 />
 ```
 
@@ -79,9 +83,9 @@ export const plainHelperC = (
 
 ```hbs live no-shadow preview below
 <HelperSignature
-  @module="declarations/browser/samples/-private"
-  @name="plainHelperC"
-  @package="kolay"
+  @module='declarations/browser/samples/-private'
+  @name='plainHelperC'
+  @package='kolay'
 />
 ```
 
@@ -104,9 +108,9 @@ export class ClassHelperD extends Helper<{
 
 ```hbs live no-shadow
 <HelperSignature
-  @module="declarations/browser/samples/-private"
-  @name="classHelperD"
-  @package="kolay"
+  @module='declarations/browser/samples/-private'
+  @name='classHelperD'
+  @package='kolay'
 />
 ```
 
@@ -132,9 +136,9 @@ export class classHelperE extends Helper<ESignature> {
 
 ```hbs live no-shadow
 <HelperSignature
-  @module="declarations/browser/samples/-private"
-  @name="classHelperE"
-  @package="kolay"
+  @module='declarations/browser/samples/-private'
+  @name='classHelperE'
+  @package='kolay'
 />
 ```
 
