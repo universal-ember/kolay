@@ -10,6 +10,7 @@ import { MDRequest } from './request.ts';
 
 import type { Page } from '../../../types.ts';
 import type DocsService from './docs.ts';
+import type Application from '@ember/application';
 import type RouterService from '@ember/routing/router-service';
 
 /**
@@ -47,8 +48,10 @@ export default class Selected extends Service {
   @service('kolay/docs') declare docs: DocsService;
 
   get config() {
-    // @ts-ignore
-    return getOwner(this).resolveRegistration('config:environment');
+    // @ts-expect-error ignore
+    return (getOwner(this) as Application).resolveRegistration('config:environment') as {
+      rootUrl: string
+    };
   }
 
   /*********************************************************************
