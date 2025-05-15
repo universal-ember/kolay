@@ -10,7 +10,7 @@ import { MDRequest } from './request.ts';
 
 import type { Page } from '../../../types.ts';
 import type DocsService from './docs.ts';
-import type Application from '@ember/application';
+import type ApplicationInstance from '@ember/application/instance';
 import type RouterService from '@ember/routing/router-service';
 
 /**
@@ -47,11 +47,9 @@ export default class Selected extends Service {
   @service declare router: RouterService;
   @service('kolay/docs') declare docs: DocsService;
 
-  get config() {
+  get rootURL() {
     // @ts-expect-error ignore
-    return (getOwner(this) as Application).resolveRegistration('config:environment') as {
-      rootURL: string;
-    };
+    return (getOwner(this) as ApplicationInstance).router.rootURL;
   }
 
   /*********************************************************************
@@ -61,7 +59,7 @@ export default class Selected extends Service {
    * be cancelled if it was still pending.
    *******************************************************************/
 
-  @link request = new MDRequest(() => `${this.config.rootURL}docs${this.path}.md`);
+  @link request = new MDRequest(() => `${this.rootURL}docs${this.path}.md`);
   @link compiled = new Prose(() => this.request.lastSuccessful);
 
   get proseCompiled() {
