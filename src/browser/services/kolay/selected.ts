@@ -48,7 +48,6 @@ export default class Selected extends Service {
   @service('kolay/docs') declare docs: DocsService;
 
   get rootURL() {
-    // @ts-expect-error ignore
     return (getOwner(this) as ApplicationInstance).router.rootURL;
   }
 
