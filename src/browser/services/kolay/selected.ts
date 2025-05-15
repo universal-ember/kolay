@@ -50,7 +50,7 @@ export default class Selected extends Service {
   get config() {
     // @ts-expect-error ignore
     return (getOwner(this) as Application).resolveRegistration('config:environment') as {
-      rootUrl: string
+      rootURL: string
     };
   }
 
