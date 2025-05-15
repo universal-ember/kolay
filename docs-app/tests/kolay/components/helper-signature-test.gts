@@ -1,4 +1,4 @@
-import { render } from '@ember/test-helpers';
+import { render, waitUntil } from '@ember/test-helpers';
 import { module, skip, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
@@ -36,7 +36,7 @@ module('<HelperSignature>', function (hooks) {
         />
       </template>
     );
-
+    await waitUntil(() => this.element.textContent.includes('the first argument'));
     assert.dom().doesNotContainText('Element');
     assert.dom().containsText('the first argument');
     assert.dom().containsText('the second argument');
