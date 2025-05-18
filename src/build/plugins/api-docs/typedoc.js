@@ -87,6 +87,7 @@ export async function generateTypeDocJSON({ packageName }) {
 
   if (project) {
     let data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
+
     return data;
   }
 
