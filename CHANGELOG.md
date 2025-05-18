@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-05-18)
+
+* kolay 3.7.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#198](https://github.com/universal-ember/kolay/pull/198) remove debug output ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2025-05-15)
 
 * kolay 3.7.0 (minor)
