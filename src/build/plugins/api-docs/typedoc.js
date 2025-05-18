@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import { writeFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
@@ -88,8 +87,6 @@ export async function generateTypeDocJSON({ packageName }) {
 
   if (project) {
     let data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
-
-    writeFileSync(packageName + '-project.json', JSON.stringify(data, null, 2));
 
     return data;
   }
