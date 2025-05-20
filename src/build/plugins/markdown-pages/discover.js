@@ -35,7 +35,7 @@ export async function discover({ groups, src, baseUrl }) {
         base += '/';
       }
 
-      let prefix = group.name === 'root' ? baseUrl : `${baseUrl}${group.name}`;
+      let prefix = group.name === 'root' ? base : `${base}${group.name}`;
 
       if (prefix.endsWith('/')) {
         prefix = prefix.slice(0, -1);
