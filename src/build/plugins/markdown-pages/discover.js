@@ -30,9 +30,11 @@ export async function discover({ groups, src, baseUrl }) {
     [...groupsToLookFor.values()].map(async (group) => {
       const { include, onlyDirectories, exclude } = group;
       let base = baseUrl;
+
       if (!base.endsWith('/')) {
         base += '/';
       }
+
       let prefix = group.name === 'root' ? baseUrl : `${baseUrl}${group.name}`;
       if (prefix.endsWith('/')) {
         prefix = prefix.slice(0, -1);
