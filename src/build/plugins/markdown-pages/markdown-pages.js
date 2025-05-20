@@ -72,7 +72,7 @@ export const markdownPages = (options) => {
               const assetUrl = req.originalUrl.split('?')[0] || '';
 
               if (assetUrl === `${baseUrl}${destination}/${name}`) {
-                const reshaped = await discover({ src, groups });
+                const reshaped = await discover({ src, groups, baseUrl });
 
                 res.setHeader('content-type', 'application/json');
 
@@ -158,7 +158,7 @@ export const markdownPages = (options) => {
       get content() {
         return stripIndent`
           export const load = async () => {
-            let request = await fetch('${baseUrl || '/'}${fileName}', {
+            let request = await fetch('${baseUrl || '/'}${fileName.replace(/\\/g, '/')}', {
               headers: {
                 Accept: 'application/json',
               },

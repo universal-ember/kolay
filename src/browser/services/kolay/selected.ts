@@ -120,7 +120,11 @@ export default class Selected extends Service {
   }
 
   #findByPath = (path: string) => {
-    return this.docs.pages.find((page) => page.path === `${path}.md`);
+    let rootURL = this.rootURL;
+    if (rootURL.endsWith('/')) {
+      rootURL = rootURL.slice(0, -1);
+    }
+    return this.docs.pages.find((page) => page.path.slice(rootURL.length) === `${path}.md`);
   };
 }
 

@@ -15,7 +15,7 @@ import { reshape } from './hydrate.js';
  * @param {Options} options
  * @return {Promise<import('../../../types.ts').Manifest>}
  */
-export async function discover({ groups, src }) {
+export async function discover({ groups, src, baseUrl }) {
   groups ??= [];
 
   let groupsToLookFor = new Set();
@@ -29,7 +29,14 @@ export async function discover({ groups, src }) {
   let foundGroups = await Promise.all(
     [...groupsToLookFor.values()].map(async (group) => {
       const { include, onlyDirectories, exclude } = group;
-      const prefix = group.name === 'root' ? '' : `/${group.name}`;
+      let base = baseUrl;
+      if (!base.endsWith('/')) {
+        base += '/';
+      }
+      let prefix = group.name === 'root' ? baseUrl : `${baseUrl}${group.name}`;
+      if (prefix.endsWith('/')) {
+        prefix = prefix.slice(0, -1);
+      }
 
       const found = await pathsFor({
         include: include ?? '**/*',
