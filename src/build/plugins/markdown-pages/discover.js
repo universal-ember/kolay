@@ -29,7 +29,7 @@ export async function discover({ groups, src, baseUrl }) {
   let foundGroups = await Promise.all(
     [...groupsToLookFor.values()].map(async (group) => {
       const { include, onlyDirectories, exclude } = group;
-      let base = baseUrl;
+      let base = baseUrl || '/';
 
       if (!base.endsWith('/')) {
         base += '/';
