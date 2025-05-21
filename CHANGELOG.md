@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-05-21)
+
+* kolay 3.7.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#202](https://github.com/universal-ember/kolay/pull/202) remove everything before docs as well to detect if page exists ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2025-05-18)
 
 * kolay 3.7.1 (patch)
