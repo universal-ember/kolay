@@ -1,5 +1,6 @@
 import { cached } from '@glimmer/tracking';
 import { service } from '@ember/service';
+import type RouterService from '@ember/routing/router-service';
 
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
@@ -8,7 +9,7 @@ import { RemoteData } from 'reactiveweb/remote-data';
 import type DocsService from './docs.ts';
 
 export const OUTPUT_PREFIX = `/docs/`;
-export const OUTPUT_PREFIX_REGEX = /.*\/docs\//;
+export const OUTPUT_PREFIX_REGEX = /^\/docs\//;
 
 /**
  * With how data is derived here, the `fetch` request does not execute
@@ -22,6 +23,7 @@ export class MDRequest {
   constructor(private urlFn: () => string) {}
 
   @service('kolay/docs') declare docs: DocsService;
+  @service declare router: RouterService;
 
   /**
    * TODO: use a private property when we move to spec-decorators
@@ -50,7 +52,7 @@ export class MDRequest {
   @cached
   private get _doesPageExist() {
     const url = this.urlFn();
-    const pagePath = url.replace(OUTPUT_PREFIX_REGEX, '/');
+    const pagePath = url.replace(this.router.rootURL, '/').replace(OUTPUT_PREFIX_REGEX, '/');
     const group = this.docs.groupForURL(pagePath);
 
     return Boolean(group);
