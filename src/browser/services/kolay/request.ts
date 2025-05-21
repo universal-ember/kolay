@@ -8,7 +8,7 @@ import { RemoteData } from 'reactiveweb/remote-data';
 import type DocsService from './docs.ts';
 
 export const OUTPUT_PREFIX = `/docs/`;
-export const OUTPUT_PREFIX_REGEX = /^\/docs\//;
+export const OUTPUT_PREFIX_REGEX = /.*\/docs\//;
 
 /**
  * With how data is derived here, the `fetch` request does not execute
