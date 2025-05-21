@@ -1,12 +1,12 @@
 import { cached } from '@glimmer/tracking';
 import { service } from '@ember/service';
-import type RouterService from '@ember/routing/router-service';
 
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { RemoteData } from 'reactiveweb/remote-data';
 
 import type DocsService from './docs.ts';
+import type RouterService from '@ember/routing/router-service';
 
 export const OUTPUT_PREFIX = `/docs/`;
 export const OUTPUT_PREFIX_REGEX = /^\/docs\//;
