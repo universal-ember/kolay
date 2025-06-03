@@ -114,7 +114,5 @@ async function resolveFiles(dir, entries) {
     }
   }
 
-  let resolvedEntries = await globby(globbyGlobs, { cwd: dir });
-
-  return resolvedEntries;
+  return globbyGlobs;
 }
