@@ -3,8 +3,6 @@ import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
-import { globby } from 'globby';
-
 import { packageTypes } from '../helpers.js';
 
 const require = createRequire(import.meta.url);
@@ -114,7 +112,5 @@ async function resolveFiles(dir, entries) {
     }
   }
 
-  let resolvedEntries = await globby(globbyGlobs, { cwd: dir });
-
-  return resolvedEntries;
+  return globbyGlobs;
 }
