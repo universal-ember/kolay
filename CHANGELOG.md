@@ -1,5 +1,10 @@
 # Changelog
 
+
+
+
+
+
 ## Release (2025-05-21)
 
 * kolay 3.7.2 (patch)
