@@ -63,11 +63,11 @@ function listifyArgs(info: DeclarationReflection | Reflection): any[] {
 
   let declaration = null;
 
-  if ('type' in info && 'declaration' in info.type && info.type?.declaration) {
+  if ('type' in info && info.type && 'declaration' in info.type && info.type.declaration) {
     declaration = info.type.declaration
   }
 
-  if ('type' in info && info.type?.type === 'reference') {
+  if ('type' in info && info.type && info.type.type === 'reference') {
     declaration = info.project.getReflectionById(info.type['_target']);
   }
 
