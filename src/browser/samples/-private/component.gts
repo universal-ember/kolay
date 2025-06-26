@@ -16,6 +16,21 @@ export interface SignatureA {
   };
 }
 
+export type ArgsC = {
+  foo: number;
+  bar: string;
+};
+
+export interface SignatureC {
+  Element: HTMLDivElement;
+  Args: ArgsC;
+  Blocks: {
+    default: [first: number, second: string];
+    namedBlockA: [first: typeof ClassA];
+    namedBlockB: [boolean];
+  };
+}
+
 export interface NullElement {
   /**
    * Element:hehe
@@ -37,6 +52,8 @@ export class ClassA extends Component<{
 }> {}
 
 export class ClassB extends Component<SignatureA> {}
+
+export class ClassC extends Component<SignatureC> {}
 
 export const TemplateOnlyC: TOC<SignatureA> = <template>hi there</template>;
 

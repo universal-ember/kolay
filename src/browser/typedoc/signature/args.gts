@@ -38,7 +38,7 @@ export const Args: TOC<{
   {{/if}}
 </template>;
 
-function listifyArgs(info: DeclarationReflection): any[] {
+function listifyArgs(info: DeclarationReflection | Reflection): any[] {
   if (!info) return [];
 
   if (Array.isArray(info)) {
@@ -61,8 +61,18 @@ function listifyArgs(info: DeclarationReflection): any[] {
     return info.children;
   }
 
-  if (info.type && 'declaration' in info.type && info.type.declaration) {
-    return listifyArgs(info.type.declaration);
+  let declaration = null;
+
+  if ('type' in info && info.type && 'declaration' in info.type && info.type.declaration) {
+    declaration = info.type.declaration;
+  }
+
+  if ('type' in info && info.type && info.type.type === 'reference') {
+    declaration = info.project.getReflectionById(info.type['_target']);
+  }
+
+  if (declaration) {
+    return listifyArgs(declaration);
   }
 
   console.warn('unhandled', info);

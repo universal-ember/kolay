@@ -93,6 +93,27 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText(':namedBlockB');
   });
 
+  test('class:args:reference', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassC"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    assert.dom().containsText('Element');
+    assert.dom().containsText('HTMLDivElement');
+    assert.dom().containsText('Arguments');
+    assert.dom().containsText('@foo');
+    assert.dom().containsText('@bar');
+    assert.dom().containsText('Blocks');
+    assert.dom().containsText(':namedBlockA');
+    assert.dom().containsText(':namedBlockB');
+  });
+
   test('template-only:reference', async function (assert) {
     await render(
       <template>
