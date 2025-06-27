@@ -5,6 +5,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { ComponentSignature } from 'kolay';
 
 import { setupKolay } from 'kolay/test-support';
+import {ClassA} from "../../../../src/browser/samples/-private";
 
 module('<ComponentSignature>', function (hooks) {
   setupRenderingTest(hooks);
@@ -112,6 +113,7 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText('Blocks');
     assert.dom().containsText(':namedBlockA');
     assert.dom().containsText(':namedBlockB');
+    assert.dom().containsText('ClassA');
   });
 
   test('template-only:reference', async function (assert) {
