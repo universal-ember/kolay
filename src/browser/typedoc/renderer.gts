@@ -173,6 +173,7 @@ const Reflection: TOC<{ info: { declaration: DeclarationReflection } }> = <templ
 
 const isReference = (x: { type: string }) => x?.type === 'reference';
 const isReflection = (x: { type: string }) => x?.type === 'reflection';
+const isQuery = (x: { type: string }) => x?.type === 'query';
 
 export const isIntrinsic = (x: { type: string }) => x?.type === 'intrinsic';
 
@@ -368,6 +369,8 @@ export const Type: TOC<{ Args: { info: SomeType } }> = <template>
   {{#if (isReference @info)}}
     {{! @glint-expect-error }}
     <Reference @info={{@info}} />
+  {{else if (isQuery @info)}}
+    <Type @info={{@info.queryType}} />
   {{else if (isReflection @info)}}
     {{! @glint-expect-error }}
     <Reflection @info={{@info}} />
