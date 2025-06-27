@@ -68,14 +68,7 @@ export const apiDocs = (options) => {
               });
 
               if (pkg) {
-                let seen = cache.get(pkg);
-
-                if (!seen) {
-                  seen = generateTypeDocJSON({ packageName: pkg });
-                  cache.set(pkg, seen);
-                }
-
-                let data = await seen;
+                let data = await generateTypeDocJSON({ packageName: pkg });;
 
                 res.setHeader('content-type', 'application/json');
 
