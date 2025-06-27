@@ -68,7 +68,7 @@ export const apiDocs = (options) => {
               });
 
               if (pkg) {
-                let data = await generateTypeDocJSON({ packageName: pkg });;
+                let data = await generateTypeDocJSON({ packageName: pkg });
 
                 res.setHeader('content-type', 'application/json');
 
