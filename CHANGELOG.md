@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-06-27)
+
+* kolay 3.7.4 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#211](https://github.com/universal-ember/kolay/pull/211) do not cache typedoc for dev mode ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2025-06-26)
 
 * kolay 3.7.3 (patch)

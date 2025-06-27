@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "3.7.2",
-      "newVersion": "3.7.3",
+      "oldVersion": "3.7.3",
+      "newVersion": "3.7.4",
       "tagName": "latest",
       "constraints": [
         {
@@ -14,5 +14,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-06-26)\n\n* kolay 3.7.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#210](https://github.com/universal-ember/kolay/pull/210) support args reference ([@patricklx](https://github.com/patricklx))\n  * [#209](https://github.com/universal-ember/kolay/pull/209) typedoc: make include folders unique ([@patricklx](https://github.com/patricklx))\n\n#### Committers: 1\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n"
+  "description": "## Release (2025-06-27)\n\n* kolay 3.7.4 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#211](https://github.com/universal-ember/kolay/pull/211) do not cache typedoc for dev mode ([@patricklx](https://github.com/patricklx))\n\n#### Committers: 1\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n"
 }
