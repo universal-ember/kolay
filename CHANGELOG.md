@@ -2,6 +2,17 @@
 
 ## Release (2025-06-27)
 
+* kolay 3.8.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#213](https://github.com/universal-ember/kolay/pull/213) support query type ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
+## Release (2025-06-27)
+
 * kolay 3.7.4 (patch)
 
 #### :bug: Bug Fix
