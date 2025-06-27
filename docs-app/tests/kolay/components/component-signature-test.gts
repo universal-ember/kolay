@@ -5,7 +5,6 @@ import { setupRenderingTest } from 'ember-qunit';
 import { ComponentSignature } from 'kolay';
 
 import { setupKolay } from 'kolay/test-support';
-import {ClassA} from "../../../../src/browser/samples/-private";
 
 module('<ComponentSignature>', function (hooks) {
   setupRenderingTest(hooks);

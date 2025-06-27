@@ -370,7 +370,6 @@ export const Type: TOC<{ Args: { info: SomeType } }> = <template>
     {{! @glint-expect-error }}
     <Reference @info={{@info}} />
   {{else if (isQuery @info)}}
-    {{log @info}}
     <Type @info={{@info.queryType}} />
   {{else if (isReflection @info)}}
     {{! @glint-expect-error }}
