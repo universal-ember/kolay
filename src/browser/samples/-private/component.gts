@@ -1,6 +1,7 @@
 /* eslint-disable ember/no-empty-glimmer-component-classes */
 import Component from '@glimmer/component';
 
+import type { WithDefaultArgs } from '@glint/template';
 import type { TOC } from '@ember/component/template-only';
 
 export interface SignatureA {
@@ -28,6 +29,7 @@ export interface SignatureC {
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
+    namedBlockC : [WithDefaultArgs<typeof ClassC, 'foo' | 'bar'>];
   };
 }
 
