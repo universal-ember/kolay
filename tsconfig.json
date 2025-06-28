@@ -4,7 +4,7 @@
     "environment": ["ember-loose", "ember-template-imports"]
   },
   "include": ["src/**/*"],
-  "exclude": ["docs-app", "declarations"],
+  "exclude": ["docs-app", "declarations", "src/fake-glint-template.d.ts"],
   "compilerOptions": {
     // Glint doesn't support Array extends.
     // https://github.com/typed-ember/glint/issues/672

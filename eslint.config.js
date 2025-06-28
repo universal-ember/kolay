@@ -1,8 +1,12 @@
-import { configs } from '@nullvoxpopuli/eslint-configs';
 import globals from 'globals';
+
+import { configs } from '@nullvoxpopuli/eslint-configs';
 
 export default [
   ...configs.ember(import.meta.dirname),
+  {
+    ignores: ['src/fake-glint-template.d.ts'],
+  },
   {
     files: ['src/build/**'],
     languageOptions: {

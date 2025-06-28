@@ -1,8 +1,8 @@
 /* eslint-disable ember/no-empty-glimmer-component-classes */
 import Component from '@glimmer/component';
 
-import type { WithDefaultArgs } from '@glint/template';
 import type { TOC } from '@ember/component/template-only';
+import type { WithBoundArgs } from '@glint/template';
 
 export interface SignatureA {
   Element: HTMLDivElement;
@@ -29,7 +29,7 @@ export interface SignatureC {
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-    namedBlockC : [WithDefaultArgs<typeof ClassC, 'foo' | 'bar'>];
+    namedBlockC: [WithBoundArgs<typeof ClassC, 'foo' | 'bar'>];
   };
 }
 

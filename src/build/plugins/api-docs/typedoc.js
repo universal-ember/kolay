@@ -1,12 +1,14 @@
 import assert from 'node:assert';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { globby } from 'globby';
 
 import { packageTypes } from '../helpers.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
 /**
@@ -44,18 +46,31 @@ export async function generateTypeDocJSON({ packageName }) {
   // const home = process.cwd();
   // const homeRequire = createRequire(home);
   const types = [
-    'ember-source/types',
+    'ember-source/types/stable',
+    'ember-modifier',
+    '@glimmer/component',
     // homeRequire.resolve('ember-source/types/stable/index.d.ts')
   ];
 
-  // const emberModifier = homeRequire.resolve('ember-modifier/package.json');
-  const eModifierEntries = await packageTypes('ember-modifier');
+  async function extractTypeLocation(t) {
+    try {
+      const entries = await packageTypes(t);
 
-  if (eModifierEntries.types[0]) {
-    let eMIndex = join(eModifierEntries.dir, eModifierEntries.types[0]);
+      if (entries.types[0]) {
+        return join(entries.dir, entries.types[0]).replace('/*', '');
+      }
 
-    types.push(eMIndex);
+      return join(process.cwd(), 'node_modules', t);
+    } catch {
+      return join(process.cwd(), 'node_modules', t);
+    }
   }
+
+  const resolvedTypes = (await Promise.all(types.map(async (t) => extractTypeLocation(t)))).filter(
+    (x) => !!x
+  );
+
+  resolvedTypes.push(resolve(__dirname, '..', '..', '..', 'fake-glint-template.d.ts'));
 
   const tsConfig = {
     extends: extendsTsConfig,
@@ -63,7 +78,7 @@ export async function generateTypeDocJSON({ packageName }) {
     compilerOptions: {
       baseUrl: typeInfo.dir,
       noEmitOnError: false,
-      types,
+      types: resolvedTypes,
     },
   };
 
