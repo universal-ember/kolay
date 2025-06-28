@@ -29,7 +29,7 @@ export interface SignatureC {
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-    namedBlockC : [WithBoundArgs<typeof ClassC, 'foo' | 'bar'>];
+    namedBlockC: [WithBoundArgs<typeof ClassC, 'foo' | 'bar'>];
   };
 }
 
