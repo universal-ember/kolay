@@ -81,6 +81,27 @@ section {
 }
 
 /**
+ * Argument Flags
+ */
+.typedoc__arg-flags {
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  justify-content: flex-start;
+  margin: 0.5rem 0;
+}
+
+.typedoc__arg-flags > .typedoc__flag {
+  display: inline-block;
+  margin: 0;
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+  border: 1px solid #222;
+  border-radius: var(--pico-border-radius);
+  font-family: var(--pico-font-family-monospace);
+}
+
+/**
  *
  * Component Signatures
  *
