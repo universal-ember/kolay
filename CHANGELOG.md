@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-06-30)
+
+* kolay 3.9.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#217](https://github.com/universal-ember/kolay/pull/217) feat: display arg flags ([@aklkv](https://github.com/aklkv))
+
+#### Committers: 1
+- Alexey Kulakov ([@aklkv](https://github.com/aklkv))
+
 ## Release (2025-06-27)
 
 * kolay 3.8.0 (minor)
