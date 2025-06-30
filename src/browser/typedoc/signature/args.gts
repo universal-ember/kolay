@@ -1,7 +1,12 @@
 import { Comment, isIntrinsic, isNamedTuple, Type } from '../renderer.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { DeclarationReflection, Reflection, SignatureReflection } from 'typedoc';
+import type {
+  DeclarationReflection,
+  Reflection,
+  ReflectionFlags,
+  SignatureReflection,
+} from 'typedoc';
 
 const not = (x: unknown) => !x;
 
@@ -26,6 +31,12 @@ export const Args: TOC<{
             <Type @info={{child.element}} />
           {{/if}}
         </span>
+
+        {{#if (getFlags child.flags)}}
+          {{! we can potentially display more flags here in the future }}
+          <Flags @flags={{child.flags}} />
+        {{/if}}
+
         {{#if (not (isIntrinsic child.type))}}
           <Type @info={{child.type}} />
         {{else if (isNamedTuple child)}}
@@ -47,7 +58,7 @@ function listifyArgs(info: DeclarationReflection | Reflection): any[] {
 
   /**
    * This object *may* have Named and Positional on them,
-   * in which case, we want to create [...Postiional, Named]
+   * in which case, we want to create [...Positional, Named]
    */
   if ('children' in info && Array.isArray(info.children)) {
     if (info.children.length <= 2) {
@@ -116,4 +127,19 @@ export function getArgs(
   if ('children' in info) {
     return getArgs(info.children);
   }
+}
+
+const Flags: TOC<{
+  Args: { flags: ReflectionFlags };
+}> = <template>
+  <span class='typedoc__arg-flags'>
+    {{#each (getFlags @flags) as |flag|}}
+      <span class='typedoc__flag'>{{flag}}</span>
+    {{/each}}
+  </span>
+</template>;
+
+function getFlags(flags: ReflectionFlags): any[] {
+  // extremely simplified logic to determine flags, for now we only interested in `isOptional`
+  return [flags?.isOptional && 'optional'].filter(Boolean);
 }
