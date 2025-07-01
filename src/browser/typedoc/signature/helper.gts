@@ -15,7 +15,8 @@ function getSignature(info: Reflection, project: ProjectReflection) {
    */
   if (
     info.type?.type === 'reference' &&
-    info.type?.package === '@glint/template' &&
+    info.type?.package === 'kolay' &&
+    info.type.symbolId?.packagePath?.includes('fake-glint-template.d.ts') &&
     info.type?.name === 'HelperLike' &&
     Array.isArray(info.type?.typeArguments) &&
     info.type.typeArguments[0] &&

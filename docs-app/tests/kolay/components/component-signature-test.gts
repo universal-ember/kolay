@@ -112,6 +112,8 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText('Blocks');
     assert.dom().containsText(':namedBlockA');
     assert.dom().containsText(':namedBlockB');
+    assert.dom().containsText('WithBoundArgs < ClassA');
+    assert.dom().containsText('WithBoundArgs < ClassC');
     assert.dom().containsText('ClassA');
   });
 

@@ -44,7 +44,8 @@ function getSignatureType(info: Reflection, _project: ProjectReflection) {
      * export const X: ModifierLike<{ ... }>
      */
     if (
-      info.type?.package === '@glint/template' &&
+      info.type?.package === 'kolay' &&
+      info.type.symbolId?.packagePath?.includes('fake-glint-template.d.ts') &&
       Array.isArray(info.type?.typeArguments) &&
       info.type.typeArguments.length > 0
     ) {
