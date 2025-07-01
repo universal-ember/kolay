@@ -2,7 +2,7 @@
 import Component from '@glimmer/component';
 
 import type { TOC } from '@ember/component/template-only';
-import type { WithBoundArgs } from '@glint/template';
+import type { ComponentLike, WithBoundArgs } from '@glint/template';
 
 export interface SignatureA {
   Element: HTMLDivElement;
@@ -29,7 +29,8 @@ export interface SignatureC {
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];
-    namedBlockC: [WithBoundArgs<typeof ClassC, 'foo' | 'bar'>];
+    namedBlockC: [WithBoundArgs<typeof ClassA, 'foo' | 'bar'>];
+    namedBlockD: [WithBoundArgs<ClassC, 'foo' | 'bar'>];
   };
 }
 
@@ -55,7 +56,7 @@ export class ClassA extends Component<{
 
 export class ClassB extends Component<SignatureA> {}
 
-export class ClassC extends Component<SignatureC> {}
+export type ClassC = ComponentLike<SignatureC>;
 
 export const TemplateOnlyC: TOC<SignatureA> = <template>hi there</template>;
 

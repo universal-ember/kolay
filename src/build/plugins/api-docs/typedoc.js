@@ -46,6 +46,7 @@ export async function generateTypeDocJSON({ packageName }) {
   // const home = process.cwd();
   // const homeRequire = createRequire(home);
   const types = [
+    'ember-source/types',
     'ember-source/types/stable',
     'ember-modifier',
     '@glimmer/component',
