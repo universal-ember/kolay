@@ -1,18 +1,18 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "3.8.0",
-      "newVersion": "3.9.0",
+      "impact": "patch",
+      "oldVersion": "3.9.0",
+      "newVersion": "3.9.1",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-06-30)\n\n* kolay 3.9.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#217](https://github.com/universal-ember/kolay/pull/217) feat: display arg flags ([@aklkv](https://github.com/aklkv))\n\n#### Committers: 1\n- Alexey Kulakov ([@aklkv](https://github.com/aklkv))\n"
+  "description": "## Release (2025-07-01)\n\n* kolay 3.9.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#215](https://github.com/universal-ember/kolay/pull/215) fix & test with bound args type ([@patricklx](https://github.com/patricklx))\n\n#### Committers: 1\n- Patrick Pircher ([@patricklx](https://github.com/patricklx))\n"
 }

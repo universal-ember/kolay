@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-07-01)
+
+* kolay 3.9.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#215](https://github.com/universal-ember/kolay/pull/215) fix & test with bound args type ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2025-06-30)
 
 * kolay 3.9.0 (minor)
