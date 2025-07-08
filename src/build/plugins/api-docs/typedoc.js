@@ -1,5 +1,6 @@
 import assert from 'node:assert';
-import { writeFile } from 'node:fs/promises';
+import { writeFile, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -85,6 +86,13 @@ export async function generateTypeDocJSON({ packageName }) {
 
   await writeFile(tmpTSConfigPath, JSON.stringify(tsConfig, null, 2));
 
+  let projectConfig = {};
+  const projectConfigPath = resolve(typeInfo.manifest, '..', 'typedoc.json');
+
+  if (existsSync(projectConfigPath)) {
+    projectConfig = JSON.parse(readFile(projectConfigPath, 'utf8'));
+  }
+
   const typedocApp = await typedoc.Application.bootstrapWithPlugins({
     entryPoints: absoluteResolved,
     tsconfig: tmpTSConfigPath,
@@ -97,6 +105,7 @@ export async function generateTypeDocJSON({ packageName }) {
     // All types to be referenced in docs must be exported.
     // This plugin does not work with the latest typedoc
     // plugin: ['@zamiell/typedoc-plugin-not-exported'],
+    ...projectConfig
   });
 
   const project = await typedocApp.convert();
