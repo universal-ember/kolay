@@ -91,7 +91,7 @@ export async function generateTypeDocJSON({ packageName }) {
   const projectConfigPath = resolve(typeInfo.dir, 'typedoc.json');
 
   if (existsSync(projectConfigPath)) {
-    projectConfig = JSON.parse(readFile(projectConfigPath, 'utf8'));
+    projectConfig = JSON.parse(await readFile(projectConfigPath, 'utf8'));
   }
 
   const typedocApp = await typedoc.Application.bootstrapWithPlugins({
