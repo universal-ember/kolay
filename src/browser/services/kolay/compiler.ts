@@ -19,10 +19,21 @@ export default class Compiler extends Service {
   // for debugging in the inspector / console
   last?: CompileState;
 
+  cache = new Map<string, CompileState>();
+
+
   compileMD = (code: string | undefined | null) => {
     const state = new CompileState();
 
     this.last = state;
+
+    if (this.cache.has(code)) {
+      this.last = this.cache.get(code);
+
+      return this.cache.get(code);
+    }
+
+    this.cache.set(code, state);
 
     if (!code) {
       return state;
