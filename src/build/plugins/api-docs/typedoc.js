@@ -88,7 +88,7 @@ export async function generateTypeDocJSON({ packageName }) {
   await writeFile(tmpTSConfigPath, JSON.stringify(tsConfig, null, 2));
 
   let projectConfig = {};
-  const projectConfigPath = resolve(typeInfo.manifest, '..', 'typedoc.json');
+  const projectConfigPath = resolve(typeInfo.dir, 'typedoc.json');
 
   if (existsSync(projectConfigPath)) {
     projectConfig = JSON.parse(readFile(projectConfigPath, 'utf8'));
