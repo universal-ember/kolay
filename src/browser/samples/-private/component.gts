@@ -72,3 +72,5 @@ export const TemplateOnlyD: TOC<{
     namedBlockB: [boolean];
   };
 }> = <template>hi</template>;
+
+export default class classE extends Component<SignatureA> {};
