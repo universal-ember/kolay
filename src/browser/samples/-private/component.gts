@@ -73,4 +73,4 @@ export const TemplateOnlyD: TOC<{
   };
 }> = <template>hi</template>;
 
-export default class classE extends Component<SignatureA> {};
+export default class classE extends Component<SignatureA> {}
