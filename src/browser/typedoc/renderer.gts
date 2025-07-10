@@ -121,6 +121,7 @@ export const Comment: TOC<{
 const isIgnored = (name: string) => ['__type', 'TOC', 'TemplateOnlyComponent'].includes(name);
 const isConst = (x: { flags: { isConst: boolean } }) => x.flags.isConst;
 const not = (x: unknown) => !x;
+const or = (...args: unknown) => args.find(x => !!x);
 
 const Declaration: TOC<{
   Args: {
@@ -251,7 +252,7 @@ const Reference: TOC<{ info: ReferenceType }> = <template>
   {{else}}
     <div class='typedoc__reference'>
       {{#if (not (isIgnored @info.name))}}
-        <div class='typedoc__reference__name'>{{@info.name}}</div>
+        <div class='typedoc__reference__name'>{{or @info.reflection.name @info.name}}</div>
       {{/if}}
       {{#if @info.typeArguments.length}}
         <div class='typedoc__reference__typeArguments'>
