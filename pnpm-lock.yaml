@@ -12,7 +12,7 @@ overrides:
   ember-repl: 6.0.0
   ember-source: 6.5.0-alpha.6
 
-packageExtensionsChecksum: ad075fa7f4ae4d75e3fe6c91b7b594c2
+packageExtensionsChecksum: sha256-I4/i17OOf0WifUwpGYE/KCRs9xMfb6hiQlSpKvR/tsk=
 
 importers:
 
