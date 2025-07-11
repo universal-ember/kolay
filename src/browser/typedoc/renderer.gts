@@ -270,7 +270,7 @@ const Reference: TOC<{ info: ReferenceType }> = <template>
 </template>;
 
 const Intrinsic: TOC<{ info: { name: string } }> = <template>
-  <span class='typedoc__intrinsic'>{{@info.name}}</span>
+  <span class='typedoc__intrinsic'>{{or @info.reflection.name @info.name}}</span>
 </template>;
 
 const VoidIntrinsic: TOC<{ info: { name: string } }> = <template>
