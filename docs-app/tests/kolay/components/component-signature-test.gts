@@ -183,13 +183,13 @@ module('<ComponentSignature>', function (hooks) {
 
   test('default export renamed', async function (assert) {
     await render(
-    <template>
-      <ComponentSignature
-        @module="declarations/browser/samples/-private"
-        @name="classE"
-        @package="kolay"
-      />
-    </template>
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="classE"
+          @package="kolay"
+        />
+      </template>
     );
 
     // Temporary -- need to figure out what async thing doesn't have a waiter
