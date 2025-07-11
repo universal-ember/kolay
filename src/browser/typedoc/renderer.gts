@@ -121,7 +121,7 @@ export const Comment: TOC<{
 const isIgnored = (name: string) => ['__type', 'TOC', 'TemplateOnlyComponent'].includes(name);
 const isConst = (x: { flags: { isConst: boolean } }) => x.flags.isConst;
 const not = (x: unknown) => !x;
-const or = (...args: unknown) => args.find(x => !!x);
+const or = (...args: unknown) => args.find((x) => !!x);
 
 const Declaration: TOC<{
   Args: {
