@@ -1,4 +1,4 @@
-import { render, waitUntil } from '@ember/test-helpers';
+import { pauseTest, render, waitUntil } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 
@@ -186,7 +186,7 @@ module('<ComponentSignature>', function (hooks) {
       <template>
         <ComponentSignature
           @module="declarations/browser/samples/-private"
-          @name="classE"
+          @name="ClassE"
           @package="kolay"
         />
       </template>
@@ -194,7 +194,8 @@ module('<ComponentSignature>', function (hooks) {
 
     // Temporary -- need to figure out what async thing doesn't have a waiter
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    await waitUntil(() => (this as any).element?.textContent?.includes('classE'));
-    assert.dom().containsText('classE');
+    await waitUntil(() => (this as any).element?.textContent?.includes('Arguments'));
+    assert.dom().containsText('first DefaultClassA');
+    assert.dom().containsText('WithBoundArgs < DefaultClassA "foo" >');
   });
 });

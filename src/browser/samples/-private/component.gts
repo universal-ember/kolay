@@ -3,6 +3,7 @@ import Component from '@glimmer/component';
 
 import type { TOC } from '@ember/component/template-only';
 import type { ComponentLike, WithBoundArgs } from '@glint/template';
+import DefaultClassA from './default-export-component.gts';
 
 export interface SignatureA {
   Element: HTMLDivElement;
@@ -73,4 +74,15 @@ export const TemplateOnlyD: TOC<{
   };
 }> = <template>hi</template>;
 
-export default class classE extends Component<SignatureA> {}
+export default class ClassE extends Component<{
+  Element: HTMLDivElement;
+  Args: {
+    foo: number;
+    bar: string;
+  };
+  Blocks: {
+    default: [first: number, second: string];
+    namedBlockA: [first: typeof DefaultClassA];
+    namedBlockB: [first: WithBoundArgs<typeof DefaultClassA, 'foo'>];
+  }
+}> {}
