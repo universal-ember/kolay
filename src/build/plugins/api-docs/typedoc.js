@@ -97,6 +97,7 @@ export async function generateTypeDocJSON({ packageName }) {
     // All types to be referenced in docs must be exported.
     // This plugin does not work with the latest typedoc
     // plugin: ['@zamiell/typedoc-plugin-not-exported'],
+    plugin: ['typedoc-plugin-rename-defaults'],
   });
 
   const project = await typedocApp.convert();

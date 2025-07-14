@@ -180,4 +180,22 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().doesNotContainText('Arguments');
     assert.dom().doesNotContainText('Blocks');
   });
+
+  test('default export renamed', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassE"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // Temporary -- need to figure out what async thing doesn't have a waiter
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    await waitUntil(() => (this as any).element?.textContent?.includes('Arguments'));
+    assert.dom().containsText('first DefaultClassA');
+    assert.dom().containsText('WithBoundArgs < DefaultClassA "foo" >');
+  });
 });

@@ -108,7 +108,7 @@
     "@ember/test-waiters": "^4.0.0",
     "@embroider/addon-shim": "1.10.0",
     "@glimmer/component": "^2.0.0",
-    "@glint/template": "1.4.1-unstable.d17c1f1",
+    "@glint/template": "1.6.1-unstable.f415a3e",
     "common-tags": "^1.8.2",
     "decorator-transforms": "^2.3.0",
     "ember-modifier": ">= 4.2.0",
@@ -122,6 +122,7 @@
     "send": "^1.2.0",
     "tracked-built-ins": "^4.0.0",
     "typedoc": "0.28.4",
+    "typedoc-plugin-rename-defaults": "^0.7.3",
     "unplugin": "^2.3.2"
   },
   "devDependencies": {
