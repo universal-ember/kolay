@@ -9,4 +9,5 @@ export default class DefaultClassA extends Component<{
   };
   Blocks: {
     namedBlockA: [first: boolean];
-  };}> {}
+  };
+}> {}

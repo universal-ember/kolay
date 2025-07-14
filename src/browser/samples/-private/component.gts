@@ -84,5 +84,5 @@ export default class ClassE extends Component<{
     default: [first: number, second: string];
     namedBlockA: [first: typeof DefaultClassA];
     namedBlockB: [first: WithBoundArgs<typeof DefaultClassA, 'foo'>];
-  }
+  };
 }> {}
