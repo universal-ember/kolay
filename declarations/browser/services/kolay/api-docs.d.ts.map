@@ -1,0 +1,1 @@
+{"version":3,"file":"api-docs.d.ts","sourceRoot":"","sources":["../../../../src/browser/services/kolay/api-docs.ts"],"names":[],"mappings":"AACA,OAAO,OAAO,MAAM,gBAAgB,CAAC;AAErC,MAAM,CAAC,OAAO,OAAO,WAAY,SAAQ,OAAO;IAC9C,SAAS,EAAE,MAAM,EAAE,CAAM;IACzB,WAAW,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,UAAU,CAAC,OAAO,KAAK,CAAC,CAAC,CAAM;IAEjE,IAAI,QAAQ,aAOX;IAED,IAAI,GAAI,MAAM,MAAM,uBAQlB;CACH"}

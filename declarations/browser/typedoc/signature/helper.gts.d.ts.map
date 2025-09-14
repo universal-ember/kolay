@@ -1,0 +1,1 @@
+{"version":3,"file":"helper.gts.d.ts","sourceRoot":"","sources":["../../../../src/browser/typedoc/signature/helper.gts"],"names":[],"mappings":"AAqKA,OAAO,KAAK,EAAE,GAAG,EAAE,MAAM,gCAAgC,CAAC;AAiJ1D,eAAO,MAAM,eAAe,EAAE,GAAG,CAAC;IAChC,IAAI,EAAE;QACJ;;WAEG;QACH,MAAM,EAAE,MAAM,CAAC;QACf;;WAEG;QACH,IAAI,EAAE,MAAM,CAAC;QACb;;WAEG;QACH,OAAO,EAAE,MAAM,CAAC;KACjB,CAAC;CACH,CAkEC,CAAC"}
