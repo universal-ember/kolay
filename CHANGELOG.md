@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-09-21)
+
+* kolay 4.0.0 (major)
+
+#### :boom: Breaking Change
+* `kolay`
+  * [#222](https://github.com/universal-ember/kolay/pull/222) add typedoc-plugin-rename-defaults plugin ([@patricklx](https://github.com/patricklx))
+
+#### Committers: 1
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+
 ## Release (2025-07-01)
 
 * kolay 3.9.1 (patch)
