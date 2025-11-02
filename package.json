@@ -184,7 +184,7 @@
     "node": ">= 18"
   },
   "volta": {
-    "node": "22.20.0",
+    "node": "22.21.1",
     "pnpm": "10.15.0"
   },
   "publishConfig": {
