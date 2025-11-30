@@ -205,7 +205,7 @@
       "@glimmer/component": "^2.0.0",
       "@glimmer/validator": ">= 0.92.0",
       "ember-repl": "6.0.0",
-      "ember-source": "6.5.0-alpha.6"
+      "ember-source": "6.9.0"
     },
     "packageExtensions": {
       "ember-async-data": {
