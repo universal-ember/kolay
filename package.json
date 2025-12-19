@@ -170,7 +170,7 @@
     "release-plan": "^0.17.2",
     "rollup": "^4.53.5",
     "tracked-built-ins": "^3.3.0",
-    "turbo": "^2.6.3",
+    "turbo": "^2.7.0",
     "typescript": "^5.9.3",
     "unified": "^11.0.5",
     "vite": "^7.3.0",
