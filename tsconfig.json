@@ -30,6 +30,6 @@
     "declaration": true,
     // Compat
     "allowSyntheticDefaultImports": true,
-    "types": ["./docs-app/node_modules/ember-source/types/stable", "unplugin"]
+    "types": ["./docs-app/node_modules/ember-source/types/stable", "unplugin", "@glint/ember-tsc"]
   }
 }

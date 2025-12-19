@@ -12,13 +12,13 @@ module('Markdown | Rendering', function (hooks) {
   setupRenderingTest(hooks);
 
   test('it works', async function (assert) {
-    let doc = `# Hello there`;
+    const doc = `# Hello there`;
 
     class Demo {
       @use doc = Compiled(() => doc);
     }
 
-    let state = new Demo();
+    const state = new Demo();
 
     setOwner(state, this.owner);
 
@@ -36,7 +36,7 @@ module('Markdown | Rendering', function (hooks) {
   });
 
   test('it renders a live codefence', async function (assert) {
-    let doc =
+    const doc =
       `# Hello there\n` +
       `\n` +
       '```hbs live no-shadow\n' +
@@ -49,7 +49,7 @@ module('Markdown | Rendering', function (hooks) {
       @use doc = Compiled(() => doc);
     }
 
-    let state = new Demo();
+    const state = new Demo();
 
     setOwner(state, this.owner);
 
@@ -72,7 +72,7 @@ module('Markdown | Rendering', function (hooks) {
       <output>general kenobi</output>
     </template>;
 
-    let doc =
+    const doc =
       `# Hello there\n` +
       `\n` +
       '```hbs live no-shadow\n' +
@@ -88,7 +88,7 @@ module('Markdown | Rendering', function (hooks) {
       @use doc = Compiled(doc);
     }
 
-    let state = new Demo();
+    const state = new Demo();
 
     setOwner(state, this.owner);
 

@@ -41,7 +41,7 @@ export const apiDocs = (options) => {
   /**
    * @type {Map<string, Promise>}
    */
-  let cache = new Map();
+  const cache = new Map();
 
   let baseUrl = '/';
 
@@ -62,13 +62,13 @@ export const apiDocs = (options) => {
               const assetUrl = req.originalUrl.split('?')[0];
 
               const pkg = options.packages.find((pkgName) => {
-                let dest = baseUrl + getDest(pkgName);
+                const dest = baseUrl + getDest(pkgName);
 
                 return dest === assetUrl;
               });
 
               if (pkg) {
-                let data = await generateTypeDocJSON({ packageName: pkg });
+                const data = await generateTypeDocJSON({ packageName: pkg });
 
                 res.setHeader('content-type', 'application/json');
 
@@ -96,10 +96,10 @@ export const apiDocs = (options) => {
             cache.set(pkgName, seen);
           }
 
-          let data = await seen;
+          const data = await seen;
 
           if (data) {
-            let dest = getDest(pkgName);
+            const dest = getDest(pkgName);
 
             this.emitFile({
               type: 'asset',

@@ -18,7 +18,7 @@ import { reshape } from './hydrate.js';
 export async function discover({ groups, src }) {
   groups ??= [];
 
-  let groupsToLookFor = new Set();
+  const groupsToLookFor = new Set();
 
   if (src) {
     groupsToLookFor.add({ name: 'root', src });
@@ -26,7 +26,7 @@ export async function discover({ groups, src }) {
 
   groups.map((group) => groupsToLookFor.add(group));
 
-  let foundGroups = await Promise.all(
+  const foundGroups = await Promise.all(
     [...groupsToLookFor.values()].map(async (group) => {
       const { include, onlyDirectories, exclude } = group;
       const prefix = group.name === 'root' ? '' : `/${group.name}`;

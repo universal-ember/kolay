@@ -6,7 +6,6 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { ProjectReflection, Reflection } from 'typedoc';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSignatureType(info: Reflection, _project: ProjectReflection) {
   if (!info.isDeclaration()) {
     return info;

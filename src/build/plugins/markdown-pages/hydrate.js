@@ -11,7 +11,7 @@ import { sortTree } from './sort.js';
  */
 export async function reshape({ paths, cwd, prefix }) {
   let tree = await parse(paths, cwd);
-  let configs = await configsFrom(paths, cwd);
+  const configs = await configsFrom(paths, cwd);
 
   tree = sortTree(tree, configs);
 
@@ -21,7 +21,7 @@ export async function reshape({ paths, cwd, prefix }) {
 
   addInTheFirstPage(tree);
 
-  let list = getList(tree);
+  const list = getList(tree);
 
   return {
     list,
@@ -57,9 +57,9 @@ export function prefixPaths(tree, prefix) {
  */
 export function addInTheFirstPage(tree) {
   if (Array.isArray(tree)) {
-    let paths = tree.map(addInTheFirstPage).flat();
+    const paths = tree.map(addInTheFirstPage).flat();
 
-    let path = paths[0];
+    const path = paths[0];
 
     if (typeof path === 'string') {
       return path;
@@ -69,7 +69,7 @@ export function addInTheFirstPage(tree) {
   }
 
   if ('pages' in tree) {
-    let path = addInTheFirstPage(tree.pages);
+    const path = addInTheFirstPage(tree.pages);
 
     if (typeof path === 'string') {
       tree.first = path;
@@ -92,7 +92,7 @@ export function addInTheFirstPage(tree) {
  * @return {import('./types.ts').Page[]}
  */
 export function getList(tree) {
-  let flatList = [];
+  const flatList = [];
 
   flatList.push(flatPages(tree));
 

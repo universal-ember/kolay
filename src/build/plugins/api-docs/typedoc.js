@@ -103,7 +103,7 @@ export async function generateTypeDocJSON({ packageName }) {
   const project = await typedocApp.convert();
 
   if (project) {
-    let data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
+    const data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
 
     return data;
   }
@@ -119,9 +119,9 @@ export async function generateTypeDocJSON({ packageName }) {
  * @param {string[]} entries
  */
 async function resolveFiles(dir, entries) {
-  let globbyGlobs = [];
+  const globbyGlobs = [];
 
-  for (let entry of entries) {
+  for (const entry of entries) {
     globbyGlobs.push(entry);
 
     // exports * are expanded to **/*
@@ -131,7 +131,7 @@ async function resolveFiles(dir, entries) {
     }
   }
 
-  let resolvedEntries = await globby(globbyGlobs, { cwd: dir });
+  const resolvedEntries = await globby(globbyGlobs, { cwd: dir });
 
   return resolvedEntries;
 }

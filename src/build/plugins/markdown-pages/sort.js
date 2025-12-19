@@ -32,29 +32,29 @@ export function betterSort(property) {
    * @param {any} b
    */
   return (a, b) => {
-    let aFull = property ? a[property] : a;
-    let bFull = property ? b[property] : b;
+    const aFull = property ? a[property] : a;
+    const bFull = property ? b[property] : b;
 
     if ('path' in a && 'path' in b && typeof a.path === 'string' && typeof b.path === 'string') {
       if (a.path.endsWith('index.md')) return -1;
       if (b.path.endsWith('index.md')) return 1;
     }
 
-    let [aNumStr, ...aRest] = aFull.split('-');
-    let [bNumStr, ...bRest] = bFull.split('-');
+    const [aNumStr, ...aRest] = aFull.split('-');
+    const [bNumStr, ...bRest] = bFull.split('-');
 
     // Throw things starting with x at the end
     if (aNumStr === 'x') return 1;
     if (bNumStr === 'x') return -1;
 
-    let aNum = Number(aNumStr);
-    let bNum = Number(bNumStr);
+    const aNum = Number(aNumStr);
+    const bNum = Number(bNumStr);
 
     if (aNum < bNum) return -1;
     if (aNum > bNum) return 1;
 
-    let aName = aRest.join('-');
-    let bName = bRest.join('-');
+    const aName = aRest.join('-');
+    const bName = bRest.join('-');
 
     return aName.localeCompare(bName);
   };
@@ -69,12 +69,12 @@ export function betterSort(property) {
  * @returns {Item[]}
  */
 export function applyPredestinedOrder(list, order, find = (x) => x) {
-  let indexPage = list.find((x) => find(x) === 'index');
-  let result = indexPage ? [indexPage] : [];
+  const indexPage = list.find((x) => find(x) === 'index');
+  const result = indexPage ? [indexPage] : [];
 
   list = list.filter((a) => a !== indexPage);
 
-  let remaining = [...list];
+  const remaining = [...list];
 
   if (uniq(order).length !== order.length)
     throw new Error(`Order configuration specified duplicate pages:
@@ -88,11 +88,11 @@ Order: ${JSON.stringify(order)}
 Actual: ${JSON.stringify(list.map(find))}`);
 
   for (let i = 0; i < order.length; i++) {
-    let current = order[i];
+    const current = order[i];
 
     if (!current) throw new Error(`Order configuration found an empty string at index ${i}`);
 
-    let foundIndex = remaining.findIndex((x) => find(x) === current);
+    const foundIndex = remaining.findIndex((x) => find(x) === current);
 
     if (foundIndex < 0)
       throw new Error(
@@ -100,7 +100,7 @@ Actual: ${JSON.stringify(list.map(find))}`);
       );
 
     // remove
-    let [found] = remaining.splice(foundIndex, 1);
+    const [found] = remaining.splice(foundIndex, 1);
 
     if (!found) continue;
 
@@ -130,8 +130,8 @@ export function sortTree(tree, configs, parents = []) {
   tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.path]));
 
   if (configs.length > 0) {
-    let subPath = `${[...parents, tree.path].join('/')}`;
-    let config = configs
+    const subPath = `${[...parents, tree.path].join('/')}`;
+    const config = configs
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;
 
@@ -141,7 +141,7 @@ export function sortTree(tree, configs, parents = []) {
 
     // Should the name always avoid the extension?
     try {
-      let replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) => page.name);
+      const replacementPages = applyPredestinedOrder(tree.pages, config.order, (page) => page.name);
 
       tree.pages = replacementPages;
     } catch (error) {

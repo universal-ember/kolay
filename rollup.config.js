@@ -34,7 +34,7 @@ export default {
     {
       name: 'Build Declarations',
       closeBundle: async () => {
-        await execaCommand(`pnpm glint`, { stdio: 'inherit' });
+        await execaCommand(`pnpm ember-tsc --declaration`, { stdio: 'inherit' });
 
         const deleteStyles2 = async () => {
           await fs.rm('dist/browser/typedoc/styles2.css');
