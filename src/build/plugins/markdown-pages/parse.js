@@ -13,9 +13,9 @@ import { betterSort } from './sort.js';
  * @returns {Promise<import('./types.ts').Collection>}
  */
 export async function parse(paths, cwd) {
-  let docs = await gather(paths, cwd);
-  let unsorted = build(docs);
-  let sorted = deepSort(deepSort(unsorted));
+  const docs = await gather(paths, cwd);
+  const unsorted = build(docs);
+  const sorted = deepSort(deepSort(unsorted));
 
   return sorted;
 }
@@ -57,9 +57,9 @@ function cleanSegment(segment) {
  */
 export function build(docs) {
   /** @type {import('./types.ts').Collection} */
-  let result = { name: 'root', pages: [], path: 'root' };
+  const result = { name: 'root', pages: [], path: 'root' };
 
-  for (let { mdPath, config } of docs) {
+  for (const { mdPath, config } of docs) {
     if (!mdPath.includes('/')) {
       console.warn(
         `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
@@ -67,9 +67,9 @@ export function build(docs) {
       continue;
     }
 
-    let parts = mdPath.split('/');
-    let [name, ...reversedGroups] = parts.reverse();
-    let groups = reversedGroups.reverse();
+    const parts = mdPath.split('/');
+    const [name, ...reversedGroups] = parts.reverse();
+    const groups = reversedGroups.reverse();
 
     if (groups.length === 0) continue;
     if (!name) continue;
@@ -77,9 +77,9 @@ export function build(docs) {
     /** @type {import('./types.ts').Collection} */
     let leafestCollection = result;
     let leafestGroupName;
-    let groupStack = [];
+    const groupStack = [];
 
-    for (let group of groups) {
+    for (const group of groups) {
       groupStack.push(group);
 
       /** @type {any} */
@@ -120,10 +120,10 @@ export function build(docs) {
       'Could not determine group name. A group / folder is required for each file.'
     );
 
-    let groupName = cleanSegment(leafestGroupName);
-    let cleanedName = cleanSegment(name);
+    const groupName = cleanSegment(leafestGroupName);
+    const cleanedName = cleanSegment(name);
 
-    let pageInfo = {
+    const pageInfo = {
       ...config,
       path: `/${mdPath}`,
       // Removes the file extension
@@ -146,10 +146,10 @@ export function build(docs) {
  * @param {import('./types.ts').Collection} collection
  */
 function preAddCheck(attemptedPath, searchFor, collection) {
-  let matching = collection.pages.find((page) => stripExt(page.name) === searchFor);
+  const matching = collection.pages.find((page) => stripExt(page.name) === searchFor);
 
   if (matching) {
-    let suggestion = stripExt(attemptedPath);
+    const suggestion = stripExt(attemptedPath);
 
     if (attemptedPath.endsWith('.md')) {
       assert(
@@ -159,7 +159,7 @@ function preAddCheck(attemptedPath, searchFor, collection) {
           `If you want this to be the first page, rename the file to ${suggestion}/index.md`
       );
     } else if ('path' in matching) {
-      let folder = stripExt(matching.path);
+      const folder = stripExt(matching.path);
 
       assert(
         false,
@@ -180,36 +180,36 @@ function preAddCheck(attemptedPath, searchFor, collection) {
 async function gather(paths, cwd) {
   const { join } = await import('node:path');
 
-  let markdown = paths.filter((path) => path.endsWith('.md'));
-  let configs = filterConfigs(paths);
+  const markdown = paths.filter((path) => path.endsWith('.md'));
+  const configs = filterConfigs(paths);
 
   /**
    * @param {string} path
    */
   async function configFor(path) {
-    let foundPath = configs.find((configPath) => {
-      let configPathWithoutExtension = configPath.replace(/\.json$/, '');
+    const foundPath = configs.find((configPath) => {
+      const configPathWithoutExtension = configPath.replace(/\.json$/, '');
 
       return path.startsWith(configPathWithoutExtension);
     });
 
     if (!foundPath) return {};
 
-    let fullPath = join(cwd, foundPath);
-    let config = await readJSONC(fullPath);
+    const fullPath = join(cwd, foundPath);
+    const config = await readJSONC(fullPath);
 
     return config;
   }
 
   /** @type { Array<{ mdPath: string, config: object }> } */
-  let docPairs = [];
+  const docPairs = [];
 
-  for (let path of markdown) {
+  for (const path of markdown) {
     if (!path.includes('/')) {
       continue;
     }
 
-    let config = await configFor(path);
+    const config = await configFor(path);
 
     docPairs.push({ mdPath: path, config });
   }
@@ -221,7 +221,7 @@ async function gather(paths, cwd) {
  * @param {string} str
  */
 function stripExt(str) {
-  let parsed = parsePath(str);
+  const parsed = parsePath(str);
 
   return join(parsed.dir, parsed.name);
 }
@@ -238,16 +238,16 @@ function filterConfigs(paths) {
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  */
 export async function configsFrom(paths, cwd) {
-  let configs = filterConfigs(paths);
+  const configs = filterConfigs(paths);
 
-  let result = [];
+  const result = [];
 
-  for (let foundPath of configs) {
-    let fullPath = join(cwd, foundPath);
-    let config = await readJSONC(fullPath);
+  for (const foundPath of configs) {
+    const fullPath = join(cwd, foundPath);
+    const config = await readJSONC(fullPath);
 
-    let dir = dirname(foundPath);
-    let path = dir === '.' ? 'root' : join('root', dir);
+    const dir = dirname(foundPath);
+    const path = dir === '.' ? 'root' : join('root', dir);
 
     result.push({ path: path, config });
   }
@@ -259,9 +259,9 @@ export async function configsFrom(paths, cwd) {
  * @param {string} filePath
  */
 async function readJSONC(filePath) {
-  let buffer = await readFile(filePath);
-  let str = buffer.toString();
-  let config = JSON5.parse(str);
+  const buffer = await readFile(filePath);
+  const str = buffer.toString();
+  const config = JSON5.parse(str);
 
   return config;
 }

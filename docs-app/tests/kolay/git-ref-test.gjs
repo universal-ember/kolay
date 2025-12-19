@@ -11,7 +11,7 @@ module('gitRef()', function () {
     test('git red is in the document title', async function (assert) {
       await visit('/');
 
-      let title = getPageTitle();
+      const title = getPageTitle();
 
       assert.ok(title.includes('Docs'));
       assert.ok(title.includes(' :: '));

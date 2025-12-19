@@ -37,15 +37,15 @@ export async function packageTypes(packageName) {
     });
   }
 
-  let manifestPath = await packageUp({ cwd: entryPath });
+  const manifestPath = await packageUp({ cwd: entryPath });
 
   assert(
     manifestPath,
     `Could not find package.json for ${packageName}. Tried looking upward from ${entryPath}`
   );
 
-  let manifest = require(manifestPath);
-  let dir = dirname(manifestPath);
+  const manifest = require(manifestPath);
+  const dir = dirname(manifestPath);
 
   let types = extractExports(manifest.exports, 'types');
 
@@ -84,7 +84,7 @@ export async function packageTypes(packageName) {
  * @returns {string[]}
  */
 export function extractTypesVersions(typesVersions) {
-  let first = Object.values(typesVersions)[0];
+  const first = Object.values(typesVersions)[0];
 
   if (!first) {
     return [];
@@ -101,13 +101,13 @@ export function extractTypesVersions(typesVersions) {
  * @returns {string[]}
  */
 export function extractExports(exports, kind, conditions = []) {
-  let result = [];
+  const result = [];
 
-  for (let [key, config] of Object.entries(exports)) {
+  for (const [key, config] of Object.entries(exports)) {
     if (typeof config === 'object') {
       if (conditions.length > 0) {
-        let isPathReference = key.startsWith('.');
-        let isKey = key === kind;
+        const isPathReference = key.startsWith('.');
+        const isKey = key === kind;
 
         if (!isPathReference && !isKey) {
           // We have conditions, so let's select one
@@ -170,11 +170,11 @@ export function virtualFile(options) {
     load(id) {
       if (!id.startsWith(INTERNAL_PREFIX)) return;
 
-      let importPath = id.slice(1);
+      const importPath = id.slice(1);
 
       if (!allowed.has(importPath)) return;
 
-      let opt = opts.find((opt) => opt.importPath === importPath);
+      const opt = opts.find((opt) => opt.importPath === importPath);
 
       assert(opt, `Could not find content for ${opt?.importPath}`);
 

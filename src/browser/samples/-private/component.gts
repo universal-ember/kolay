@@ -1,8 +1,7 @@
 /* eslint-disable ember/no-empty-glimmer-component-classes */
 import Component from '@glimmer/component';
 
-import DefaultClassA from './default-export-component.gts';
-
+import type DefaultClassA from './default-export-component.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { ComponentLike, WithBoundArgs } from '@glint/template';
 

@@ -78,7 +78,7 @@ export class Logs extends Component {
     registerDestructor(this, () => LEVELS.forEach((level) => (console[level] = original[level])));
 
     for (const level of LEVELS) {
-      console[level] = (...messageParts) => {
+      console[level] = (...messageParts: unknown[]) => {
         // If our thing fails, we want the normal
         // log to still happen, just in case.
         // Makes debugging easier
