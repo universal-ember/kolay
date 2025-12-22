@@ -2,7 +2,13 @@ import { cached } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
 
+import { Shadowed } from 'ember-primitives/components/shadowed';
 import { type ModuleMap, setupCompiler } from 'ember-repl';
+
+import { APIDocs, CommentQuery } from '../../typedoc/renderer.gts';
+import { ComponentSignature } from '../../typedoc/signature/component.gts';
+import { HelperSignature } from '../../typedoc/signature/helper.gts';
+import { ModifierSignature } from '../../typedoc/signature/modifier.gts';
 
 import type { Manifest } from '../../../types.ts';
 import type ApiDocs from './api-docs.ts';
@@ -100,7 +106,15 @@ export default class DocsService extends Service {
           options: {
             md,
             gmd: {
-              scope: options.topLevelScope,
+              scope: {
+                ...options.topLevelScope,
+                Shadowed,
+                APIDocs,
+                CommentQuery,
+                ComponentSignature,
+                ModifierSignature,
+                HelperSignature,
+              },
               ...md,
             },
           },
