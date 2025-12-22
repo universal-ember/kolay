@@ -5,7 +5,7 @@ import { waitForPromise } from '@ember/test-waiters';
 import { trackedFunction } from 'reactiveweb/function';
 import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
 
-import { typedocLoader } from '../services/kolay/api-docs.ts';
+import { typedocLoader } from '../services/api-docs.ts';
 
 import type { TOC } from '@ember/component/template-only';
 import type { Reflection } from 'typedoc';

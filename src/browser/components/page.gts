@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 
-import { selected } from '../services/kolay/selected.ts';
+import { selected } from '../services/selected.ts';
 
 import type { ComponentLike } from '@glint/template';
 

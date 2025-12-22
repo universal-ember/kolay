@@ -10,7 +10,7 @@ import { Compiled } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
 import { MDRequest } from './request.ts';
 
-import type { Page } from '../../../types.ts';
+import type { Page } from '../../types.ts';
 import type ApplicationInstance from '@ember/application/instance';
 import type RouterService from '@ember/routing/router-service';
 

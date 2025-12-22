@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
-import { docsManager } from '../services/kolay/docs.ts';
+import { docsManager } from '../services/docs.ts';
 
 import type RouterService from '@ember/routing/router-service';
 

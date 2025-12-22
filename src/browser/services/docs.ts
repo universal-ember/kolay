@@ -6,13 +6,13 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createService } from 'ember-primitives/service';
 import { type ModuleMap, setupCompiler } from 'ember-repl';
 
-import { APIDocs, CommentQuery } from '../../typedoc/renderer.gts';
-import { ComponentSignature } from '../../typedoc/signature/component.gts';
-import { HelperSignature } from '../../typedoc/signature/helper.gts';
-import { ModifierSignature } from '../../typedoc/signature/modifier.gts';
+import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
+import { ComponentSignature } from '../typedoc/signature/component.gts';
+import { HelperSignature } from '../typedoc/signature/helper.gts';
+import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { typedocLoader } from './api-docs.ts';
 
-import type { Manifest } from '../../../types.ts';
+import type { Manifest } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
@@ -125,9 +125,9 @@ class DocsService {
             },
           },
           modules: {
-            kolay: () => import('../../index.ts'),
-            'kolay/components': () => import('../../components.ts'),
-            'kolay/typedoc': () => import('../../typedoc/index.ts'),
+            kolay: () => import('../index.ts'),
+            'kolay/components': () => import('../components.ts'),
+            'kolay/typedoc': () => import('../typedoc/index.ts'),
             ...options.resolve,
           },
         });

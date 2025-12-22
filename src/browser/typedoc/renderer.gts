@@ -3,7 +3,7 @@
 // @ts-nocheck
 import { hash } from '@ember/helper';
 
-import { Compiled } from '../services/kolay/compiler/reactive.ts';
+import { Compiled } from '../services/compiler/reactive.ts';
 import { isLiteral } from './narrowing.ts';
 import { Load } from './utils.gts';
 

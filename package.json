@@ -39,11 +39,6 @@
     "./types": {
       "types": "./declarations/types.d.ts"
     },
-    "./services/*": {
-      "types": "./declarations/browser/services/*.d.ts",
-      "import": "./dist/browser/services/*.js",
-      "default": "./dist/browser/services/*.js"
-    },
     "./build": {
       "types": "./declarations/build/plugins/index.d.ts",
       "import": "./src/build/plugins/index.js"
@@ -62,9 +57,6 @@
     "./build/legacy": {
       "types": "./declarations/build/plugins/legacy/index.d.cts",
       "default": "./src/build/plugins/legacy/index.cjs"
-    },
-    "./browser/app-re-exports/*": {
-      "default": "./src/browser/app-re-exports/*"
     },
     "./virtual": {
       "types": "./src/browser/virtual/references.d.ts"
@@ -235,9 +227,6 @@
     "version": 2,
     "type": "addon",
     "main": "addon-main.cjs",
-    "app-js": {
-      "./services/kolay/docs.js": "./src/browser/app-re-exports/docs.js",
-      "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
-    }
+    "app-js": {}
   }
 }
