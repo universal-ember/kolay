@@ -1,18 +1,15 @@
-import { cached, tracked } from '@glimmer/tracking';
+import { cached } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
 import Service, { service } from '@ember/service';
+
+import { type ModuleMap, setupCompiler } from 'ember-repl';
 
 import type { Manifest } from '../../../types.ts';
 import type ApiDocs from './api-docs.ts';
 import type Selected from './selected.ts';
 import type RouterService from '@ember/routing/router-service';
-import type { UnifiedPlugin } from 'ember-repl';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
-
-interface ResolveMap {
-  [moduleName: string]: ScopeMap;
-}
 
 interface ScopeMap {
   [identifier: string]: unknown;
@@ -23,10 +20,6 @@ export default class DocsService extends Service {
   @service('kolay/selected') declare selected: Selected;
   @service('kolay/api-docs') declare apiDocs: ApiDocs;
 
-  @tracked additionalResolves?: ResolveMap;
-  @tracked additionalTopLevelScope?: ScopeMap;
-  @tracked remarkPlugins?: UnifiedPlugin[];
-  @tracked rehypePlugins?: UnifiedPlugin[];
   _docs: Manifest | undefined;
 
   loadManifest: () => Promise<Manifest> = () =>
@@ -67,26 +60,22 @@ export default class DocsService extends Service {
      * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: { [moduleName: string]: Promise<ScopeMap> };
+    resolve?: ModuleMap;
 
     /**
      * Provide additional remark plugins to the default markdown compiler.
      *
      * These can be used to add features like notes, callouts, footnotes, etc
      */
-    remarkPlugins?: UnifiedPlugin[];
+    remarkPlugins?: unknown[];
     /**
      * Provide additional rehype plugins to the default html compiler.
      *
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
-    rehypePlugins?: UnifiedPlugin[];
+    rehypePlugins?: unknown[];
   }) => {
-    const [manifest, apiDocs, resolve] = await Promise.all([
-      options.manifest,
-      options.apiDocs,
-      promiseHash(options.resolve),
-    ]);
+    const [manifest, apiDocs] = await Promise.all([options.manifest, options.apiDocs]);
 
     if (options.manifest) {
       this.loadManifest = manifest.load;
@@ -97,23 +86,30 @@ export default class DocsService extends Service {
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
 
-    if (options.resolve) {
-      this.additionalResolves = resolve;
-    }
+    const md = {
+      remarkPlugins: options.remarkPlugins ?? [],
+      rehypePlugins: options.rehypePlugins ?? [],
+    };
 
-    if (options.topLevelScope) {
-      this.additionalTopLevelScope = options.topLevelScope;
-    }
-
-    if (options.remarkPlugins) {
-      this.remarkPlugins = options.remarkPlugins;
-    }
-
-    if (options.rehypePlugins) {
-      this.rehypePlugins = options.rehypePlugins;
-    }
-
-    this._docs = await this.loadManifest();
+    await Promise.all([
+      (async () => {
+        this._docs = await this.loadManifest();
+      })(),
+      (async () => {
+        return setupCompiler(this, {
+          options: {
+            md,
+            gmd: {
+              scope: options.topLevelScope,
+              ...md,
+            },
+          },
+          modules: {
+            ...options.resolve,
+          },
+        });
+      })(),
+    ]);
 
     return this.manifest;
   };
