@@ -1,14 +1,18 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
+import { docsManager } from 'kolay';
+
 import type RouterService from '@ember/routing/router-service';
-import type { DocsService } from 'kolay';
 
 type Transition = ReturnType<RouterService['transitionTo']>;
 
 export default class ApplicationRoute extends Route {
   @service declare router: RouterService;
-  @service('kolay/docs') declare docs: DocsService;
+
+  get #docs() {
+    return docsManager(this);
+  }
 
   /**
    * Does our target destination exist? if not,
@@ -21,9 +25,9 @@ export default class ApplicationRoute extends Route {
     const groupName = yolo.to.parent?.params?.page;
 
     if (!groupName) return;
-    if (!this.docs.availableGroups.includes(groupName)) return;
+    if (!this.#docs.availableGroups.includes(groupName)) return;
 
-    const group = this.docs.groupFor(groupName);
+    const group = this.#docs.groupFor(groupName);
 
     const first = group.list[0];
 

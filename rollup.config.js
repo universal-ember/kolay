@@ -17,11 +17,11 @@ export default {
   plugins: [
     addon.dependencies(),
     addon.publicEntrypoints([
-      '*.js',
+      'index.js',
+      'test-support.js',
       'typedoc/index.js',
-      'components/**/*.js',
-      'services/kolay/{api-docs,compiler,docs,selected}.js',
-      'typedoc/**/*.js',
+      'components.js',
+      'virtual/*.js',
     ]),
     babel({
       extensions: ['.js', '.gjs', '.gts', '.ts'],
@@ -50,14 +50,14 @@ export default {
         };
 
         await Promise.all([
-          updateFile('dist/browser/typedoc/index.js', `'./styles2.css'`, `'./styles.css'`),
+          // updateFile('dist/browser/typedoc/index.js', `'./styles2.css'`, `'./styles.css'`),
           // This doesn't exist in source, but rollup.. just puts it here..
-          updateFile('dist/browser/index.js', `'./typedoc/styles2.css'`, `'./typedoc/styles.css'`),
-          deleteStyles2(),
+          // updateFile('dist/browser/index.js', `'./typedoc/styles2.css'`, `'./typedoc/styles.css'`),
+          // deleteStyles2(),
         ]);
       },
     },
-    addon.keepAssets(['**/styles.css']),
+    addon.keepAssets(['**/*.css']),
     addon.clean(),
   ],
 };

@@ -1,8 +1,4 @@
 import PageTitleService from 'ember-page-title/services/page-title';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import ResizeService from 'ember-resize-observer-service/services/resize-observer';
-import { registry as kolayRegistry } from 'kolay';
 
 import Router from './router.ts';
 
@@ -30,8 +26,6 @@ const resolverRegistry = {
 };
 
 export const registry = {
-  [`${appName}/services/resize-observer`]: ResizeService,
   [`${appName}/services/page-title`]: PageTitleService,
   ...resolverRegistry,
-  ...kolayRegistry(appName),
 };

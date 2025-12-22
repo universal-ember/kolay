@@ -1,3 +1,5 @@
+import { docsManager } from './services/kolay/docs.ts';
+
 import type Owner from '@ember/owner';
 import type { setupTest } from 'ember-qunit';
 import type { setupKolay as setup } from 'kolay/setup';
@@ -7,7 +9,7 @@ type NestedHooks = Parameters<typeof setupTest>[0];
 
 export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>): void {
   hooks.beforeEach(async function () {
-    const docs = this.owner.lookup('service:kolay/docs');
+    const docs = docsManager(this.owner);
 
     const userConfig = config ? await config() : {};
 
@@ -34,7 +36,8 @@ export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>):
  * @param {{ owner: { lookup: (registryName: string) => any }}} context
  */
 export function selectGroup(context: object, groupName = 'root'): void {
-  const docs = (context as { owner: Owner }).owner.lookup('service:kolay/docs');
+  const owner = (context as { owner: Owner }).owner;
+  const docs = docsManager(owner);
 
   docs.selectGroup(groupName);
 }

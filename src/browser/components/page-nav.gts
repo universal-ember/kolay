@@ -2,10 +2,10 @@ import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { docsManager } from '../services/kolay/docs.ts';
 import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
 import type { Collection, Page } from '../../types.ts';
-import type DocsService from '../services/kolay/docs.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
@@ -107,7 +107,9 @@ export class PageNav extends Component<{
     ];
   };
 }> {
-  @service('kolay/docs') declare docs: DocsService;
+  private get docs() {
+    return docsManager(this);
+  }
 
   /**
    * Ember doesn't yet have a way to forward blocks,

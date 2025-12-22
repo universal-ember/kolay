@@ -1,7 +1,12 @@
 import { assert } from '@ember/debug';
-import Service from '@ember/service';
 
-export default class DocsService extends Service {
+import { createService } from 'ember-primitives/service';
+
+export function typedocLoader(context: object) {
+  return createService(context, DocsLoader);
+}
+
+class DocsLoader {
   _packages: string[] = [];
   loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
 

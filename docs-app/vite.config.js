@@ -12,9 +12,6 @@ const cache = `${process.cwd()}/node_modules/ember-source/dist/packages/@glimmer
 
 export default defineConfig((/* { mode } */) => {
   return {
-    build: {
-      target: ['esnext'],
-    },
     resolve: {
       extensions,
       alias: {
@@ -45,18 +42,11 @@ export default defineConfig((/* { mode } */) => {
     ],
     optimizeDeps: {
       exclude: [
-        'ember-repl > repl-sdk',
-        // a wasm-providing dependency
-        'content-tag',
-        'ember-repl > repl-sdk > content-tag',
-        'ember-repl > content-tag',
-        // vite doesn't have good web worker-optimization
-        'ember-repl > tar-worker',
+        // has a wasm-dependency, as well as web-worker,
+        // which vite can't optimize at this this stage
+        'ember-repl',
       ],
-      // for top-level-await, etc
-      esbuildOptions: {
-        target: 'esnext',
-      },
+      include: ['ember-repl > repl-sdk'],
     },
   };
 });

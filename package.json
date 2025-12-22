@@ -236,8 +236,6 @@
     "type": "addon",
     "main": "addon-main.cjs",
     "app-js": {
-      "./services/kolay/api-docs.js": "./src/browser/app-re-exports/api-docs.js",
-      "./services/kolay/compiler.js": "./src/browser/app-re-exports/compiler.js",
       "./services/kolay/docs.js": "./src/browser/app-re-exports/docs.js",
       "./services/kolay/selected.js": "./src/browser/app-re-exports/selected.js"
     }

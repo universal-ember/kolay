@@ -1,18 +1,18 @@
 import { cached } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
-import Service, { service } from '@ember/service';
+import { service } from '@ember/service';
 
 import { Shadowed } from 'ember-primitives/components/shadowed';
+import { createService } from 'ember-primitives/service';
 import { type ModuleMap, setupCompiler } from 'ember-repl';
 
 import { APIDocs, CommentQuery } from '../../typedoc/renderer.gts';
 import { ComponentSignature } from '../../typedoc/signature/component.gts';
 import { HelperSignature } from '../../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../../typedoc/signature/modifier.gts';
+import { typedocLoader } from './api-docs.ts';
 
 import type { Manifest } from '../../../types.ts';
-import type ApiDocs from './api-docs.ts';
-import type Selected from './selected.ts';
 import type RouterService from '@ember/routing/router-service';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
@@ -21,10 +21,16 @@ interface ScopeMap {
   [identifier: string]: unknown;
 }
 
-export default class DocsService extends Service {
+export function docsManager(context: object) {
+  return createService(context, DocsService);
+}
+
+class DocsService {
   @service declare router: RouterService;
-  @service('kolay/selected') declare selected: Selected;
-  @service('kolay/api-docs') declare apiDocs: ApiDocs;
+
+  private get apiDocs() {
+    return typedocLoader(this);
+  }
 
   _docs: Manifest | undefined;
 
@@ -119,6 +125,9 @@ export default class DocsService extends Service {
             },
           },
           modules: {
+            kolay: () => import('../../index.ts'),
+            'kolay/components': () => import('../../components.ts'),
+            'kolay/typedoc': () => import('../../typedoc/index.ts'),
             ...options.resolve,
           },
         });
@@ -230,46 +239,4 @@ export default class DocsService extends Service {
 
     return false;
   };
-}
-
-/**
- * RSVP.hash, but native
- */
-async function promiseHash<T>(obj?: { [key: string]: Promise<T> }): Promise<{ [key: string]: T }> {
-  const result: Record<string, T> = {};
-
-  if (!obj) {
-    return result;
-  }
-
-  const keys: string[] = [];
-  const promises = [];
-
-  for (const [key, promise] of Object.entries(obj)) {
-    keys.push(key);
-    promises.push(promise);
-  }
-
-  assert(`Something went wrong when resolving a promise Hash`, keys.length === promises.length);
-
-  const resolved = await Promise.all(promises);
-
-  for (let i = 0; i < resolved.length; i++) {
-    const key = keys[i];
-    const resolvedValue = resolved[i];
-
-    assert(`Missing key for index ${i}`, key);
-    assert(`Resolved value for key ${key} is not an object`, typeof resolvedValue === 'object');
-
-    result[key] = resolvedValue;
-  }
-
-  return result;
-}
-
-// DO NOT DELETE: this is how TypeScript knows how to look up your services.
-declare module '@ember/service' {
-  interface Registry {
-    'kolay/docs': DocsService;
-  }
 }

@@ -15,6 +15,7 @@ export const setup = () => {
         content: stripIndent`
           import { getOwner } from '@ember/owner';
           import { assert } from '@ember/debug';
+          import { docsManager } from 'kolay';
 
           export async function setupKolay(context, options) {
             let owner = getOwner(context) ?? context.owner;
@@ -28,7 +29,7 @@ export const setup = () => {
               owner
             );
 
-            let docs = owner.lookup('service:kolay/docs');
+            let docs = docsManager(this);
 
             // NOTE: TS doesn't resolve paths with colons in them.
             //       But these files don't actually exist on disk.

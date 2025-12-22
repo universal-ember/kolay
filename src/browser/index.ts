@@ -9,13 +9,14 @@ export {
 
 // Required to use Kolay
 export { addRoutes } from './router.ts';
+export { typedocLoader } from './services/kolay/api-docs.ts';
 export { Compiled } from './services/kolay/compiler/reactive.ts';
+export { docsManager } from './services/kolay/docs.ts';
+export { selected } from './services/kolay/selected.ts';
 
 // Utilities
-export { registry } from './service-registry.ts';
 export * from './utils.ts';
 
 // Types
 export type { Collection, Manifest, Page } from '../types.ts';
-export type { default as APIDocsService } from './services/kolay/api-docs.ts';
-export type { default as DocsService, SetupOptions } from './services/kolay/docs.ts';
+export type { SetupOptions } from './services/kolay/docs.ts';

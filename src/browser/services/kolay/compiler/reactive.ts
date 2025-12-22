@@ -1,14 +1,18 @@
+import { compile, getCompiler } from 'ember-repl';
 import { resource, resourceFactory } from 'ember-resources';
-
-import type Compiler from '../compiler.ts';
 
 export function Compiled(textFn: string | null | (() => string | null)) {
   return resource(({ owner }) => {
-    const compiler = owner.lookup('service:kolay/compiler') as Compiler;
-
     const text = typeof textFn === 'function' ? textFn() : textFn;
 
-    return compiler.compileMD(text);
+    const state = compile(getCompiler(owner), text, {
+      /**
+       * Documentation can only be in markdown.
+       */
+      format: 'glimdown',
+    });
+
+    return state;
   });
 }
 
