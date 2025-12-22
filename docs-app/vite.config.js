@@ -44,8 +44,15 @@ export default defineConfig((/* { mode } */) => {
       }),
     ],
     optimizeDeps: {
-      // a wasm-providing dependency
-      exclude: ['content-tag'],
+      exclude: [
+        'ember-repl > repl-sdk',
+        // a wasm-providing dependency
+        'content-tag',
+        'ember-repl > repl-sdk > content-tag',
+        'ember-repl > content-tag',
+        // vite doesn't have good web worker-optimization
+        'ember-repl > tar-worker',
+      ],
       // for top-level-await, etc
       esbuildOptions: {
         target: 'esnext',

@@ -31,8 +31,10 @@ export default class ApplicationRoute extends Route {
 
     const manifest = await setupKolay(this, {
       resolve: {
-        'ember-primitives': import('ember-primitives'),
-        kolay: import('kolay'),
+        'ember-primitives': () => import('ember-primitives'),
+        kolay: () => import('kolay'),
+        'babel-plugin-ember-template-compilation': () =>
+          import('babel-plugin-ember-template-compilation'),
       },
       rehypePlugins: [
         // @shikijs/rehype
