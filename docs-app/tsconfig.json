@@ -1,8 +1,5 @@
 {
   "extends": "@ember/app-tsconfig",
-  "glint": {
-    "environment": ["ember-loose", "ember-template-imports"]
-  },
   "compilerOptions": {
     // stylistic
     "noPropertyAccessFromIndexSignature": false,
@@ -11,7 +8,8 @@
       "kolay/virtual",
       "vite/client",
       "vitest/importMeta",
-      "unplugin-info/client"
+      "unplugin-info/client",
+      "@glint/ember-tsc/types"
     ]
   }
 }
