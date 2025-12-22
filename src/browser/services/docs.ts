@@ -94,13 +94,23 @@ class DocsService {
     }
 
     if (options.apiDocs) {
-      this.apiDocs._packages = apiDocs.packages;
+      this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
 
     const md = {
       remarkPlugins: options.remarkPlugins ?? [],
       rehypePlugins: options.rehypePlugins ?? [],
+    };
+
+    const scope = {
+      ...options.topLevelScope,
+      Shadowed,
+      APIDocs,
+      CommentQuery,
+      ComponentSignature,
+      ModifierSignature,
+      HelperSignature,
     };
 
     await Promise.all([
@@ -112,16 +122,11 @@ class DocsService {
           options: {
             md,
             gmd: {
-              scope: {
-                ...options.topLevelScope,
-                Shadowed,
-                APIDocs,
-                CommentQuery,
-                ComponentSignature,
-                ModifierSignature,
-                HelperSignature,
-              },
+              scope,
               ...md,
+            },
+            hbs: {
+              scope,
             },
           },
           modules: {

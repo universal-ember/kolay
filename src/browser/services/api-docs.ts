@@ -2,8 +2,16 @@ import { assert } from '@ember/debug';
 
 import { createService } from 'ember-primitives/service';
 
+let docs = new Set();
+globalThis.docs = docs;
+
 export function typedocLoader(context: object) {
-  return createService(context, DocsLoader);
+  console.log('ctx', context);
+  let result = createService(context, DocsLoader);
+
+  docs.add(result);
+
+  return result;
 }
 
 class DocsLoader {
