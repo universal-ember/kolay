@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@ember/render-modifier': ^2.1.0
   '@ember/test-waiters': ^4.0.0
   '@glint/template': 1.7.3
   '@glimmer/component': ^2.0.0
