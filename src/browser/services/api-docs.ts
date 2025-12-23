@@ -18,6 +18,12 @@ class DocsLoader {
   _packages: string[] = [];
   loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
 
+  constructor() {
+    if (docs.length === 1) {
+      debugger;
+    }
+  }
+
   get packages() {
     assert(
       `packages was never set. Did you forget to import 'kolay/api-docs:virtual' and set it to 'apiDocs' when calling docs.setup()?`,

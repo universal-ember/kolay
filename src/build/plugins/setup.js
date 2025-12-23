@@ -19,7 +19,6 @@ export const setup = () => {
 
           export async function setupKolay(context, options) {
             let owner = getOwner(context) ?? context.owner;
-            setOwner(owner, owner);
 
             assert(
               \`Expected owner to exist on the passed context, \`
