@@ -87,7 +87,7 @@ export class Page extends Component<{
   </template>
 
   private get selected() {
-    return selected(this);
+    return selected();
   }
 }
 

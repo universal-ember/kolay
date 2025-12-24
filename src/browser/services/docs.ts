@@ -3,7 +3,7 @@ import { assert } from '@ember/debug';
 import { service } from '@ember/service';
 
 import { Shadowed } from 'ember-primitives/components/shadowed';
-import { createService } from 'ember-primitives/service';
+import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, setupCompiler } from 'ember-repl';
 
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
@@ -21,15 +21,15 @@ interface ScopeMap {
   [identifier: string]: unknown;
 }
 
-export function docsManager(context: object) {
-  return createService(context, DocsService);
+export function docsManager() {
+  return createStore(document.body, DocsService);
 }
 
 class DocsService {
   @service declare router: RouterService;
 
   private get apiDocs() {
-    return typedocLoader(this);
+    return typedocLoader();
   }
 
   _docs: Manifest | undefined;

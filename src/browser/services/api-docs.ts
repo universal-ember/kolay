@@ -1,28 +1,14 @@
 import { assert } from '@ember/debug';
 
-import { createService } from 'ember-primitives/service';
+import { createStore } from 'ember-primitives/store';
 
-let docs = new Set();
-globalThis.docs = docs;
-
-export function typedocLoader(context: object) {
-  console.log('ctx', context);
-  let result = createService(context, DocsLoader);
-
-  docs.add(result);
-
-  return result;
+export function typedocLoader() {
+  return createStore(document.body, DocsLoader);
 }
 
 class DocsLoader {
   _packages: string[] = [];
   loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
-
-  constructor() {
-    if (docs.length === 1) {
-      debugger;
-    }
-  }
 
   get packages() {
     assert(

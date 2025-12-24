@@ -19,6 +19,9 @@ export const setup = () => {
 
           export async function setupKolay(context, options) {
             let owner = getOwner(context) ?? context.owner;
+            // Beyond a singleton, an eternal
+            // (no destruction)
+            setOwner(document.body, owner);
 
             assert(
               \`Expected owner to exist on the passed context, \`

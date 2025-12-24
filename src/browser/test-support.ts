@@ -9,7 +9,7 @@ type NestedHooks = Parameters<typeof setupTest>[0];
 
 export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>): void {
   hooks.beforeEach(async function () {
-    const docs = docsManager(this.owner);
+    const docs = docsManager();
 
     const userConfig = config ? await config() : {};
 
@@ -32,12 +32,9 @@ export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>):
 
 /**
  * For changing which sub-context is loaded as the primary set of docs
- *
- * @param {{ owner: { lookup: (registryName: string) => any }}} context
  */
-export function selectGroup(context: object, groupName = 'root'): void {
-  const owner = (context as { owner: Owner }).owner;
-  const docs = docsManager(owner);
+export function selectGroup(groupName = 'root'): void {
+  const docs = docsManager();
 
   docs.selectGroup(groupName);
 }

@@ -1,7 +1,7 @@
 import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
 
-import { createService } from 'ember-primitives/service';
+import { createStore } from 'ember-primitives/store';
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { link } from 'reactiveweb/link';
@@ -28,8 +28,8 @@ import type RouterService from '@ember/routing/router-service';
 
 const firstPath = '/1-get-started/intro.md';
 
-export function selected(context: object) {
-  return createService(context, Selected);
+export function selected() {
+  return createStore(document.body, Selected);
 }
 
 /**
@@ -52,7 +52,7 @@ class Selected {
   @service declare router: RouterService;
 
   get #docs() {
-    return docsManager(this);
+    return docsManager();
   }
 
   get rootURL() {

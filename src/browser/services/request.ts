@@ -24,7 +24,7 @@ export class MDRequest {
   constructor(private urlFn: () => string) {}
 
   get #docs() {
-    return docsManager(this);
+    return docsManager();
   }
 
   @service declare router: RouterService;
