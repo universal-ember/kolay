@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
 import { waitForPromise } from '@ember/test-waiters';
 
+import { Provide } from 'ember-primitives/dom-context';
 import { trackedFunction } from 'reactiveweb/function';
 import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
 
@@ -113,7 +114,9 @@ export class Load extends Component<{
     {{#if this.request.value}}
       <section>
         <Query @info={{this.request.value}} @module={{@module}} @name={{@name}} as |type|>
-          {{yield type this.request.value}}
+          <Provide @data={{this.request.value}} @key='project'>
+            {{yield type this.request.value}}
+          </Provide>
         </Query>
       </section>
     {{/if}}

@@ -1,4 +1,5 @@
 import { ExternalLink } from 'ember-primitives/components/external-link';
+import { Heading } from 'ember-primitives/components/heading';
 
 import { isLiteral } from '../narrowing.ts';
 import { Comment } from '../renderer.gts';
@@ -19,19 +20,21 @@ export const Element: TOC<{
   Args: { kind: 'component' | 'modifier'; info: any };
 }> = <template>
   {{#if @info}}
-    <h3 class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
-      <span class='typedoc__name'>{{@info.name}}</span>
-      <span class='typedoc__{{@kind}}-signature__element-type'>
-        {{#if (hasName @info)}}
-          <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
-            {{@info.type.name}}
-            ➚
-          </ExternalLink>
-        {{else if (isLiteral @info.type)}}
-          {{String @info.type.value}}
-        {{/if}}
-      </span>
-    </h3>
+    <section>
+      <Heading class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
+        <span class='typedoc__name'>{{@info.name}}</span>
+        <span class='typedoc__{{@kind}}-signature__element-type'>
+          {{#if (hasName @info)}}
+            <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
+              {{@info.type.name}}
+              ➚
+            </ExternalLink>
+          {{else if (isLiteral @info.type)}}
+            {{String @info.type.value}}
+          {{/if}}
+        </span>
+      </Heading>
+    </section>
     <span class='typedoc__{{@kind}}-signature__element'>
       <Comment @info={{@info}} />
     </span>

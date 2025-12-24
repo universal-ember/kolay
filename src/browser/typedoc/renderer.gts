@@ -3,8 +3,14 @@
 // @ts-nocheck
 import { hash } from '@ember/helper';
 
+import { Consume } from 'ember-primitives/dom-context';
+
 import { Compiled } from '../services/compiler/reactive.ts';
 import { isLiteral } from './narrowing.ts';
+import {
+  ComponentDeclaration,
+  getSignature as getComponentSignature,
+} from './signature/component.gts';
 import { Load } from './utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -367,38 +373,44 @@ const Literal: TOC<{ Args: { info: LiteralType } }> = <template>
 </template>;
 
 export const Type: TOC<{ Args: { info: SomeType } }> = <template>
-  {{#if (isReference @info)}}
-    {{! @glint-expect-error }}
-    <Reference @info={{@info}} />
-  {{else if (isQuery @info)}}
-    <Type @info={{@info.queryType}} />
-  {{else if (isReflection @info)}}
-    {{! @glint-expect-error }}
-    <Reflection @info={{@info}} />
-  {{else if (isIntrinsic @info)}}
-    {{! @glint-expect-error }}
-    <Intrinsic @info={{@info}} />
-  {{else if (isTuple @info)}}
-    {{! @glint-expect-error }}
-    <Tuple @info={{@info}} />
-  {{else if (isNamedTuple @info)}}
-    <NamedTuple @info={{@info}} />
-  {{else if (isVoidIntrinsic @info)}}
-    {{! @glint-expect-error }}
-    <VoidIntrinsic @info={{@info}} />
-  {{else if (isArray @info)}}
-    <Array @info={{@info}} />
-  {{else if (isFn @info)}}
-    {{! @glint-expect-error }}
-    <Function @info={{@info}} />
-  {{else if (isUnion @info)}}
-    <Union @info={{@info}} />
-  {{else if (isLiteral @info)}}
-    <Literal @info={{@info}} />
-  {{else if (isUnknownType @info)}}
-    <Unknown @info={{@info}} />
-  {{else}}
-    {{! template-lint-disable no-log }}
-    {{log 'Unknown Type' @info}}
-  {{/if}}
+  <Consume @key='project' as |project|>
+    {{#let (getComponentSignature @info.declaration project) as |maybe|}}
+      {{#if maybe}}
+        <ComponentDeclaration @signature={{maybe}} />
+      {{else if (isReference @info)}}
+        {{! @glint-expect-error }}
+        <Reference @info={{@info}} />
+      {{else if (isQuery @info)}}
+        <Type @info={{@info.queryType}} />
+      {{else if (isReflection @info)}}
+        {{! @glint-expect-error }}
+        <Reflection @info={{@info}} />
+      {{else if (isIntrinsic @info)}}
+        {{! @glint-expect-error }}
+        <Intrinsic @info={{@info}} />
+      {{else if (isTuple @info)}}
+        {{! @glint-expect-error }}
+        <Tuple @info={{@info}} />
+      {{else if (isNamedTuple @info)}}
+        <NamedTuple @info={{@info}} />
+      {{else if (isVoidIntrinsic @info)}}
+        {{! @glint-expect-error }}
+        <VoidIntrinsic @info={{@info}} />
+      {{else if (isArray @info)}}
+        <Array @info={{@info}} />
+      {{else if (isFn @info)}}
+        {{! @glint-expect-error }}
+        <Function @info={{@info}} />
+      {{else if (isUnion @info)}}
+        <Union @info={{@info}} />
+      {{else if (isLiteral @info)}}
+        <Literal @info={{@info}} />
+      {{else if (isUnknownType @info)}}
+        <Unknown @info={{@info}} />
+      {{else}}
+        {{! template-lint-disable no-log }}
+        {{log 'Unknown Type' @info}}
+      {{/if}}
+    {{/let}}
+  </Consume>
 </template>;

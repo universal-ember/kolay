@@ -1,3 +1,5 @@
+import { Heading } from 'ember-primitives/components/heading';
+
 import { Comment, isIntrinsic, isNamedTuple, Type } from '../renderer.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -20,7 +22,7 @@ export const Args: TOC<{
   Args: { kind: 'component' | 'modifier' | 'helper'; info: any };
 }> = <template>
   {{#if @info}}
-    <h3 class='typedoc__heading'>Arguments</h3>
+    <Heading class='typedoc__heading'>Arguments</Heading>
     {{#each (listifyArgs @info) as |child|}}
       <span class='typedoc__{{@kind}}-signature__arg'>
         <span class='typedoc__{{@kind}}-signature__arg-info'>

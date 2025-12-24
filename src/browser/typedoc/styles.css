@@ -152,6 +152,9 @@ section {
 .typedoc__component-signature__block .typedoc__declaration-name + .typedoc__reference {
   margin-bottom: -0.25rem;
 }
+.typedoc__component-signature__block > .typedoc__property {
+  border-left: 1px dashed color-mix(in lch, currentColor 50%, transparent 75%);
+}
 .typedoc__component-signature__block > .typedoc__property .typedoc__declaration-children {
   display: grid;
   gap: 0.5rem;
