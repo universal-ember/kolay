@@ -8,10 +8,36 @@ import type { ComponentLike, WithBoundArgs } from '@glint/template';
 export interface SignatureA {
   Element: HTMLDivElement;
   Args: {
+    /**
+     * Every property on a type can have docs, and code fences
+     *
+     * example:
+     * ```gjs
+     * import { A } from 'somewhere';
+     *
+     * <template>
+     *  <A @foo={{2}} @bar="hello">...</A>
+     * </template>
+     * ```
+     */
     foo: number;
     bar: string;
   };
   Blocks: {
+    /**
+     * Block documentation should have examples of how to use the yielded data
+     *
+     * ```gjs
+     * import { A } from 'somewhere';
+     *
+     * <template>
+     *  <A as |first second|>...
+     *    {{first}} a number
+     *    {{second}} a string
+     *  </A>
+     * </template>
+     * ```
+     */
     default: [first: number, second: string];
     namedBlockA: [first: typeof ClassA];
     namedBlockB: [boolean];

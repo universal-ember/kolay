@@ -39,17 +39,17 @@ export class PageNav extends Component<{
      * By default the `name` property will be used in a link.
      *
      * Example:
-     * ```gjs
+     * ```gjs live preview
      * import { PageNav } from 'kolay/components';
-     *
-     * function toSentenceCase(name) { /* ... *\/ }
+     * import { nameFor } from '#docs/demo-support';
      *
      * <template>
      *   <PageNav>
-     *     <:page as |page|>
-     *       <x.Link>
-     *         {{toSentenceCase page.name}}
-     *       </x.Link>
+     *     <:page as |x|>
+     *       <pre>{{JSON.stringify x.page null 3}}</pre>
+     *       <page.Link>
+     *         {{nameFor x.page}}
+     *       </page.Link>
      *     </:page>
      *   </PageNav>
      * </template>
@@ -69,14 +69,14 @@ export class PageNav extends Component<{
      * By default the `name` property will be used or a link will be rendered if an index page is present..
      *
      * Example:
-     * ```gjs
+     * ```gjs live preview
      * import { PageNav } from 'kolay/components';
-     *
-     * function toSentenceCase(name) { /* ... *\/ }
+     * import { sentenceCase } from '#docs/demo-support';
      *
      * <template>
      *   <PageNav>
      *     <:collection as |x|>
+     *       <pre>{{JSON.stringify x null 3}}</pre>
      *       {{#if x.index}}
      *         <x.index.Link>
      *           {{sentenceCase x.collection.name}}

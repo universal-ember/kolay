@@ -1,6 +1,5 @@
 import { docsManager } from './services/docs.ts';
 
-import type Owner from '@ember/owner';
 import type { setupTest } from 'ember-qunit';
 import type { setupKolay as setup } from 'kolay/setup';
 

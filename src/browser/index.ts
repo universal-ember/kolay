@@ -1,3 +1,5 @@
+import './kolay.css';
+
 // Required to *sanely* use typedoc data
 export {
   APIDocs,

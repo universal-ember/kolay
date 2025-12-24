@@ -11,7 +11,7 @@ export default class ApplicationRoute extends Route {
   @service declare router: RouterService;
 
   get #docs() {
-    return docsManager(this);
+    return docsManager();
   }
 
   /**

@@ -157,6 +157,7 @@
     "reactiveweb": "^1.2.1",
     "release-plan": "^0.17.2",
     "rollup": "^4.54.0",
+    "rollup-plugin-import-css": "^4.1.2",
     "tracked-built-ins": "^3.3.0",
     "turbo": "2.5.4",
     "typescript": "^5.9.3",

@@ -1,6 +1,7 @@
 import { Addon } from '@embroider/addon-dev/rollup';
 import fs from 'node:fs/promises';
 
+import css from 'rollup-plugin-import-css';
 import { babel } from '@rollup/plugin-babel';
 import { execaCommand } from 'execa';
 
@@ -12,8 +13,12 @@ const addon = new Addon({
 export default {
   output: {
     ...addon.output(),
-    preserveModules: true,
   },
+  // The kolay.css import exists in source,
+  // but does not resolve anywhere in source.
+  // It is emitted via the css() plugin, which bundles
+  // all CSS in the project into one file (not very much)
+  external: ['./kolay.css'],
   plugins: [
     addon.dependencies(),
     addon.publicEntrypoints([
@@ -29,35 +34,8 @@ export default {
     }),
 
     addon.gjs(),
-    // the declarations plugin needs to detect Glint @ 2, and not do extension stripping on the imports
-    // addon.declarations('declarations'),
-    {
-      name: 'Build Declarations',
-      closeBundle: async () => {
-        await execaCommand(`pnpm ember-tsc --declaration`, { stdio: 'inherit' });
-
-        const deleteStyles2 = async () => {
-          await fs.rm('dist/browser/typedoc/styles2.css');
-          await fs.rm('dist/browser/typedoc/styles2.css.map');
-        };
-
-        const updateFile = async (file, search, replace) => {
-          // https://github.com/embroider-build/embroider/issues/2461
-          let contents = await fs.readFile(file);
-          let fixed = contents.toString().replace(search, replace);
-
-          await fs.writeFile(file, fixed);
-        };
-
-        await Promise.all([
-          // updateFile('dist/browser/typedoc/index.js', `'./styles2.css'`, `'./styles.css'`),
-          // This doesn't exist in source, but rollup.. just puts it here..
-          // updateFile('dist/browser/index.js', `'./typedoc/styles2.css'`, `'./typedoc/styles.css'`),
-          // deleteStyles2(),
-        ]);
-      },
-    },
-    addon.keepAssets(['**/*.css']),
+    addon.declarations('declarations', 'ember-tsc --declaration'),
+    css({ include: ['**/*.css'], output: 'kolay.css', copyRelativeAssets: true }),
     addon.clean(),
   ],
 };

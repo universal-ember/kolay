@@ -178,6 +178,9 @@ importers:
       rollup:
         specifier: ^4.54.0
         version: 4.54.0
+      rollup-plugin-import-css:
+        specifier: ^4.1.2
+        version: 4.1.2(rollup@4.54.0)
       turbo:
         specifier: 2.5.4
         version: 2.5.4
@@ -7145,6 +7148,12 @@ packages:
     resolution: {integrity: sha512-ETShhQGb9SoiwcNrvb3BhUNSGR89Jao0+XxxfzzLW1YsUzx8+rMO4z9oqWWmo6OHUmfNQRvqRj0cAyPkS9lN9w==}
     peerDependencies:
       rollup: '>=1.1.2'
+
+  rollup-plugin-import-css@4.1.2:
+    resolution: {integrity: sha512-bIdDaQnED3P/Z++hoH9+iyLgmTc7h6F7XL/j51sdJA38IPJAubx3HhHNruI+C644iB74UFFXo85cr588H1LnCw==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      rollup: ^2.x.x || ^3.x.x || ^4.x.x
 
   rollup@4.54.0:
     resolution: {integrity: sha512-3nk8Y3a9Ea8szgKhinMlGMhGMw89mqule3KWczxhIzqudyHdCIOHw8WJlj/r329fACjKLEh13ZSk7oE22kyeIw==}
@@ -17471,6 +17480,11 @@ snapshots:
   rollup-plugin-copy-assets@2.0.3(rollup@4.54.0):
     dependencies:
       fs-extra: 7.0.1
+      rollup: 4.54.0
+
+  rollup-plugin-import-css@4.1.2(rollup@4.54.0):
+    dependencies:
+      '@rollup/pluginutils': 5.3.0(rollup@4.54.0)
       rollup: 4.54.0
 
   rollup@4.54.0:

@@ -128,7 +128,7 @@ export default Route(
   </template>
 );
 
-function nameFor(x: Page) {
+export function nameFor(x: Page) {
   // We defined componentName via json file
 
   if ('componentName' in x) {
