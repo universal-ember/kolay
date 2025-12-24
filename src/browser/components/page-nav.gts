@@ -52,6 +52,7 @@ export class PageNav extends Component<{
      *       </page.Link>
      *     </:page>
      *   </PageNav>
+     *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */
@@ -86,6 +87,7 @@ export class PageNav extends Component<{
      *       {{/if}}
      *     </:collection>
      *   </PageNav>
+     *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */

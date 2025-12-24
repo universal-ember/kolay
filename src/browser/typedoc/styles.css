@@ -20,6 +20,12 @@
   line-height: 1.5rem;
 }
 .typedoc__declaration {
+  &:not(:has(.typedoc__declaration-children)) {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
   .typedoc__declaration-name {
     font-weight: bold;
   }
@@ -154,9 +160,9 @@ section {
   > .typedoc__property
   > .typedoc__declaration
   > ul.typedoc__declaration-children
-  > li
+  > li:not(:last-child)
   > .typedoc__declaration {
-  border: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
   padding: 0.5rem;
 }
 
@@ -189,7 +195,9 @@ section {
 /**
  * References
  */
-.typedoc__reference {
+.typedoc__reference:has(.typedoc__reference__typeArguments) {
+  display: grid;
+  grid-auto-flow: row;
 }
 .typedoc__reference__name {
   display: inline;
@@ -207,7 +215,7 @@ section {
   gap: 0.5rem;
 }
 .typedoc__reference__typeArgument {
-  border: 1px solid;
+  /* border: 1px solid; */
 }
 
 /**
