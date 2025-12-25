@@ -1,3 +1,6 @@
+export type LoadManifest = () => Promise<Manifest>;
+export type LoadTypedoc = Record<string, () => ReturnType<typeof fetch>>;
+
 export interface Manifest {
   groups: {
     name: string;

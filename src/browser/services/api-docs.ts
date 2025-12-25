@@ -2,13 +2,15 @@ import { assert } from '@ember/debug';
 
 import { createStore } from 'ember-primitives/store';
 
+import type { LoadTypedoc } from '../../types.ts';
+
 export function typedocLoader() {
   return createStore(document.body, DocsLoader);
 }
 
 class DocsLoader {
   _packages: string[] = [];
-  loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
+  loadApiDocs: LoadTypedoc = {};
 
   get packages() {
     assert(

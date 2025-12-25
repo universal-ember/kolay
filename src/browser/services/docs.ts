@@ -12,7 +12,7 @@ import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { typedocLoader } from './api-docs.ts';
 
-import type { Manifest } from '../../types.ts';
+import type { LoadManifest, LoadTypedoc, Manifest } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
@@ -34,24 +34,20 @@ class DocsService {
 
   _docs: Manifest | undefined;
 
-  loadManifest: () => Promise<Manifest> = () =>
-    Promise.resolve({
-      list: [],
-      tree: {},
-    } as any);
+  loadManifest: LoadManifest = () => Promise.resolve({ groups: [] });
 
   setup = async (options: {
     /**
      * The module of the manifest virtual module.
      * This should be set to `await import('kolay/manifest:virtual')
      */
-    manifest?: Promise<any>;
+    manifest?: Promise<{ load: LoadManifest }>;
 
     /**
      * The module of the api docs virtual module.
      * This should be set to `await import('kolay/api-docs:virtual')
      */
-    apiDocs?: Promise<any>;
+    apiDocs?: Promise<{ packageNames: string[]; loadApiDocs: LoadTypedoc }>;
 
     /**
      * Additional invokables that you'd like to have access to
@@ -89,11 +85,11 @@ class DocsService {
   }) => {
     const [manifest, apiDocs] = await Promise.all([options.manifest, options.apiDocs]);
 
-    if (options.manifest) {
+    if (manifest) {
       this.loadManifest = manifest.load;
     }
 
-    if (options.apiDocs) {
+    if (apiDocs) {
       this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
@@ -117,28 +113,28 @@ class DocsService {
       (async () => {
         this._docs = await this.loadManifest();
       })(),
-      (async () => {
-        return setupCompiler(this, {
-          options: {
-            md,
-            gmd: {
-              scope,
-              ...md,
-            },
-            hbs: {
-              scope,
-            },
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+      setupCompiler(this, {
+        options: {
+          md,
+          gmd: {
+            scope,
+            ...md,
           },
-          modules: {
-            kolay: () => import('../index.ts'),
-            'kolay/components': () => import('../components.ts'),
-            'kolay/typedoc': () => import('../typedoc/index.ts'),
-            ...options.resolve,
+          hbs: {
+            scope,
           },
-        });
-      })(),
+        },
+        modules: {
+          kolay: () => import('../index.ts'),
+          'kolay/components': () => import('../components.ts'),
+          'kolay/typedoc': () => import('../typedoc/index.ts'),
+          ...options.resolve,
+        },
+      }),
     ]);
 
+    // type-narrowed version of _docs, above
     return this.manifest;
   };
 
