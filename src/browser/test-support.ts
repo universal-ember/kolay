@@ -4,6 +4,7 @@ import { compilerOptions, docsManager, LOAD_MANIFEST, PREPARE_DOCS } from './ser
 
 import type { setupTest } from 'ember-qunit';
 import type { setupKolay as setup } from 'kolay/setup';
+import { setOwner } from '@ember/owner';
 
 type Options = Parameters<typeof setup>[1];
 type NestedHooks = Parameters<typeof setupTest>[0];
@@ -12,6 +13,8 @@ export function setupKolay(hooks: NestedHooks, config?: Options): void {
   setupCompiler(hooks, compilerOptions(config ?? {}));
 
   hooks.beforeEach(async function () {
+    setOwner(document.body, this.owner);
+
     const docs = docsManager();
 
     const [apiDocs, manifest] = await Promise.all([

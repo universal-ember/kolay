@@ -90,6 +90,7 @@
     "extends": "../package.json"
   },
   "dependencies": {
+    "@embroider/legacy-inspector-support": "^0.1.3",
     "@shikijs/rehype": "^3.20.0",
     "@universal-ember/test-support": "^0.5.1",
     "change-case": "^5.4.3",
