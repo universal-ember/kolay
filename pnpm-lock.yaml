@@ -208,9 +208,6 @@ importers:
       change-case:
         specifier: ^5.4.3
         version: 5.4.4
-      content-tag:
-        specifier: ^4.0.0
-        version: 4.0.0
       ember-async-data:
         specifier: ^2.0.0
         version: 2.0.1(@babel/core@7.28.5)(@glint/template@1.7.3)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
@@ -220,9 +217,6 @@ importers:
       ember-mobile-menu:
         specifier: ^6.0.0
         version: 6.0.0(@babel/core@7.28.5)(@ember/test-helpers@5.4.1(@babel/core@7.28.5)(@glint/template@1.7.3))(@glint/template@1.7.3)(ember-resources@7.0.7(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5)))(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
-      ember-repl:
-        specifier: 7.1.3
-        version: 7.1.3(@babel/core@7.28.5)(@codemirror/lang-css@6.3.1)(@glimmer/component@2.0.0)(@glint/template@1.7.3)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.5)(ember-modifier@4.2.2(@babel/core@7.28.5))(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))(encoding@0.1.13)(reactiveweb@1.9.1(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5)))
       ember-route-template:
         specifier: ^1.0.3
         version: 1.0.3
@@ -357,8 +351,8 @@ importers:
         specifier: ^12.0.0
         version: 12.0.0
       tracked-built-ins:
-        specifier: ^4.0.0
-        version: 4.0.0(@babel/core@7.28.5)
+        specifier: ^4.1.0
+        version: 4.1.0(@babel/core@7.28.5)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -7853,6 +7847,9 @@ packages:
   tracked-built-ins@4.0.0:
     resolution: {integrity: sha512-0Jl43A1SDZd+yYCJvXfgDSn4Wk/zcawkyFTBPqOETU5UJRngnVEnQ8oOjawqPRg6qja3sKjIQ8z6X9xJzcUTUA==}
 
+  tracked-built-ins@4.1.0:
+    resolution: {integrity: sha512-v1+jca3sD3LgbAFVsontSONTv7HsZll3yeUB00L6KPwLilFRrY77gvgptDe35fTalk9ea7mmrM2wABD56pTvuw==}
+
   tracked-toolbox@2.0.0:
     resolution: {integrity: sha512-adZtX+RGN6F+pWs/5JqVuDxLhuia4uhqmQp+UlUaxpykWjDFETtAdQR+LdDJiFPXFAXnS6FBqn/tnSLJQCm3Yw==}
     engines: {node: 14.* || 16.* || >= 18}
@@ -13521,7 +13518,7 @@ snapshots:
       ember-gesture-modifiers: 6.1.0(@babel/core@7.28.5)(@ember/test-helpers@5.4.1(@babel/core@7.28.5)(@glint/template@1.7.3))(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       ember-modifier: 4.2.2(@babel/core@7.28.5)
       ember-primitives: 0.46.0(@babel/core@7.28.5)(@ember/test-helpers@5.4.1(@babel/core@7.28.5)(@glint/template@1.7.3))(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-modifier@4.2.2(@babel/core@7.28.5))(ember-resources@7.0.7(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5)))(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
-      tracked-built-ins: 4.0.0(@babel/core@7.28.5)
+      tracked-built-ins: 4.1.0(@babel/core@7.28.5)
       wobble: 1.5.1
     transitivePeerDependencies:
       - '@babel/core'
@@ -13565,7 +13562,7 @@ snapshots:
       reactiveweb: 1.9.1(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       should-handle-link: 1.3.0
       tabster: 8.7.0
-      tracked-built-ins: 4.0.0(@babel/core@7.28.5)
+      tracked-built-ins: 4.1.0(@babel/core@7.28.5)
       tracked-toolbox: 2.0.0(@babel/core@7.28.5)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       which-heading-do-i-need: 0.1.0
     optionalDependencies:
@@ -13592,7 +13589,7 @@ snapshots:
       reactiveweb: 1.9.1(@babel/core@7.28.5)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       should-handle-link: 1.3.0
       tabster: 8.7.0
-      tracked-built-ins: 4.0.0(@babel/core@7.28.5)
+      tracked-built-ins: 4.1.0(@babel/core@7.28.5)
       tracked-toolbox: 2.0.0(@babel/core@7.28.5)(ember-source@6.9.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       which-heading-do-i-need: 0.2.1
     optionalDependencies:
@@ -18417,6 +18414,15 @@ snapshots:
       punycode: 2.3.1
 
   tracked-built-ins@4.0.0(@babel/core@7.28.5):
+    dependencies:
+      '@embroider/addon-shim': 1.10.2
+      decorator-transforms: 2.3.0(@babel/core@7.28.5)
+      ember-tracked-storage-polyfill: 1.0.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
+
+  tracked-built-ins@4.1.0(@babel/core@7.28.5):
     dependencies:
       '@embroider/addon-shim': 1.10.2
       decorator-transforms: 2.3.0(@babel/core@7.28.5)

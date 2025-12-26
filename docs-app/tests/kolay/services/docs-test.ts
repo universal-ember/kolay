@@ -1,6 +1,8 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
+import { docsManager } from 'kolay';
+
 import { setupKolay } from 'kolay/test-support';
 
 module('@service(Docs)', function (hooks) {
@@ -8,7 +10,7 @@ module('@service(Docs)', function (hooks) {
   setupKolay(hooks);
 
   test('No duplicates in available Groups', async function (assert) {
-    const docs = this.owner.lookup('service:kolay/docs');
+    const docs = docsManager();
 
     const groups = docs.availableGroups;
 

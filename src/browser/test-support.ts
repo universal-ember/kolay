@@ -1,4 +1,6 @@
-import { docsManager } from './services/docs.ts';
+import { setupCompiler } from 'ember-repl/test-support';
+
+import { compilerOptions, docsManager, LOAD_MANIFEST, PREPARE_DOCS } from './services/docs.ts';
 
 import type { setupTest } from 'ember-qunit';
 import type { setupKolay as setup } from 'kolay/setup';
@@ -6,26 +8,20 @@ import type { setupKolay as setup } from 'kolay/setup';
 type Options = Parameters<typeof setup>[1];
 type NestedHooks = Parameters<typeof setupTest>[0];
 
-export function setupKolay(hooks: NestedHooks, config?: () => Promise<Options>): void {
+export function setupKolay(hooks: NestedHooks, config?: Options): void {
+  setupCompiler(hooks, compilerOptions(config ?? {}));
+
   hooks.beforeEach(async function () {
     const docs = docsManager();
-
-    const userConfig = config ? await config() : {};
 
     const [apiDocs, manifest] = await Promise.all([
       import('kolay/api-docs:virtual'),
       import('kolay/manifest:virtual'),
     ]);
 
-    await docs.setup({
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      apiDocs,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      manifest,
-      ...userConfig,
-    });
+    docs[PREPARE_DOCS](manifest, apiDocs);
+
+    await docs[LOAD_MANIFEST];
   });
 }
 

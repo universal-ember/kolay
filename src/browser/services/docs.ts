@@ -4,7 +4,7 @@ import { service } from '@ember/service';
 
 import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
-import { type ModuleMap, setupCompiler } from 'ember-repl';
+import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
@@ -17,12 +17,56 @@ import type RouterService from '@ember/routing/router-service';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
-interface ScopeMap {
-  [identifier: string]: unknown;
-}
-
 export function docsManager() {
   return createStore(document.body, DocsService);
+}
+
+export const LOAD_MANIFEST = Symbol('__KOLAY__LOAD_MANIFEST__');
+export const PREPARE_DOCS = Symbol('__KOLAY__PREPARE_DOCS__');
+
+export function compilerOptions({
+  topLevelScope,
+  remarkPlugins,
+  rehypePlugins,
+  modules,
+}: {
+  topLevelScope?: ScopeMap;
+  modules?: ModuleMap;
+  remarkPlugins?: unknown[];
+  rehypePlugins?: unknown[];
+} = {}) {
+  const md = {
+    remarkPlugins,
+    rehypePlugins,
+  };
+  const scope = {
+    ...topLevelScope,
+    Shadowed,
+    APIDocs,
+    CommentQuery,
+    ComponentSignature,
+    ModifierSignature,
+    HelperSignature,
+  };
+
+  return {
+    options: {
+      md,
+      gmd: {
+        scope,
+        ...md,
+      },
+      hbs: {
+        scope,
+      },
+    },
+    modules: {
+      kolay: () => import('../index.ts'),
+      'kolay/components': () => import('../components.ts'),
+      'kolay/typedoc': () => import('../typedoc/index.ts'),
+      ...modules,
+    },
+  };
 }
 
 class DocsService {
@@ -85,6 +129,25 @@ class DocsService {
   }) => {
     const [manifest, apiDocs] = await Promise.all([options.manifest, options.apiDocs]);
 
+    this[PREPARE_DOCS](manifest, apiDocs);
+
+    const optionsForCompiler = compilerOptions({
+      topLevelScope: options.topLevelScope,
+      remarkPlugins: options.remarkPlugins ?? [],
+      rehypePlugins: options.rehypePlugins ?? [],
+      resolve: options.resolve,
+    });
+
+    await Promise.all([this[LOAD_MANIFEST](), setupCompiler(this, optionsForCompiler)]);
+
+    // type-narrowed version of _docs, above
+    return this.manifest;
+  };
+
+  [PREPARE_DOCS](
+    manifest: { load: LoadManifest } | undefined,
+    apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined
+  ) {
     if (manifest) {
       this.loadManifest = manifest.load;
     }
@@ -93,50 +156,11 @@ class DocsService {
       this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
+  }
 
-    const md = {
-      remarkPlugins: options.remarkPlugins ?? [],
-      rehypePlugins: options.rehypePlugins ?? [],
-    };
-
-    const scope = {
-      ...options.topLevelScope,
-      Shadowed,
-      APIDocs,
-      CommentQuery,
-      ComponentSignature,
-      ModifierSignature,
-      HelperSignature,
-    };
-
-    await Promise.all([
-      (async () => {
-        this._docs = await this.loadManifest();
-      })(),
-      // eslint-disable-next-line @typescript-eslint/await-thenable
-      setupCompiler(this, {
-        options: {
-          md,
-          gmd: {
-            scope,
-            ...md,
-          },
-          hbs: {
-            scope,
-          },
-        },
-        modules: {
-          kolay: () => import('../index.ts'),
-          'kolay/components': () => import('../components.ts'),
-          'kolay/typedoc': () => import('../typedoc/index.ts'),
-          ...options.resolve,
-        },
-      }),
-    ]);
-
-    // type-narrowed version of _docs, above
-    return this.manifest;
-  };
+  async [LOAD_MANIFEST]() {
+    this._docs = await this.loadManifest();
+  }
 
   get docs() {
     assert(

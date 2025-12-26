@@ -6,6 +6,11 @@ import { setupEmberOnerrorValidation, start as qunitStart } from 'ember-qunit';
 import Application from '../src/app.ts';
 import config, { enterTestMode } from '../src/config.ts';
 
+QUnit.config.urlConfig.push({
+  id: 'skipAllLinks',
+  label: 'Skip "all links" test',
+});
+
 export function start() {
   enterTestMode();
   setApplication(Application.create(config.APP));

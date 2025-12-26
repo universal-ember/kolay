@@ -6,7 +6,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { use } from 'ember-resources';
 import { Compiled } from 'kolay';
 
-import { getService } from '@universal-ember/test-support';
+import { setupKolay } from 'kolay/test-support';
 
 module('Markdown | Rendering', function (hooks) {
   setupRenderingTest(hooks);
@@ -67,42 +67,46 @@ module('Markdown | Rendering', function (hooks) {
     assert.dom('output').containsText('general kenobi');
   });
 
-  test('it renders a live codefence with one of the global components', async function (assert) {
-    const Response = <template>
-      <output>general kenobi</output>
-    </template>;
+  module('with custom topLevelScope', function (hooks) {
+    setupKolay(hooks, {
+      topLevelScope: {
+        Response: <template>
+          <output>general kenobi</output>
+        </template>,
+      },
+    });
 
-    const doc =
-      `# Hello there\n` +
-      `\n` +
-      '```hbs live no-shadow\n' +
-      '\n' +
-      '<hr>\n' +
-      '<Response />\n' +
-      '<hr>\n' +
-      '```\n';
+    test('it renders a live codefence with one of the global components', async function (assert) {
+      const doc =
+        `# Hello there\n` +
+        `\n` +
+        '```hbs live no-shadow\n' +
+        '\n' +
+        '<hr>\n' +
+        '<Response />\n' +
+        '<hr>\n' +
+        '```\n';
 
-    getService('kolay/docs').additionalTopLevelScope = { Response };
+      class Demo {
+        @use doc = Compiled(doc);
+      }
 
-    class Demo {
-      @use doc = Compiled(doc);
-    }
+      const state = new Demo();
 
-    const state = new Demo();
+      setOwner(state, this.owner);
 
-    setOwner(state, this.owner);
+      await render(
+        <template>
+          {{#if state.doc.component}}
+            <state.doc.component />
+          {{/if}}
+        </template>
+      );
 
-    await render(
-      <template>
-        {{#if state.doc.component}}
-          <state.doc.component />
-        {{/if}}
-      </template>
-    );
+      await waitUntil(() => state.doc.isReady);
 
-    await waitUntil(() => state.doc.isReady);
-
-    assert.dom('h1').containsText('Hello there');
-    assert.dom('output').containsText('general kenobi');
+      assert.dom('h1').containsText('Hello there');
+      assert.dom('output').containsText('general kenobi');
+    });
   });
 });
