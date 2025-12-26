@@ -251,20 +251,20 @@ section {
  */
 .typedoc__function__type {
   display: flex;
+  align-items: start;
   gap: 0.25rem;
 }
 
 .typedoc__function__type:has(.typedoc__function__parameter) {
-  display: grid;
+  /* display: grid; */
 }
 
 .typedoc__function__parameters {
-  margin-left: 1rem;
   display: grid;
   gap: 0.25rem;
 }
 .typedoc__function__parameter__container {
-  border: 1px solid;
+  border: 1px dashed color-mix(in lch, currentColor 50%, transparent 75%);
   padding: 0.5rem;
 }
 .typedoc__function__parameter {
@@ -277,12 +277,15 @@ section {
   /* font-style: italic; */
   /* font-size: 0.75rem; */
 }
-.typedoc__function__return_type,
+.typedoc__function__open,
 .typedoc__function__close {
+  display: ruby;
+}
+
+.typedoc__function__return_type {
   display: inline-block;
 }
 .typedoc__function__return_type {
-  margin-left: 1rem;
 }
 .typedoc__function__parameter__name {
   font-style: italic;
