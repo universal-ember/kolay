@@ -145,7 +145,9 @@ const Declaration: TOC<{
       {{/if}}
 
       {{#if @info.type}}
-        <Type @info={{@info.type}} />
+        <div class='typedoc__declaration-type'>
+          <Type @info={{@info.type}} />
+        </div>
       {{/if}}
 
       {{#if @info.children}}
