@@ -40,7 +40,7 @@
     grid-area: comment;
   }
 
-  &:has(>.typedoc__declaration-signatures) {
+  &:has(> .typedoc__declaration-signatures) {
     grid-auto-flow: column;
     grid-template-columns: unset;
     grid-template-areas:
@@ -52,7 +52,6 @@
 .typedoc__declaration-name {
   font-weight: bold;
 }
-
 
 section {
   > .typedoc__declaration {
