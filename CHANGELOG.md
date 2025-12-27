@@ -2,6 +2,17 @@
 
 ## Release (2025-12-27)
 
+* kolay 4.0.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#243](https://github.com/universal-ember/kolay/pull/243) Style fixes for typedoc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-12-27)
+
 * kolay 4.0.0 (major)
 
 #### :boom: Breaking Change
