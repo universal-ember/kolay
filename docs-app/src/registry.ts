@@ -1,12 +1,10 @@
 import PageTitleService from 'ember-page-title/services/page-title';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import ResizeService from 'ember-resize-observer-service/services/resize-observer';
-import { registry as kolayRegistry } from 'kolay';
 
 import Router from './router.ts';
 
 const appName = `docs-app`;
+
+import KolayPrivateService from 'kolay/private/😉 wut r u doin ❤️';
 
 function formatAsResolverEntries(imports: Record<string, unknown>) {
   return Object.fromEntries(
@@ -27,11 +25,11 @@ const resolverRegistry = {
   ...formatAsResolverEntries(import.meta.glob('./services/**/*.{js,ts}', { eager: true })),
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,
+  // No user would ever do this
+  [`${appName}/services/kolay/-private/😉-wut-r-u-doin?-❤️`]: { default: KolayPrivateService },
 };
 
 export const registry = {
-  [`${appName}/services/resize-observer`]: ResizeService,
   [`${appName}/services/page-title`]: PageTitleService,
   ...resolverRegistry,
-  ...kolayRegistry(appName),
 };

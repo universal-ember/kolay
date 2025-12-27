@@ -17,33 +17,10 @@ import `kolay/vite`
 ```js
 import { kolay } from "kolay/vite";
 
-const aliasPlugin = {
-  name: "env",
-  setup(build) {
-    // Bug in esbuild that tries to resolve virtual imports
-    build.onResolve({ filter: /^kolay.*:virtual$/ }, (args) => ({
-      path: args.path,
-      external: true,
-    }));
-
-    // Temporary aliasing until Ember 6.1
-    build.onResolve({ filter: /ember-template-compiler/ }, () => ({
-      path: require.resolve("ember-source/dist/ember-template-compiler"),
-    }));
-  },
-};
-
-const optimization = optimizeDeps();
-
 export default defineConfig(({ mode }) => {
+  const replSdkDependencies =
+
   return {
-    resolve: {
-      extensions,
-      // Temporary aliasing until Ember 6.1
-      alias: {
-        "ember-template-compiler": "ember-source/dist/ember-template-compiler",
-      },
-    },
     plugins: [
       kolay({
         // This is your main docs in "this" app.
@@ -53,25 +30,6 @@ export default defineConfig(({ mode }) => {
       }),
       // ...
     ],
-    optimizeDeps: {
-      ...optimization,
-      esbuildOptions: {
-        ...optimization.esbuildOptions,
-        target: "esnext",
-        plugins: [aliasPlugin, ...optimization.esbuildOptions.plugins],
-      },
-    },
-    esbuild: {
-      supported: {
-        "top-level-await": true,
-      },
-    },
-    server: {
-      mimeTypes: {
-        "application/wasm": ["wasm"],
-      },
-      port: 4200,
-    },
   };
 });
 
@@ -156,18 +114,19 @@ export default class ApplicationRoute extends Route {
         import("shiki/langs/bash.mjs"),
         import("shiki/langs/css.mjs"),
         import("shiki/langs/html.mjs"),
+        import("shiki/langs/markdown.mjs"),
         import("shiki/langs/glimmer-js.mjs"),
         import("shiki/langs/glimmer-ts.mjs"),
         import("shiki/langs/handlebars.mjs"),
         import("shiki/langs/jsonc.mjs"),
       ],
-      loadWasm: getWasm,
+      engine: createOnigurumaEngine(() => import("shiki/wasm")),
     });
 
     const manifest = await setupKolay(this, {
       resolve: {
-        "ember-primitives": import("ember-primitives"),
-        kolay: import("kolay"),
+        "ember-primitives": () => import("ember-primitives"),
+        kolay: () => import("kolay"),
       },
       rehypePlugins: [
         [

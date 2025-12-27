@@ -1,12 +1,13 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
-import { service } from '@ember/service';
 import { waitForPromise } from '@ember/test-waiters';
 
+import { Provide } from 'ember-primitives/dom-context';
 import { trackedFunction } from 'reactiveweb/function';
 import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
 
-import type APIDocsService from '../services/kolay/api-docs.ts';
+import { typedocLoader } from '../services/api-docs.ts';
+
 import type { TOC } from '@ember/component/template-only';
 import type { Reflection } from 'typedoc';
 
@@ -60,7 +61,9 @@ export class Load extends Component<{
   };
   Blocks: { default: [Reflection, ProjectReflection] };
 }> {
-  @service('kolay/api-docs') declare apiDocs: APIDocsService;
+  get #apiDocs() {
+    return typedocLoader(this);
+  }
 
   /**
    * TODO: move this to the service and dedupe requests
@@ -79,7 +82,7 @@ export class Load extends Component<{
     }
 
     const loadNew = async (): Promise<ProjectReflection> => {
-      const req = await this.apiDocs.load(pkg);
+      const req = await this.#apiDocs.load(pkg);
       const json = await req.json();
 
       const logger = new ConsoleLogger();
@@ -111,7 +114,9 @@ export class Load extends Component<{
     {{#if this.request.value}}
       <section>
         <Query @info={{this.request.value}} @module={{@module}} @name={{@name}} as |type|>
-          {{yield type this.request.value}}
+          <Provide @data={{this.request.value}} @key='project'>
+            {{yield type this.request.value}}
+          </Provide>
         </Query>
       </section>
     {{/if}}

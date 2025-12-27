@@ -8,6 +8,10 @@ import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 
 sync();
 
+import { sentenceCase } from 'change-case';
+
+import { nameFor } from '../templates/application.gts';
+
 import type { Manifest } from 'kolay';
 
 export default class ApplicationRoute extends Route {
@@ -30,9 +34,16 @@ export default class ApplicationRoute extends Route {
     });
 
     const manifest = await setupKolay(this, {
-      resolve: {
-        'ember-primitives': import('ember-primitives'),
-        kolay: import('kolay'),
+      modules: {
+        'ember-primitives': () => import('ember-primitives'),
+        'ember-modifier': () => import('ember-modifier'),
+        'tracked-built-ins': () => import('tracked-built-ins'),
+        '#docs/demo-support': () => ({
+          nameFor,
+          sentenceCase,
+        }),
+        'babel-plugin-ember-template-compilation': () =>
+          import('babel-plugin-ember-template-compilation'),
       },
       rehypePlugins: [
         // @shikijs/rehype

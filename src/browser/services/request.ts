@@ -5,7 +5,8 @@ import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { RemoteData } from 'reactiveweb/remote-data';
 
-import type DocsService from './docs.ts';
+import { docsManager } from './docs.ts';
+
 import type RouterService from '@ember/routing/router-service';
 
 export const OUTPUT_PREFIX = `/docs/`;
@@ -22,7 +23,10 @@ export const OUTPUT_PREFIX_REGEX = /^\/docs\//;
 export class MDRequest {
   constructor(private urlFn: () => string) {}
 
-  @service('kolay/docs') declare docs: DocsService;
+  get #docs() {
+    return docsManager(this);
+  }
+
   @service declare router: RouterService;
 
   /**
@@ -53,7 +57,7 @@ export class MDRequest {
   private get _doesPageExist() {
     const url = this.urlFn();
     const pagePath = url.replace(this.router.rootURL, '/').replace(OUTPUT_PREFIX_REGEX, '/');
-    const group = this.docs.groupForURL(pagePath);
+    const group = this.#docs.groupForURL(pagePath);
 
     return Boolean(group);
   }

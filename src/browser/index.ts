@@ -1,3 +1,5 @@
+import './kolay.css';
+
 // Required to *sanely* use typedoc data
 export {
   APIDocs,
@@ -9,13 +11,14 @@ export {
 
 // Required to use Kolay
 export { addRoutes } from './router.ts';
-export { Compiled } from './services/kolay/compiler/reactive.ts';
+export { typedocLoader } from './services/api-docs.ts';
+export { Compiled } from './services/compiler/reactive.ts';
+export { docsManager } from './services/docs.ts';
+export { selected } from './services/selected.ts';
 
 // Utilities
-export { registry } from './service-registry.ts';
-export * from './utils.ts';
+export { getIndexPage, isCollection, isIndex } from './utils.ts';
 
 // Types
 export type { Collection, Manifest, Page } from '../types.ts';
-export type { default as APIDocsService } from './services/kolay/api-docs.ts';
-export type { default as DocsService, SetupOptions } from './services/kolay/docs.ts';
+export type { SetupOptions } from './services/docs.ts';

@@ -1,7 +1,8 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
-import type DocsService from '../services/kolay/docs.ts';
+import { docsManager } from '../services/docs.ts';
+
 import type RouterService from '@ember/routing/router-service';
 
 export class GroupNav extends Component<{
@@ -48,7 +49,10 @@ export class GroupNav extends Component<{
     default: [name: string];
   };
 }> {
-  @service('kolay/docs') declare docs: DocsService;
+  get #docs() {
+    return docsManager(this);
+  }
+
   @service declare router: RouterService;
 
   get homeName() {
@@ -56,7 +60,7 @@ export class GroupNav extends Component<{
   }
 
   get groups() {
-    return this.docs.availableGroups.map((groupName) => {
+    return this.#docs.availableGroups.map((groupName) => {
       if (groupName === 'root') return { text: this.homeName, value: '/' };
 
       return { text: groupName, value: `/${groupName}` };

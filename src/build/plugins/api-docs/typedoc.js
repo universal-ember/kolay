@@ -48,6 +48,7 @@ export async function generateTypeDocJSON({ packageName }) {
   const types = [
     'ember-source/types',
     'ember-source/types/stable',
+    '@glint/ember-tsc/types',
     'ember-modifier',
     '@glimmer/component',
     // homeRequire.resolve('ember-source/types/stable/index.d.ts')

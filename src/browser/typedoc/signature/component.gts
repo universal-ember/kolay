@@ -1,3 +1,5 @@
+import { Heading } from 'ember-primitives/components/heading';
+
 import { isReference } from '../narrowing.ts';
 import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
@@ -63,19 +65,25 @@ function getSignatureType(info: Reflection, project: ProjectReflection) {
   return info;
 }
 
-function getSignature(info: Reflection, project: ProjectReflection) {
+export function getSignature(info: Reflection | undefined, project: ProjectReflection) {
+  if (!info) return;
+
   const type = getSignatureType(info, project);
 
-  if (!type) {
-    console.warn('Could not finde signature');
+  if (!type) return;
 
-    return;
-  }
+  const Element = findChildDeclaration(type, 'Element');
+  const Args = findChildDeclaration(type, 'Args');
+  const Blocks = findChildDeclaration(type, 'Blocks');
+
+  const hasAny = Element || Args || Blocks;
+
+  if (!hasAny) return;
 
   return {
-    Element: findChildDeclaration(type, 'Element'),
-    Args: findChildDeclaration(type, 'Args'),
-    Blocks: findChildDeclaration(type, 'Blocks'),
+    Element,
+    Args,
+    Blocks,
   };
 }
 
@@ -97,25 +105,35 @@ export const ComponentSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      <Element @kind='component' @info={{info.Element}} />
-      <Args @kind='component' @info={{info.Args}} />
-      <Blocks @info={{info.Blocks}} />
+      <ComponentDeclaration @signature={{info}} />
     {{/let}}
   </Load>
 </template>;
 
+export const ComponentDeclaration: TOC<{
+  Args: {
+    signature: NonNullable<ReturnType<typeof getSignature>>;
+  };
+}> = <template>
+  <Element @kind='component' @info={{@signature.Element}} />
+  <Args @kind='component' @info={{@signature.Args}} />
+  <Blocks @info={{@signature.Blocks}} />
+</template>;
+
 const Blocks: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <h3 class='typedoc__heading'>Blocks</h3>
-    {{#each @info.type.declaration.children as |child|}}
-      <span class='typedoc__component-signature__block'>
-        <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
-        {{! <span class='typedoc-category'>Properties </span> }}
-        <div class='typedoc__property'>
-          <Type @info={{child.type}} />
-          <Comment @info={{child}} />
-        </div>
-      </span>
-    {{/each}}
+    <section>
+      <Heading class='typedoc__heading'>Blocks</Heading>
+      {{#each @info.type.declaration.children as |child|}}
+        <span class='typedoc__component-signature__block'>
+          <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
+          {{! <span class='typedoc-category'>Properties </span> }}
+          <div class='typedoc__property'>
+            <Type @info={{child.type}} />
+            <Comment @info={{child}} />
+          </div>
+        </span>
+      {{/each}}
+    </section>
   {{/if}}
 </template>;

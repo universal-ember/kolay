@@ -1,12 +1,5 @@
-interface ResolveMap {
-  [moduleName: string]: ScopeMap;
-}
-
-interface ScopeMap {
-  [identifier: string]: unknown;
-}
-
 declare module 'kolay/setup' {
+  import type { ModuleMap, ScopeMap } from 'ember-repl';
   import type { Manifest } from 'kolay/types';
 
   export function setupKolay(
@@ -31,7 +24,7 @@ declare module 'kolay/setup' {
        * and allows you to have access to private libraries without
        * needing to publish those libraries to NPM.
        */
-      resolve?: { [moduleName: string]: Promise<ScopeMap> };
+      modules?: ModuleMap;
 
       /**
        * Provide additional remark plugins to the default markdown compiler.

@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
-import { service } from '@ember/service';
 
-import type SelectedService from '../services/kolay/selected.ts';
+import { selected } from '../services/selected.ts';
+
 import type { ComponentLike } from '@glint/template';
 
 export class Page extends Component<{
@@ -86,7 +86,9 @@ export class Page extends Component<{
     {{/if}}
   </template>
 
-  @service('kolay/selected') declare selected: SelectedService;
+  private get selected() {
+    return selected(this);
+  }
 }
 
 export default Page;

@@ -1,15 +1,18 @@
 import { getOwner } from '@ember/owner';
-import Service, { service } from '@ember/service';
+import { service } from '@ember/service';
 
+import { createStore } from 'ember-primitives/store';
 import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { link } from 'reactiveweb/link';
 
+import { forceFindOwner } from '../utils.ts';
 import { Compiled } from './compiler/reactive.ts';
+import { docsManager } from './docs.ts';
+import { getKey } from './lazy-load.ts';
 import { MDRequest } from './request.ts';
 
-import type { Page } from '../../../types.ts';
-import type DocsService from './docs.ts';
+import type { Page } from '../../types.ts';
 import type ApplicationInstance from '@ember/application/instance';
 import type RouterService from '@ember/routing/router-service';
 
@@ -27,6 +30,12 @@ import type RouterService from '@ember/routing/router-service';
 
 const firstPath = '/1-get-started/intro.md';
 
+export function selected(context: unknown) {
+  const owner = forceFindOwner(context);
+
+  return createStore(getKey(owner), Selected);
+}
+
 /**
  * Sort of like an ember-concurrency task...
  * if we ignore concurrency and only care about the states of the running function
@@ -43,9 +52,12 @@ class Prose {
   });
 }
 
-export default class Selected extends Service {
+class Selected {
   @service declare router: RouterService;
-  @service('kolay/docs') declare docs: DocsService;
+
+  get #docs() {
+    return docsManager(this);
+  }
 
   get rootURL() {
     return (getOwner(this) as ApplicationInstance).router.rootURL;
@@ -93,7 +105,7 @@ export default class Selected extends Service {
   }
   get error() {
     if (!this.page) {
-      return `Page not found for path ${this.path}. (Using group: ${this.docs.currentGroup.name})`;
+      return `Page not found for path ${this.path}. (Using group: ${this.#docs.currentGroup.name})`;
     }
 
     return String(this.proseCompiled.error);
@@ -120,7 +132,7 @@ export default class Selected extends Service {
   }
 
   #findByPath = (path: string) => {
-    return this.docs.pages.find((page) => page.path === `${path}.md`);
+    return this.#docs.pages.find((page) => page.path === `${path}.md`);
   };
 }
 

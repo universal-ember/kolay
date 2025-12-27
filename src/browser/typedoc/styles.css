@@ -20,6 +20,31 @@
   line-height: 1.5rem;
 }
 .typedoc__declaration {
+  display: grid;
+
+  &:not(:has(.typedoc__declaration-children)) {
+    /* display: flex; */
+    gap: 1rem;
+    /* justify-content: space-between; */
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    grid-template-areas:
+      "name . type"
+      "comment comment comment";
+
+    .typedoc__declaration-name {
+      grid-area: name;
+    }
+    .typedoc__declaration-type,
+    .typedoc__declararation-children {
+      grid-area: type;
+    }
+
+    .typedoc-rendered-comment {
+      grid-area: comment;
+    }
+  }
+
   .typedoc__declaration-name {
     font-weight: bold;
   }
@@ -36,9 +61,20 @@ section {
   display: block;
 }
 
-.typedoc__property,
+.typedoc__property {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.typedoc__modifier-signature__arg,
+.typedoc__helper-signature__arg,
 .typedoc__component-signature__arg {
   padding: 0 1rem;
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  grid-template-areas:
+    "info"
+    "comment";
 }
 
 .typedoc__declaration-signatures {
@@ -62,8 +98,13 @@ section {
   font-size: 1rem;
   font-weight: bold;
 }
+.typedoc__component-signature__arg-info,
+.typedoc__modifier-signature__arg-info,
 .typedoc__helper-signature__arg-info {
   border-bottom: 1px rgba(125, 125, 125, 0.5) dashed;
+  grid-area: info;
+  display: flex;
+  justify-content: space-between;
 }
 .typedoc__helper__return {
   display: flex;
@@ -146,6 +187,9 @@ section {
 .typedoc__component-signature__block .typedoc__declaration-name + .typedoc__reference {
   margin-bottom: -0.25rem;
 }
+.typedoc__component-signature__block > .typedoc__property {
+  border-left: 1px dashed color-mix(in lch, currentColor 50%, transparent 75%);
+}
 .typedoc__component-signature__block > .typedoc__property .typedoc__declaration-children {
   display: grid;
   gap: 0.5rem;
@@ -154,9 +198,9 @@ section {
   > .typedoc__property
   > .typedoc__declaration
   > ul.typedoc__declaration-children
-  > li
+  > li:not(:last-child)
   > .typedoc__declaration {
-  border: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
   padding: 0.5rem;
 }
 
@@ -164,7 +208,7 @@ section {
 .typedoc__modifier-signature__arg,
 .typedoc__component-signature__arg {
   margin-bottom: 0.5rem;
-  display: grid;
+  display: block;
   gap: 0.25rem;
 }
 .typedoc__helper-signature__arg > .typedoc__name,
@@ -189,7 +233,9 @@ section {
 /**
  * References
  */
-.typedoc__reference {
+.typedoc__reference:has(.typedoc__reference__typeArguments) {
+  display: grid;
+  grid-auto-flow: row;
 }
 .typedoc__reference__name {
   display: inline;
@@ -207,7 +253,7 @@ section {
   gap: 0.5rem;
 }
 .typedoc__reference__typeArgument {
-  border: 1px solid;
+  /* border: 1px solid; */
 }
 
 /**
@@ -223,20 +269,20 @@ section {
  */
 .typedoc__function__type {
   display: flex;
+  align-items: start;
   gap: 0.25rem;
 }
 
 .typedoc__function__type:has(.typedoc__function__parameter) {
-  display: grid;
+  /* display: grid; */
 }
 
 .typedoc__function__parameters {
-  margin-left: 1rem;
   display: grid;
   gap: 0.25rem;
 }
 .typedoc__function__parameter__container {
-  border: 1px solid;
+  border: 1px dashed color-mix(in lch, currentColor 50%, transparent 75%);
   padding: 0.5rem;
 }
 .typedoc__function__parameter {
@@ -249,12 +295,15 @@ section {
   /* font-style: italic; */
   /* font-size: 0.75rem; */
 }
-.typedoc__function__return_type,
+.typedoc__function__open,
 .typedoc__function__close {
+  display: ruby;
+}
+
+.typedoc__function__return_type {
   display: inline-block;
 }
 .typedoc__function__return_type {
-  margin-left: 1rem;
 }
 .typedoc__function__parameter__name {
   font-style: italic;

@@ -1,52 +1,101 @@
-import { cached, tracked } from '@glimmer/tracking';
+import { cached } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
-import Service, { service } from '@ember/service';
+import { service } from '@ember/service';
 
-import type { Manifest } from '../../../types.ts';
-import type ApiDocs from './api-docs.ts';
-import type Selected from './selected.ts';
+import { Shadowed } from 'ember-primitives/components/shadowed';
+import { createStore } from 'ember-primitives/store';
+import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
+
+import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
+import { ComponentSignature } from '../typedoc/signature/component.gts';
+import { HelperSignature } from '../typedoc/signature/helper.gts';
+import { ModifierSignature } from '../typedoc/signature/modifier.gts';
+import { forceFindOwner } from '../utils.ts';
+import { typedocLoader } from './api-docs.ts';
+import { getKey } from './lazy-load.ts';
+
+import type { LoadManifest, LoadTypedoc, Manifest } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
-import type { UnifiedPlugin } from 'ember-repl';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
-interface ResolveMap {
-  [moduleName: string]: ScopeMap;
+export function docsManager(context: unknown) {
+  const owner = forceFindOwner(context);
+
+  return createStore(getKey(owner), DocsService);
 }
 
-interface ScopeMap {
-  [identifier: string]: unknown;
+export const LOAD_MANIFEST = Symbol('__KOLAY__LOAD_MANIFEST__');
+export const PREPARE_DOCS = Symbol('__KOLAY__PREPARE_DOCS__');
+
+export function compilerOptions({
+  topLevelScope,
+  remarkPlugins,
+  rehypePlugins,
+  modules,
+}: {
+  topLevelScope?: ScopeMap;
+  modules?: ModuleMap;
+  remarkPlugins?: unknown[];
+  rehypePlugins?: unknown[];
+} = {}) {
+  const md = {
+    remarkPlugins,
+    rehypePlugins,
+  };
+  const scope = {
+    ...topLevelScope,
+    Shadowed,
+    APIDocs,
+    CommentQuery,
+    ComponentSignature,
+    ModifierSignature,
+    HelperSignature,
+  };
+
+  return {
+    options: {
+      md,
+      gmd: {
+        scope,
+        ...md,
+      },
+      hbs: {
+        scope,
+      },
+    },
+    modules: {
+      kolay: () => import('../index.ts'),
+      'kolay/components': () => import('../components.ts'),
+      'kolay/typedoc': () => import('../typedoc/index.ts'),
+      ...modules,
+    },
+  };
 }
 
-export default class DocsService extends Service {
+class DocsService {
   @service declare router: RouterService;
-  @service('kolay/selected') declare selected: Selected;
-  @service('kolay/api-docs') declare apiDocs: ApiDocs;
 
-  @tracked additionalResolves?: ResolveMap;
-  @tracked additionalTopLevelScope?: ScopeMap;
-  @tracked remarkPlugins?: UnifiedPlugin[];
-  @tracked rehypePlugins?: UnifiedPlugin[];
+  private get apiDocs() {
+    return typedocLoader(this);
+  }
+
   _docs: Manifest | undefined;
 
-  loadManifest: () => Promise<Manifest> = () =>
-    Promise.resolve({
-      list: [],
-      tree: {},
-    } as any);
+  loadManifest: LoadManifest = () => Promise.resolve({ groups: [] });
 
   setup = async (options: {
     /**
      * The module of the manifest virtual module.
      * This should be set to `await import('kolay/manifest:virtual')
      */
-    manifest?: Promise<any>;
+    manifest?: Promise<{ load: LoadManifest }>;
 
     /**
      * The module of the api docs virtual module.
      * This should be set to `await import('kolay/api-docs:virtual')
      */
-    apiDocs?: Promise<any>;
+    apiDocs?: Promise<{ packageNames: string[]; loadApiDocs: LoadTypedoc }>;
 
     /**
      * Additional invokables that you'd like to have access to
@@ -67,56 +116,55 @@ export default class DocsService extends Service {
      * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: { [moduleName: string]: Promise<ScopeMap> };
+    resolve?: ModuleMap;
 
     /**
      * Provide additional remark plugins to the default markdown compiler.
      *
      * These can be used to add features like notes, callouts, footnotes, etc
      */
-    remarkPlugins?: UnifiedPlugin[];
+    remarkPlugins?: unknown[];
     /**
      * Provide additional rehype plugins to the default html compiler.
      *
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
-    rehypePlugins?: UnifiedPlugin[];
+    rehypePlugins?: unknown[];
   }) => {
-    const [manifest, apiDocs, resolve] = await Promise.all([
-      options.manifest,
-      options.apiDocs,
-      promiseHash(options.resolve),
-    ]);
+    const [manifest, apiDocs] = await Promise.all([options.manifest, options.apiDocs]);
 
-    if (options.manifest) {
+    this[PREPARE_DOCS](manifest, apiDocs);
+
+    const optionsForCompiler = compilerOptions({
+      topLevelScope: options.topLevelScope,
+      remarkPlugins: options.remarkPlugins ?? [],
+      rehypePlugins: options.rehypePlugins ?? [],
+      modules: options.resolve,
+    });
+
+    await Promise.all([this[LOAD_MANIFEST](), setupCompiler(this, optionsForCompiler)]);
+
+    // type-narrowed version of _docs, above
+    return this.manifest;
+  };
+
+  [PREPARE_DOCS](
+    manifest: { load: LoadManifest } | undefined,
+    apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined
+  ) {
+    if (manifest) {
       this.loadManifest = manifest.load;
     }
 
-    if (options.apiDocs) {
-      this.apiDocs._packages = apiDocs.packages;
+    if (apiDocs) {
+      this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
+  }
 
-    if (options.resolve) {
-      this.additionalResolves = resolve;
-    }
-
-    if (options.topLevelScope) {
-      this.additionalTopLevelScope = options.topLevelScope;
-    }
-
-    if (options.remarkPlugins) {
-      this.remarkPlugins = options.remarkPlugins;
-    }
-
-    if (options.rehypePlugins) {
-      this.rehypePlugins = options.rehypePlugins;
-    }
-
+  async [LOAD_MANIFEST]() {
     this._docs = await this.loadManifest();
-
-    return this.manifest;
-  };
+  }
 
   get docs() {
     assert(
@@ -220,46 +268,4 @@ export default class DocsService extends Service {
 
     return false;
   };
-}
-
-/**
- * RSVP.hash, but native
- */
-async function promiseHash<T>(obj?: { [key: string]: Promise<T> }): Promise<{ [key: string]: T }> {
-  const result: Record<string, T> = {};
-
-  if (!obj) {
-    return result;
-  }
-
-  const keys: string[] = [];
-  const promises = [];
-
-  for (const [key, promise] of Object.entries(obj)) {
-    keys.push(key);
-    promises.push(promise);
-  }
-
-  assert(`Something went wrong when resolving a promise Hash`, keys.length === promises.length);
-
-  const resolved = await Promise.all(promises);
-
-  for (let i = 0; i < resolved.length; i++) {
-    const key = keys[i];
-    const resolvedValue = resolved[i];
-
-    assert(`Missing key for index ${i}`, key);
-    assert(`Resolved value for key ${key} is not an object`, typeof resolvedValue === 'object');
-
-    result[key] = resolvedValue;
-  }
-
-  return result;
-}
-
-// DO NOT DELETE: this is how TypeScript knows how to look up your services.
-declare module '@ember/service' {
-  interface Registry {
-    'kolay/docs': DocsService;
-  }
 }

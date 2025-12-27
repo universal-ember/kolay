@@ -2,10 +2,10 @@ import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { docsManager } from '../services/docs.ts';
 import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
 import type { Collection, Page } from '../../types.ts';
-import type DocsService from '../services/kolay/docs.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
@@ -39,19 +39,20 @@ export class PageNav extends Component<{
      * By default the `name` property will be used in a link.
      *
      * Example:
-     * ```gjs
+     * ```gjs live preview
      * import { PageNav } from 'kolay/components';
-     *
-     * function toSentenceCase(name) { /* ... *\/ }
+     * import { nameFor } from '#docs/demo-support';
      *
      * <template>
      *   <PageNav>
-     *     <:page as |page|>
-     *       <x.Link>
-     *         {{toSentenceCase page.name}}
-     *       </x.Link>
+     *     <:page as |x|>
+     *       <pre>{{JSON.stringify x.page null 3}}</pre>
+     *       <page.Link>
+     *         {{nameFor x.page}}
+     *       </page.Link>
      *     </:page>
      *   </PageNav>
+     *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */
@@ -69,14 +70,14 @@ export class PageNav extends Component<{
      * By default the `name` property will be used or a link will be rendered if an index page is present..
      *
      * Example:
-     * ```gjs
+     * ```gjs live preview
      * import { PageNav } from 'kolay/components';
-     *
-     * function toSentenceCase(name) { /* ... *\/ }
+     * import { sentenceCase } from '#docs/demo-support';
      *
      * <template>
      *   <PageNav>
      *     <:collection as |x|>
+     *       <pre>{{JSON.stringify x null 3}}</pre>
      *       {{#if x.index}}
      *         <x.index.Link>
      *           {{sentenceCase x.collection.name}}
@@ -86,6 +87,7 @@ export class PageNav extends Component<{
      *       {{/if}}
      *     </:collection>
      *   </PageNav>
+     *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */
@@ -107,7 +109,9 @@ export class PageNav extends Component<{
     ];
   };
 }> {
-  @service('kolay/docs') declare docs: DocsService;
+  private get docs() {
+    return docsManager(this);
+  }
 
   /**
    * Ember doesn't yet have a way to forward blocks,

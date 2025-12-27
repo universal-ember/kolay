@@ -1,9 +1,21 @@
 import { assert } from '@ember/debug';
-import Service from '@ember/service';
 
-export default class DocsService extends Service {
+import { createStore } from 'ember-primitives/store';
+
+import { forceFindOwner } from '../utils.ts';
+import { getKey } from './lazy-load.ts';
+
+import type { LoadTypedoc } from '../../types.ts';
+
+export function typedocLoader(context: unknown) {
+  const owner = forceFindOwner(context);
+
+  return createStore(getKey(owner), DocsLoader);
+}
+
+class DocsLoader {
   _packages: string[] = [];
-  loadApiDocs: Record<string, () => ReturnType<typeof fetch>> = {};
+  loadApiDocs: LoadTypedoc = {};
 
   get packages() {
     assert(

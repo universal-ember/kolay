@@ -4,6 +4,9 @@ Render the docs generated from Comments, [JSDoc](https://jsdoc.app/), etc, speci
 
 This, along with the other API doc-related components, are powered by [TypeDoc](https://typedoc.org/) and generated from declarations.
 
+
+All codeblocks in the in-source documentation support the same meta flags as [ember-repl](https://limber.glimdown.com/docs/ember-repl) / [repl-sdk](https://limber.glimdown.com/docs/repl-sdk) -- which means you can render not only snippets of code with examples, but live demos in Ember, Mermaid, React, Svelte, and Vue (and likely more in the future, whatever ember-repl / repl-sdk supports). See [the docs for Page nav](/Runtime/util/page-nav.md) for an example of this in action.
+
 ## API Reference
 
 ```hbs live no-shadow
