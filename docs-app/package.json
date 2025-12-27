@@ -29,7 +29,7 @@
     "start:test": "pnpm start:vite --open /tests/",
     "start:sync": "pnpm _syncPnpm --watch",
     "_syncPnpm": "DEBUG=* pnpm sync-dependencies-meta-injected",
-    "test:ember": "vite build --mode test && pnpm dist:ember:test",
+    "test:ember": "NODE_ENV=development vite build --mode development && pnpm dist:ember:test",
     "dist:ember:test": "ember test --path dist --config-file ./testem.cjs"
   },
   "devDependencies": {
