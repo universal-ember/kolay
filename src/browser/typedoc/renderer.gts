@@ -310,9 +310,6 @@ const Array: TOC<{ Args: { info: ArrayType } }> = <template>
 
 const Function: TOC<{ Args: { info: SignatureReflection } }> = <template>
   <div class='typedoc__function'>
-    <div class='typedoc__function_comment'>
-      <Comment @info={{@info}} />
-    </div>
     <div class='typedoc__function__type'>
       <div class='typedoc__function__open'>(</div>
       <div class='typedoc__function__parameters'>
@@ -336,6 +333,9 @@ const Function: TOC<{ Args: { info: SignatureReflection } }> = <template>
         {{! @glint-expect-error }}
         <Type @info={{@info.type}} />
       </div>
+    </div>
+    <div class='typedoc__function_comment'>
+      <Comment @info={{@info}} />
     </div>
   </div>
 </template>;
