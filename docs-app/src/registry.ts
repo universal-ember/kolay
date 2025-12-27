@@ -4,7 +4,6 @@ import Router from './router.ts';
 
 const appName = `docs-app`;
 
-// @ts-expect-error - private - requires app-tree-merging
 import KolayPrivateService from 'kolay/private/😉 wut r u doin ❤️';
 
 function formatAsResolverEntries(imports: Record<string, unknown>) {
