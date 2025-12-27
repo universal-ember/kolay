@@ -21,34 +21,38 @@
 }
 .typedoc__declaration {
   display: grid;
-
-  &:not(:has(.typedoc__declaration-children)) {
-    /* display: flex; */
-    gap: 1rem;
-    /* justify-content: space-between; */
-    display: grid;
-    grid-template-columns: max-content 1fr max-content;
-    grid-template-areas:
-      "name . type"
-      "comment comment comment";
-
-    .typedoc__declaration-name {
-      grid-area: name;
-    }
-    .typedoc__declaration-type,
-    .typedoc__declararation-children {
-      grid-area: type;
-    }
-
-    .typedoc-rendered-comment {
-      grid-area: comment;
-    }
-  }
+  gap: 1rem;
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  grid-template-areas:
+    "name . type"
+    "comment comment comment";
 
   .typedoc__declaration-name {
-    font-weight: bold;
+    grid-area: name;
+  }
+  .typedoc__declaration-type,
+  .typedoc__declararation-children {
+    grid-area: type;
+  }
+
+  .typedoc-rendered-comment {
+    grid-area: comment;
+  }
+
+  &:has(> .typedoc__declaration-signatures) {
+    grid-auto-flow: column;
+    grid-template-columns: unset;
+    grid-template-areas:
+      "name"
+      "comment";
   }
 }
+
+.typedoc__declaration-name {
+  font-weight: bold;
+}
+
 section {
   > .typedoc__declaration {
     > .typedoc__declaration-name {
@@ -79,6 +83,10 @@ section {
 
 .typedoc__declaration-signatures {
   list-style: none;
+
+  > li {
+    border-bottom: 1px dashed color-mix(in lch, currentColor 50%, transparent 75%);
+  }
 }
 
 .typedoc__named-tuple,
