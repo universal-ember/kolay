@@ -61,7 +61,13 @@ section {
   display: block;
 }
 
-.typedoc__property,
+.typedoc__property {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.typedoc__modifier-signature__arg,
+.typedoc__helper-signature__arg,
 .typedoc__component-signature__arg {
   padding: 0 1rem;
   display: grid;
@@ -92,6 +98,8 @@ section {
   font-size: 1rem;
   font-weight: bold;
 }
+.typedoc__component-signature__arg-info,
+.typedoc__modifier-signature__arg-info,
 .typedoc__helper-signature__arg-info {
   border-bottom: 1px rgba(125, 125, 125, 0.5) dashed;
   grid-area: info;
