@@ -6,6 +6,10 @@ import { setupApplicationTest } from 'ember-qunit';
 module('Errors', function (hooks) {
   setupApplicationTest(hooks);
 
+  hooks.afterEach(async function () {
+    await settled();
+  });
+
   module('Not found', function () {
     test('not in any manifest / group', async function (assert) {
       await visit('/usage/does-not-exist.md');
