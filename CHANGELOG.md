@@ -1,5 +1,27 @@
 # Changelog
 
+## Release (2025-12-27)
+
+* kolay 4.0.0 (major)
+
+#### :boom: Breaking Change
+* `kolay`
+  * [#238](https://github.com/universal-ember/kolay/pull/238) Use ember-repl v7, ditch the service registry ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#222](https://github.com/universal-ember/kolay/pull/222) add typedoc-plugin-rename-defaults plugin ([@patricklx](https://github.com/patricklx))
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#240](https://github.com/universal-ember/kolay/pull/240) Remove peer on @glint/template ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `kolay`
+  * [#239](https://github.com/universal-ember/kolay/pull/239) Update glint in the docs-app ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#237](https://github.com/universal-ember/kolay/pull/237) Update deps ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-07-01)
 
 * kolay 3.9.1 (patch)
