@@ -20,6 +20,8 @@
   line-height: 1.5rem;
 }
 .typedoc__declaration {
+  display: grid;
+
   &:not(:has(.typedoc__declaration-children)) {
     /* display: flex; */
     gap: 1rem;
@@ -62,6 +64,11 @@ section {
 .typedoc__property,
 .typedoc__component-signature__arg {
   padding: 0 1rem;
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  grid-template-areas:
+    "info"
+    "comment";
 }
 
 .typedoc__declaration-signatures {
@@ -87,6 +94,9 @@ section {
 }
 .typedoc__helper-signature__arg-info {
   border-bottom: 1px rgba(125, 125, 125, 0.5) dashed;
+  grid-area: info;
+  display: flex;
+  justify-content: space-between;
 }
 .typedoc__helper__return {
   display: flex;
@@ -190,7 +200,7 @@ section {
 .typedoc__modifier-signature__arg,
 .typedoc__component-signature__arg {
   margin-bottom: 0.5rem;
-  display: grid;
+  display: block;
   gap: 0.25rem;
 }
 .typedoc__helper-signature__arg > .typedoc__name,
