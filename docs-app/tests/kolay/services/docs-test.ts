@@ -10,7 +10,7 @@ module('@service(Docs)', function (hooks) {
   setupKolay(hooks);
 
   test('No duplicates in available Groups', async function (assert) {
-    const docs = docsManager();
+    const docs = docsManager(this);
 
     const groups = docs.availableGroups;
 

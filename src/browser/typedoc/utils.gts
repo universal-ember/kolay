@@ -62,7 +62,7 @@ export class Load extends Component<{
   Blocks: { default: [Reflection, ProjectReflection] };
 }> {
   get #apiDocs() {
-    return typedocLoader();
+    return typedocLoader(this);
   }
 
   /**

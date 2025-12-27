@@ -77,7 +77,7 @@ class DocsService {
   @service declare router: RouterService;
 
   private get apiDocs() {
-    return typedocLoader();
+    return typedocLoader(this);
   }
 
   _docs: Manifest | undefined;
