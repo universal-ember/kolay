@@ -76,8 +76,6 @@ export function findOwner(contextOrOwner: unknown): Owner | undefined {
 export function forceFindOwner(contextOrOwner: unknown): Owner {
   const maybe = findOwner(contextOrOwner);
 
-  if (!maybe) debugger;
-
   assert(`Did not find owner. An owner is required`, maybe);
 
   return maybe;
