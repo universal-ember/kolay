@@ -1,3 +1,4 @@
+import { settled } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
@@ -10,6 +11,8 @@ module('@service(Docs)', function (hooks) {
   setupKolay(hooks);
 
   test('No duplicates in available Groups', async function (assert) {
+    await settled();
+
     const docs = docsManager(this);
 
     const groups = docs.availableGroups;

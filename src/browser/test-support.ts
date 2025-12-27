@@ -22,7 +22,7 @@ export function setupKolay(hooks: NestedHooks, config?: Options): void {
 
     docs[PREPARE_DOCS](manifest, apiDocs);
 
-    await docs[LOAD_MANIFEST];
+    await docs[LOAD_MANIFEST]();
   });
 }
 
