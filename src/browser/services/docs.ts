@@ -10,15 +10,19 @@ import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
+import { forceFindOwner } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
+import { getKey } from './lazy-load.ts';
 
 import type { LoadManifest, LoadTypedoc, Manifest } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
-export function docsManager() {
-  return createStore(document.body, DocsService);
+export function docsManager(context: unknown) {
+  const owner = forceFindOwner(context);
+
+  return createStore(getKey(owner), DocsService);
 }
 
 export const LOAD_MANIFEST = Symbol('__KOLAY__LOAD_MANIFEST__');
@@ -135,7 +139,7 @@ class DocsService {
       topLevelScope: options.topLevelScope,
       remarkPlugins: options.remarkPlugins ?? [],
       rehypePlugins: options.rehypePlugins ?? [],
-      resolve: options.resolve,
+      modules: options.resolve,
     });
 
     await Promise.all([this[LOAD_MANIFEST](), setupCompiler(this, optionsForCompiler)]);

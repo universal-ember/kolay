@@ -110,7 +110,7 @@ export class PageNav extends Component<{
   };
 }> {
   private get docs() {
-    return docsManager();
+    return docsManager(this);
   }
 
   /**

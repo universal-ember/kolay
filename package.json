@@ -43,6 +43,9 @@
       "types": "./declarations/build/plugins/index.d.ts",
       "import": "./src/build/plugins/index.js"
     },
+    "./private/kolay/-private/😉 wut r u doin? ❤️": {
+      "default": "./dist/browser/services/lazy-load.js"
+    },
     "./private/samples": {
       "types": "./declarations/browser/samples/-private/index.d.ts"
     },
@@ -64,6 +67,14 @@
     "./*": {
       "types": "./src/browser/virtual/*",
       "default": "./src/browser/virtual/*.js"
+    }
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {
+      "./services/kolay/-private/😉 wut r u doin? ❤️": "./src/browser/-private/😉 wut r u doin? ❤️.js"
     }
   },
   "files": [
@@ -224,11 +235,5 @@
   },
   "ember": {
     "edition": "octane"
-  },
-  "ember-addon": {
-    "version": 2,
-    "type": "addon",
-    "main": "addon-main.cjs",
-    "app-js": {}
   }
 }

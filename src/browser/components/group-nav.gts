@@ -50,7 +50,7 @@ export class GroupNav extends Component<{
   };
 }> {
   get #docs() {
-    return docsManager();
+    return docsManager(this);
   }
 
   @service declare router: RouterService;

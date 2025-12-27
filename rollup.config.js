@@ -1,9 +1,7 @@
 import { Addon } from '@embroider/addon-dev/rollup';
-import fs from 'node:fs/promises';
 
-import css from 'rollup-plugin-import-css';
 import { babel } from '@rollup/plugin-babel';
-import { execaCommand } from 'execa';
+import css from 'rollup-plugin-import-css';
 
 const addon = new Addon({
   srcDir: 'src/browser',
@@ -25,6 +23,7 @@ export default {
       'index.js',
       'test-support.js',
       'typedoc/index.js',
+      'services/lazy-load.js',
       'components.js',
       'virtual/*.js',
     ]),

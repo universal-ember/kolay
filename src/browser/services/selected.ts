@@ -6,8 +6,10 @@ import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { link } from 'reactiveweb/link';
 
+import { forceFindOwner } from '../utils.ts';
 import { Compiled } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
+import { getKey } from './lazy-load.ts';
 import { MDRequest } from './request.ts';
 
 import type { Page } from '../../types.ts';
@@ -28,8 +30,10 @@ import type RouterService from '@ember/routing/router-service';
 
 const firstPath = '/1-get-started/intro.md';
 
-export function selected() {
-  return createStore(document.body, Selected);
+export function selected(context: unknown) {
+  const owner = forceFindOwner(context);
+
+  return createStore(getKey(owner), Selected);
 }
 
 /**
@@ -52,7 +56,7 @@ class Selected {
   @service declare router: RouterService;
 
   get #docs() {
-    return docsManager();
+    return docsManager(this);
   }
 
   get rootURL() {
