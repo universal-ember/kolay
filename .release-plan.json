@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "4.0.0",
-      "newVersion": "4.0.1",
+      "oldVersion": "4.0.1",
+      "newVersion": "4.0.2",
       "tagName": "latest",
       "constraints": [
         {
@@ -14,5 +14,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-12-27)\n\n* kolay 4.0.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#243](https://github.com/universal-ember/kolay/pull/243) Style fixes for typedoc ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-12-28)\n\n* kolay 4.0.2 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#244](https://github.com/universal-ember/kolay/pull/244) No question mark in service name ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
