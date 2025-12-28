@@ -43,7 +43,7 @@
       "types": "./declarations/build/plugins/index.d.ts",
       "import": "./src/build/plugins/index.js"
     },
-    "./private/😉 wut r u doin ❤️": {
+    "./private/😉-wut-r-u-doin-❤️": {
       "default": "./dist/browser/services/lazy-load.js"
     },
     "./private/samples": {

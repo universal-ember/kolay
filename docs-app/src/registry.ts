@@ -4,7 +4,7 @@ import Router from './router.ts';
 
 const appName = `docs-app`;
 
-import KolayPrivateService from 'kolay/private/😉 wut r u doin ❤️';
+import KolayPrivateService from 'kolay/private/😉-wut-r-u-doin-❤️';
 
 function formatAsResolverEntries(imports: Record<string, unknown>) {
   return Object.fromEntries(
