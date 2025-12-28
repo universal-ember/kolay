@@ -2,6 +2,17 @@
 
 ## Release (2025-12-28)
 
+* kolay 4.0.3 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#246](https://github.com/universal-ember/kolay/pull/246) Services cant have spaces ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2025-12-28)
+
 * kolay 4.0.2 (patch)
 
 #### :bug: Bug Fix
