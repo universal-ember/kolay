@@ -26,7 +26,7 @@ const resolverRegistry = {
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,
   // No user would ever do this
-  [`${appName}/services/kolay/-private/😉-wut-r-u-doin?-❤️`]: { default: KolayPrivateService },
+  [`${appName}/services/kolay/-private/😉-wut-r-u-doin-❤️`]: { default: KolayPrivateService },
 };
 
 export const registry = {
