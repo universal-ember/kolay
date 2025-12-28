@@ -3,7 +3,7 @@ import Service from '@ember/service';
 
 import type Owner from '@ember/owner';
 
-export const KEY = 'kolay/-private/😉-wut-r-u-doin-❤️';
+export const KEY = 'kolay/private/😉-wut-r-u-doin-❤️';
 
 export function getKey(owner: Pick<Owner, 'lookup'>) {
   const service = owner.lookup(`service:${KEY}`);
