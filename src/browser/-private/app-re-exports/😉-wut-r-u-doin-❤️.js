@@ -1,1 +1,1 @@
-export { default } from 'kolay/private/😉 wut r u doin ❤️';
+export { default } from 'kolay/private/😉-wut-r-u-doin-❤️';
