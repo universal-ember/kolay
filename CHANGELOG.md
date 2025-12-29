@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-12-29)
+
+* kolay 4.0.5 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#252](https://github.com/universal-ember/kolay/pull/252) resolve -> modules ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-12-28)
 
 * kolay 4.0.4 (patch)

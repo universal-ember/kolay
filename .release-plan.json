@@ -2,8 +2,8 @@
   "solution": {
     "kolay": {
       "impact": "patch",
-      "oldVersion": "4.0.3",
-      "newVersion": "4.0.4",
+      "oldVersion": "4.0.4",
+      "newVersion": "4.0.5",
       "tagName": "latest",
       "constraints": [
         {
@@ -14,5 +14,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2025-12-28)\n\n* kolay 4.0.4 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#248](https://github.com/universal-ember/kolay/pull/248) Services cant have spaces ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2025-12-29)\n\n* kolay 4.0.5 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#252](https://github.com/universal-ember/kolay/pull/252) resolve -> modules ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
