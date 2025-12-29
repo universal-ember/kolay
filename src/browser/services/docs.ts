@@ -116,7 +116,7 @@ class DocsService {
      * and allows you to have access to private libraries without
      * needing to publish those libraries to NPM.
      */
-    resolve?: ModuleMap;
+    modules?: ModuleMap;
 
     /**
      * Provide additional remark plugins to the default markdown compiler.
@@ -139,7 +139,7 @@ class DocsService {
       topLevelScope: options.topLevelScope,
       remarkPlugins: options.remarkPlugins ?? [],
       rehypePlugins: options.rehypePlugins ?? [],
-      modules: options.resolve,
+      modules: options.modules,
     });
 
     await Promise.all([this[LOAD_MANIFEST](), setupCompiler(this, optionsForCompiler)]);
