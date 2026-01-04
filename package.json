@@ -162,7 +162,7 @@
     "eslint": "^9.39.2",
     "execa": "^9.6.1",
     "fix-bad-declaration-output": "^1.1.5",
-    "globals": "^16.5.0",
+    "globals": "^17.0.0",
     "pnpm-sync-dependencies-meta-injected": "^0.0.15",
     "prettier": "^3.7.4",
     "prettier-plugin-ember-template-tag": "^2.1.2",
