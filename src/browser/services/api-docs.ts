@@ -2,15 +2,14 @@ import { assert } from '@ember/debug';
 
 import { createStore } from 'ember-primitives/store';
 
-import { forceFindOwner } from '../utils.ts';
 import { getKey } from './lazy-load.ts';
 
 import type { LoadTypedoc } from '../../types.ts';
 
 export function typedocLoader(context: unknown) {
-  const owner = forceFindOwner(context);
+  const owner = getKey(context);
 
-  return createStore(getKey(owner), DocsLoader);
+  return createStore(owner, DocsLoader);
 }
 
 class DocsLoader {

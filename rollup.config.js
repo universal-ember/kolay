@@ -23,7 +23,6 @@ export default {
       'index.js',
       'test-support.js',
       'typedoc/index.js',
-      'services/lazy-load.js',
       'components.js',
       'virtual/*.js',
     ]),

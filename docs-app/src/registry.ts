@@ -4,8 +4,6 @@ import Router from './router.ts';
 
 const appName = `docs-app`;
 
-import KolayPrivateService from 'kolay/private/😉-wut-r-u-doin-❤️';
-
 function formatAsResolverEntries(imports: Record<string, unknown>) {
   return Object.fromEntries(
     Object.entries(imports).map(([k, v]) => [
@@ -25,8 +23,6 @@ const resolverRegistry = {
   ...formatAsResolverEntries(import.meta.glob('./services/**/*.{js,ts}', { eager: true })),
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,
-  // No user would ever do this
-  [`${appName}/services/kolay/private/😉-wut-r-u-doin-❤️`]: { default: KolayPrivateService },
 };
 
 export const registry = {

@@ -10,7 +10,6 @@ import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
-import { forceFindOwner } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 
@@ -20,9 +19,9 @@ import type RouterService from '@ember/routing/router-service';
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
 export function docsManager(context: unknown) {
-  const owner = forceFindOwner(context);
+  const owner = getKey(context);
 
-  return createStore(getKey(owner), DocsService);
+  return createStore(owner, DocsService);
 }
 
 export const LOAD_MANIFEST = Symbol('__KOLAY__LOAD_MANIFEST__');

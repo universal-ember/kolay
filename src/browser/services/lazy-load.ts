@@ -1,30 +1,38 @@
 import { assert } from '@ember/debug';
-import Service from '@ember/service';
+import { isDestroyed, isDestroying, registerDestructor } from '@ember/destroyable';
 
+import type { Secret } from '../../types.ts';
 import type Owner from '@ember/owner';
 
 export const KEY = 'kolay/private/😉-wut-r-u-doin-❤️';
 
-export function getKey(owner: Pick<Owner, 'lookup'>) {
-  const service = owner.lookup(`service:${KEY}`);
-
-  assert(
-    `Expected the Kolay private service to exist, but it did not. Is the owner correct and app-tree-merging enabled?`,
-    service
-  );
-
-  return service;
-}
+const SECRET = Symbol.for('__kolay__secret__context__');
 
 /**
- * Not exactly lazy load, but allows lazy loading.
- * This is a "well known" service that all the lazy loaded
- * stuff will attach to.
- *
- * it *MUST* be mounted at the above path
- *
- * This is so that our private services have a lifetime to attach to.
+ * same logic in the setup.js plugin
  */
-export class KolayLazyLoadService extends Service {}
+export function setupSecret(owner: Owner) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+  const secret = ((window as any)[SECRET] ||= {}) as Secret;
 
-export default KolayLazyLoadService;
+  secret.owners ||= new Set();
+
+  secret.owners.add(owner);
+
+  registerDestructor(owner, () => secret.owners.delete(owner));
+}
+
+export function getKey(_owner: unknown) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+  const secret = (window as any)[SECRET] as unknown as Secret;
+
+  for (const owner of secret.owners) {
+    const isDanger = isDestroying(owner) || isDestroyed(owner);
+
+    if (!isDanger) return owner;
+  }
+
+  assert(
+    `Expected to have had setupKolay called from 'kolay/setup'. Be sure to call setupKolay before trying to use any of Kolay's components`
+  );
+}
