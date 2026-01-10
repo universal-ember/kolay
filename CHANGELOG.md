@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-01-10)
+
+* kolay 4.1.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#256](https://github.com/universal-ember/kolay/pull/256) Support rendering kolay components in both nested applications as well as renderComponent environments ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2025-12-29)
 
 * kolay 4.0.5 (patch)
