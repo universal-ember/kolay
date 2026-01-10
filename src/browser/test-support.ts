@@ -1,6 +1,7 @@
 import { setupCompiler } from 'ember-repl/test-support';
 
 import { compilerOptions, docsManager, LOAD_MANIFEST, PREPARE_DOCS } from './services/docs.ts';
+import { setupSecret } from './services/lazy-load.ts';
 import { forceFindOwner } from './utils.ts';
 
 import type { setupTest } from 'ember-qunit';
@@ -13,6 +14,8 @@ export function setupKolay(hooks: NestedHooks, config?: Options): void {
   setupCompiler(hooks, compilerOptions(config ?? {}));
 
   hooks.beforeEach(async function () {
+    setupSecret(this.owner);
+
     const docs = docsManager(this.owner);
 
     const [apiDocs, manifest] = await Promise.all([

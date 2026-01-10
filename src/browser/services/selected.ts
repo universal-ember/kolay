@@ -6,7 +6,6 @@ import { use } from 'ember-resources';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { link } from 'reactiveweb/link';
 
-import { forceFindOwner } from '../utils.ts';
 import { Compiled } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
 import { getKey } from './lazy-load.ts';
@@ -31,9 +30,9 @@ import type RouterService from '@ember/routing/router-service';
 const firstPath = '/1-get-started/intro.md';
 
 export function selected(context: unknown) {
-  const owner = forceFindOwner(context);
+  const owner = getKey(context);
 
-  return createStore(getKey(owner), Selected);
+  return createStore(owner, Selected);
 }
 
 /**

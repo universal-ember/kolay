@@ -16,9 +16,21 @@ export const setup = () => {
           import { getOwner, setOwner } from '@ember/owner';
           import { assert } from '@ember/debug';
           import { docsManager } from 'kolay';
+          import { registerDestructor } from '@ember/destroyable';
+
+
+          const secret = window[Symbol.for('__kolay__secret__context__')] ||= {};
+          secret.owners ||= new Set();
 
           export async function setupKolay(context, options) {
             let owner = getOwner(context) ?? context.owner;
+
+            // This is needed because some of our components can be rendered with different owners.
+            // But the fetching of API docs is unique per window, not per owner -- documents at an URL
+            // can't change.
+            secret.owners.add(owner);
+
+            registerDestructor(owner, () => secret.owners.delete(owner));
 
             assert(
               \`Expected owner to exist on the passed context, \`

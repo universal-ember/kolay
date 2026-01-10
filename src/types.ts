@@ -1,3 +1,9 @@
+import type Owner from '@ember/owner';
+
+export interface Secret {
+  owners: Set<Owner>;
+}
+
 export type LoadManifest = () => Promise<Manifest>;
 export type LoadTypedoc = Record<string, () => ReturnType<typeof fetch>>;
 
