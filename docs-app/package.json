@@ -35,6 +35,7 @@
   "devDependencies": {
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/node": "^9.5.1",
+    "unist-util-visit": "^5.0.0",
     "@babel/core": "^7.28.5",
     "@babel/plugin-proposal-decorators": "^7.28.0",
     "@ember/app-tsconfig": "^2.0.0",
