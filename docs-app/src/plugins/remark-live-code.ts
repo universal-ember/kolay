@@ -1,4 +1,5 @@
 import { visit } from 'unist-util-visit';
+import { relative, dirname } from 'path';
 
 /**
  * Remark plugin to transform live code blocks into LiveDemo component invocations
@@ -43,9 +44,18 @@ export function remarkLiveCode() {
 
     // Add import for LiveDemoWrapper at the beginning if we found live blocks
     if (hasLiveBlocks) {
+      // Calculate relative path from current file to components directory
+      const filePath = file.history[0] || file.path || '';
+      const fileDir = dirname(filePath);
+      const componentsPath = fileDir.replace(/.*\/src\/pages/, '../../../src/components') + '/../../../src/components/LiveDemoWrapper.astro';
+      
+      // Simplify the path - count directory depth and use appropriate number of ../
+      const depth = (filePath.match(/src\/pages\//g) || []).length + (filePath.split('/').slice(filePath.split('/').indexOf('pages') + 1).length - 1);
+      const relativePath = '../'.repeat(depth) + 'components/LiveDemoWrapper.astro';
+      
       tree.children.unshift({
         type: 'mdxjsEsm',
-        value: "import LiveDemoWrapper from '../../components/LiveDemoWrapper.astro';",
+        value: `import LiveDemoWrapper from '${relativePath}';`,
         data: {
           estree: {
             type: 'Program',
@@ -60,8 +70,8 @@ export function remarkLiveCode() {
               }],
               source: {
                 type: 'Literal',
-                value: '../../components/LiveDemoWrapper.astro',
-                raw: "'../../components/LiveDemoWrapper.astro'"
+                value: relativePath,
+                raw: `'${relativePath}'`
               }
             }],
             sourceType: 'module',
