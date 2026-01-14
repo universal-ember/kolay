@@ -9,8 +9,7 @@
       "vite/client",
       "vitest/importMeta",
       "unplugin-info/client",
-      "@glint/ember-tsc/types",
-      "astro/client"
+      "@glint/ember-tsc/types"
     ]
   }
 }
