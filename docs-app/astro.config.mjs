@@ -3,6 +3,10 @@ import { ember } from 'ember-astro';
 import node from '@astrojs/node';
 import { kolay } from 'kolay/vite';
 import info from 'unplugin-info/vite';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +16,12 @@ export default defineConfig({
   }),
   integrations: [ember()],
   vite: {
+    resolve: {
+      alias: {
+        'kolay': path.resolve(__dirname, '../dist/browser'),
+        'kolay/components': path.resolve(__dirname, '../dist/browser/components.js'),
+      },
+    },
     plugins: [
       info(),
       kolay({

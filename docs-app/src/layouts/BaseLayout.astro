@@ -18,8 +18,7 @@ const { title = 'Docs' } = Astro.props;
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
     />
-    <link rel="stylesheet" href="/src/styles/app.css" />
-
+    
     <style>
       #kolay__loading {
         position: fixed;
@@ -42,11 +41,13 @@ const { title = 'Docs' } = Astro.props;
     </style>
   </head>
   <body>
-    <slot />
+    <div id="ember-app-root"></div>
     
-    <div id="kolay__loading" style="display: none;">
+    <div id="kolay__loading">
       Kolay
       <div aria-busy="true"></div>
     </div>
+    
+    <slot />
   </body>
 </html>

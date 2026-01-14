@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Application from '../app.ts';
+import config from '../config.ts';
+---
+
+<BaseLayout title="Kolay Documentation">
+  <link rel="stylesheet" href="/src/styles/app.css" />
+  
+  <script>
+    import Application from '../app.ts';
+    import config from '../config.ts';
+    
+    // Boot the Ember application
+    Application.create(config.APP);
+  </script>
+</BaseLayout>

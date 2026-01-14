@@ -1,18 +1,10 @@
-import Application from '@ember/application';
-import { setOwner } from '@ember/owner';
-import Component from '@glimmer/component';
-import Resolver from 'ember-resolver';
-import config from '../../config.ts';
-import { registry } from '../../registry.ts';
-
 import 'ember-mobile-menu/themes/android';
 import { on } from '@ember/modifier';
 import { pascalCase, sentenceCase } from 'change-case';
 // @ts-expect-error no types for the mobile-menu
 import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
-import { pageTitle } from 'ember-page-title';
 import { GroupNav, PageNav, Page } from 'kolay/components';
-import { abbreviatedSha } from '~build/git';
+import Component from '@glimmer/component';
 
 import type { TOC } from '@ember/component/template-only';
 import type { Page as PageType } from 'kolay';
@@ -64,32 +56,8 @@ export function nameFor(x: PageType) {
   return sentenceCase(x.name);
 }
 
-// Create a single app instance outside of the component
-let emberApp: Application | null = null;
-
-function getOrCreateApp() {
-  if (!emberApp) {
-    class App extends Application {
-      modulePrefix = config.modulePrefix;
-      Resolver = Resolver.withModules(registry);
-    }
-    
-    emberApp = App.create(config.APP);
-  }
-  return emberApp;
-}
-
-export default class KolayApp extends Component {
-  constructor(owner: unknown, args: object) {
-    super(owner, args);
-    // Ensure the Ember app is created and set as the owner
-    const app = getOrCreateApp();
-    setOwner(this, app as any);
-  }
-
+export default class KolayAppSimple extends Component {
   <template>
-    {{pageTitle "Docs :: " abbreviatedSha}}
-
     <MenuWrapper as |mmw|>
       <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
         <SideNav {{on "click" mm.actions.close}} />
