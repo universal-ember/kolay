@@ -1,15 +1,7 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-
-<BaseLayout title="Kolay Documentation">
-  <link rel="stylesheet" href="/src/styles/app.css" />
-  
-  <script type="module">
-    import Application from '../app.ts';
-    import config from '../config.ts';
-    
-    // Boot the Ember application
-    Application.create(config.APP);
-  </script>
-</BaseLayout>
+<meta http-equiv="refresh" content="0; url=/usage/setup" />
+<script>
+  window.location.href = '/usage/setup';
+</script>
+<p>Redirecting to <a href="/usage/setup">Setup</a>...</p>

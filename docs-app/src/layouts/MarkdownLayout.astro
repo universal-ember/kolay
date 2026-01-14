@@ -1,0 +1,83 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import '../styles/app.css';
+
+interface Props {
+  title?: string;
+  frontmatter?: {
+    title?: string;
+  };
+}
+
+const { title, frontmatter } = Astro.props;
+const pageTitle = frontmatter?.title || title || 'Docs';
+---
+
+<BaseLayout title={pageTitle}>
+  <div class="container">
+    <header style="display: flex; align-items: baseline; gap: 1rem; border-bottom: 1px solid currentColor;">
+      <h1>Kolay Docs</h1>
+    </header>
+
+    <div class="big-layout">
+      <aside>
+        <nav>
+          <ul>
+            <li><a href="/usage/index">Usage</a>
+              <ul>
+                <li><a href="/usage/setup">Setup</a></li>
+                <li><a href="/usage/rendering-pages">Rendering Pages</a></li>
+                <li><a href="/usage/ordering-pages">Ordering Pages</a></li>
+                <li><a href="/usage/testing">Testing</a></li>
+              </ul>
+            </li>
+            <li>Plugins
+              <ul>
+                <li><a href="/plugins/helpers">Helpers</a></li>
+                <li><a href="/plugins/kolay">Kolay</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main style="padding-top: 1rem;">
+        <slot />
+      </main>
+    </div>
+  </div>
+
+  <style>
+    .big-layout {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 2rem;
+    }
+
+    .big-layout main {
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .big-layout nav ul {
+      padding-left: 0.5rem;
+      list-style: none;
+      line-height: 1.75rem;
+    }
+
+    aside {
+      min-width: 200px;
+    }
+
+    @media (max-width: 768px) {
+      .big-layout {
+        grid-template-columns: 1fr;
+      }
+      .big-layout aside {
+        display: none;
+      }
+    }
+  </style>
+</BaseLayout>
