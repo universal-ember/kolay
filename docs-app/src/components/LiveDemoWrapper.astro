@@ -1,0 +1,7 @@
+---
+import LiveDemo from './LiveDemo.gts';
+
+const { code } = Astro.props;
+---
+
+<LiveDemo code={code} client:only="ember" />

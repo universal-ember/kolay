@@ -11,6 +11,15 @@ interface Props {
 
 const { title, frontmatter } = Astro.props;
 const pageTitle = frontmatter?.title || title || 'Docs';
+
+// Determine which group/tab the current page belongs to
+const currentPath = Astro.url.pathname;
+let currentGroup = 'usage';
+if (currentPath.startsWith('/plugins')) {
+  currentGroup = 'plugins';
+} else if (currentPath.startsWith('/Runtime')) {
+  currentGroup = 'runtime';
+}
 ---
 
 <BaseLayout title={pageTitle}>
@@ -19,46 +28,80 @@ const pageTitle = frontmatter?.title || title || 'Docs';
       <h1>Kolay Docs</h1>
     </header>
 
+    <!-- Top Navigation Tabs -->
+    <nav class="top-nav">
+      <button 
+        class={`tab-button ${currentGroup === 'usage' ? 'active' : ''}`}
+        data-group="usage">
+        Usage
+      </button>
+      <button 
+        class={`tab-button ${currentGroup === 'plugins' ? 'active' : ''}`}
+        data-group="plugins">
+        Plugins
+      </button>
+      <button 
+        class={`tab-button ${currentGroup === 'runtime' ? 'active' : ''}`}
+        data-group="runtime">
+        Runtime
+      </button>
+    </nav>
+
     <div class="big-layout">
       <aside>
         <nav>
-          <ul>
-            <li><a href="/usage/index">Usage</a>
-              <ul>
-                <li><a href="/usage/setup">Setup</a></li>
-                <li><a href="/usage/rendering-pages">Rendering Pages</a></li>
-                <li><a href="/usage/ordering-pages">Ordering Pages</a></li>
-                <li><a href="/usage/testing">Testing</a></li>
-              </ul>
-            </li>
-            <li>Plugins
-              <ul>
-                <li><a href="/plugins/helpers">Helpers</a></li>
-                <li><a href="/plugins/kolay">Kolay</a></li>
-              </ul>
-            </li>
-            <li>Runtime
-              <ul>
-                <li>Docs
-                  <ul>
-                    <li><a href="/Runtime/docs/api-docs">API Docs</a></li>
-                    <li><a href="/Runtime/docs/comment-query">Comment Query</a></li>
-                    <li><a href="/Runtime/docs/component-signature">Component Signature</a></li>
-                    <li><a href="/Runtime/docs/helper-signature">Helper Signature</a></li>
-                    <li><a href="/Runtime/docs/modifier-signature">Modifier Signature</a></li>
-                  </ul>
-                </li>
-                <li>Util
-                  <ul>
-                    <li><a href="/Runtime/util/group-nav">Group Nav</a></li>
-                    <li><a href="/Runtime/util/logs">Logs</a></li>
-                    <li><a href="/Runtime/util/page-nav">Page Nav</a></li>
-                    <li><a href="/Runtime/util/page">Page</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
+          <!-- Usage Navigation -->
+          <div class={`nav-group ${currentGroup === 'usage' ? 'active' : ''}`} data-nav="usage">
+            <ul>
+              <li><a href="/usage/index">Usage</a>
+                <ul>
+                  <li><a href="/usage/setup">Setup</a></li>
+                  <li><a href="/usage/rendering-pages">Rendering Pages</a></li>
+                  <li><a href="/usage/ordering-pages">Ordering Pages</a></li>
+                  <li><a href="/usage/testing">Testing</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Plugins Navigation -->
+          <div class={`nav-group ${currentGroup === 'plugins' ? 'active' : ''}`} data-nav="plugins">
+            <ul>
+              <li>Plugins
+                <ul>
+                  <li><a href="/plugins/helpers">Helpers</a></li>
+                  <li><a href="/plugins/kolay">Kolay</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Runtime Navigation -->
+          <div class={`nav-group ${currentGroup === 'runtime' ? 'active' : ''}`} data-nav="runtime">
+            <ul>
+              <li>Runtime
+                <ul>
+                  <li>Docs
+                    <ul>
+                      <li><a href="/Runtime/docs/api-docs">API Docs</a></li>
+                      <li><a href="/Runtime/docs/comment-query">Comment Query</a></li>
+                      <li><a href="/Runtime/docs/component-signature">Component Signature</a></li>
+                      <li><a href="/Runtime/docs/helper-signature">Helper Signature</a></li>
+                      <li><a href="/Runtime/docs/modifier-signature">Modifier Signature</a></li>
+                    </ul>
+                  </li>
+                  <li>Util
+                    <ul>
+                      <li><a href="/Runtime/util/group-nav">Group Nav</a></li>
+                      <li><a href="/Runtime/util/logs">Logs</a></li>
+                      <li><a href="/Runtime/util/page-nav">Page Nav</a></li>
+                      <li><a href="/Runtime/util/page">Page</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </nav>
       </aside>
 
@@ -69,6 +112,43 @@ const pageTitle = frontmatter?.title || title || 'Docs';
   </div>
 
   <style>
+    .top-nav {
+      display: flex;
+      gap: 0;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--pico-muted-border-color);
+    }
+
+    .tab-button {
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      color: var(--pico-color);
+      margin-bottom: -2px;
+    }
+
+    .tab-button:hover {
+      background: var(--pico-primary-hover-background);
+    }
+
+    .tab-button.active {
+      border-bottom-color: var(--pico-primary);
+      font-weight: bold;
+    }
+
+    .nav-group {
+      display: none;
+    }
+
+    .nav-group.active {
+      display: block;
+    }
+
     .big-layout {
       display: grid;
       grid-template-columns: max-content 1fr;
@@ -99,6 +179,36 @@ const pageTitle = frontmatter?.title || title || 'Docs';
       .big-layout aside {
         display: none;
       }
+      .top-nav {
+        flex-wrap: wrap;
+      }
     }
   </style>
+
+  <script>
+    // Handle tab switching
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const navGroups = document.querySelectorAll('.nav-group');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetGroup = button.getAttribute('data-group');
+
+          // Update active tab
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          // Show corresponding navigation
+          navGroups.forEach(group => {
+            if (group.getAttribute('data-nav') === targetGroup) {
+              group.classList.add('active');
+            } else {
+              group.classList.remove('active');
+            }
+          });
+        });
+      });
+    });
+  </script>
 </BaseLayout>

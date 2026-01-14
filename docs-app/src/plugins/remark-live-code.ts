@@ -1,14 +1,11 @@
 import { visit } from 'unist-util-visit';
 
 /**
- * Remark plugin to transform live code blocks into component invocations
- * 
- * This extracts live code blocks and replaces them with imports of a LiveDemo component
+ * Remark plugin to transform live code blocks into LiveDemo component invocations
  */
 export function remarkLiveCode() {
   return (tree, file) => {
-    const components = [];
-    let componentCounter = 0;
+    let hasLiveBlocks = false;
 
     visit(tree, 'code', (node, index, parent) => {
       // Check if this is a live code block
@@ -19,34 +16,24 @@ export function remarkLiveCode() {
         return;
       }
 
+      hasLiveBlocks = true;
+
       // Extract the component code
       const code = node.value.trim();
       
-      // Generate a unique ID for this live block
-      componentCounter++;
-      const componentId = `live_${componentCounter}`;
-      
-      // Store the component code
-      components.push({
-        id: componentId,
-        code: code
-      });
-      
-      // Replace the code block with a LiveDemo component invocation
-      // Pass the code as a prop
+      // Replace with MDX JSX element
       const replacement = {
         type: 'mdxJsxFlowElement',
-        name: 'LiveDemo',
+        name: 'LiveDemoWrapper',
         attributes: [{
           type: 'mdxJsxAttribute',
           name: 'code',
           value: code
-        }, {
-          type: 'mdxJsxAttribute',
-          name: 'client:only',
-          value: 'ember'
         }],
-        children: []
+        children: [],
+        data: {
+          _mdxExplicitJsx: true
+        }
       };
       
       if (parent && typeof index === 'number') {
@@ -54,11 +41,11 @@ export function remarkLiveCode() {
       }
     });
 
-    // Add import for LiveDemo component at the beginning
-    if (components.length > 0) {
+    // Add import for LiveDemoWrapper at the beginning if we found live blocks
+    if (hasLiveBlocks) {
       tree.children.unshift({
         type: 'mdxjsEsm',
-        value: "import LiveDemo from '../components/LiveDemo.gts';",
+        value: "import LiveDemoWrapper from '../../components/LiveDemoWrapper.astro';",
         data: {
           estree: {
             type: 'Program',
@@ -68,16 +55,17 @@ export function remarkLiveCode() {
                 type: 'ImportDefaultSpecifier',
                 local: {
                   type: 'Identifier',
-                  name: 'LiveDemo'
+                  name: 'LiveDemoWrapper'
                 }
               }],
               source: {
                 type: 'Literal',
-                value: '../components/LiveDemo.gts',
-                raw: "'../components/LiveDemo.gts'"
+                value: '../../components/LiveDemoWrapper.astro',
+                raw: "'../../components/LiveDemoWrapper.astro'"
               }
             }],
-            sourceType: 'module'
+            sourceType: 'module',
+            comments: []
           }
         }
       });

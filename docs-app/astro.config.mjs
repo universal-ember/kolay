@@ -8,6 +8,9 @@ import { remarkLiveCode } from './src/plugins/remark-live-code.ts';
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
+  markdown: {
+    remarkPlugins: [remarkLiveCode],
+  },
   integrations: [ember(), mdx({
     remarkPlugins: [remarkLiveCode]
   })],
