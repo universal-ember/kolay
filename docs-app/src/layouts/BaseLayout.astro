@@ -41,13 +41,11 @@ const { title = 'Docs' } = Astro.props;
     </style>
   </head>
   <body>
-    <div id="ember-app-root"></div>
+    <slot />
     
     <div id="kolay__loading">
       Kolay
       <div aria-busy="true"></div>
     </div>
-    
-    <slot />
   </body>
 </html>

@@ -1,10 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import KolayAppSimple from '../components/astro-wrappers/kolay-app-simple.gts';
-
-const currentPath = Astro.url.pathname;
 ---
 
 <BaseLayout title="Kolay Documentation">
-  <KolayAppSimple client:only="ember" />
+  <link rel="stylesheet" href="/src/styles/app.css" />
+  
+  <script type="module">
+    import Application from '../app.ts';
+    import config from '../config.ts';
+    
+    // Boot the Ember application
+    Application.create(config.APP);
+  </script>
 </BaseLayout>
