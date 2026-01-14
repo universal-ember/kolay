@@ -18,34 +18,8 @@ const { title = 'Docs' } = Astro.props;
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
     />
-    
-    <style>
-      #kolay__loading {
-        position: fixed;
-        inset: 0;
-        background: #111;
-        color: white;
-        font-size: 4rem;
-        z-index: 10;
-        font-family: "System UI", "System";
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 4rem;
-      }
-
-      #kolay__loading [aria-busy="true"] {
-        background: #111;
-      }
-    </style>
   </head>
   <body>
     <slot />
-    
-    <div id="kolay__loading">
-      Kolay
-      <div aria-busy="true"></div>
-    </div>
   </body>
 </html>
