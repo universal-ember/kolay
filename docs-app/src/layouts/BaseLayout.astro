@@ -1,0 +1,52 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = 'Docs' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
+    />
+    <link rel="stylesheet" href="/src/styles/app.css" />
+
+    <style>
+      #kolay__loading {
+        position: fixed;
+        inset: 0;
+        background: #111;
+        color: white;
+        font-size: 4rem;
+        z-index: 10;
+        font-family: "System UI", "System";
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 4rem;
+      }
+
+      #kolay__loading [aria-busy="true"] {
+        background: #111;
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+    
+    <div id="kolay__loading" style="display: none;">
+      Kolay
+      <div aria-busy="true"></div>
+    </div>
+  </body>
+</html>

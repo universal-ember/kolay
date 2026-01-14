@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KolayApp from '../components/astro-wrappers/app-shell.gts';
+
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title="Kolay Documentation">
+  <KolayApp client:only="ember" />
+</BaseLayout>
