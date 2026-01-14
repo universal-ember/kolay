@@ -27,3 +27,4 @@
 
 # astro
 /.astro/
+src/components/live/
