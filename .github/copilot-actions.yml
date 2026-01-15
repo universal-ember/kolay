@@ -1,0 +1,9 @@
+# Configuration for GitHub Copilot Actions
+# This file configures the firewall allowlist for Copilot coding agent.
+#
+# Reference: https://gh.io/copilot/actions-setup-steps
+
+# Custom firewall allowlist - allows Copilot agents to access these hosts
+firewall:
+  allow:
+    - telemetry.astro.build
