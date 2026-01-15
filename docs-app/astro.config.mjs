@@ -11,9 +11,14 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkLiveCode],
   },
-  integrations: [ember(), mdx({
-    remarkPlugins: [remarkLiveCode]
-  })],
+  integrations: [
+    ember(), 
+    mdx({
+      remarkPlugins: [remarkLiveCode],
+      // This allows .md files to be treated as MDX
+      extendMarkdownConfig: true,
+    })
+  ],
   vite: {
     plugins: [
       info(),
