@@ -24,31 +24,37 @@ if (currentPath.startsWith('/plugins')) {
 
 <BaseLayout title={pageTitle}>
   <div class="container">
-    <header style="display: flex; align-items: baseline; gap: 1rem; border-bottom: 1px solid currentColor;">
+    <header style="display: flex; align-items: baseline; gap: 1rem; border-bottom: 1px solid currentColor; justify-content: space-between;">
       <h1>Kolay Docs</h1>
+      <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+        ☰
+      </button>
     </header>
 
     <!-- Top Navigation Tabs -->
     <nav class="top-nav">
-      <button 
+      <a 
+        href="/usage/setup"
         class={`tab-button ${currentGroup === 'usage' ? 'active' : ''}`}
         data-group="usage">
         Usage
-      </button>
-      <button 
+      </a>
+      <a 
+        href="/plugins/helpers"
         class={`tab-button ${currentGroup === 'plugins' ? 'active' : ''}`}
         data-group="plugins">
         Plugins
-      </button>
-      <button 
+      </a>
+      <a 
+        href="/Runtime/docs/api-docs"
         class={`tab-button ${currentGroup === 'runtime' ? 'active' : ''}`}
         data-group="runtime">
         Runtime
-      </button>
+      </a>
     </nav>
 
     <div class="big-layout">
-      <aside>
+      <aside class="sidebar">
         <nav>
           <!-- Usage Navigation -->
           <div class={`nav-group ${currentGroup === 'usage' ? 'active' : ''}`} data-nav="usage">
@@ -112,6 +118,16 @@ if (currentPath.startsWith('/plugins')) {
   </div>
 
   <style>
+    .mobile-menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      color: var(--pico-color);
+    }
+
     .top-nav {
       display: flex;
       gap: 0;
@@ -130,6 +146,8 @@ if (currentPath.startsWith('/plugins')) {
       transition: all 0.2s;
       color: var(--pico-color);
       margin-bottom: -2px;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .tab-button:hover {
@@ -173,41 +191,96 @@ if (currentPath.startsWith('/plugins')) {
     }
 
     @media (max-width: 768px) {
+      .mobile-menu-toggle {
+        display: block;
+      }
+
       .big-layout {
         grid-template-columns: 1fr;
       }
-      .big-layout aside {
-        display: none;
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: var(--pico-background-color);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 1rem;
       }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .mobile-overlay.active {
+        display: block;
+      }
+
       .top-nav {
         flex-wrap: wrap;
+      }
+
+      .tab-button {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
       }
     }
   </style>
 
+  <div class="mobile-overlay"></div>
+
   <script>
-    // Handle tab switching
+    // Handle mobile menu toggle
     document.addEventListener('DOMContentLoaded', () => {
-      const tabButtons = document.querySelectorAll('.tab-button');
-      const navGroups = document.querySelectorAll('.nav-group');
+      const menuToggle = document.querySelector('.mobile-menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.mobile-overlay');
 
-      tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const targetGroup = button.getAttribute('data-group');
+      function closeMobileMenu() {
+        sidebar?.classList.remove('mobile-open');
+        overlay?.classList.remove('active');
+      }
 
-          // Update active tab
-          tabButtons.forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
+      function openMobileMenu() {
+        sidebar?.classList.add('mobile-open');
+        overlay?.classList.add('active');
+      }
 
-          // Show corresponding navigation
-          navGroups.forEach(group => {
-            if (group.getAttribute('data-nav') === targetGroup) {
-              group.classList.add('active');
-            } else {
-              group.classList.remove('active');
-            }
-          });
-        });
+      menuToggle?.addEventListener('click', () => {
+        if (sidebar?.classList.contains('mobile-open')) {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
+      });
+
+      overlay?.addEventListener('click', closeMobileMenu);
+
+      // Close mobile menu when clicking a link
+      const navLinks = sidebar?.querySelectorAll('a');
+      navLinks?.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
       });
     });
   </script>
