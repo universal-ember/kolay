@@ -19,18 +19,27 @@ export function remarkLiveCode() {
 
       hasLiveBlocks = true;
 
-      // Extract the component code
+      // Extract the component code and language
       const code = node.value.trim();
+      // Get the language/format from the code fence (e.g., 'hbs', 'gjs', 'glimdown')
+      const format = lang.replace(/\s+live.*/, '').trim() || 'hbs';
       
       // Replace with MDX JSX element
       const replacement = {
         type: 'mdxJsxFlowElement',
         name: 'LiveDemoWrapper',
-        attributes: [{
-          type: 'mdxJsxAttribute',
-          name: 'code',
-          value: code
-        }],
+        attributes: [
+          {
+            type: 'mdxJsxAttribute',
+            name: 'code',
+            value: code
+          },
+          {
+            type: 'mdxJsxAttribute',
+            name: 'format',
+            value: format
+          }
+        ],
         children: [],
         data: {
           _mdxExplicitJsx: true

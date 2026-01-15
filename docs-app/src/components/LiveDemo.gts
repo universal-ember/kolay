@@ -12,6 +12,7 @@ import {
 export interface LiveDemoSignature {
   Args: {
     code: string;
+    format?: 'hbs' | 'gjs' | 'glimdown';
   };
 }
 
@@ -22,12 +23,12 @@ export interface LiveDemoSignature {
 export default class LiveDemo extends Component<LiveDemoSignature> {
   // Make a resource that compiles the code with kolay components in scope
   compiled = resource(({ owner }) => {
-    const { code } = this.args;
+    const { code, format = 'hbs' } = this.args;
     
     // Compile the template with ember-repl
     // This will make the kolay components available in the template scope
     const compiled = compile(getCompiler(owner), code, {
-      format: 'hbs',
+      format: format as 'hbs' | 'gjs' | 'glimdown',
       globals: {
         APIDocs,
         CommentQuery,
