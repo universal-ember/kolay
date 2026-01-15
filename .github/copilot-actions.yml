@@ -7,8 +7,3 @@
 # Environment variables to set for all Copilot agent sessions
 env:
   ASTRO_TELEMETRY_DISABLED: "1"
-
-# Setup steps to run before the firewall is enabled
-setup_steps:
-  - name: Disable Astro Telemetry
-    run: echo "Astro telemetry disabled via ASTRO_TELEMETRY_DISABLED=1"
