@@ -1,22 +1,29 @@
 ---
 import MarkdownLayout from '../../layouts/MarkdownLayout.astro';
-import { loadManifest, slugToTitle } from '../../utils/loadManifest';
+import { slugToTitle } from '../../utils/loadManifest';
 import KolayPageWithSetup from '../../components/KolayPageWithSetup.gts';
+import fs from 'node:fs';
+import path from 'node:path';
+import { glob } from 'glob';
 
-// For SSG, we need to define all possible paths from the manifest
+// For SSG, we need to define all possible paths by reading the filesystem
 export async function getStaticPaths() {
-  const manifest = await loadManifest();
-  const runtimeGroup = manifest.groups.find(g => g.name === 'Runtime');
+  // The docs are in the docs/ directory at the root of the project
+  const docsDir = path.resolve(process.cwd(), '..', 'docs');
   
-  if (!runtimeGroup) {
-    return [];
-  }
-
-  return runtimeGroup.list.map(page => ({
-    params: { 
-      slug: page.path.replace('/Runtime/', '').replace(/^\//, '')
-    }
-  }));
+  // Find all markdown files
+  const files = glob.sync('**/*.md', {
+    cwd: docsDir,
+    ignore: ['**/node_modules/**'],
+  });
+  
+  return files.map(file => {
+    // Remove .md extension to get the slug
+    const slug = file.replace(/\.md$/, '');
+    return {
+      params: { slug }
+    };
+  });
 }
 
 const { slug } = Astro.params;
