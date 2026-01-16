@@ -1,6 +1,8 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import '../styles/app.css';
+import { loadManifest } from '../utils/loadManifest';
+import type { Collection, Page } from '../../../src/types';
 
 interface Props {
   title?: string;
@@ -12,13 +14,32 @@ interface Props {
 const { title, frontmatter } = Astro.props;
 const pageTitle = frontmatter?.title || title || 'Docs';
 
+// Load manifest to generate navigation
+const manifest = await loadManifest();
+
 // Determine which group/tab the current page belongs to
 const currentPath = Astro.url.pathname;
-let currentGroup = 'usage';
-if (currentPath.startsWith('/plugins')) {
-  currentGroup = 'plugins';
-} else if (currentPath.startsWith('/Runtime')) {
-  currentGroup = 'runtime';
+let currentGroup = 'root';
+for (const group of manifest.groups) {
+  if (group.name === 'root') continue;
+  if (currentPath.startsWith(`/${group.name}`)) {
+    currentGroup = group.name;
+    break;
+  }
+}
+
+// Helper function to render navigation recursively
+function renderNavItem(item: Page | Collection, depth = 0): string {
+  if ('groupName' in item) {
+    // It's a Page
+    const page = item as Page;
+    return `<li><a href="${page.path}">${page.cleanedName || page.name}</a></li>`;
+  } else {
+    // It's a Collection
+    const collection = item as Collection;
+    const childrenHtml = collection.pages.map(child => renderNavItem(child, depth + 1)).join('');
+    return `<li>${collection.name}<ul>${childrenHtml}</ul></li>`;
+  }
 }
 ---
 
@@ -31,83 +52,36 @@ if (currentPath.startsWith('/plugins')) {
       </button>
     </header>
 
-    <!-- Top Navigation Tabs -->
+    <!-- Top Navigation Tabs - generated from manifest -->
     <nav class="top-nav">
-      <a 
-        href="/usage/setup"
-        class={`tab-button ${currentGroup === 'usage' ? 'active' : ''}`}
-        data-group="usage">
-        Usage
-      </a>
-      <a 
-        href="/plugins/helpers"
-        class={`tab-button ${currentGroup === 'plugins' ? 'active' : ''}`}
-        data-group="plugins">
-        Plugins
-      </a>
-      <a 
-        href="/Runtime/docs/api-docs"
-        class={`tab-button ${currentGroup === 'runtime' ? 'active' : ''}`}
-        data-group="runtime">
-        Runtime
-      </a>
+      {manifest.groups.map(group => {
+        const isActive = currentGroup === group.name;
+        const firstPage = group.list[0];
+        const href = firstPage ? firstPage.path : `/${group.name}`;
+        const displayName = group.name === 'root' ? 'Usage' : group.name;
+        return (
+          <a 
+            href={href}
+            class={`tab-button ${isActive ? 'active' : ''}`}
+            data-group={group.name}>
+            {displayName}
+          </a>
+        );
+      })}
     </nav>
 
     <div class="big-layout">
       <aside class="sidebar">
         <nav>
-          <!-- Usage Navigation -->
-          <div class={`nav-group ${currentGroup === 'usage' ? 'active' : ''}`} data-nav="usage">
-            <ul>
-              <li><a href="/usage/index">Usage</a>
-                <ul>
-                  <li><a href="/usage/setup">Setup</a></li>
-                  <li><a href="/usage/rendering-pages">Rendering Pages</a></li>
-                  <li><a href="/usage/ordering-pages">Ordering Pages</a></li>
-                  <li><a href="/usage/testing">Testing</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Plugins Navigation -->
-          <div class={`nav-group ${currentGroup === 'plugins' ? 'active' : ''}`} data-nav="plugins">
-            <ul>
-              <li>Plugins
-                <ul>
-                  <li><a href="/plugins/helpers">Helpers</a></li>
-                  <li><a href="/plugins/kolay">Kolay</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Runtime Navigation -->
-          <div class={`nav-group ${currentGroup === 'runtime' ? 'active' : ''}`} data-nav="runtime">
-            <ul>
-              <li>Runtime
-                <ul>
-                  <li>Docs
-                    <ul>
-                      <li><a href="/Runtime/docs/api-docs">API Docs</a></li>
-                      <li><a href="/Runtime/docs/comment-query">Comment Query</a></li>
-                      <li><a href="/Runtime/docs/component-signature">Component Signature</a></li>
-                      <li><a href="/Runtime/docs/helper-signature">Helper Signature</a></li>
-                      <li><a href="/Runtime/docs/modifier-signature">Modifier Signature</a></li>
-                    </ul>
-                  </li>
-                  <li>Util
-                    <ul>
-                      <li><a href="/Runtime/util/group-nav">Group Nav</a></li>
-                      <li><a href="/Runtime/util/logs">Logs</a></li>
-                      <li><a href="/Runtime/util/page-nav">Page Nav</a></li>
-                      <li><a href="/Runtime/util/page">Page</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
+          {manifest.groups.map(group => {
+            const isActive = currentGroup === group.name;
+            const navHtml = group.tree.pages.map(item => renderNavItem(item)).join('');
+            return (
+              <div class={`nav-group ${isActive ? 'active' : ''}`} data-nav={group.name}>
+                <ul set:html={navHtml} />
+              </div>
+            );
+          })}
         </nav>
       </aside>
 
