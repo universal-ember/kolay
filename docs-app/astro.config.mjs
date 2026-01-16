@@ -27,7 +27,7 @@ export default defineConfig({
         groups: [
           {
             name: 'Runtime',
-            src: './node_modules/kolay/docs',
+            src: '../docs',
           },
         ],
         packages: ['kolay', 'ember-primitives', 'ember-resources'],
