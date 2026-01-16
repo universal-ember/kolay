@@ -22,7 +22,8 @@ export function remarkLiveCode() {
       // Extract the component code and language
       const code = node.value.trim();
       // Get the language/format from the code fence (e.g., 'hbs', 'gjs', 'glimdown')
-      const format = lang.replace(/\s+live.*/, '').trim() || 'hbs';
+      // The language is in 'lang', and 'live' is in 'meta'
+      const format = lang.trim() || 'hbs';
       
       // Replace with MDX JSX element
       const replacement = {
