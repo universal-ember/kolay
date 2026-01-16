@@ -28,19 +28,20 @@ for (const group of manifest.groups) {
   }
 }
 
-// Helper function to render navigation recursively
-function renderNavItem(item: Page | Collection): string {
+// Recursive component to render navigation items
+const renderNavItem = (item: Page | Collection) => {
   if ('groupName' in item) {
-    // It's a Page
     const page = item as Page;
-    return `<li><a href="${page.path}">${page.cleanedName || page.name}</a></li>`;
+    return { type: 'page', href: page.path, name: page.cleanedName || page.name };
   } else {
-    // It's a Collection
     const collection = item as Collection;
-    const childrenHtml = collection.pages.map(child => renderNavItem(child)).join('');
-    return `<li>${collection.name}<ul>${childrenHtml}</ul></li>`;
+    return { 
+      type: 'collection',
+      name: collection.name,
+      children: collection.pages.map(child => renderNavItem(child))
+    };
   }
-}
+};
 ---
 
 <BaseLayout title={pageTitle}>
@@ -75,10 +76,30 @@ function renderNavItem(item: Page | Collection): string {
         <nav>
           {manifest.groups.map(group => {
             const isActive = currentGroup === group.name;
-            const navHtml = group.tree.pages.map(item => renderNavItem(item)).join('');
+            const navItems = group.tree.pages.map(item => renderNavItem(item));
             return (
               <div class={`nav-group ${isActive ? 'active' : ''}`} data-nav={group.name}>
-                <ul set:html={navHtml} />
+                <ul>
+                  {navItems.map(item => {
+                    if (item.type === 'page') {
+                      return <li><a href={item.href}>{item.name}</a></li>;
+                    } else {
+                      return (
+                        <li>
+                          {item.name}
+                          <ul>
+                            {item.children?.map((child: any) => {
+                              if (child.type === 'page') {
+                                return <li><a href={child.href}>{child.name}</a></li>;
+                              }
+                              return null;
+                            })}
+                          </ul>
+                        </li>
+                      );
+                    }
+                  })}
+                </ul>
               </div>
             );
           })}

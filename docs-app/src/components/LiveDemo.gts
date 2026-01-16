@@ -13,7 +13,13 @@ export interface LiveDemoSignature {
  * with kolay components available in scope
  */
 export default class LiveDemo extends Component<LiveDemoSignature> {
+  get compiled() {
+    return Compiled(this.args.code);
+  }
+
   <template>
-    <Compiled @source={{@code}} @format={{@format}} />
+    {{#if this.compiled.component}}
+      <this.compiled.component />
+    {{/if}}
   </template>
 }

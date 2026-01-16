@@ -16,7 +16,7 @@ export default class KolayPageWithSetup extends Component {
   @tracked isReady = false;
   @tracked error: Error | null = null;
 
-  constructor(owner: unknown, args: object) {
+  constructor(owner: object, args: object) {
     super(owner, args);
     this.initializeKolay();
   }
