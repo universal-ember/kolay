@@ -1,8 +1,3 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Helpers
----
-
 # Helper utilities
 
 These utilities can be imported and used within your own projects, as they are already used within `kolay`.

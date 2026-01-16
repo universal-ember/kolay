@@ -1,8 +1,3 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Testing
----
-
 # Testing
 
 Testing will require a setup phase so that only your tests that actually need the kolay behavior will cause the kolay behavior to be used.
