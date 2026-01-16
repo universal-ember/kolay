@@ -1,0 +1,36 @@
+---
+import MarkdownLayout from '../../layouts/MarkdownLayout.astro';
+import KolayPage from '../../components/KolayPage.gts';
+
+// For SSG, we need to define all possible paths
+export function getStaticPaths() {
+  return [
+    { params: { slug: 'docs/api-docs' } },
+    { params: { slug: 'docs/comment-query' } },
+    { params: { slug: 'docs/component-signature' } },
+    { params: { slug: 'docs/helper-signature' } },
+    { params: { slug: 'docs/modifier-signature' } },
+    { params: { slug: 'util/group-nav' } },
+    { params: { slug: 'util/logs' } },
+    { params: { slug: 'util/page-nav' } },
+    { params: { slug: 'util/page' } },
+  ];
+}
+
+const { slug } = Astro.params;
+
+// Convert slug to title: "api-docs" -> "Api Docs"
+function slugToTitle(slug: string | undefined): string {
+  if (!slug) return 'Runtime';
+  const lastPart = slug.split('/').pop() || '';
+  return lastPart.split('-').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+}
+
+const title = slugToTitle(slug);
+---
+
+<MarkdownLayout title={title}>
+  <KolayPage client:only="ember" />
+</MarkdownLayout>
