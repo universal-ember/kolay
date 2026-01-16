@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { service } from '@ember/service';
 import { setupKolay } from 'kolay/setup';
 import { Page } from 'kolay/components';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';

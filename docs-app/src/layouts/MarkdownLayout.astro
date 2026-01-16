@@ -29,7 +29,7 @@ for (const group of manifest.groups) {
 }
 
 // Helper function to render navigation recursively
-function renderNavItem(item: Page | Collection, depth = 0): string {
+function renderNavItem(item: Page | Collection): string {
   if ('groupName' in item) {
     // It's a Page
     const page = item as Page;
@@ -37,7 +37,7 @@ function renderNavItem(item: Page | Collection, depth = 0): string {
   } else {
     // It's a Collection
     const collection = item as Collection;
-    const childrenHtml = collection.pages.map(child => renderNavItem(child, depth + 1)).join('');
+    const childrenHtml = collection.pages.map(child => renderNavItem(child)).join('');
     return `<li>${collection.name}<ul>${childrenHtml}</ul></li>`;
   }
 }

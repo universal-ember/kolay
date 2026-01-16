@@ -18,14 +18,18 @@ export async function loadManifest(): Promise<Manifest> {
     try {
       if (fs.existsSync(manifestPath)) {
         const content = fs.readFileSync(manifestPath, 'utf-8');
-        return JSON.parse(content);
+        try {
+          return JSON.parse(content);
+        } catch (parseError) {
+          console.warn(`Failed to parse JSON from ${manifestPath}:`, parseError);
+        }
       }
-    } catch (error) {
-      console.warn(`Failed to load manifest from ${manifestPath}:`, error);
+    } catch (readError) {
+      console.warn(`Failed to read manifest from ${manifestPath}:`, readError);
     }
   }
   
-  console.warn('Manifest not found, returning fallback structure');
+  console.warn('Manifest not found in any expected location, returning fallback structure');
   // Return fallback structure with expected groups
   return {
     groups: [
