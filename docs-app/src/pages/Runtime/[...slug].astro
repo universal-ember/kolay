@@ -2,28 +2,23 @@
 import MarkdownLayout from '../../layouts/MarkdownLayout.astro';
 import { slugToTitle } from '../../utils/loadManifest';
 import KolayPageWithSetup from '../../components/KolayPageWithSetup.gts';
-import fs from 'node:fs';
-import path from 'node:path';
-import { glob } from 'glob';
 
-// For SSG, we need to define all possible paths by reading the filesystem
-export async function getStaticPaths() {
-  // The docs are in the docs/ directory at the root of the project
-  const docsDir = path.resolve(process.cwd(), '..', 'docs');
-  
-  // Find all markdown files
-  const files = glob.sync('**/*.md', {
-    cwd: docsDir,
-    ignore: ['**/node_modules/**'],
-  });
-  
-  return files.map(file => {
-    // Remove .md extension to get the slug
-    const slug = file.replace(/\.md$/, '');
-    return {
-      params: { slug }
-    };
-  });
+// For SSG, define all Runtime documentation paths
+// These correspond to the markdown files in the docs/ directory
+export function getStaticPaths() {
+  return [
+    // docs/docs/*.md
+    { params: { slug: 'docs/api-docs' } },
+    { params: { slug: 'docs/comment-query' } },
+    { params: { slug: 'docs/component-signature' } },
+    { params: { slug: 'docs/helper-signature' } },
+    { params: { slug: 'docs/modifier-signature' } },
+    // docs/util/*.md
+    { params: { slug: 'util/group-nav' } },
+    { params: { slug: 'util/logs' } },
+    { params: { slug: 'util/page-nav' } },
+    { params: { slug: 'util/page' } },
+  ];
 }
 
 const { slug } = Astro.params;
@@ -32,5 +27,6 @@ const title = slugToTitle(slug);
 
 <MarkdownLayout title={title}>
   <!-- Use the component that properly initializes kolay -->
+  <!-- This Ember component will handle fetching and rendering the documentation client-side -->
   <KolayPageWithSetup client:only="ember" />
 </MarkdownLayout>

@@ -14,7 +14,6 @@
     "./*": "./src/*"
   },
   "scripts": {
-    "prebuild:app": "node scripts/generate-manifest.mjs",
     "build:app": "astro build",
     "lint": "pnpm -w turbo --filter docs-app _:lint",
     "lint:fix": "pnpm -w turbo --filter docs-app _:lint:fix",
