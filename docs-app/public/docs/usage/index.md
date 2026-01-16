@@ -1,8 +1,3 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Index
----
-
 <h1 style="
   font-size: 2rem; 
   display: inline-block; 
@@ -21,7 +16,7 @@ title: Index
   margin-top: -2rem; 
   font-size: 0.5rem;">after initial setup</small>
 
-<hr />
+<hr>
 
 Documentation system for the the `@universal-ember` family of projects.
 

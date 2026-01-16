@@ -1,8 +1,3 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Setup
----
-
 ## Install
 
 ```bash
@@ -17,7 +12,7 @@ There are two areas of configuration needed: buildtime, and runtime[^runtime-opt
 
 ### Build: Vite
 
-Import `kolay/vite`:
+import `kolay/vite`
 
 ```js
 import { kolay } from "kolay/vite";

@@ -1,7 +1,7 @@
 # Helper utilities
 
 These utilities can be imported and used within your own projects, as they are already used within `kolay`.
-This should allow users to build their own specific set of outputs using the same underlying tools that `kolay` uses.
+This should allow users to build their own specific set of outputs using the same underying tools that `kolay` uses.
 
 ```hbs live no-shadow
 <APIDocs @module="declarations/build/plugins" @name="gitRef" @package="kolay" />

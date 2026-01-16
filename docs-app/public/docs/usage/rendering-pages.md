@@ -1,11 +1,6 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Rendering Pages
----
-
 ## Rendering Pages
 
-The way the docs app for Kolay renders pages looks like this:
+The way this the docs app for Kolay renders pages looks like this:
 
 ```gjs
 // templates/page.gjs

@@ -1,8 +1,3 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Ordering Pages
----
-
 ## Ordering
 
 At build time, the order of both pages and folders can be configured by providing a `meta.json` or `meta.jsonc` file as a sibling to the list of paths you want to sort.

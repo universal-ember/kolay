@@ -1,8 +1,3 @@
----
-layout: ../../layouts/MarkdownLayout.astro
-title: Kolay
----
-
 # `kolay(...)`
 
 Kolay requires some build-time static analysis to function.
