@@ -41,6 +41,8 @@ export async function loadManifest(): Promise<Manifest> {
 
 /**
  * Convert a slug to a readable title
+ * @param slug - The URL slug (e.g., "api-docs" or "component-signature")
+ * @returns A formatted title string (e.g., "Api Docs" or "Component Signature")
  */
 export function slugToTitle(slug: string | undefined): string {
   if (!slug) return 'Docs';
