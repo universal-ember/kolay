@@ -29,7 +29,17 @@ for (const group of manifest.groups) {
 }
 
 // Recursive component to render navigation items
-const renderNavItem = (item: Page | Collection) => {
+type NavItem = {
+  type: 'page';
+  href: string;
+  name: string;
+} | {
+  type: 'collection';
+  name: string;
+  children: NavItem[];
+};
+
+const renderNavItem = (item: Page | Collection): NavItem => {
   if ('groupName' in item) {
     const page = item as Page;
     return { type: 'page', href: page.path, name: page.cleanedName || page.name };
@@ -88,9 +98,24 @@ const renderNavItem = (item: Page | Collection) => {
                         <li>
                           {item.name}
                           <ul>
-                            {item.children?.map((child: any) => {
+                            {item.children?.map((child: NavItem) => {
                               if (child.type === 'page') {
                                 return <li><a href={child.href}>{child.name}</a></li>;
+                              } else if (child.type === 'collection') {
+                                // Nested collections (only go one level deep for now)
+                                return (
+                                  <li>
+                                    {child.name}
+                                    <ul>
+                                      {child.children.map((grandchild) => {
+                                        if (grandchild.type === 'page') {
+                                          return <li><a href={grandchild.href}>{grandchild.name}</a></li>;
+                                        }
+                                        return null;
+                                      })}
+                                    </ul>
+                                  </li>
+                                );
                               }
                               return null;
                             })}
