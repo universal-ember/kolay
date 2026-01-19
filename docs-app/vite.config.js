@@ -9,8 +9,6 @@ export default defineConfig((/* { mode } */) => {
   return {
     plugins: [
       info(),
-      classicEmberSupport(),
-      ember(),
       kolay({
         src: 'public/docs',
         groups: [
@@ -20,7 +18,14 @@ export default defineConfig((/* { mode } */) => {
           },
         ],
         packages: ['kolay', 'ember-primitives', 'ember-resources'],
+        scope: `
+        import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
+        import { Shadowed } from 'ember-primitives/components/shadowed';
+        import { InViewport } from 'ember-primitives/viewport';
+        `
       }),
+      classicEmberSupport(),
+      ember(),
       babel({
         babelHelpers: 'runtime',
         extensions,

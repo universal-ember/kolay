@@ -19,7 +19,7 @@ function formatAsResolverEntries(imports: Record<string, unknown>) {
  * - we design a new routing system
  */
 const resolverRegistry = {
-  ...formatAsResolverEntries(import.meta.glob('./templates/**/*.{gjs,gts,js,ts}', { eager: true })),
+  ...formatAsResolverEntries(import.meta.glob('./templates/**/*.{gjs,gts,js,ts,md}', { eager: true })),
   ...formatAsResolverEntries(import.meta.glob('./services/**/*.{js,ts}', { eager: true })),
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,
