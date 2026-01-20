@@ -35,15 +35,6 @@ export interface Page {
  */
 export interface Options {
   /**
-   * A manual list of navigation entries to use
-   * with the PageNav and Pages components.
-   *
-   * Useful if you're mixing runtime and buildtime markdown.
-   */
-  nav: {
-    groupName: string[],
-  },
-  /**
    * The source directory for where to look for files to include in  the build and create the manifest from.
    * This is relative to the CWD.
    * Note that only md, json, and jsonc files are used.
@@ -56,27 +47,40 @@ export interface Options {
   /**
    * Additional markdown sources to include
    * These will be copied into your dist directory, and will be grouped by each entry's "name" property
+   *
+   * default value: `[ { name: 'Home', static: './{app,src}/templates/\*\*\/\*.gjs.md' } ]`
    */
-  groups: {
-    /**
-     * The name of the group
-     */
-    name: string;
-    /**
-     * The source directory for where to look for files to include in  the build and create the manifest from.
-     * This is relative to the CWD.
-     * Note that only md, json, and jsonc files are used.
-     */
-    src: string;
+  groups?:
+    | {
+        name: string;
 
-    /**
-     * Only generate a manifest of directories.
-     * This ignores all of the files on disk, useful if you have many
-     * convention-based file names and some other means of enforcing that they all exist.
-     * (such as runtime testing)
-     */
-    onlyDirectories?: boolean;
-  }[];
+        /**
+         * Glob for finding .gjs.md files.
+         * These will be built as part of the app build,
+         * and will not be deferred to runtime.
+         */
+        static: string;
+      }
+    | {
+        /**
+         * The name of the group
+         */
+        name: string;
+        /**
+         * The source directory for where to look for files to include in  the build and create the manifest from.
+         * This is relative to the CWD.
+         * Note that only md, json, and jsonc files are used.
+         */
+        src: string;
+
+        /**
+         * Only generate a manifest of directories.
+         * This ignores all of the files on disk, useful if you have many
+         * convention-based file names and some other means of enforcing that they all exist.
+         * (such as runtime testing)
+         */
+        onlyDirectories?: boolean;
+      }[];
 
   /**
    * List of packages to generate api docs for

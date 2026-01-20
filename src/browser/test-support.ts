@@ -18,12 +18,13 @@ export function setupKolay(hooks: NestedHooks, config?: Options): void {
 
     const docs = docsManager(this.owner);
 
-    const [apiDocs, manifest] = await Promise.all([
+    const [apiDocs, manifest, compiledDocs] = await Promise.all([
       import('kolay/api-docs:virtual'),
       import('kolay/manifest:virtual'),
+      import('kolay/compiled-docs:virtual'),
     ]);
 
-    docs[PREPARE_DOCS](manifest, apiDocs);
+    docs[PREPARE_DOCS](manifest, apiDocs, compiledDocs);
 
     await docs[LOAD_MANIFEST]();
   });

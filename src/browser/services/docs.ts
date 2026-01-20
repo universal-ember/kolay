@@ -12,9 +12,11 @@ import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
+import { selected } from './selected.ts';
 
 import type { LoadManifest, LoadTypedoc, Manifest } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
+import type { ComponentLike } from '@glint/template';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
@@ -79,6 +81,10 @@ class DocsService {
     return typedocLoader(this);
   }
 
+  get #selected() {
+    return selected(this);
+  }
+
   _docs: Manifest | undefined;
 
   loadManifest: LoadManifest = () => Promise.resolve({ groups: [] });
@@ -95,6 +101,12 @@ class DocsService {
      * This should be set to `await import('kolay/api-docs:virtual')
      */
     apiDocs?: Promise<{ packageNames: string[]; loadApiDocs: LoadTypedoc }>;
+
+    /**
+     * The module of the compiled docs virtual module.
+     * This should be set to `await import('kolay/compiled-docs:virtual')
+     */
+    compiledDocs?: { pages: Record<string, () => Promise<{ default: ComponentLike }>> };
 
     /**
      * Additional invokables that you'd like to have access to
@@ -130,9 +142,9 @@ class DocsService {
      */
     rehypePlugins?: unknown[];
   }) => {
-    const [manifest, apiDocs] = await Promise.all([options.manifest, options.apiDocs]);
+    const [manifest, apiDocs, compiledDocs] = await Promise.all([options.manifest, options.apiDocs, options.compiledDocs]);
 
-    this[PREPARE_DOCS](manifest, apiDocs);
+    this[PREPARE_DOCS](manifest, apiDocs, compiledDocs);
 
     const optionsForCompiler = compilerOptions({
       topLevelScope: options.topLevelScope,
@@ -149,7 +161,8 @@ class DocsService {
 
   [PREPARE_DOCS](
     manifest: { load: LoadManifest } | undefined,
-    apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined
+    apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined,
+    compiledDocs: { pages: Record<string, () => Promise<{ default: ComponentLike }>> } | undefined
   ) {
     if (manifest) {
       this.loadManifest = manifest.load;
@@ -158,6 +171,10 @@ class DocsService {
     if (apiDocs) {
       this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
+    }
+
+    if (compiledDocs?.pages) {
+      this.#selected.compiledDocs = compiledDocs.pages;
     }
   }
 
@@ -205,9 +222,9 @@ class DocsService {
   get selectedGroup() {
     const [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
 
-    if (!first) return 'root';
+    if (!first) return this.availableGroups[0];
 
-    if (!this.availableGroups.includes(first)) return 'root';
+    if (!this.availableGroups.includes(first)) return this.availableGroups[0];
 
     return first;
   }
@@ -238,7 +255,7 @@ class DocsService {
     return this.groupFor(this.selectedGroup);
   }
 
-  groupFor = (groupName: string) => {
+  groupFor = (groupName: string | undefined) => {
     const groups = this.manifest?.groups ?? [];
 
     const group = groups.find((group) => group.name === groupName);

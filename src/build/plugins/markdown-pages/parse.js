@@ -59,13 +59,15 @@ export function build(docs) {
   /** @type {import('./types.ts').Collection} */
   const result = { name: 'root', pages: [], path: 'root' };
 
-  for (const { mdPath, config } of docs) {
+  for (let { mdPath, config } of docs) {
     if (!mdPath.includes('/')) {
       console.warn(
         `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
       );
       continue;
     }
+
+    mdPath = mdPath.replace(/^\.\/(src|app)\/templates\//, '');
 
     const parts = mdPath.split('/');
     const [name, ...reversedGroups] = parts.reverse();
@@ -127,7 +129,7 @@ export function build(docs) {
       ...config,
       path: `/${mdPath}`,
       // Removes the file extension
-      name: name.replace(/\.\w+$/, ''),
+      name: stripExt(name),
       groupName,
       cleanedName,
     };
@@ -222,8 +224,9 @@ async function gather(paths, cwd) {
  */
 function stripExt(str) {
   const parsed = parsePath(str);
+  const doubleExt = parsePath(parsed.name);
 
-  return join(parsed.dir, parsed.name);
+  return join(parsed.dir, doubleExt.name);
 }
 
 /**

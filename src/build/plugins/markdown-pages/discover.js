@@ -1,5 +1,10 @@
 import { reshape } from './hydrate.js';
 
+const DEFAULT_GROUP = {
+  name: 'Home',
+  static: './{app,src}/templates/**/*.gjs.md',
+};
+
 /**
  * @typedef {object} Group
  * @property {string} name
@@ -15,10 +20,14 @@ import { reshape } from './hydrate.js';
  * @param {Options} options
  * @return {Promise<import('../../../types.ts').Manifest>}
  */
-export async function discover({ groups, src }) {
+export async function discover({ groups, src, cwd }) {
   groups ??= [];
 
   const groupsToLookFor = new Set();
+
+  const home = groups.find((group) => group.name === 'Home') ?? DEFAULT_GROUP;
+
+  groupsToLookFor.add(home);
 
   if (src) {
     groupsToLookFor.add({ name: 'root', src });
@@ -28,19 +37,20 @@ export async function discover({ groups, src }) {
 
   const foundGroups = await Promise.all(
     [...groupsToLookFor.values()].map(async (group) => {
-      const { include, onlyDirectories, exclude } = group;
-      const prefix = group.name === 'root' ? '' : `/${group.name}`;
+      const { static: staticInclude, include, onlyDirectories, exclude } = group;
+      const prefix = group.name === 'root' ? '' : group.name === 'Home' ? '' : `/${group.name}`;
 
       const found = await pathsFor({
-        include: include ?? '**/*',
+        include: staticInclude ?? include ?? '**/*.md',
         onlyDirectories: onlyDirectories ?? false,
         exclude: exclude ?? [],
-        cwd: group.src,
+        cwd: group.src ?? cwd,
         prefix,
       });
 
       return {
         name: group.name,
+        type: staticInclude ? 'static' : 'runtime',
         ...found,
       };
     })

@@ -1,8 +1,10 @@
+import { cached } from '@glimmer/tracking';
 import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
 
 import { createStore } from 'ember-primitives/store';
 import { use } from 'ember-resources';
+import { getPromiseState } from 'reactiveweb/get-promise-state';
 import { keepLatest } from 'reactiveweb/keep-latest';
 import { link } from 'reactiveweb/link';
 
@@ -14,6 +16,7 @@ import { MDRequest } from './request.ts';
 import type { Page } from '../../types.ts';
 import type ApplicationInstance from '@ember/application/instance';
 import type RouterService from '@ember/routing/router-service';
+import type { ComponentLike } from '@glint/template';
 
 /**
  * Populate a cache of all the documents.
@@ -54,12 +57,29 @@ class Prose {
 class Selected {
   @service declare router: RouterService;
 
+  compiledDocs: Record<string, () => Promise<{ default: ComponentLike }>> = {};
+
   get #docs() {
     return docsManager(this);
   }
 
   get rootURL() {
     return (getOwner(this) as ApplicationInstance).router.rootURL;
+  }
+
+  @cached
+  get activeCompiled() {
+    const path = this.path?.replace(/^\//, '');
+
+    if (!path) return;
+
+    const loadFn = this.compiledDocs[path];
+
+    if (loadFn) {
+      return getPromiseState(loadFn());
+    }
+
+    return;
   }
 
   /*********************************************************************
@@ -84,6 +104,10 @@ class Selected {
    *
    ********************************************************************/
   get prose() {
+    if (this.activeCompiled) {
+      return this.activeCompiled.resolved?.default;
+    }
+
     return this.compiled.lastSuccessful;
   }
 
@@ -92,6 +116,10 @@ class Selected {
    * rendering without extra flashes.
    */
   get isReady() {
+    if (this.activeCompiled?.resolved) {
+      return true;
+    }
+
     return this.proseCompiled.isReady;
   }
 
@@ -100,9 +128,17 @@ class Selected {
   }
 
   get hasError() {
+    if (this.activeCompiled?.error) {
+      return true;
+    }
+
     return Boolean(this.proseCompiled.error) || this.request.hasError;
   }
   get error() {
+    if (this.activeCompiled?.error) {
+      return String(this.activeCompiled.error);
+    }
+
     if (!this.page) {
       return `Page not found for path ${this.path}. (Using group: ${this.#docs.currentGroup.name})`;
     }

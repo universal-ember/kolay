@@ -1,12 +1,17 @@
 /**
  * This plugin is *basically* what v1 addons did.
  */
+import { glob } from 'node:fs/promises';
+import { join } from 'node:path';
+
 import { stripIndent } from 'common-tags';
 
 import { virtualFile } from './helpers.js';
 
 /** @type {() => import('unplugin').UnpluginOptions} */
 export const setup = () => {
+  const cwd = process.cwd();
+
   return {
     name: 'kolay-setup',
     ...virtualFile([
@@ -57,16 +62,19 @@ export const setup = () => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, manifest] = await Promise.all([
+            let [apiDocs, manifest, compiledDocs] = await Promise.all([
               import('kolay/api-docs:virtual'),
               import('kolay/manifest:virtual'),
+              import('kolay/compiled-docs:virtual'),
             ]);
 
             await docs.setup({
               apiDocs,
               manifest,
+              compiledDocs,
               ...options,
             });
+
 
             return docs.manifest;
           }
@@ -86,6 +94,27 @@ export const setup = () => {
           }
         `,
       },
+      {
+        importPath: 'kolay/compiled-docs:virtual',
+        content: async () => {
+          const result = {};
+
+          for await (const entry of glob('./{app,src}/templates/**/*.{gjs,gts}.md', { cwd })) {
+            const name = entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
+            const full = join(cwd, entry);
+
+            result[name] = `() => import("${full}")`;
+          }
+
+          const virtualFile = `
+            export const pages = {
+              ${Object.entries(result).map(([name, importer]) => `"${name}": ${importer}`).join(',\n')}
+            };
+          `;
+
+          return virtualFile
+        },
+      }
     ]),
   };
 };

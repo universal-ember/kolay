@@ -44,3 +44,17 @@ declare module 'kolay/manifest:virtual' {
    */
   export const load: () => Promise<Manifest>;
 }
+
+
+/**
+ * Virtual Module responsible for providing
+ * pre-compiled markdown documents compiled to components for faster loading and rendering
+ */
+declare module 'kolay/compiled-docs:virtual' {
+  import type { ComponentLike } from '@glint/template';
+
+  /**
+   * Similar to import.meta.glob
+   */
+  export const pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+}

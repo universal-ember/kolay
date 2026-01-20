@@ -24,7 +24,7 @@ const resolverRegistry = {
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,
 };
-console.log(resolverRegistry)
+
 export const registry = {
   [`${appName}/services/page-title`]: PageTitleService,
   ...resolverRegistry,
