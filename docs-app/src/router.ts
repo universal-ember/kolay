@@ -13,6 +13,10 @@ export default class Router extends EmberRouter {
 
 Router.map(function () {
   this.route('usage', function () {
+    this.route('ordering-pages');
+    this.route('rendering-pages');
+    this.route('setup');
+    this.route('testing');
   });
 
   addRoutes(this);
