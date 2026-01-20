@@ -35,7 +35,7 @@ function isRelevantCode(node) {
 
   meta = meta?.trim() ?? '';
 
-  if (isLive(meta)) {
+  if (!isLive(meta)) {
     return false;
   }
 
@@ -44,6 +44,17 @@ function isRelevantCode(node) {
   }
 
   return true;
+}
+
+function componentNameFromId(id) {
+  // Ember/Glimmer angle-bracket component invocations must be capitalized,
+  // and should be valid JS identifiers for GJS scope.
+  // demo-12 -> Demo12
+  return id
+    .split(/[^A-Za-z0-9_]/g)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
 }
 
 // Swaps live codeblocks with placeholders that the compiler can then
@@ -99,6 +110,7 @@ export function liveCodeExtraction(_options = { /* no options */ }) {
 
       const code = value.trim();
       const id = nextId();
+      const componentName = componentNameFromId(id);
 
       const invokeNode = {
         type: 'html',
@@ -107,7 +119,7 @@ export function liveCodeExtraction(_options = { /* no options */ }) {
             [GLIMDOWN_RENDER]: true,
           },
         },
-        value: `<${id} />`,
+        value: `<${componentName} />`,
       };
 
       const wrapper = codeNode;
@@ -115,7 +127,8 @@ export function liveCodeExtraction(_options = { /* no options */ }) {
       file.data.liveCode.push({
         format: lang,
         code,
-        placeholderId: id,
+        id,
+        componentName,
         meta,
       });
 

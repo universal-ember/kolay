@@ -7,6 +7,14 @@ function removeLoader() {
   });
 }
 
+/**
+ * If page with '.md' is detected, try to load it, if it doesn't exist,
+ * redirect to real route without the .md.
+ *
+ * (this could probably be checked synchronously via the manifest)
+ *
+ * We may also need to remove the /index as well?
+ */
 export default Route(
   <template>
     <Page>

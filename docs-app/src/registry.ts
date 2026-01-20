@@ -7,7 +7,7 @@ const appName = `docs-app`;
 function formatAsResolverEntries(imports: Record<string, unknown>) {
   return Object.fromEntries(
     Object.entries(imports).map(([k, v]) => [
-      k.replace(/\.g?(j|t)s$/, '').replace(/^\.\//, `${appName}/`),
+      k.replace(/\.gjs\.md$/, '').replace(/\.g?(j|t)s$/, '').replace(/^\.\//, `${appName}/`),
       v,
     ])
   );
@@ -24,7 +24,7 @@ const resolverRegistry = {
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,
 };
-
+console.log(resolverRegistry)
 export const registry = {
   [`${appName}/services/page-title`]: PageTitleService,
   ...resolverRegistry,
