@@ -4,6 +4,7 @@ import { babel } from '@rollup/plugin-babel';
 import { kolay } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
+import rehypeShiki from '@shikijs/rehype'
 
 export default defineConfig((/* { mode } */) => {
   return {
@@ -19,6 +20,13 @@ export default defineConfig((/* { mode } */) => {
             '/usage/testing',
           ],
         },
+        rehypePlugins: [[rehypeShiki, {
+          themes: {
+            light: 'github-light',
+            dark: 'github-dark',
+          },
+          defaultColor: 'light-dark()',
+        }]],
         groups: [
           {
             name: 'Runtime',
