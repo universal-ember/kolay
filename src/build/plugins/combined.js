@@ -26,7 +26,7 @@ export function combinedPlugins(options) {
       rehypePlugins: options.rehypePlugins,
       scope: options.scope,
     }),
-  ];
+  ].filter(Boolean);
 }
 
 export const combined = /* #__PURE__ */ createUnplugin(combinedPlugins);

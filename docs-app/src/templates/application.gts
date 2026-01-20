@@ -50,7 +50,7 @@ function removeLoader() {
 
 export default Route(
   <template>
-            {{(removeLoader)}}
+    {{(removeLoader)}}
 
     {{pageTitle "Docs :: " abbreviatedSha}}
 

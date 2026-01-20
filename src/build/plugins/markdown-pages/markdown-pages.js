@@ -21,10 +21,9 @@ export const markdownPages = (options) => {
 
   const destination = dest ?? 'kolay-manifest';
 
-  assert(
-    src,
-    `A src directory must be specified for the core documentation. This may be an empty folder, but it usally is the "root-est" information on your docs site`
-  );
+  /**
+   * If src isn't passed, it likely means we aren't using runtime markdown
+   */
 
   assert(
     destination,
@@ -102,14 +101,16 @@ export const markdownPages = (options) => {
       },
     },
     async buildStart() {
-      assert(
-        src && !relative(process.cwd(), src).startsWith('../'),
-        `When using \`src\` as a top-level option to \`markdownPages\`, ` +
+      if (src) {
+        assert(
+          !relative(process.cwd(), src).startsWith('../'),
+          `When using \`src\` as a top-level option to \`markdownPages\`, ` +
           `it must be held within the current directory. ` +
           `The current directory is ${process.cwd()}, and with a \`src\` of ${src}, ` +
           `we exit the project. If you want to include files from outside the project, ` +
           `use the 'groups' key.`
-      );
+        );
+      }
 
       if (server) return;
 

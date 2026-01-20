@@ -34,6 +34,15 @@ export default class ApplicationRoute extends Route {
     });
 
     const manifest = await setupKolay(this, {
+      nav: {
+        root: [
+          '/usage/index',
+          '/usage/setup',
+          '/usage/ordering-pages',
+          '/usage/rendering-pages',
+          '/usage/testing',
+        ],
+      },
       modules: {
         'ember-primitives': () => import('ember-primitives'),
         'ember-modifier': () => import('ember-modifier'),
