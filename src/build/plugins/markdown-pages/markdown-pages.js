@@ -8,6 +8,7 @@ import send from 'send';
 
 import { virtualFile } from '../helpers.js';
 import { discover } from './discover.js';
+import { cleanSegment } from './parse.js';
 
 const SECRET_INTERNAL_IMPORT = 'kolay/manifest:virtual';
 
@@ -17,7 +18,7 @@ const SECRET_INTERNAL_IMPORT = 'kolay/manifest:virtual';
  * @return {import('unplugin').UnpluginOptions}
  * */
 export const markdownPages = (options) => {
-  let { src, dest, name, groups } = options ?? {};
+  let { src, dest, name, groups, nav } = options ?? {};
 
   const destination = dest ?? 'kolay-manifest';
 
@@ -40,6 +41,47 @@ export const markdownPages = (options) => {
    */
   let server;
   let baseUrl = '/';
+
+  /**
+   *
+   * @param {{Promise<import('../../types.ts').Manifest>} reshaped
+   * @returns
+   */
+  function addNav(reshaped) {
+    if (!nav) return;
+
+    const navReshaped = [];
+
+    for (const [groupName, pages] of Object.entries(nav)) {
+      const list = [];
+
+      for (const page of pages) {
+        const group = page.split('/')[0];
+        const name = page.split('/').at(-1)
+
+        list.push({
+          cleanedName: cleanSegment(name),
+          groupName: group,
+          name,
+          path: page,
+        });
+      }
+
+      navReshaped.push({
+        name: groupName,
+        tree: {
+          name: groupName,
+          first: pages[0],
+          path: groupName,
+          pages: list
+        },
+        list: [],
+      });
+
+    }
+
+    reshaped.groups.push(...navReshaped)
+  }
 
   /**
    * @type {import('unplugin').UnpluginOptions}
@@ -72,6 +114,8 @@ export const markdownPages = (options) => {
 
               if (assetUrl === `${baseUrl}${destination}/${name}`) {
                 const reshaped = await discover({ src, groups });
+
+                addNav(reshaped);
 
                 res.setHeader('content-type', 'application/json');
 
@@ -144,6 +188,8 @@ export const markdownPages = (options) => {
           });
         });
       }
+
+      addNav(reshaped);
 
       // The *Manifest*
       //   Includes a list and tree structure of all discovered docs

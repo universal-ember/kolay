@@ -47,7 +47,7 @@ function deepSort(input) {
  * @param {string} segment
  * @returns {string}
  */
-function cleanSegment(segment) {
+export function cleanSegment(segment) {
   return stripExt(segment.replaceAll(/\d/g, '').replaceAll('-', ' ')).trim();
 }
 

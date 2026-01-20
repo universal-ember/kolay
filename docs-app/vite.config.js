@@ -10,7 +10,15 @@ export default defineConfig((/* { mode } */) => {
     plugins: [
       info(),
       kolay({
-        // src: 'public/docs',
+        nav: {
+          root: [
+            '/usage/index',
+            '/usage/setup',
+            '/usage/ordering-pages',
+            '/usage/rendering-pages',
+            '/usage/testing',
+          ],
+        },
         groups: [
           {
             name: 'Runtime',

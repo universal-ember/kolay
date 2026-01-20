@@ -35,6 +35,15 @@ export interface Page {
  */
 export interface Options {
   /**
+   * A manual list of navigation entries to use
+   * with the PageNav and Pages components.
+   *
+   * Useful if you're mixing runtime and buildtime markdown.
+   */
+  nav: {
+    groupName: string[],
+  },
+  /**
    * The source directory for where to look for files to include in  the build and create the manifest from.
    * This is relative to the CWD.
    * Note that only md, json, and jsonc files are used.
