@@ -73,7 +73,7 @@ export const markdownPages = (options) => {
           name: groupName,
           first: pages[0],
           path: groupName,
-          pages: list
+          pages: list.filter(page => page.name !== 'index'),
         },
         list: [],
       });
