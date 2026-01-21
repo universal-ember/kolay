@@ -14,7 +14,6 @@ import { getKey } from './lazy-load.ts';
 import { MDRequest } from './request.ts';
 
 import type { Page } from '../../types.ts';
-import type ApplicationInstance from '@ember/application/instance';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -63,20 +62,20 @@ class Selected {
     return docsManager(this);
   }
 
-  get rootURL() {
-    return (getOwner(this) as ApplicationInstance).router.rootURL;
+  get #rootURL() {
+    return this.router.rootURL;
   }
 
   @cached
   get activeCompiled() {
-    const path = this.path?.replace(/^\//, '');
+    const path = this.#path?.replace(/^\//, '');
 
     if (!path) return;
 
     const loadFn = this.compiledDocs[path];
 
     if (loadFn) {
-      return getPromiseState(loadFn());
+      return getPromiseState(loadFn);
     }
 
     return;
@@ -89,7 +88,7 @@ class Selected {
    * be cancelled if it was still pending.
    *******************************************************************/
 
-  @link request = new MDRequest(() => `${this.rootURL}docs${this.path}.md`);
+  @link request = new MDRequest(() => `${this.#rootURL}docs${this.#path}.md`);
   @link compiled = new Prose(() => this.request.lastSuccessful);
 
   get proseCompiled() {
@@ -128,19 +127,19 @@ class Selected {
   }
 
   get hasError() {
-    if (this.activeCompiled?.error) {
-      return true;
+    if (this.activeCompiled) {
+      return Boolean(this.activeCompiled.error);
     }
 
     return Boolean(this.proseCompiled.error) || this.request.hasError;
   }
   get error() {
-    if (this.activeCompiled?.error) {
-      return String(this.activeCompiled.error);
+    if (this.activeCompiled) {
+      return this.activeCompiled.error ? String(this.activeCompiled.error) : '';
     }
 
-    if (!this.page) {
-      return `Page not found for path ${this.path}. (Using group: ${this.#docs.currentGroup.name})`;
+    if (!this.#page) {
+      return `Page not found for path ${this.#path}. (Using group: ${this.#docs.currentGroup.name})`;
     }
 
     return String(this.proseCompiled.error);
@@ -150,7 +149,7 @@ class Selected {
     return Boolean(this.prose);
   }
 
-  get path(): string | undefined {
+  get #path(): string | undefined {
     if (!this.router.currentURL) return firstPath;
 
     const url = new URL(this.router.currentURL, window.location.origin);
@@ -160,10 +159,10 @@ class Selected {
     return result?.replace(/\.md$/, '');
   }
 
-  get page(): Page | undefined {
-    if (!this.path) return;
+  get #page(): Page | undefined {
+    if (!this.#path) return;
 
-    return this.#findByPath(this.path);
+    return this.#findByPath(this.#path);
   }
 
   #findByPath = (path: string) => {

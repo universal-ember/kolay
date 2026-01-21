@@ -124,10 +124,11 @@ export function build(docs) {
 
     const groupName = cleanSegment(leafestGroupName);
     const cleanedName = cleanSegment(name);
+    const path = '/' + mdPath.replace(/\.g(j|t)s\.md$/, '');
 
     const pageInfo = {
       ...config,
-      path: `/${mdPath}`,
+      path,
       // Removes the file extension
       name: stripExt(name),
       groupName,
