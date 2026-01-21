@@ -23,12 +23,6 @@ export default defineConfig((/* { mode } */) => {
             },
           ],
         ],
-        groups: [
-          {
-            name: 'Runtime',
-            src: './node_modules/kolay/docs',
-          },
-        ],
         packages: ['kolay', 'ember-primitives', 'ember-resources'],
         scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';

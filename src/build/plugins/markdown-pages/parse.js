@@ -68,6 +68,7 @@ export function build(docs) {
     }
 
     mdPath = mdPath.replace(/^\.\/(src|app)\/templates\//, '');
+    mdPath = mdPath.replace(/^\.\.\//, '');
 
     const parts = mdPath.split('/');
     const [name, ...reversedGroups] = parts.reverse();
