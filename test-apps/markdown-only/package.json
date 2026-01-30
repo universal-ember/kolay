@@ -20,7 +20,6 @@
     "./*": "./app/*"
   },
   "scripts": {
-    "build": "vite build",
     "dev": "vite",
     "start": "vite",
     "lint:eslint": "eslint . --cache",
