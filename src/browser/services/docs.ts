@@ -91,12 +91,6 @@ class DocsService {
 
   setup = async (options: {
     /**
-     * The module of the manifest virtual module.
-     * This should be set to `await import('kolay/manifest:virtual')
-     */
-    manifest?: Promise<{ load: LoadManifest }>;
-
-    /**
      * The module of the api docs virtual module.
      * This should be set to `await import('kolay/api-docs:virtual')
      */
@@ -106,7 +100,10 @@ class DocsService {
      * The module of the compiled docs virtual module.
      * This should be set to `await import('kolay/compiled-docs:virtual')
      */
-    compiledDocs?: { pages: Record<string, () => Promise<{ default: ComponentLike }>> };
+    compiledDocs?: {
+      manifest: Manifest;
+      pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+    };
 
     /**
      * Additional invokables that you'd like to have access to
@@ -142,9 +139,9 @@ class DocsService {
      */
     rehypePlugins?: unknown[];
   }) => {
-    const [manifest, apiDocs, compiledDocs] = await Promise.all([options.manifest, options.apiDocs, options.compiledDocs]);
+    const [apiDocs, compiledDocs] = await Promise.all([options.apiDocs, options.compiledDocs]);
 
-    this[PREPARE_DOCS](manifest, apiDocs, compiledDocs);
+    this[PREPARE_DOCS](apiDocs, compiledDocs);
 
     const optionsForCompiler = compilerOptions({
       topLevelScope: options.topLevelScope,
@@ -153,21 +150,21 @@ class DocsService {
       modules: options.modules,
     });
 
-    await Promise.all([this[LOAD_MANIFEST](), setupCompiler(this, optionsForCompiler)]);
+    setupCompiler(this, optionsForCompiler);
 
     // type-narrowed version of _docs, above
     return this.manifest;
   };
 
   [PREPARE_DOCS](
-    manifest: { load: LoadManifest } | undefined,
     apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined,
-    compiledDocs: { pages: Record<string, () => Promise<{ default: ComponentLike }>> } | undefined
+    compiledDocs:
+      | {
+          manifest: Manifest;
+          pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+        }
+      | undefined
   ) {
-    if (manifest) {
-      this.loadManifest = manifest.load;
-    }
-
     if (apiDocs) {
       this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
@@ -176,10 +173,10 @@ class DocsService {
     if (compiledDocs?.pages) {
       this.#selected.compiledDocs = compiledDocs.pages;
     }
-  }
 
-  async [LOAD_MANIFEST]() {
-    this._docs = await this.loadManifest();
+    if (compiledDocs?.manifest) {
+      this._docs = compiledDocs.manifest;
+    }
   }
 
   get docs() {

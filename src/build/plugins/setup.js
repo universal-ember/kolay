@@ -2,18 +2,26 @@
  * This plugin is *basically* what v1 addons did.
  */
 import { glob } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { stripIndent } from 'common-tags';
 
 import { virtualFile } from './helpers.js';
+import { discover } from './markdown-pages/discover.js';
 
 /** @type {() => import('unplugin').UnpluginOptions} */
-export const setup = () => {
+export const setup = (options = {}) => {
   const cwd = process.cwd();
+  let baseUrl = '/';
 
   return {
-    name: 'kolay-setup',
+    name: 'kolay:setup',
+    vite: {
+      configResolved(resolvedConfig) {
+        baseUrl = resolvedConfig.base;
+      },
+    },
     ...virtualFile([
       {
         importPath: 'kolay/setup',
@@ -62,15 +70,13 @@ export const setup = () => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, manifest, compiledDocs] = await Promise.all([
+            let [apiDocs, compiledDocs] = await Promise.all([
               import('kolay/api-docs:virtual'),
-              import('kolay/manifest:virtual'),
               import('kolay/compiled-docs:virtual'),
             ]);
 
             await docs.setup({
               apiDocs,
-              manifest,
               compiledDocs,
               ...options,
             });
@@ -98,23 +104,64 @@ export const setup = () => {
         importPath: 'kolay/compiled-docs:virtual',
         content: async () => {
           const result = {};
+          const globs = [
+            {
+              name: '',
+              path: './',
+              glob: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md}', {
+                cwd,
+                exclude: ['node_modules'],
+              }),
+            },
+          ];
 
-          for await (const entry of glob('./{app,src}/templates/**/*.{gjs,gts}.md', { cwd })) {
-            const name = entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
-            const full = join(cwd, entry);
+          /**
+           * TODO: support `onlyDirectories` of what globby provides
+           */
+          for (const group of options?.groups ?? []) {
+            const path = relative(cwd, group.src);
 
-            result[name] = `() => import("${full}")`;
+            globs.push({
+              name: group.name,
+              path,
+              glob: glob('**/*.{md,gjs.md,gts.md}', {
+                cwd: fileURLToPath(group.src),
+                exclude: ['node_modules'],
+              }),
+            });
           }
 
-          const virtualFile = `
+          for (const config of globs) {
+            for await (const entry of config.glob) {
+              const name =
+                baseUrl +
+                (config.name ? config.name + '/' : '') +
+                entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
+              const full = join(cwd, entry);
+
+              result[name] = `() => import("${full.startsWith('/') ? '/@fs' + full : full}")`;
+            }
+          }
+
+          const { groups: groupsJson } = await discover({ groups: options.groups, cwd });
+
+          const virtualFile = stripIndent`
+            export const manifest = {
+              groups: ${JSON.stringify(groupsJson)}
+            };
+
             export const pages = {
-              ${Object.entries(result).map(([name, importer]) => `"${name}": ${importer}`).join(',\n')}
+              ${Object.entries(result)
+                .map(([name, importer]) => `"${name}": ${importer}`)
+                .join(',\n')}
             };
           `;
 
-          return virtualFile
+          console.log(globs, result, virtualFile);
+
+          return virtualFile;
         },
-      }
+      },
     ]),
   };
 };

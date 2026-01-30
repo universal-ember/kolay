@@ -11,6 +11,12 @@ export default defineConfig((/* { mode } */) => {
     plugins: [
       info(),
       kolay({
+        groups: [
+          {
+            name: 'Runtime',
+            src: import.meta.resolve('../docs', import.meta.url),
+          },
+        ],
         rehypePlugins: [
           [
             rehypeShiki,

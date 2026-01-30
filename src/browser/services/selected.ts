@@ -68,7 +68,7 @@ class Selected {
 
   @cached
   get activeCompiled() {
-    const path = this.#path?.replace(/^\//, '');
+    const path = this.#path;
 
     if (!path) return;
 
@@ -139,7 +139,17 @@ class Selected {
     }
 
     if (!this.#page) {
-      return `Page not found for path ${this.#path}. (Using group: ${this.#docs.currentGroup.name})`;
+      const message = `Page not found for path "${this.#path}". (Using group: "${this.#docs.currentGroup.name}", see console for more information)`;
+
+      console.error(message);
+      console.group('manifest');
+      console.info(this.#docs.manifest);
+      console.groupEnd();
+      console.group('pages');
+      console.info(this.#docs.pages);
+      console.groupEnd();
+
+      return message;
     }
 
     return String(this.proseCompiled.error);
@@ -166,7 +176,7 @@ class Selected {
   }
 
   #findByPath = (path: string) => {
-    return this.#docs.pages.find((page) => page.path === `${path}.md`);
+    return this.#docs.pages.find((page) => page.path === path);
   };
 }
 
