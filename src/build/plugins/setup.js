@@ -10,6 +10,14 @@ import { stripIndent } from 'common-tags';
 import { virtualFile } from './helpers.js';
 import { reshape } from './markdown-pages/hydrate.js';
 
+function normalizePath(path) {
+  if (path.startsWith('file:/')) {
+    return fileURLToPath(path);
+  }
+
+  return path;
+}
+
 /** @type {() => import('unplugin').UnpluginOptions} */
 export const setup = (options = {}) => {
   const cwd = process.cwd();
@@ -20,6 +28,14 @@ export const setup = (options = {}) => {
     vite: {
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
+
+        resolvedConfig.server ||= {};
+        resolvedConfig.server.fs ||= {};
+        resolvedConfig.server.fs.allow ||= [];
+
+        options.groups.forEach((group) => {
+          resolvedConfig.server.fs.allow.push(normalizePath(group.src));
+        });
       },
     },
     ...virtualFile([
@@ -127,7 +143,7 @@ export const setup = (options = {}) => {
               path,
               cwd: group.src,
               glob: glob('**/*.{md,gjs.md,gts.md}', {
-                cwd: fileURLToPath(group.src),
+                cwd: normalizePath(group.src),
                 exclude: ['node_modules'],
               }),
             });
@@ -145,7 +161,7 @@ export const setup = (options = {}) => {
                 baseUrl +
                 (config.name ? config.name + '/' : '') +
                 entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
-              const full = '/@fs' + join(config.cwd, entry);
+              const full = '/@fs' + join(normalizePath(config.cwd), entry);
 
               result[name] = `() => import("${full}")`;
               paths.push(entry);
