@@ -193,8 +193,6 @@ export const setup = (options = {}) => {
             };
           `;
 
-          console.log(virtualFile);
-
           return virtualFile;
         },
       },

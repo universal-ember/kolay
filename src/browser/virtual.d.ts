@@ -28,30 +28,21 @@ declare module 'kolay/api-docs:virtual' {
 }
 
 /**
- * Virtual Module responsible for building a "manifest"
- * for:
- * - where all the markdown files in your project
- * can be fetched at runtime
- * - the structure of all those files
- * - the nesting / grouping / library association of those files
- */
-declare module 'kolay/manifest:virtual' {
-  import type { Manifest } from '#types';
-
-  /**
-   * Loads the list and tree data for the discovered pages from the markdownDocs plugin
-   *
-   */
-  export const load: () => Promise<Manifest>;
-}
-
-
-/**
  * Virtual Module responsible for providing
  * pre-compiled markdown documents compiled to components for faster loading and rendering
  */
 declare module 'kolay/compiled-docs:virtual' {
   import type { ComponentLike } from '@glint/template';
+  import type { Manifest } from '#types';
+
+  /**
+   * The Manifest is / knows:
+   * - where all the markdown files in your project
+   * can be fetched at runtime
+   * - the structure of all those files
+   * - the nesting / grouping / library association of those files
+   */
+  export const manifest: Manifest;
 
   /**
    * Similar to import.meta.glob
