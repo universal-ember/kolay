@@ -67,7 +67,7 @@ class Selected {
   }
 
   @cached
-  get activeCompiled() {
+  get _activeCompiled() {
     const path = this.#path;
 
     if (!path) return;
@@ -80,6 +80,11 @@ class Selected {
 
     return;
   }
+
+  @use activeCompiled = keepLatest({
+    value: () => this._activeCompiled,
+    when: () => Boolean(this._activeCompiled?.isLoading),
+  });
 
   /*********************************************************************
    * These load the files from /public and handle loading / error state.
