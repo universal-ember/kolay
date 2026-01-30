@@ -1,0 +1,18 @@
+# unconventionally formatted files
+/.changeset
+
+# compiled output
+/dist/
+/tmp/
+
+# dependencies
+/node_modules/
+
+# misc
+/.env*
+/.vite/
+/.pnp*
+.pnp.*
+
+# ember-try
+/.node_modules.ember-try/
