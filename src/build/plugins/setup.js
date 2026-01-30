@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { stripIndent } from 'common-tags';
 
 import { virtualFile } from './helpers.js';
-import { discover } from './markdown-pages/discover.js';
+import { reshape } from './markdown-pages/hydrate.js';
 
 /** @type {() => import('unplugin').UnpluginOptions} */
 export const setup = (options = {}) => {
@@ -108,6 +108,7 @@ export const setup = (options = {}) => {
             {
               name: '',
               path: './',
+              cwd,
               glob: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md}', {
                 cwd,
                 exclude: ['node_modules'],
@@ -124,6 +125,7 @@ export const setup = (options = {}) => {
             globs.push({
               name: group.name,
               path,
+              cwd: group,
               glob: glob('**/*.{md,gjs.md,gts.md}', {
                 cwd: fileURLToPath(group.src),
                 exclude: ['node_modules'],
@@ -131,24 +133,38 @@ export const setup = (options = {}) => {
             });
           }
 
+          const manifest = {
+            groups: [],
+          };
+
           for (const config of globs) {
+            const paths = [];
+
             for await (const entry of config.glob) {
               const name =
                 baseUrl +
                 (config.name ? config.name + '/' : '') +
                 entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
-              const full = join(cwd, entry);
+              const full = '/@fs' + join(cwd, entry);
 
-              result[name] = `() => import("${full.startsWith('/') ? '/@fs' + full : full}")`;
+              result[name] = `() => import("${full}")`;
+              paths.push(entry);
             }
+
+            const found = await reshape({
+              cwd: config.cwd,
+              paths,
+              prefix: baseUrl + config.name,
+            });
+
+            manifest.groups.push({
+              name: config.name || 'Home',
+              ...found,
+            });
           }
 
-          const { groups: groupsJson } = await discover({ groups: options.groups, cwd });
-
           const virtualFile = stripIndent`
-            export const manifest = {
-              groups: ${JSON.stringify(groupsJson)}
-            };
+            export const manifest = ${JSON.stringify(manifest)};
 
             export const pages = {
               ${Object.entries(result)
@@ -156,8 +172,6 @@ export const setup = (options = {}) => {
                 .join(',\n')}
             };
           `;
-
-          console.log(globs, result, virtualFile);
 
           return virtualFile;
         },
