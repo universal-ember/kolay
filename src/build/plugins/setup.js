@@ -153,6 +153,10 @@ export const setup = (options = {}) => {
             groups: [],
           };
 
+          function removeUnwantedPrexix(path) {
+            return path.replace(/^(app|src)\/templates\//, '');
+          }
+
           for (const config of globs) {
             const paths = [];
 
@@ -160,11 +164,11 @@ export const setup = (options = {}) => {
               const name =
                 baseUrl +
                 (config.name ? config.name + '/' : '') +
-                entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
+                removeUnwantedPrexix(entry).replace(/\.(gjs|gts)\.md$/, '');
               const full = '/@fs' + join(normalizePath(config.cwd), entry);
 
               result[name] = `() => import("${full}")`;
-              paths.push(entry);
+              paths.push(removeUnwantedPrexix(entry));
             }
 
             const found = await reshape({
