@@ -125,7 +125,7 @@ export const setup = (options = {}) => {
             globs.push({
               name: group.name,
               path,
-              cwd: group,
+              cwd: group.src,
               glob: glob('**/*.{md,gjs.md,gts.md}', {
                 cwd: fileURLToPath(group.src),
                 exclude: ['node_modules'],
@@ -145,7 +145,7 @@ export const setup = (options = {}) => {
                 baseUrl +
                 (config.name ? config.name + '/' : '') +
                 entry.replace(/^(app|src)\/templates\//, '').replace(/\.(gjs|gts)\.md$/, '');
-              const full = '/@fs' + join(cwd, entry);
+              const full = '/@fs' + join(config.cwd, entry);
 
               result[name] = `() => import("${full}")`;
               paths.push(entry);
@@ -172,6 +172,8 @@ export const setup = (options = {}) => {
                 .join(',\n')}
             };
           `;
+
+          console.log(virtualFile);
 
           return virtualFile;
         },
