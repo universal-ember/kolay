@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+
 import { configsFrom, parse } from './parse.js';
 import { sortTree } from './sort.js';
 
@@ -37,7 +39,7 @@ export async function reshape({ paths, cwd, prefix }) {
 export function prefixPaths(tree, prefix) {
   if (!('pages' in tree)) {
     if ('path' in tree) {
-      tree.path = `${prefix}${tree.path}`;
+      tree.path = join(prefix, tree.path);
     }
 
     return tree;

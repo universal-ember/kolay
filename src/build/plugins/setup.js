@@ -170,7 +170,7 @@ export const setup = (options = {}) => {
             const found = await reshape({
               cwd: config.cwd,
               paths,
-              prefix: baseUrl + config.name,
+              prefix: join(baseUrl, config.name),
             });
 
             manifest.groups.push({
