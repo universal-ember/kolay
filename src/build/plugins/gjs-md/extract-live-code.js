@@ -59,7 +59,11 @@ function componentNameFromId(id) {
 
 // Swaps live codeblocks with placeholders that the compiler can then
 // use to insert compiled-from-other-sources' code into those placeholders.
-export function liveCodeExtraction(_options = { /* no options */ }) {
+export function liveCodeExtraction(
+  _options = {
+    /* no options */
+  }
+) {
   function flatReplaceAt(array, index, replacement) {
     array.splice(index, 1, ...replacement);
   }

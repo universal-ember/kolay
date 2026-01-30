@@ -7,7 +7,10 @@ const appName = `docs-app`;
 function formatAsResolverEntries(imports: Record<string, unknown>) {
   return Object.fromEntries(
     Object.entries(imports).map(([k, v]) => [
-      k.replace(/\.gjs\.md$/, '').replace(/\.g?(j|t)s$/, '').replace(/^\.\//, `${appName}/`),
+      k
+        .replace(/\.gjs\.md$/, '')
+        .replace(/\.g?(j|t)s$/, '')
+        .replace(/^\.\//, `${appName}/`),
       v,
     ])
   );
@@ -19,7 +22,9 @@ function formatAsResolverEntries(imports: Record<string, unknown>) {
  * - we design a new routing system
  */
 const resolverRegistry = {
-  ...formatAsResolverEntries(import.meta.glob('./templates/**/*.{gjs,gts,js,ts,md}', { eager: true })),
+  ...formatAsResolverEntries(
+    import.meta.glob('./templates/**/*.{gjs,gts,js,ts,md}', { eager: true })
+  ),
   ...formatAsResolverEntries(import.meta.glob('./services/**/*.{js,ts}', { eager: true })),
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),
   [`${appName}/router`]: Router,

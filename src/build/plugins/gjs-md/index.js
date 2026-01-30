@@ -14,7 +14,7 @@ import { sanitizeForGlimmer } from './sanitize-for-glimmer.js';
 export function buildCompiler(options) {
   let compiler = unified().use(remarkParse).use(remarkGfm, { singleTilde: true }).use(headingId);
 
-    /**
+  /**
    * If this were "use"d after `remarkRehype`,
    * remark is gone, and folks would need to work with rehype trees
    */
@@ -32,7 +32,9 @@ export function buildCompiler(options) {
 
   // TODO: we only want to do this when we have pre > code.
   //       code can exist inline.
-  compiler = compiler.use(liveCodeExtraction, { /* no options */ });
+  compiler = compiler.use(liveCodeExtraction, {
+    /* no options */
+  });
 
   // .use(() => (tree) => visit(tree, (node) => console.log('i', node)))
   // remark rehype is needed to convert markdown to HTML
@@ -122,5 +124,4 @@ export function buildCompiler(options) {
 
   // @ts-ignore
   return compiler;
-
 }

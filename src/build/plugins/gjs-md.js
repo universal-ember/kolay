@@ -107,7 +107,8 @@ export function gjsmd(options = {}) {
 
       virtualModulesByMarkdownFile.set(id, nextVirtualIds);
 
-      const built = (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.value}</template>`;
+      const built =
+        (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.value}</template>`;
 
       const { code, map } = processor.process(built, {
         filename: id,

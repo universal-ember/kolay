@@ -52,7 +52,7 @@ function setNodeId(node, id) {
   /** @type {any} */ (node.data).id = node.data.hProperties.id = id;
 }
 
-export function headingId(options = { defaults: false }) {
+export function headingId(_options = { defaults: false }) {
   /**
    * @param {import('mdast').Root} node
    */

@@ -41,7 +41,6 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
   </aside>
 </template>;
 
-
 function removeLoader() {
   requestAnimationFrame(() => {
     document.querySelector('#kolay__loading')?.remove();

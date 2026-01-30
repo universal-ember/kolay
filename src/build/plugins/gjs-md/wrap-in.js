@@ -8,8 +8,8 @@ export function wrapIn(tagName, attributes) {
           'data-meta': meta,
         },
         type: tagName,
-        children: [node]
-      }
-    }
-  }
+        children: [node],
+      },
+    };
+  };
 }

@@ -1,5 +1,4 @@
 import { cached } from '@glimmer/tracking';
-import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
 
 import { createStore } from 'ember-primitives/store';

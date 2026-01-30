@@ -22,7 +22,6 @@ const ENV = {
 // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
 // ENV.APP.LOG_VIEW_LOOKUPS = true;
 
-
 export default ENV;
 
 export function enterTestMode() {
