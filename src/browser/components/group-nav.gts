@@ -59,11 +59,15 @@ export class GroupNav extends Component<{
     return this.args.homeName ?? 'Home';
   }
 
+  get rootURL() {
+    return this.router.rootURL;
+  }
+
   get groups() {
     return this.#docs.availableGroups.map((groupName) => {
       if (groupName === 'root') return { text: this.homeName, value: '/' };
 
-      return { text: groupName, value: `/${groupName}` };
+      return { text: groupName, value: groupName };
     });
   }
 
@@ -82,7 +86,10 @@ export class GroupNav extends Component<{
       <ul>
         {{#each this.groups as |group|}}
           <li>
-            <a href={{group.value}} class={{if (this.isActive group.value) this.activeClass}}>
+            <a
+              href='{{this.rootURL}}{{group.value}}'
+              class={{if (this.isActive group.value) this.activeClass}}
+            >
 
               {{#if (has-block)}}
                 {{yield group.text}}

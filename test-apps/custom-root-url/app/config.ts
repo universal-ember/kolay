@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable padding-line-between-statements */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 interface Config {
   environment: "development" | "production";
@@ -11,7 +12,7 @@ interface Config {
 
 const ENV: Config = {
   environment: import.meta.env.DEV ? "development" : "production",
-  rootURL: "/",
+  rootURL: "/my-github-project/",
   locationType: "history",
   EmberENV: {},
   APP: {},
@@ -28,7 +29,6 @@ export function enterTestMode() {
   ENV.APP.autoboot = false;
 
   const theMacrosGlobal = getGlobalConfig();
-
   theMacrosGlobal["@embroider/macros"] ||= {};
   theMacrosGlobal["@embroider/macros"].isTesting ||= true;
 }

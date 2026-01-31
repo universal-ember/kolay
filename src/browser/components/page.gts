@@ -73,9 +73,9 @@ export class Page extends Component<{
   };
 }> {
   <template>
-    {{log 'hasError' this.selected.hasError}}
-    {{log 'isPending' this.selected.isPending}}
-    {{log 'prose' this.selected.prose}}
+    {{!log 'hasError' this.selected.hasError}}
+    {{!log 'isPending' this.selected.isPending}}
+    {{!log 'prose' this.selected.prose}}
 
     {{#if this.selected.hasError}}
       {{yield this.selected.error to='error'}}
