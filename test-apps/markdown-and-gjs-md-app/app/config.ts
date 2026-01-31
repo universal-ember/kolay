@@ -25,6 +25,7 @@ export function enterTestMode() {
   ENV.APP.autoboot = false;
 
   const theMacrosGlobal = getGlobalConfig();
+
   theMacrosGlobal["@embroider/macros"] ||= {};
   theMacrosGlobal["@embroider/macros"].isTesting ||= true;
 }
