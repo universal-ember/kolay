@@ -28,6 +28,7 @@
     "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto && pnpm format",
     "format": "prettier --write .",
     "lint:prettier": "prettier --check .",
+    "test:ember": "pnpm build:test && pnpm test:ci",
     "build:test": "vite build --mode development",
     "test:ci": "testem ci --port 0",
     "test": "pnpm build:test && pnpm test:ci",
