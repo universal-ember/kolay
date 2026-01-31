@@ -122,12 +122,14 @@ class Selected {
     if (error) {
       const message = `Page not found for path "${this.#path}". (Using group: "${this.#docs.currentGroup.name}", see console for more information)`;
 
-      console.error(message);
+      console.group(message);
+      console.error(error);
       console.group('manifest');
       console.info(this.#docs.manifest);
       console.groupEnd();
       console.group('pages');
       console.info(this.#docs.pages);
+      console.groupEnd();
       console.groupEnd();
 
       return error;

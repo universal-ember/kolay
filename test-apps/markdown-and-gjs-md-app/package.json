@@ -58,6 +58,7 @@
     "@nullvoxpopuli/eslint-configs": "5.5.0",
     "@rollup/plugin-babel": "6.1.0",
     "@types/qunit": "2.19.13",
+    "@universal-ember/test-support": "^0.5.1",
     "babel-plugin-ember-template-compilation": "4.0.0",
     "concurrently": "9.2.1",
     "ember-qunit": "9.0.4",
@@ -70,7 +71,7 @@
     "qunit-theme-ember": "1.0.0",
     "testem": "3.17.0",
     "typescript": "5.9.3",
-    "vite": "7.3.1"
+    "vite": "8.0.0-beta.11"
   },
   "engines": {
     "node": ">= 24"

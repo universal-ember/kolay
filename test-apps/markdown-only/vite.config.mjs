@@ -5,12 +5,6 @@ import { kolay } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
-    ember(),
-    babel({
-      babelHelpers: "runtime",
-      extensions,
-    }),
-
     kolay({
       groups: [
         {
@@ -22,6 +16,11 @@ export default defineConfig({
       scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         `,
+    }),
+    ember(),
+    babel({
+      babelHelpers: "runtime",
+      extensions,
     }),
   ],
 });
