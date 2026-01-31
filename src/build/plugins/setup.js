@@ -167,7 +167,15 @@ export const setup = (options = {}) => {
                 removeUnwantedPrexix(entry).replace(/\.(gjs|gts)\.md$/, '');
               const full = '/@fs' + join(normalizePath(config.cwd), entry);
 
-              result[name] = `() => import("${full}")`;
+              let query = '';
+
+              if (entry.endsWith('.md')) {
+                if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
+                  query = '?raw';
+                }
+              }
+
+              result[name] = `() => import("${full}${query}")`;
               paths.push(removeUnwantedPrexix(entry));
             }
 

@@ -1,34 +1,19 @@
-import { cached } from '@glimmer/tracking';
+import { assert } from '@ember/debug';
+import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
 
 import { createStore } from 'ember-primitives/store';
 import { use } from 'ember-resources';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import { keepLatest } from 'reactiveweb/keep-latest';
-import { link } from 'reactiveweb/link';
 
-import { Compiled } from './compiler/reactive.ts';
+import { compileText } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
 import { getKey } from './lazy-load.ts';
-import { MDRequest } from './request.ts';
 
 import type { Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
-
-/**
- * Populate a cache of all the documents.
- *
- * Network can be slow, and compilation is fast.
- * So after we get the requested page, let's get
- * everything else
- */
-// const fillCache = (path: string) => {
-//   fetch(`/docs/${path}`)
-// };
-//
-
-const firstPath = '/1-get-started/intro.md';
 
 export function selected(context: unknown) {
   const owner = getKey(context);
@@ -36,67 +21,71 @@ export function selected(context: unknown) {
   return createStore(owner, Selected);
 }
 
+type File = { default: string | ComponentLike };
+type Loader = () => Promise<File>;
+
+const CACHE = new Map<string, ReturnType<typeof getPromiseState<ComponentLike | undefined>>>();
+
 /**
- * Sort of like an ember-concurrency task...
- * if we ignore concurrency and only care about the states of the running function
- * (and want automatic invocation based on derivation)
+ * With .gjs.md and .gts.md documents, we have only one promise to deal with.
+ * With .md documents, we have two promises.
+ *
+ * .gjs.md / .gts.md:
+ *  1. the request to get the module
+ *
+ * .md
+ *  1. the request to get the module
+ *  2. compile
  */
-class Prose {
-  constructor(private docFn: () => string | null) {}
+function loaderFor(selected: Selected, path: string | undefined) {
+  if (!path) return;
 
-  @use last = Compiled(() => this.docFn());
+  const existing = CACHE.get(path);
 
-  @use lastSuccessful = keepLatest({
-    value: () => this.last.component,
-    when: () => !this.last.isReady,
-  });
+  if (existing) return existing;
+
+  const docs = selected.compiledDocs;
+  const owner = getOwner(selected);
+
+  /**
+   * NOTE: we support paths with and withouth the '.md' on the URL
+   */
+  const fn = docs[path] ?? docs[path + '.md'];
+
+  async function wrapper(): Promise<ComponentLike | undefined> {
+    if (!fn) return;
+
+    assert(`[Bug] Owner is missing`, owner);
+
+    const module = await fn();
+
+    if (typeof module.default === 'string') {
+      const state = compileText(owner, module.default);
+
+      return state.promise;
+    }
+
+    return module.default;
+  }
+
+  const wrapped = getPromiseState(wrapper);
+
+  CACHE.set(path, wrapped);
+
+  return wrapped;
 }
 
 class Selected {
   @service declare router: RouterService;
 
-  compiledDocs: Record<string, () => Promise<{ default: ComponentLike }>> = {};
+  compiledDocs: Record<string, Loader> = {};
 
   get #docs() {
     return docsManager(this);
   }
 
-  get #rootURL() {
-    return this.router.rootURL;
-  }
-
-  @cached
-  get _activeCompiled() {
-    const path = this.#path;
-
-    if (!path) return;
-
-    const loadFn = this.compiledDocs[path];
-
-    if (loadFn) {
-      return getPromiseState(loadFn);
-    }
-
-    return;
-  }
-
-  @use activeCompiled = keepLatest({
-    value: () => this._activeCompiled,
-    when: () => Boolean(this._activeCompiled?.isLoading),
-  });
-
-  /*********************************************************************
-   * These load the files from /public and handle loading / error state.
-   *
-   * When the path changes for each of these, the previous request will
-   * be cancelled if it was still pending.
-   *******************************************************************/
-
-  @link request = new MDRequest(() => `${this.#rootURL}docs${this.#path}.md`);
-  @link compiled = new Prose(() => this.request.lastSuccessful);
-
-  get proseCompiled() {
-    return this.compiled.last;
+  get #loader() {
+    return loaderFor(this, this.#matchOrFirstPagePath);
   }
 
   /*********************************************************************
@@ -106,24 +95,17 @@ class Selected {
    * we can, and only swap out the old data when the new data is done loading.
    *
    ********************************************************************/
-  get prose() {
-    if (this.activeCompiled) {
-      return this.activeCompiled.resolved?.default;
-    }
+  @use activeCompiled = keepLatest({
+    value: () => this.#loader,
+    when: () => Boolean(this.#loader?.isLoading),
+  });
 
-    return this.compiled.lastSuccessful;
+  get prose() {
+    return this.activeCompiled?.resolved;
   }
 
-  /**
-   * Once this whole thing is "true", we can start
-   * rendering without extra flashes.
-   */
   get isReady() {
-    if (this.activeCompiled?.resolved) {
-      return true;
-    }
-
-    return this.proseCompiled.isReady;
+    return Boolean(this.activeCompiled?.resolved);
   }
 
   get isPending() {
@@ -131,18 +113,13 @@ class Selected {
   }
 
   get hasError() {
-    if (this.activeCompiled) {
-      return Boolean(this.activeCompiled.error);
-    }
-
-    return Boolean(this.proseCompiled.error) || this.request.hasError;
+    return Boolean(this.activeCompiled?.error);
   }
-  get error() {
-    if (this.activeCompiled) {
-      return this.activeCompiled.error ? String(this.activeCompiled.error) : '';
-    }
 
-    if (!this.#page) {
+  get error() {
+    const error = this.activeCompiled?.error ? String(this.activeCompiled?.error) : '';
+
+    if (error) {
       const message = `Page not found for path "${this.#path}". (Using group: "${this.#docs.currentGroup.name}", see console for more information)`;
 
       console.error(message);
@@ -153,10 +130,10 @@ class Selected {
       console.info(this.#docs.pages);
       console.groupEnd();
 
-      return message;
+      return error;
     }
 
-    return String(this.proseCompiled.error);
+    return error;
   }
 
   get hasProse() {
@@ -164,13 +141,20 @@ class Selected {
   }
 
   get #path(): string | undefined {
-    if (!this.router.currentURL) return firstPath;
+    if (!this.router.currentURL) return;
 
     const url = new URL(this.router.currentURL, window.location.origin);
     const path = url.pathname;
-    const result = path && path !== '/' ? path : firstPath;
 
-    return result?.replace(/\.md$/, '');
+    if (path === '/') {
+      return;
+    }
+
+    return path?.replace(/\.md$/, '');
+  }
+
+  get #matchOrFirstPagePath() {
+    return this.#page?.path ?? this.#docs.pages[0]?.path;
   }
 
   get #page(): Page | undefined {
@@ -180,13 +164,6 @@ class Selected {
   }
 
   #findByPath = (path: string) => {
-    return this.#docs.pages.find((page) => page.path === path);
+    return this.#docs.pages.find((page) => page.path === path || page.path === path + '.md');
   };
-}
-
-// DO NOT DELETE: this is how TypeScript knows how to look up your services.
-declare module '@ember/service' {
-  interface Registry {
-    'kolay/selected': Selected;
-  }
 }

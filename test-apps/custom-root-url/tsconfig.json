@@ -3,7 +3,6 @@
   "compilerOptions": {
     "allowJs": true,
     "types": [
-      "kolay/virtual",
       "ember-source/types",
       "@embroider/core/virtual",
       "vite/client",
