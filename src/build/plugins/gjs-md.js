@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 import { Preprocessor } from 'content-tag';
 import { parseMarkdown } from 'repl-sdk/markdown/parse';
 
@@ -12,6 +14,13 @@ function componentNameFromId(id) {
 }
 
 /**
+ * @typedof {Object} CodeBlock
+ * @property {string} format
+ * @property {string} code
+ * @property {string} placeholderId
+ */
+
+/**
  * Build/Vite plugin for authoring markdown with live code fences
  * to be compiled to GJS during build.
  *
@@ -24,13 +33,19 @@ function componentNameFromId(id) {
  */
 export function gjsmd(options = {}) {
   const VIRTUAL_PREFIX = 'kolay:gjs-md:';
-  /** @type {Map<string, string>} */
-  const virtualModules = new Map();
-  /** @type {Map<string, Set<string>>} */
+  /**
+   * Map of:
+   *   .gjs.md -> Map of
+   *                virtual module id -> CodeBlock
+   * @type {Map<string, Map<string, CodeBlock>>>}
+   */
   const virtualModulesByMarkdownFile = new Map();
 
-  function toVirtualId(demoId) {
-    return `${VIRTUAL_PREFIX}${demoId}.gjs`;
+  /**
+   * @param {CodeBlock} block
+   */
+  function toVirtualId(block) {
+    return `${VIRTUAL_PREFIX}${block.placeholderId}.gjs`;
   }
 
   return {
@@ -39,40 +54,49 @@ export function gjsmd(options = {}) {
      * We need to run before babel *and* embroider's gjs processing.
      * */
     enforce: 'pre',
-    resolveId(source) {
-      if (typeof source === 'string' && source.startsWith(VIRTUAL_PREFIX)) {
-        return source;
+    resolveId(id, parent) {
+      if (typeof id === 'string' && id.startsWith(VIRTUAL_PREFIX)) {
+        return `${id}?from=${parent}`;
       }
 
       return null;
     },
     load(id) {
       if (typeof id === 'string' && id.startsWith(VIRTUAL_PREFIX)) {
-        return virtualModules.get(id) ?? null;
+        const [actualId, qps] = id.split('?');
+        const search = new URLSearchParams(qps);
+        const fromId = search.get('from');
+
+        const virtualModules = virtualModulesByMarkdownFile.get(fromId);
+
+        const block = virtualModules.get(actualId);
+
+        assert(block?.code, `Could not find virtual module for id ${actualId} from ${fromId}`);
+
+        let hbsCode;
+
+        if (block.format === 'hbs') {
+          hbsCode = (options.scope ?? '') + `\n\n<template>\n${block.code}\n</template>`;
+        }
+
+        const { code, map } = processor.process(hbsCode ?? block.code, {
+          filename: id,
+        });
+
+        return {
+          code,
+          map,
+        };
       }
 
       return null;
     },
-    // resolveId(id) {
-    //   if (id.endsWith('.gjs.md')) {
-    //     return INTERNAL_PREFIX + id;
-    //   }
-
-    //   return;
-    // },
-    // loadInclude(id) {
-    //   if (!id.startsWith(INTERNAL_PREFIX)) return false;
-    // },
     async transform(input, id) {
       if (!id.endsWith('.gjs.md')) return;
-      // if (!id.startsWith(INTERNAL_PREFIX)) return;
 
       /**
        * Convert to GJS!
        */
-      // const originalPath = id.slice(INTERNAL_PREFIX.length);
-      // const buffer = await readFile(originalPath);
-      // const content = buffer.toString();
       const result = await parseMarkdown(input, {
         remarkPlugins: options?.remarkPlugins,
         rehypePlugins: options?.rehypePlugins,
@@ -80,22 +104,17 @@ export function gjsmd(options = {}) {
         isPreview: (meta) => meta?.includes('preview'),
         isBelow: (meta) => meta.includes('below'),
         needsLive: () => true,
-        ALLOWED_FORMATS: ['gjs'],
+        ALLOWED_FORMATS: ['gjs', 'hbs'],
         getFlavorFromMeta: () => null,
       });
 
       let imports = '';
 
-      // Clean up stale virtual modules for this markdown file (dev/HMR rebuilds).
-      const previousVirtualIds = virtualModulesByMarkdownFile.get(id);
+      virtualModulesByMarkdownFile.delete(id);
 
-      if (previousVirtualIds) {
-        for (const vid of previousVirtualIds) {
-          virtualModules.delete(vid);
-        }
-      }
+      const virtualModules = new Map();
 
-      const nextVirtualIds = new Set();
+      virtualModulesByMarkdownFile.set(id, virtualModules);
 
       for (const block of result.codeBlocks ?? []) {
         const demoId = block?.id ?? block?.placeholderId;
@@ -103,15 +122,12 @@ export function gjsmd(options = {}) {
         if (!demoId) continue;
 
         const componentName = block?.componentName ?? componentNameFromId(demoId);
-        const virtualId = toVirtualId(demoId);
+        const virtualId = toVirtualId(block);
 
-        virtualModules.set(virtualId, String(block.code ?? ''));
-        nextVirtualIds.add(virtualId);
+        virtualModules.set(virtualId, block);
 
         imports += `\nimport ${componentName} from '${virtualId}';`;
       }
-
-      virtualModulesByMarkdownFile.set(id, nextVirtualIds);
 
       const built =
         (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
