@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { Preprocessor } from 'content-tag';
-import { parseMarkdown } from 'repl-sdk/markdown/parse';
+import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 
 const processor = new Preprocessor();
 
@@ -33,6 +33,18 @@ function componentNameFromId(id) {
  */
 export function gjsmd(options = {}) {
   const VIRTUAL_PREFIX = 'kolay/virtual:gjs-md:';
+
+  const compiler = buildCompiler({
+    remarkPlugins: options.remarkPlugins,
+    rehypePlugins: options.rehypePlugins,
+    isLive: (meta) => meta?.includes('live'),
+    isPreview: (meta) => meta?.includes('preview'),
+    isBelow: (meta) => meta.includes('below'),
+    needsLive: () => true,
+    ALLOWED_FORMATS: ['gjs', 'hbs'],
+    getFlavorFromMeta: () => null,
+  });
+
   /**
    * Map of:
    *   .gjs.md -> Map of
@@ -104,14 +116,7 @@ export function gjsmd(options = {}) {
        * Convert to GJS!
        */
       const result = await parseMarkdown(input, {
-        remarkPlugins: options?.remarkPlugins,
-        rehypePlugins: options?.rehypePlugins,
-        isLive: (meta) => meta?.includes('live'),
-        isPreview: (meta) => meta?.includes('preview'),
-        isBelow: (meta) => meta.includes('below'),
-        needsLive: () => true,
-        ALLOWED_FORMATS: ['gjs', 'hbs'],
-        getFlavorFromMeta: () => null,
+        compiler,
       });
 
       let imports = '';

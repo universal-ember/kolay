@@ -54,8 +54,8 @@ importers:
         specifier: ^0.53.0
         version: 0.53.0(@babel/core@7.28.6)(@ember/test-helpers@5.4.1(@babel/core@7.28.6)(@glint/template@1.7.3))(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-modifier@4.2.2(@babel/core@7.28.6))(ember-resources@7.0.7(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5)))(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       ember-repl:
-        specifier: ^7.3.3
-        version: 7.3.3(@babel/core@7.28.6)(@codemirror/lang-css@6.3.1)(@glimmer/component@2.0.0)(@glint/template@1.7.3)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(ember-modifier@4.2.2(@babel/core@7.28.6))(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))(encoding@0.1.13)(reactiveweb@1.9.1(@babel/core@7.28.6)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5)))
+        specifier: ^7.3.4
+        version: 7.3.4(@babel/core@7.28.6)(@codemirror/lang-css@6.3.1)(@glimmer/component@2.0.0)(@glint/template@1.7.3)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(ember-modifier@4.2.2(@babel/core@7.28.6))(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))(encoding@0.1.13)(reactiveweb@1.9.1(@babel/core@7.28.6)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5)))
       ember-resources:
         specifier: ^7.0.4
         version: 7.0.7(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
@@ -87,8 +87,8 @@ importers:
         specifier: ^11.1.2
         version: 11.1.2
       repl-sdk:
-        specifier: ^1.3.0
-        version: 1.3.0(@codemirror/lang-css@6.3.1)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(encoding@0.1.13)
+        specifier: ^1.4.0
+        version: 1.4.0(@codemirror/lang-css@6.3.1)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(encoding@0.1.13)
       send:
         specifier: ^1.2.1
         version: 1.2.1
@@ -4705,8 +4705,8 @@ packages:
       '@ember/test-helpers': '>=3.0.3'
       qunit: ^2.13.0
 
-  ember-repl@7.3.3:
-    resolution: {integrity: sha512-YYrSbzqN65RBEPZfbdFtNd3NVVdnTuuvz17+f3aj30IIlIC44F+8+jHxJ/0ei5ane584UJPmOi1+O8h8ucpgVw==}
+  ember-repl@7.3.4:
+    resolution: {integrity: sha512-yWe9MLQGKh6PBvmK9OoFL/XqjiOO43RYFEvY4P3sph2kpXqNISYTTDyjtKJEBSCgPO+C+bA+HnYwDo+Z8tUCIA==}
     peerDependencies:
       '@glint/template': 1.7.3
       ember-source: 6.10.0
@@ -7791,8 +7791,8 @@ packages:
     resolution: {integrity: sha512-PV0dzCYDNfRi1jCDbJzpW7jNNDRuCOG/jI5ctQcGKt/clZD+YcPS3yIlWuTJMmESC8aevCFmWJy5wjAFgNqN6w==}
     engines: {node: '>=0.10'}
 
-  repl-sdk@1.3.0:
-    resolution: {integrity: sha512-2OaxUCANN+cKVZZjNhkzH1iGaRofc6Nstp7FNXz7XEONfvFj1JpngLr7DZNGQHPWRcsfcWH3EBwYztubdyRNpQ==}
+  repl-sdk@1.4.0:
+    resolution: {integrity: sha512-yVe+NZxnjZyOf+ukqDJcZ4qtlPjtHkBQ7aPjWX1oaSvma6tO5P7P1HzodJDCh43l3scI2nnnTNCMq9MFCU4eRQ==}
 
   request-light@0.7.0:
     resolution: {integrity: sha512-lMbBMrDoxgsyO+yB3sDcrDuX85yYt7sS8BfQd11jtbW/z5ZWgLZRcEGLsLoYw7I0WSUGQBs8CC8ScIxkTX1+6Q==}
@@ -14718,7 +14718,7 @@ snapshots:
       - '@glint/template'
       - supports-color
 
-  ember-repl@7.3.3(@babel/core@7.28.6)(@codemirror/lang-css@6.3.1)(@glimmer/component@2.0.0)(@glint/template@1.7.3)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(ember-modifier@4.2.2(@babel/core@7.28.6))(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))(encoding@0.1.13)(reactiveweb@1.9.1(@babel/core@7.28.6)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))):
+  ember-repl@7.3.4(@babel/core@7.28.6)(@codemirror/lang-css@6.3.1)(@glimmer/component@2.0.0)(@glint/template@1.7.3)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(ember-modifier@4.2.2(@babel/core@7.28.6))(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))(encoding@0.1.13)(reactiveweb@1.9.1(@babel/core@7.28.6)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))):
     dependencies:
       '@ember/test-helpers': 5.4.1(@babel/core@7.28.6)(@glint/template@1.7.3)
       '@ember/test-waiters': 4.1.1(@glint/template@1.7.3)
@@ -14731,7 +14731,7 @@ snapshots:
       ember-resources: 7.0.7(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
       ember-source: 6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5)
       reactiveweb: 1.9.1(@babel/core@7.28.6)(@ember/test-waiters@4.1.1(@glint/template@1.7.3))(@glimmer/component@2.0.0)(@glint/template@1.7.3)(ember-source@6.10.0(@glimmer/component@2.0.0)(rsvp@4.8.5))
-      repl-sdk: 1.3.0(@codemirror/lang-css@6.3.1)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(encoding@0.1.13)
+      repl-sdk: 1.4.0(@codemirror/lang-css@6.3.1)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(encoding@0.1.13)
     optionalDependencies:
       '@glint/template': 1.7.3
     transitivePeerDependencies:
@@ -18568,7 +18568,7 @@ snapshots:
 
   repeat-string@1.6.1: {}
 
-  repl-sdk@1.3.0(@codemirror/lang-css@6.3.1)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(encoding@0.1.13):
+  repl-sdk@1.4.0(@codemirror/lang-css@6.3.1)(@lezer/javascript@1.5.4)(@lezer/lr@1.4.8)(encoding@0.1.13):
     dependencies:
       '@codemirror/autocomplete': 6.20.0
       '@codemirror/commands': 6.10.1
