@@ -1,0 +1,21 @@
+diff --git a/dist/src/template-tag.js b/dist/src/template-tag.js
+index 5e46538aa54b1ebfc2df6358e7b62d7747cd695c..351e6a86ad03bac7865723219d7d8d0f56716993 100644
+--- a/dist/src/template-tag.js
++++ b/dist/src/template-tag.js
+@@ -1,6 +1,15 @@
+ import { createFilter } from '@rollup/pluginutils';
+ import { Preprocessor } from 'content-tag';
+-const gjsFilter = createFilter('**/*.{gjs,gts}?(\\?)*');
++const gjsFilter = createFilter(
++ // include: "*.gjs" with optional "?..."
++  '**/*.gjs?([?]*)',
++
++  // exclude: any "gjs" anywhere BEFORE the final ".gjs"
++  [
++    '**/*gjs*/**', // any directory segment containing "gjs"
++    '**/*gjs*.gjs?([?]*)', // basename contains "gjs" before ".gjs" (also handles query)
++  ]
++);
+ export function templateTag() {
+     let preprocessor = new Preprocessor();
+     return {

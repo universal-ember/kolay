@@ -10,6 +10,8 @@ export default defineConfig((/* { mode } */) => {
   return {
     plugins: [
       info(),
+      classicEmberSupport(),
+      ember(),
       kolay({
         groups: [
           {
@@ -36,8 +38,6 @@ export default defineConfig((/* { mode } */) => {
         import { InViewport } from 'ember-primitives/viewport';
         `,
       }),
-      classicEmberSupport(),
-      ember(),
       babel({
         babelHelpers: 'runtime',
         extensions,

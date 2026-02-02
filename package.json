@@ -235,6 +235,9 @@
           "ember-source": "*"
         }
       }
+    },
+    "patchedDependencies": {
+      "@embroider/vite": "patches/@embroider__vite.patch"
     }
   },
   "ember": {

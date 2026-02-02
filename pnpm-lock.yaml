@@ -14,6 +14,11 @@ overrides:
 
 packageExtensionsChecksum: sha256-I4/i17OOf0WifUwpGYE/KCRs9xMfb6hiQlSpKvR/tsk=
 
+patchedDependencies:
+  '@embroider/vite':
+    hash: c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f
+    path: patches/@embroider__vite.patch
+
 importers:
 
   .:
@@ -295,7 +300,7 @@ importers:
         version: 1.19.6(@glint/template@1.7.3)
       '@embroider/vite':
         specifier: ^1.5.0
-        version: 1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))
+        version: 1.5.0(patch_hash=c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f)(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))
       '@glimmer/component':
         specifier: ^2.0.0
         version: 2.0.0
@@ -449,7 +454,7 @@ importers:
         version: 4.4.2(@glint/template@1.7.3)
       '@embroider/vite':
         specifier: 1.5.0
-        version: 1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))
+        version: 1.5.0(patch_hash=c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f)(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))
       '@glint/ember-tsc':
         specifier: 1.1.0
         version: 1.1.0(typescript@5.9.3)
@@ -558,7 +563,7 @@ importers:
         version: 4.4.2(@glint/template@1.7.3)
       '@embroider/vite':
         specifier: 1.5.0
-        version: 1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@8.0.0-beta.11(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
+        version: 1.5.0(patch_hash=c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f)(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@8.0.0-beta.11(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))
       '@glint/ember-tsc':
         specifier: 1.1.0
         version: 1.1.0(typescript@5.9.3)
@@ -670,7 +675,7 @@ importers:
         version: 4.4.2(@glint/template@1.7.3)
       '@embroider/vite':
         specifier: 1.5.0
-        version: 1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))
+        version: 1.5.0(patch_hash=c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f)(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))
       '@glint/ember-tsc':
         specifier: 1.1.0
         version: 1.1.0(typescript@5.9.3)
@@ -10831,7 +10836,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@embroider/vite@1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))':
+  '@embroider/vite@1.5.0(patch_hash=c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f)(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.28.6
       '@embroider/core': 4.4.2(@glint/template@1.7.3)
@@ -10859,7 +10864,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@embroider/vite@1.5.0(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@8.0.0-beta.11(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))':
+  '@embroider/vite@1.5.0(patch_hash=c3702d6df45a86a9b0c03bae4a79d0da533ebc6e817953d28ea1776a22c7863f)(@embroider/core@4.4.2(@glint/template@1.7.3))(@glint/template@1.7.3)(rollup@4.57.1)(vite@8.0.0-beta.11(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.28.6
       '@embroider/core': 4.4.2(@glint/template@1.7.3)

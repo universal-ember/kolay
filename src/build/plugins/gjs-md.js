@@ -53,7 +53,7 @@ export function gjsmd(options = {}) {
     /**
      * We need to run before babel *and* embroider's gjs processing.
      * */
-    enforce: 'pre',
+    // enforce: 'pre',
     resolveId(id, parent) {
       if (typeof id === 'string' && id.startsWith(VIRTUAL_PREFIX)) {
         return `${id}?from=${parent}`;
@@ -82,6 +82,8 @@ export function gjsmd(options = {}) {
         const { code, map } = processor.process(hbsCode ?? block.code, {
           filename: id,
         });
+
+        console.log({ id, code });
 
         return {
           code,
