@@ -32,7 +32,7 @@ function componentNameFromId(id) {
  * @param {Options} options - Plugin options.
  */
 export function gjsmd(options = {}) {
-  const VIRTUAL_PREFIX = 'kolay:gjs-md:';
+  const VIRTUAL_PREFIX = 'kolay/virtual:gjs-md:';
   /**
    * Map of:
    *   .gjs.md -> Map of
@@ -45,7 +45,7 @@ export function gjsmd(options = {}) {
    * @param {CodeBlock} block
    */
   function toVirtualId(block) {
-    let ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
+    const ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
 
     return `${VIRTUAL_PREFIX}${block.placeholderId}.${ext}`;
   }
@@ -84,8 +84,6 @@ export function gjsmd(options = {}) {
         const { code, map } = processor.process(hbsCode ?? block.code, {
           filename: id,
         });
-
-        console.log({ id, code });
 
         return {
           code,
