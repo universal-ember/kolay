@@ -1,6 +1,5 @@
 import { Preprocessor } from 'content-tag';
-
-import { buildCompiler } from './gjs-md/index.js';
+import { parseMarkdown } from 'repl-sdk/markdown/parse';
 
 const processor = new Preprocessor();
 
@@ -24,8 +23,6 @@ function componentNameFromId(id) {
  * @param {Options} options - Plugin options.
  */
 export function gjsmd(options = {}) {
-  const compiler = buildCompiler(options);
-
   const VIRTUAL_PREFIX = 'kolay:gjs-md:';
   /** @type {Map<string, string>} */
   const virtualModules = new Map();
@@ -76,7 +73,16 @@ export function gjsmd(options = {}) {
       // const originalPath = id.slice(INTERNAL_PREFIX.length);
       // const buffer = await readFile(originalPath);
       // const content = buffer.toString();
-      const result = await compiler.process(input);
+      const result = await parseMarkdown(input, {
+        remarkPlugins: options?.remarkPlugins,
+        rehypePlugins: options?.rehypePlugins,
+        isLive: (meta) => meta?.includes('live'),
+        isPreview: (meta) => meta?.includes('preview'),
+        isBelow: (meta) => meta.includes('below'),
+        needsLive: () => true,
+        ALLOWED_FORMATS: ['gjs'],
+        getFlavorFromMeta: () => null,
+      });
 
       let imports = '';
 
@@ -91,7 +97,7 @@ export function gjsmd(options = {}) {
 
       const nextVirtualIds = new Set();
 
-      for (const block of result.data?.liveCode ?? []) {
+      for (const block of result.codeBlocks ?? []) {
         const demoId = block?.id ?? block?.placeholderId;
 
         if (!demoId) continue;
@@ -108,7 +114,7 @@ export function gjsmd(options = {}) {
       virtualModulesByMarkdownFile.set(id, nextVirtualIds);
 
       const built =
-        (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.value}</template>`;
+        (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
 
       const { code, map } = processor.process(built, {
         filename: id,

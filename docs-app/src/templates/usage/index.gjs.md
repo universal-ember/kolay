@@ -30,6 +30,8 @@ Documentation system for the the `@universal-ember` family of projects.
 pnpm add kolay
 ```
 
+[^type-module]: this library sets `type: module` in its `package.json`, which for ember projects means that it requires vite.
+
 ### Use Markdown
 
 - from any folder, any project (good for monorepos)

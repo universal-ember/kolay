@@ -37,7 +37,7 @@
   "dependencies": {
     "@embroider/macros": "1.19.6",
     "@embroider/router": "3.0.6",
-    "@glimmer/component": "2.0.0",
+    "@glimmer/component": "^2.0.0",
     "decorator-transforms": "2.3.1",
     "ember-primitives": "^0.53.0",
     "ember-source": "6.10.0",
@@ -50,7 +50,7 @@
     "@babel/runtime": "7.28.6",
     "@ember/app-tsconfig": "2.0.0",
     "@ember/test-helpers": "5.4.1",
-    "@ember/test-waiters": "4.1.1",
+    "@ember/test-waiters": "^4.0.0",
     "@embroider/core": "4.4.2",
     "@embroider/vite": "1.5.0",
     "@glint/ember-tsc": "1.1.0",

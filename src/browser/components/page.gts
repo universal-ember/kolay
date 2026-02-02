@@ -73,6 +73,7 @@ export class Page extends Component<{
   };
 }> {
   <template>
+    {{!log this.selected}}
     {{!log 'hasError' this.selected.hasError}}
     {{!log 'isPending' this.selected.isPending}}
     {{!log 'prose' this.selected.prose}}

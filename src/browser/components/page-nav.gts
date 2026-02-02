@@ -120,6 +120,7 @@ export class PageNav extends Component<{
    * This is extra annoying since Pages is a recursive component.
    */
   <template>
+    {{!log this.docs}}
     <nav aria-label='Selected Group' ...attributes>
       <Pages @item={{this.docs.tree}}>
 
