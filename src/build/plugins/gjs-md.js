@@ -45,7 +45,9 @@ export function gjsmd(options = {}) {
    * @param {CodeBlock} block
    */
   function toVirtualId(block) {
-    return `${VIRTUAL_PREFIX}${block.placeholderId}.gjs`;
+    let ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
+
+    return `${VIRTUAL_PREFIX}${block.placeholderId}.${ext}`;
   }
 
   return {
@@ -94,6 +96,10 @@ export function gjsmd(options = {}) {
       return null;
     },
     async transform(input, id) {
+      if (id.startsWith(VIRTUAL_PREFIX)) {
+        return null;
+      }
+
       if (!id.endsWith('.gjs.md')) return;
 
       /**
