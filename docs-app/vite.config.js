@@ -12,6 +12,10 @@ export default defineConfig((/* { mode } */) => {
       info(),
       classicEmberSupport(),
       ember(),
+      babel({
+        babelHelpers: 'runtime',
+        extensions,
+      }),
       kolay({
         groups: [
           {
@@ -37,10 +41,6 @@ export default defineConfig((/* { mode } */) => {
         import { Shadowed } from 'ember-primitives/components/shadowed';
         import { InViewport } from 'ember-primitives/viewport';
         `,
-      }),
-      babel({
-        babelHelpers: 'runtime',
-        extensions,
       }),
     ],
   };
