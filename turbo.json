@@ -26,7 +26,7 @@
       "cache": false
     },
     "start": {
-      "dependsOn": ["_syncPnpm", "^build"],
+      "dependsOn": ["^build"],
       "outputs": [],
       "cache": false,
       "persistent": true
@@ -41,23 +41,19 @@
     /////////////////////////////////////////////////
     "build": {
       "outputs": ["dist/**", "declarations/**"],
-      "dependsOn": ["_syncPnpm"]
+      "dependsOn": ["^build"]
     },
     "build:app": {
       "outputs": ["dist/**"],
-      "dependsOn": ["_syncPnpm"]
-    },
-    "_syncPnpm": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "dependsOn": ["^build"]
     },
     "test:node": {
       "outputs": [],
-      "dependsOn": ["_syncPnpm", "^build"]
+      "dependsOn": ["^build"]
     },
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
-      "dependsOn": ["_syncPnpm", "^build"]
+      "dependsOn": ["^build"]
     },
 
     /////////////////////////////////////////////////
@@ -82,7 +78,7 @@
     "lint:js": { "outputs": [], "dependsOn": ["^build"] },
     "lint:hbs": { "outputs": [] },
     "lint:prettier": { "outputs": [] },
-    "lint:types": { "outputs": [], "dependsOn": ["_syncPnpm"] },
+    "lint:types": { "outputs": [], "dependsOn": ["^build"] },
     "lint:package": { "outputs": [], "dependsOn": ["build"] },
     "lint:published-types": { "outputs": [], "dependsOn": ["build"] },
 
