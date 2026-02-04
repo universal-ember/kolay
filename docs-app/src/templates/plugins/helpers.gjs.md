@@ -10,4 +10,3 @@ This should allow users to build their own specific set of outputs using the sam
 <APIDocs @module="declarations/build/plugins" @name="virtualFile" @package="kolay" />
 
 <APIDocs @module="declarations/build/plugins" @name="generateTypeDocJSON" @package="kolay" />
-

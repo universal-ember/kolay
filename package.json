@@ -140,7 +140,7 @@
     "@babel/runtime": "^7.28.4",
     "@ember/app-tsconfig": "^2.0.0",
     "@ember/library-tsconfig": "^2.0.0",
-    "@embroider/addon-dev": "8.2.0",
+    "@embroider/addon-dev": "8.3.0",
     "@glint/ember-tsc": "1.1.0",
     "@glint/template": "1.7.3",
     "@glint/tsserver-plugin": "2.1.0",
@@ -236,9 +236,7 @@
         }
       }
     },
-    "patchedDependencies": {
-      "@embroider/vite": "patches/@embroider__vite.patch"
-    }
+    "patchedDependencies": {}
   },
   "ember": {
     "edition": "octane"
