@@ -25,6 +25,11 @@
       "dependsOn": ["^dev"],
       "cache": false
     },
+    "sync": {
+      "dependsOn": [],
+      "cache": false
+    },
+
     "start": {
       "dependsOn": ["^build"],
       "outputs": [],
@@ -41,7 +46,7 @@
     /////////////////////////////////////////////////
     "build": {
       "outputs": ["dist/**", "declarations/**"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "sync"]
     },
     "build:app": {
       "outputs": ["dist/**"],
@@ -49,11 +54,11 @@
     },
     "test:node": {
       "outputs": [],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "sync"]
     },
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "sync"]
     },
 
     /////////////////////////////////////////////////

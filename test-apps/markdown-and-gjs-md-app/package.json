@@ -31,6 +31,7 @@
     "test:ember": "pnpm build:test && pnpm test:ci",
     "build:test": "vite build --mode development",
     "test:ci": "testem ci --port 0",
+    "sync": "echo 'syncing'",
     "test": "pnpm build:test && pnpm test:ci",
     "lint:types": "ember-tsc --noEmit"
   },

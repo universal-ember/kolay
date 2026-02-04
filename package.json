@@ -98,6 +98,7 @@
     "start": "concurrently 'pnpm:start:*'",
     "start:browser": "rollup --config --watch",
     "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
+    "sync": "echo 'syncing'",
     "test:dev": "vitest dev",
     "test:node": "vitest --run"
   },
@@ -172,7 +173,7 @@
     "vite": "^7.3.0",
     "vitest": "^4.0.16"
   },
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.28.2",
   "engines": {
     "node": ">= 18"
   },
