@@ -179,7 +179,7 @@
   },
   "volta": {
     "node": "24.13.0",
-    "pnpm": "10.27.0"
+    "pnpm": "10.28.2"
   },
   "publishConfig": {
     "access": "public",
