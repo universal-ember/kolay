@@ -16,6 +16,7 @@
   "scripts": {
     "build:app": "vite build",
     "lint": "pnpm -w turbo --filter docs-app _:lint",
+    "sync": "echo 'syncing'",
     "lint:fix": "pnpm -w turbo --filter docs-app _:lint:fix",
     "lint:types": "ember-tsc --noEmit",
     "lint:hbs": "ember-template-lint .",
