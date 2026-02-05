@@ -3,3 +3,32 @@ packages:
   - "./docs-app"
   - "./ui"
   - "./test-apps/*"
+
+ignoreDepScripts: true
+
+####################
+# super strict mode
+####################
+autoInstallPeers: false
+strictPeerDependencies: true
+
+################
+# Optimizations
+################
+# Less strict, but required for tooling to not barf on duplicate peer trees.
+# (many libraries declare the same peers, which resolve to the same
+#  versions)
+peersSuffixMaxLength: 40
+dedupeInjectedDeps: true
+dedupePeerDependents: true
+injectWorkspacePackages: true
+syncInjectedDepsAfterScripts:
+  - build
+  - sync
+
+################
+# Compatibility
+################
+# highest is what everyone is used to, but
+# not ensuring folks are actually compatible with declared ranges.
+resolutionMode: highest
