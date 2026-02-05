@@ -16,7 +16,12 @@ export default {
   // but does not resolve anywhere in source.
   // It is emitted via the css() plugin, which bundles
   // all CSS in the project into one file (not very much)
-  external: ['./kolay.css'],
+  external: [
+    // All handled by the packager (e.g.: vite)
+    './kolay.css',
+    'kolay/api-docs:virtual',
+    'kolay/compiled-docs:virtual',
+  ],
   plugins: [
     addon.dependencies(),
     addon.publicEntrypoints([
