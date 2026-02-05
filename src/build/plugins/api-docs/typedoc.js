@@ -116,13 +116,20 @@ export async function generateTypeDocJSON({ packageName }) {
 
   const typedocApp = await typedoc.Application.bootstrapWithPlugins({
     entryPoints: absoluteResolved,
+    // exclude: [],
+    compilerOptions: {},
     tsconfig: tmpTSConfigPath,
     basePath: typeInfo.dir,
+    entryPointStrategy: 'expand',
+    disableGit: true,
+    sourceLinkExternal: false,
+    disableSources: true,
     cleanOutputDir: false,
     pretty: false,
     excludeInternal: false,
     excludeExternals: true,
-    skipErrorChecking: true,
+    skipErrorChecking: false,
+    showConfig: true,
     // All types to be referenced in docs must be exported.
     // This plugin does not work with the latest typedoc
     // plugin: ['@zamiell/typedoc-plugin-not-exported'],
