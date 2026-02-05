@@ -89,6 +89,11 @@
   "volta": {
     "extends": "../package.json"
   },
+  "dependenciesMeta": {
+    "kolay": {
+      "injected": true
+    }
+  },
   "dependencies": {
     "@embroider/legacy-inspector-support": "^0.1.3",
     "@shikijs/rehype": "^3.20.0",

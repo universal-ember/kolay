@@ -25,10 +25,6 @@
       "dependsOn": ["^dev"],
       "cache": false
     },
-    "sync": {
-      "dependsOn": ["^build"],
-      "cache": false
-    },
 
     "start": {
       "dependsOn": ["^build", "sync"],
@@ -44,21 +40,25 @@
     //
     /////////////////////////////////////////////////
     /////////////////////////////////////////////////
+    "sync": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
     "build": {
       "outputs": ["dist/**", "declarations/**"],
-      "dependsOn": ["^build", "sync"]
+      "dependsOn": ["sync"]
     },
     "build:app": {
       "outputs": ["dist/**"],
-      "dependsOn": ["^build", "sync"]
+      "dependsOn": ["sync"]
     },
     "test:node": {
       "outputs": [],
-      "dependsOn": ["^build", "sync"]
+      "dependsOn": ["sync"]
     },
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
-      "dependsOn": ["^build", "sync"]
+      "dependsOn": ["sync"]
     },
 
     /////////////////////////////////////////////////
@@ -79,11 +79,11 @@
         "lint:published-types"
       ]
     },
-    "lint:eslint": { "outputs": [], "dependsOn": ["^build", "sync"] },
-    "lint:js": { "outputs": [], "dependsOn": ["^build", "sync"] },
+    "lint:eslint": { "outputs": [], "dependsOn": ["sync"] },
+    "lint:js": { "outputs": [], "dependsOn": ["sync"] },
     "lint:hbs": { "outputs": [] },
     "lint:prettier": { "outputs": [] },
-    "lint:types": { "outputs": [], "dependsOn": ["^build", "sync"] },
+    "lint:types": { "outputs": [], "dependsOn": ["sync"] },
     "lint:package": { "outputs": [], "dependsOn": ["build"] },
     "lint:published-types": { "outputs": [], "dependsOn": ["build"] },
 
@@ -93,7 +93,7 @@
     },
     // Prettier can alter files too, so let's prevent race conditions for multiple
     // writing to the same files.
-    "lint:js:fix": { "cache": false, "dependsOn": ["^build", "sync"] },
+    "lint:js:fix": { "cache": false, "dependsOn": ["sync"] },
     "lint:eslint:fix": { "cache": false },
     "lint:hbs:fix": { "cache": false },
     "lint:prettier:fix": {

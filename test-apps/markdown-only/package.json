@@ -35,6 +35,11 @@
     "test": "pnpm build:test && pnpm test:ci",
     "lint:types": "ember-tsc --noEmit"
   },
+  "dependenciesMeta": {
+    "kolay": {
+      "injected": true
+    }
+  },
   "dependencies": {
     "@embroider/macros": "1.19.7",
     "@embroider/router": "3.0.6",

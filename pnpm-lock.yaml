@@ -258,6 +258,9 @@ importers:
       shiki:
         specifier: ^3.20.0
         version: 3.22.0
+    dependenciesMeta:
+      kolay:
+        injected: true
     devDependencies:
       '@babel/core':
         specifier: ^7.29.0
@@ -421,6 +424,9 @@ importers:
       ember-strict-application-resolver:
         specifier: 0.1.1
         version: 0.1.1(@babel/core@7.29.0)
+    dependenciesMeta:
+      kolay:
+        injected: true
     devDependencies:
       '@babel/core':
         specifier: 7.29.0
@@ -533,6 +539,9 @@ importers:
       ember-strict-application-resolver:
         specifier: 0.1.1
         version: 0.1.1(@babel/core@7.29.0)
+    dependenciesMeta:
+      kolay:
+        injected: true
     devDependencies:
       '@babel/core':
         specifier: 7.29.0
@@ -648,6 +657,9 @@ importers:
       ember-strict-application-resolver:
         specifier: 0.1.1
         version: 0.1.1(@babel/core@7.29.0)
+    dependenciesMeta:
+      kolay:
+        injected: true
     devDependencies:
       '@babel/core':
         specifier: 7.29.0
