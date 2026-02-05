@@ -127,7 +127,7 @@
     "repl-sdk": "^1.4.0",
     "send": "^1.2.1",
     "tracked-built-ins": "^4.1.0",
-    "typedoc": "0.28.15",
+    "typedoc": "0.28.16",
     "typedoc-plugin-rename-defaults": "^0.7.3",
     "unist-util-visit": "^5.0.0",
     "unplugin": "^3.0.0"

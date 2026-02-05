@@ -37,7 +37,9 @@ export async function generateTypeDocJSON({ packageName }) {
   );
 
   const resolvedEntries = await resolveFiles(typeInfo.dir, entries);
-  const absoluteResolved = resolvedEntries.map((entry) => join(typeInfo.dir, entry));
+  const absoluteResolved = resolvedEntries
+    .map((entry) => join(typeInfo.dir, entry))
+    .filter((entry) => entry.endsWith('.ts'));
 
   const typedoc = await import('typedoc');
   const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
@@ -46,9 +48,9 @@ export async function generateTypeDocJSON({ packageName }) {
   // const home = process.cwd();
   // const homeRequire = createRequire(home);
   const types = [
-    'ember-source/types',
-    'ember-source/types/stable',
+    'ember-source/types/stable/index.d.ts',
     '@glint/ember-tsc/types',
+    // '@glint/template',
     'ember-modifier',
     '@glimmer/component',
     // homeRequire.resolve('ember-source/types/stable/index.d.ts')
@@ -74,14 +76,40 @@ export async function generateTypeDocJSON({ packageName }) {
 
   resolvedTypes.push(resolve(__dirname, '..', '..', '..', 'fake-glint-template.d.ts'));
 
+  // const tsc = resolve('@glint/tsserver-plugin');
+
   const tsConfig = {
     extends: extendsTsConfig,
     include: [...new Set(absoluteResolved.map((entry) => dirname(entry)))],
+    exclude: ['dne'],
     compilerOptions: {
+      allowJs: true,
       baseUrl: typeInfo.dir,
       noEmitOnError: false,
       types: resolvedTypes,
+      skipLibCheck: true,
+      allowImportingTsExtensions: true,
+      verbatimModuleSyntax: false,
+      allowArbitraryExtensions: true,
     },
+    // plugins: [
+    //   {
+    //     name: '@glint/tsserver-plugin',
+    //     location: tsc,
+    //     languages: [
+    //       'Glimmer JS',
+    //       'Glimmer TS',
+    //       'typescript',
+    //       'javascript',
+    //       'typescript.glimmer',
+    //       'javascript.glimmer',
+    //       'typescript.tsx',
+    //       'javascript.jsx',
+    //       'html.handlebars',
+    //       'handlebars',
+    //     ],
+    // },
+    // ],
   };
 
   await writeFile(tmpTSConfigPath, JSON.stringify(tsConfig, null, 2));
