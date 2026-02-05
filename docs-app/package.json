@@ -16,7 +16,7 @@
   "scripts": {
     "build:app": "vite build",
     "lint": "pnpm -w turbo --filter docs-app _:lint",
-    "sync": "echo 'syncing'",
+    "sync": "pnpm sync-dependencies-meta-injected",
     "lint:fix": "pnpm -w turbo --filter docs-app _:lint:fix",
     "lint:types": "ember-tsc --noEmit",
     "lint:hbs": "ember-template-lint .",
@@ -67,6 +67,7 @@
     "ember-template-lint": "^7.9.3",
     "eslint": "^9.39.2",
     "loader.js": "^4.7.0",
+    "pnpm-sync-dependencies-meta-injected": "^0.0.15",
     "prettier": "^3.7.4",
     "prettier-plugin-ember-template-tag": "^2.1.2",
     "qunit": "^2.24.1",

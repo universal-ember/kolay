@@ -93,7 +93,7 @@
     },
     // Prettier can alter files too, so let's prevent race conditions for multiple
     // writing to the same files.
-    "lint:js:fix": { "cache": false },
+    "lint:js:fix": { "cache": false, "dependsOn": ["^build", "sync"] },
     "lint:eslint:fix": { "cache": false },
     "lint:hbs:fix": { "cache": false },
     "lint:prettier:fix": {
