@@ -25,7 +25,6 @@ export const setup = (options = {}) => {
 
   return {
     name: 'kolay:setup',
-    enforce: 'pre',
     vite: {
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;

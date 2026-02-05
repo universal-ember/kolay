@@ -99,17 +99,18 @@ export default Route(
       }
 
       @media (min-width: 768px) {
+        .big-layout { display: grid; }
         header button.mobile-menu__toggle {
           display: none;
         }
       }
 
       @media (max-width: 768px) {
+        .big-layout { display: flex; }
         .big-layout aside { display: none; }
       }
 
       .big-layout {
-        display: grid;
         grid-template-columns: max-content 1fr;
         gap: 2rem;
 

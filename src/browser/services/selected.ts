@@ -1,3 +1,5 @@
+import { cached } from '@glimmer/tracking';
+import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
@@ -113,27 +115,28 @@ class Selected {
   }
 
   get hasError() {
+    if (this.error) {
+      return Boolean(this.error);
+    }
+
     return Boolean(this.activeCompiled?.error);
   }
 
+  @cached
   get error() {
-    const error = this.activeCompiled?.error ? String(this.activeCompiled?.error) : '';
-
-    if (error) {
+    if (!this.#page) {
       const message = `Page not found for path "${this.#path}". (Using group: "${this.#docs.currentGroup.name}", see console for more information)`;
 
-      console.group(message);
-      console.error(error);
-      console.group('manifest');
-      console.info(this.#docs.manifest);
-      console.groupEnd();
-      console.group('pages');
-      console.info(this.#docs.pages);
-      console.groupEnd();
-      console.groupEnd();
+      this.#printError(message);
 
-      return error;
+      return message;
     }
+
+    const error = this.activeCompiled?.error ? String(this.activeCompiled?.error) : '';
+
+    if (!error) return '';
+
+    this.#printError(`An error occurred`, error);
 
     return error;
   }
@@ -159,13 +162,29 @@ class Selected {
     return this.#page?.path ?? this.#docs.pages[0]?.path;
   }
 
-  get #page(): Page | undefined {
+  #pageCache = createCache(() => {
     if (!this.#path) return;
 
-    return this.#findByPath(this.#path);
+    return this.#docs.findByPath(this.#path);
+  });
+
+  get #page(): Page | undefined {
+    return getValue(this.#pageCache);
   }
 
-  #findByPath = (path: string) => {
-    return this.#docs.pages.find((page) => page.path === path || page.path === path + '.md');
-  };
+  #printError(message: string, error?: unknown) {
+    console.group(message);
+
+    if (error) {
+      console.error(error);
+    }
+
+    console.group('manifest');
+    console.info(this.#docs.manifest);
+    console.groupEnd();
+    console.group('pages');
+    console.info(this.#docs.pages);
+    console.groupEnd();
+    console.groupEnd();
+  }
 }

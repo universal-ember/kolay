@@ -193,7 +193,7 @@ class DocsService {
   }
 
   /**
-   * The flat list of all pages.
+   * The flat list of all pages for the current group.
    * Each page knows the name of its immediate parent.
    */
   get pages() {
@@ -201,7 +201,7 @@ class DocsService {
   }
 
   /**
-   * The full page hierachy
+   * The full page hierachy for the current group.
    */
   get tree() {
     return this.currentGroup?.tree ?? {};
@@ -280,5 +280,12 @@ class DocsService {
     }
 
     return false;
+  };
+
+  /**
+   * Returns the page entry for the current group
+   */
+  findByPath = (path: string) => {
+    return this.pages.find((page) => page.path === path || page.path === path + '.md');
   };
 }

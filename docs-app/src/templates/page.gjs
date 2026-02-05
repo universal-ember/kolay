@@ -23,7 +23,7 @@ function removeLoader() {
     </:pending>
 
     <:error as |error|>
-      <div style="border: 1px solid red; padding: 1rem;" data-page-error role="alert">
+      <div class="error" data-page-error role="alert">
         {{error}}
       </div>
       {{(removeLoader)}}
@@ -35,7 +35,13 @@ function removeLoader() {
     </:success>
 
   </Page>
-  <style>
+
+  <style scoped>
+    .error {
+      margin-bottom: 2rem;
+      border: 1px solid red;
+      padding: 1rem;
+    }
     .loading-page {
       position: fixed;
       top: 0rem;

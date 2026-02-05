@@ -1,4 +1,4 @@
-import { classicEmberSupport, ember, extensions } from '@embroider/vite';
+import { ember, extensions } from '@embroider/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import rehypeShiki from '@shikijs/rehype';
@@ -6,11 +6,10 @@ import { kolay } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 
-export default defineConfig((/* { mode } */) => {
+export default defineConfig(async (/* { mode } */) => {
   return {
     plugins: [
       info(),
-      classicEmberSupport(),
       ember(),
       babel({
         babelHelpers: 'runtime',
@@ -43,5 +42,9 @@ export default defineConfig((/* { mode } */) => {
         `,
       }),
     ],
+    optimizeDeps: {
+      // Because we use dep injection
+      exclude: ['kolay'],
+    },
   };
 });
