@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
-import { waitForPromise } from '@ember/test-waiters';
 
 import { Provide } from 'ember-primitives/dom-context';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
@@ -48,8 +47,6 @@ export const Query: TOC<{
     {{/if}}
   {{/let}}
 </template>;
-
-const stringify = (x: unknown) => String(x);
 
 const cache = new Map<string, () => Promise<ProjectReflection>>();
 
@@ -102,18 +99,16 @@ export class Load extends Component<{
   }
 
   <template>
-    {{log this.request}}
+    {{log (JSON.stringify this.request)}}
     {{#if this.request.isLoading}}
       Loading api docs...
     {{/if}}
 
     {{#if this.request.error}}
-    {{log this.request.error}}
-      {{stringify this.request.error}}
+      {{errorFor this.request.error}}
     {{/if}}
 
     {{#if this.request.resolved}}
-    {{log this.request.resolved}}
       <section>
         <Query @info={{this.request.resolved}} @module={{@module}} @name={{@name}} as |type|>
           <Provide @data={{this.request.resolved}} @key='project'>
@@ -123,4 +118,18 @@ export class Load extends Component<{
       </section>
     {{/if}}
   </template>
+}
+
+function errorFor(error: unknown) {
+  if (typeof error === 'object' && null !== error) {
+    if ('reason' in error) {
+      return error.reason;
+    }
+  }
+
+  if (error instanceof Error) {
+    return `Error loading API docs: ${error.message}`;
+  }
+
+  return `Error loading API docs: ${String(error)}`;
 }
