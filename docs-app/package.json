@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "imports": {
+    "#src/*": "./src/*",
     "#config": "./src/config.ts",
     "#components/*": "./src/components/*",
     "#routes/*": "./src/routes/*"
