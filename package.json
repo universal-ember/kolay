@@ -106,7 +106,7 @@
     "@ember/test-waiters": "^4.0.0",
     "@embroider/addon-shim": "1.10.2",
     "@glimmer/component": "^2.0.0",
-    "@glint/template": "1.7.3",
+    "@glint/template": "1.7.4",
     "change-case": "^5.4.4",
     "common-tags": "^1.8.2",
     "content-tag": "^4.1.0",

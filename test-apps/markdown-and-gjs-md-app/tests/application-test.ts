@@ -13,6 +13,8 @@ module("All Links", function (hooks) {
       assert.step(path);
 
       return new Promise((resolve) => setTimeout(resolve, 250));
+    }, {
+      '/Home': '/usage/index',
     });
 
     assert.verifySteps([
