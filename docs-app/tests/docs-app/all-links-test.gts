@@ -9,6 +9,8 @@ module('All Links', function (hooks) {
   setupApplicationTest(hooks);
 
   skippable('are visitable without error', async function () {
-    await visitAllLinks(async () => new Promise((resolve) => setTimeout(resolve, 250)));
+    await visitAllLinks(async () => new Promise((resolve) => setTimeout(resolve, 250)), {
+      '/Home': '/usage/index',
+    });
   });
 });

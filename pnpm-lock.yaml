@@ -232,8 +232,8 @@ importers:
         specifier: ^3.20.0
         version: 3.22.0
       '@universal-ember/test-support':
-        specifier: ^0.6.0
-        version: 0.6.0(109b94cfef4fa6f8e96512756d4e265e)
+        specifier: ^0.6.1
+        version: 0.6.1(109b94cfef4fa6f8e96512756d4e265e)
       change-case:
         specifier: ^5.4.3
         version: 5.4.4
@@ -474,8 +474,8 @@ importers:
         specifier: 2.19.13
         version: 2.19.13
       '@universal-ember/test-support':
-        specifier: ^0.6.0
-        version: 0.6.0(109b94cfef4fa6f8e96512756d4e265e)
+        specifier: ^0.6.1
+        version: 0.6.1(109b94cfef4fa6f8e96512756d4e265e)
       babel-plugin-ember-template-compilation:
         specifier: 4.0.0
         version: 4.0.0
@@ -589,8 +589,8 @@ importers:
         specifier: 2.19.13
         version: 2.19.13
       '@universal-ember/test-support':
-        specifier: ^0.6.0
-        version: 0.6.0(109b94cfef4fa6f8e96512756d4e265e)
+        specifier: ^0.6.1
+        version: 0.6.1(109b94cfef4fa6f8e96512756d4e265e)
       babel-plugin-ember-template-compilation:
         specifier: 4.0.0
         version: 4.0.0
@@ -707,8 +707,8 @@ importers:
         specifier: 2.19.13
         version: 2.19.13
       '@universal-ember/test-support':
-        specifier: ^0.6.0
-        version: 0.6.0(109b94cfef4fa6f8e96512756d4e265e)
+        specifier: ^0.6.1
+        version: 0.6.1(109b94cfef4fa6f8e96512756d4e265e)
       babel-plugin-ember-template-compilation:
         specifier: 4.0.0
         version: 4.0.0
@@ -2999,8 +2999,8 @@ packages:
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
-  '@universal-ember/test-support@0.6.0':
-    resolution: {integrity: sha512-NkvT1CvsEBw6IQrnnl8mR0u9kbdoHQRoePkUcDlrM//5qLPQSRqKGBvEoVDmjFr/qLUjBv497nqAwIgX/qVR4w==}
+  '@universal-ember/test-support@0.6.1':
+    resolution: {integrity: sha512-xpteNhkzbBHlNwD+18cG8FrvEH3rq4DU2EiNftgl58JE/G8qk7gNoNyMN1s4eNjINI2smo56enls7oTpSzlB3w==}
     peerDependencies:
       ember-source: 6.10.1
       qunit: ^2.20.1
@@ -12150,7 +12150,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@universal-ember/test-support@0.6.0(109b94cfef4fa6f8e96512756d4e265e)':
+  '@universal-ember/test-support@0.6.1(109b94cfef4fa6f8e96512756d4e265e)':
     dependencies:
       '@ember/test-helpers': 5.4.1(882cf82caec78f226fcbd647b89f3bbe)
       '@embroider/addon-shim': 1.10.2

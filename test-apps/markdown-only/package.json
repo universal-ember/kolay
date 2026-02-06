@@ -65,7 +65,7 @@
     "@nullvoxpopuli/eslint-configs": "5.5.0",
     "@rollup/plugin-babel": "6.1.0",
     "@types/qunit": "2.19.13",
-    "@universal-ember/test-support": "^0.6.0",
+    "@universal-ember/test-support": "^0.6.1",
     "babel-plugin-ember-template-compilation": "4.0.0",
     "concurrently": "9.2.1",
     "ember-qunit": "9.0.4",
