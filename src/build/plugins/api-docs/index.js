@@ -61,6 +61,7 @@ export const apiDocs = (options) => {
             if (req.originalUrl && req.originalUrl.length > 1) {
               const assetUrl = req.originalUrl.split('?')[0];
 
+              debugger;
               const pkg = options.packages.find((pkgName) => {
                 const dest = baseUrl + getDest(pkgName);
 

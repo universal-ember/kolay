@@ -84,32 +84,17 @@ export async function generateTypeDocJSON({ packageName }) {
     exclude: ['dne'],
     compilerOptions: {
       allowJs: true,
+      preserveSymlinks: false,
       baseUrl: typeInfo.dir,
       noEmitOnError: false,
       types: resolvedTypes,
-      skipLibCheck: true,
+      // We disable skipLibCheck so that we can slurp up types from
+      // dependencies.
+      skipLibCheck: false,
       allowImportingTsExtensions: true,
       verbatimModuleSyntax: false,
       allowArbitraryExtensions: true,
     },
-    // plugins: [
-    //   {
-    //     name: '@glint/tsserver-plugin',
-    //     location: tsc,
-    //     languages: [
-    //       'Glimmer JS',
-    //       'Glimmer TS',
-    //       'typescript',
-    //       'javascript',
-    //       'typescript.glimmer',
-    //       'javascript.glimmer',
-    //       'typescript.tsx',
-    //       'javascript.jsx',
-    //       'html.handlebars',
-    //       'handlebars',
-    //     ],
-    // },
-    // ],
   };
 
   await writeFile(tmpTSConfigPath, JSON.stringify(tsConfig, null, 2));
@@ -117,19 +102,22 @@ export async function generateTypeDocJSON({ packageName }) {
   const typedocApp = await typedoc.Application.bootstrapWithPlugins({
     entryPoints: absoluteResolved,
     // exclude: [],
-    compilerOptions: {},
+    compilerOptions: {
+      preserveSymlinks: false,
+    },
     tsconfig: tmpTSConfigPath,
     basePath: typeInfo.dir,
-    entryPointStrategy: 'expand',
     disableGit: true,
     sourceLinkExternal: false,
     disableSources: true,
     cleanOutputDir: false,
     pretty: false,
+    commentStyle: 'all',
+    excludeNotDocumented: false,
     excludeInternal: false,
-    excludeExternals: true,
-    skipErrorChecking: false,
-    showConfig: true,
+    excludeExternals: false,
+    skipErrorChecking: true,
+    showConfig: false,
     // All types to be referenced in docs must be exported.
     // This plugin does not work with the latest typedoc
     // plugin: ['@zamiell/typedoc-plugin-not-exported'],
@@ -139,7 +127,35 @@ export async function generateTypeDocJSON({ packageName }) {
   const project = await typedocApp.convert();
 
   if (project) {
+    const countComments = (node) => {
+      let count = 0;
+      const stack = [node];
+
+      while (stack.length > 0) {
+        const current = stack.pop();
+
+        if (!current || typeof current !== 'object') continue;
+
+        if (current.comment) count += 1;
+
+        for (const value of Object.values(current)) {
+          if (Array.isArray(value)) {
+            for (const item of value) stack.push(item);
+          } else if (value && typeof value === 'object') {
+            stack.push(value);
+          }
+        }
+      }
+
+      return count;
+    };
+
     const data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
+    const projectCommentCount = countComments(project);
+    const dataCommentCount = countComments(data);
+
+    console.log('[typedoc] Project comment count:', projectCommentCount);
+    console.log('[typedoc] Serialized comment count:', dataCommentCount);
 
     return data;
   }
