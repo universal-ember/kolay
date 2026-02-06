@@ -37,6 +37,15 @@ function removeLoader() {
   </Page>
 
   <style scoped>
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
     .error {
       margin-bottom: 2rem;
       border: 1px solid red;
@@ -46,13 +55,26 @@ function removeLoader() {
       position: fixed;
       top: 0rem;
       padding: 0.5rem 1rem;
-      background: rgba(40, 40, 50, 0.9);
+      background: linear-gradient(
+        90deg,
+        rgba(40, 40, 50, 0.9),
+        rgba(60, 60, 70, 0.9),
+        rgba(40, 40, 50, 0.9)
+      );
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
       filter: drop-shadow(0 0.5rem 0.5rem rgba(0, 0, 0, 0.8));
       color: white;
       right: 0;
       width: 100%;
       border-bottom-left-radius: 0.25rem;
       border-bottom-right-radius: 0.25rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .loading-page {
+        animation: shimmer 10s infinite;
+      }
     }
   </style>
 </template>
