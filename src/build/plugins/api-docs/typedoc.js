@@ -127,35 +127,7 @@ export async function generateTypeDocJSON({ packageName }) {
   const project = await typedocApp.convert();
 
   if (project) {
-    const countComments = (node) => {
-      let count = 0;
-      const stack = [node];
-
-      while (stack.length > 0) {
-        const current = stack.pop();
-
-        if (!current || typeof current !== 'object') continue;
-
-        if (current.comment) count += 1;
-
-        for (const value of Object.values(current)) {
-          if (Array.isArray(value)) {
-            for (const item of value) stack.push(item);
-          } else if (value && typeof value === 'object') {
-            stack.push(value);
-          }
-        }
-      }
-
-      return count;
-    };
-
     const data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
-    const projectCommentCount = countComments(project);
-    const dataCommentCount = countComments(data);
-
-    console.log('[typedoc] Project comment count:', projectCommentCount);
-    console.log('[typedoc] Serialized comment count:', dataCommentCount);
 
     return data;
   }
