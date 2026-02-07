@@ -420,9 +420,6 @@ importers:
       ember-strict-application-resolver:
         specifier: 0.1.1
         version: 0.1.1(@babel/core@7.29.0)
-    dependenciesMeta:
-      kolay:
-        injected: true
     devDependencies:
       '@babel/core':
         specifier: 7.29.0
@@ -486,7 +483,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       kolay:
         specifier: workspace:*
-        version: file:(40aa4eb01a5803084c93f642a5c38b5c)
+        version: link:../..
       prettier:
         specifier: 3.8.1
         version: 3.8.1
@@ -532,9 +529,6 @@ importers:
       ember-strict-application-resolver:
         specifier: 0.1.1
         version: 0.1.1(@babel/core@7.29.0)
-    dependenciesMeta:
-      kolay:
-        injected: true
     devDependencies:
       '@babel/core':
         specifier: 7.29.0
@@ -598,7 +592,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       kolay:
         specifier: workspace:*
-        version: file:(40aa4eb01a5803084c93f642a5c38b5c)
+        version: link:../..
       prettier:
         specifier: 3.8.1
         version: 3.8.1
@@ -647,9 +641,6 @@ importers:
       ember-strict-application-resolver:
         specifier: 0.1.1
         version: 0.1.1(@babel/core@7.29.0)
-    dependenciesMeta:
-      kolay:
-        injected: true
     devDependencies:
       '@babel/core':
         specifier: 7.29.0
@@ -713,7 +704,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       kolay:
         specifier: workspace:*
-        version: file:(40aa4eb01a5803084c93f642a5c38b5c)
+        version: link:../..
       prettier:
         specifier: 3.8.1
         version: 3.8.1
@@ -5929,10 +5920,6 @@ packages:
   kind-of@6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
-
-  'kolay@file:':
-    resolution: {directory: '', type: directory}
-    engines: {node: '>= 18'}
 
   ky@1.14.3:
     resolution: {integrity: sha512-9zy9lkjac+TR1c2tG+mkNSVlyOpInnWdSMiue4F+kq8TwJSgv6o8jhLRg8Ho6SnZ9wOYUq/yozts9qQCfk7bIw==}
@@ -15669,49 +15656,6 @@ snapshots:
       json-buffer: 3.0.1
 
   kind-of@6.0.3: {}
-
-  kolay@file:(40aa4eb01a5803084c93f642a5c38b5c):
-    dependencies:
-      '@ember/test-waiters': 4.1.1(882cf82caec78f226fcbd647b89f3bbe)
-      '@embroider/addon-shim': 1.10.2
-      '@glimmer/component': 2.0.0
-      '@glint/template': 1.7.4
-      change-case: 5.4.4
-      common-tags: 1.8.2
-      content-tag: 4.1.0
-      decorator-transforms: 2.3.1(@babel/core@7.29.0)
-      ember-modifier: 4.3.0(@babel/core@7.29.0)
-      ember-primitives: 0.53.0(ed2660980ede4ecc94e83aa069151086)
-      ember-repl: 7.3.4(cd501088b508a17aa4432dd5ef29cef6)
-      ember-resources: 7.0.7(c9b2d83ca9f23eabb33653a2e0f9845f)
-      globby: 16.1.0
-      json5: 2.2.3
-      package-up: 5.0.0
-      reactiveweb: 1.9.1(319aff8695de9f3f406eb0cd76a2e35f)
-      rehype-raw: 7.0.0
-      rehype-stringify: 10.0.1
-      remark-gfm: 4.0.1
-      remark-parse: 11.0.0
-      remark-rehype: 11.1.2
-      repl-sdk: 1.4.0(6f4bb085e066dcd1e8cba157a733f3a5)
-      send: 1.2.1
-      tracked-built-ins: 4.1.0(@babel/core@7.29.0)
-      typedoc: 0.28.16(typescript@5.9.3)
-      typedoc-plugin-rename-defaults: 0.7.3(typedoc@0.28.16(typescript@5.9.3))
-      unist-util-visit: 5.1.0
-      unplugin: 3.0.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@codemirror/lang-css'
-      - '@ember/test-helpers'
-      - '@lezer/javascript'
-      - '@lezer/lr'
-      - bufferutil
-      - ember-source
-      - encoding
-      - supports-color
-      - typescript
-      - utf-8-validate
 
   ky@1.14.3: {}
 
