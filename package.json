@@ -98,7 +98,6 @@
     "start": "concurrently 'pnpm:start:*'",
     "start:browser": "rollup --config --watch",
     "start:typedoc": "typedoc --options ./typedoc.config.json --watch",
-    "sync": "echo 'syncing'",
     "test:dev": "vitest dev",
     "test:node": "vitest --run"
   },

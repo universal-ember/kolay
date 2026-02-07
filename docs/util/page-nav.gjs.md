@@ -6,10 +6,8 @@ This components provides a `<nav>` for the currently selected `group` (or the de
 
 ## API Reference
 
-```hbs live no-shadow
 <ComponentSignature
   @package='kolay'
   @name='PageNav'
   @module='declarations/browser/components'
 />
-```

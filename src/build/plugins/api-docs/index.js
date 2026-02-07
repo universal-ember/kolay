@@ -58,22 +58,26 @@ export const apiDocs = (options) => {
       configureServer(server) {
         return () => {
           server.middlewares.use(async (req, res, next) => {
-            if (req.originalUrl && req.originalUrl.length > 1) {
-              const assetUrl = req.originalUrl.split('?')[0];
+            try {
+              if (req.originalUrl && req.originalUrl.length > 1) {
+                const assetUrl = req.originalUrl.split('?')[0];
 
-              const pkg = options.packages.find((pkgName) => {
-                const dest = baseUrl + getDest(pkgName);
+                const pkg = options.packages.find((pkgName) => {
+                  const dest = baseUrl + getDest(pkgName);
 
-                return dest === assetUrl;
-              });
+                  return dest === assetUrl;
+                });
 
-              if (pkg) {
-                const data = await generateTypeDocJSON({ packageName: pkg });
+                if (pkg) {
+                  const data = await generateTypeDocJSON({ packageName: pkg });
 
-                res.setHeader('content-type', 'application/json');
+                  res.setHeader('content-type', 'application/json');
 
-                return res.end(JSON.stringify(data));
+                  return res.end(JSON.stringify(data));
+                }
               }
+            } catch (e) {
+              console.error(e);
             }
 
             return next();

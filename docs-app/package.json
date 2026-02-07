@@ -17,7 +17,6 @@
   "scripts": {
     "build:app": "vite build",
     "lint": "pnpm -w turbo --filter docs-app _:lint",
-    "sync": "pnpm sync-dependencies-meta-injected",
     "lint:fix": "pnpm -w turbo --filter docs-app _:lint:fix",
     "lint:types": "ember-tsc --noEmit",
     "lint:hbs": "ember-template-lint .",
@@ -44,7 +43,7 @@
     "@embroider/compat": "^4.1.13",
     "@embroider/core": "^4.4.3",
     "@embroider/macros": "^1.19.7",
-    "@embroider/vite": "^1.5.1",
+    "@embroider/vite": "^1.5.2",
     "@glimmer/component": "^2.0.0",
     "@glint/ember-tsc": "1.1.1",
     "@glint/template": "1.7.4",
@@ -68,7 +67,6 @@
     "ember-template-lint": "^7.9.3",
     "eslint": "^9.39.2",
     "loader.js": "^4.7.0",
-    "pnpm-sync-dependencies-meta-injected": "^0.0.15",
     "prettier": "^3.7.4",
     "prettier-plugin-ember-template-tag": "^2.1.2",
     "qunit": "^2.24.1",
@@ -78,6 +76,7 @@
     "typescript": "^5.9.3",
     "unplugin-info": "^1.2.4",
     "vite": "^7.3.0",
+    "vite-plugin-inspect": "^11.3.3",
     "vite-plugin-wasm": "^3.5.0"
   },
   "ember": {
@@ -91,9 +90,6 @@
     "extends": "../package.json"
   },
   "dependenciesMeta": {
-    "kolay": {
-      "injected": true
-    }
   },
   "dependencies": {
     "@embroider/legacy-inspector-support": "^0.1.3",

@@ -30,7 +30,10 @@ class DocsLoader {
 
     const loader = this.loadApiDocs[name];
 
-    assert(`Could load API Docs for ${name}. 'loadApiDocs' did not now how to find ${name}. Was '${name}' including in the build config?`, loader);
+    assert(
+      `Could load API Docs for ${name}. 'loadApiDocs' did not now how to find ${name}. Was '${name}' including in the build config?`,
+      loader
+    );
 
     return loader();
   };

@@ -5,10 +5,12 @@ import rehypeShiki from '@shikijs/rehype';
 import { kolay } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
+import inspect from 'vite-plugin-inspect';
 
 export default defineConfig(async (/* { mode } */) => {
   return {
     plugins: [
+      inspect(),
       info(),
       ember(),
       babel({

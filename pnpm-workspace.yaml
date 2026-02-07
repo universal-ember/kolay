@@ -20,7 +20,8 @@ autoInstallPeers: false
 peersSuffixMaxLength: 40
 dedupePeerDependents: true
 dedupeInjectedDeps: true
-injectWorkspacePackages: true
+# buggy? idk
+injectWorkspacePackages: false
 syncInjectedDepsAfterScripts:
   - build
   - sync

@@ -27,7 +27,7 @@
     },
 
     "start": {
-      "dependsOn": ["^build", "sync"],
+      "dependsOn": ["^build", "^build"],
       "outputs": [],
       "cache": false,
       "persistent": true
@@ -40,25 +40,21 @@
     //
     /////////////////////////////////////////////////
     /////////////////////////////////////////////////
-    "sync": {
-      "dependsOn": ["^build"],
-      "cache": false
-    },
     "build": {
       "outputs": ["dist/**", "declarations/**"],
-      "dependsOn": ["sync"]
+      "dependsOn": ["^build"]
     },
     "build:app": {
       "outputs": ["dist/**"],
-      "dependsOn": ["sync"]
+      "dependsOn": ["^build"]
     },
     "test:node": {
       "outputs": [],
-      "dependsOn": ["sync"]
+      "dependsOn": ["^build"]
     },
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
-      "dependsOn": ["sync"]
+      "dependsOn": ["^build"]
     },
 
     /////////////////////////////////////////////////
@@ -79,11 +75,11 @@
         "lint:published-types"
       ]
     },
-    "lint:eslint": { "outputs": [], "dependsOn": ["sync"] },
-    "lint:js": { "outputs": [], "dependsOn": ["sync"] },
+    "lint:eslint": { "outputs": [], "dependsOn": ["^build"] },
+    "lint:js": { "outputs": [], "dependsOn": ["^build"] },
     "lint:hbs": { "outputs": [] },
     "lint:prettier": { "outputs": [] },
-    "lint:types": { "outputs": [], "dependsOn": ["sync"] },
+    "lint:types": { "outputs": [], "dependsOn": ["^build"] },
     "lint:package": { "outputs": [], "dependsOn": ["build"] },
     "lint:published-types": { "outputs": [], "dependsOn": ["build"] },
 
@@ -93,7 +89,7 @@
     },
     // Prettier can alter files too, so let's prevent race conditions for multiple
     // writing to the same files.
-    "lint:js:fix": { "cache": false, "dependsOn": ["sync"] },
+    "lint:js:fix": { "cache": false, "dependsOn": ["^build"] },
     "lint:eslint:fix": { "cache": false },
     "lint:hbs:fix": { "cache": false },
     "lint:prettier:fix": {

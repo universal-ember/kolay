@@ -2,7 +2,9 @@ import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
 
 import { Provide } from 'ember-primitives/dom-context';
+import { use } from 'ember-resources';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
+import { keepLatest } from 'reactiveweb/keep-latest';
 import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
 
 import { typedocLoader } from '../services/api-docs.ts';
@@ -66,6 +68,11 @@ export class Load extends Component<{
     return getPromiseState(this.#createProject);
   }
 
+  @use resolved = keepLatest({
+    value: () => this.request.resolved,
+    when: () => this.request.isLoading,
+  });
+
   get #createProject() {
     const { package: pkg } = this.args;
 
@@ -99,8 +106,6 @@ export class Load extends Component<{
   }
 
   <template>
-    {{log this.request}}
-
     {{#if this.request.isLoading}}
       Loading api docs...
     {{/if}}
