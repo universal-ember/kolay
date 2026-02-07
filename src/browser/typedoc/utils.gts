@@ -99,7 +99,8 @@ export class Load extends Component<{
   }
 
   <template>
-    {{log (JSON.stringify this.request)}}
+    {{log this.request}}
+
     {{#if this.request.isLoading}}
       Loading api docs...
     {{/if}}
@@ -120,9 +121,9 @@ export class Load extends Component<{
   </template>
 }
 
-function errorFor(error: unknown) {
+function errorFor(error: unknown): string | undefined {
   if (typeof error === 'object' && null !== error) {
-    if ('reason' in error) {
+    if ('reason' in error && typeof error.reason === 'string') {
       return error.reason;
     }
   }
