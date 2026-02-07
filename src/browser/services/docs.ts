@@ -20,11 +20,9 @@ import type { ComponentLike } from '@glint/template';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
-let owners = new Set();
 export function docsManager(context: unknown) {
   const owner = getKey(context);
-  owners.add(owner);
-  console.log(`owners`, owners);
+
   return createStore(owner, DocsService);
 }
 
