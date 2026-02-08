@@ -7,7 +7,9 @@ import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 import inspect from 'vite-plugin-inspect';
 
-export default defineConfig(async (/* { mode } */) => {
+export default defineConfig(async ({ mode }) => {
+  const isDev = mode === 'development';
+
   return {
     plugins: [
       inspect(),
@@ -44,6 +46,25 @@ export default defineConfig(async (/* { mode } */) => {
         `,
       }),
     ],
+    build: {
+      ...(isDev ? { minify: false } : {}),
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (
+              id.includes('hast') ||
+              id.includes('mdast') ||
+              id.includes('remark') ||
+              id.includes('rehype') ||
+              id.includes('unified') ||
+              id.includes('vfile')
+            ) {
+              return 'unified';
+            }
+          },
+        },
+      },
+    },
     optimizeDeps: {
       // Because we use dep injection
       exclude: ['kolay'],

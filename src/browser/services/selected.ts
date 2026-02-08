@@ -103,6 +103,10 @@ class Selected {
   });
 
   get prose() {
+    if (this.error) {
+      return;
+    }
+
     return this.activeCompiled?.resolved;
   }
 

@@ -331,7 +331,7 @@ importers:
         version: 2.12.0(@glint/template@1.7.4)
       ember-cli:
         specifier: ^6.9.1
-        version: 6.10.0(@types/node@25.2.0)
+        version: 6.10.0(aee6f353e28028806c6c60dd4e194896)
       ember-eslint:
         specifier: ^0.6.1
         version: 0.6.1(5a7f00948a6312db668ed12e548f3346)
@@ -380,6 +380,9 @@ importers:
       read-package-up:
         specifier: ^12.0.0
         version: 12.0.0
+      testem:
+        specifier: 3.17.0
+        version: 3.17.0(8bcdda22d80c66a2796dcf0ed2360163)
       tracked-built-ins:
         specifier: ^4.1.0
         version: 4.1.0(@babel/core@7.29.0)
@@ -13329,7 +13332,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-cli@6.10.0(@types/node@25.2.0):
+  ember-cli@6.10.0(aee6f353e28028806c6c60dd4e194896):
     dependencies:
       '@ember-tooling/blueprint-blueprint': 0.2.1
       '@ember-tooling/blueprint-model': 0.5.0

@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build:app": "vite build",
+    "build:tests": "NODE_ENV=development vite build --mode development",
     "lint": "pnpm -w turbo --filter docs-app _:lint",
     "lint:fix": "pnpm -w turbo --filter docs-app _:lint:fix",
     "lint:types": "ember-tsc --noEmit",
@@ -28,8 +29,8 @@
     "start": "pnpm start:vite",
     "start:vite": "vite",
     "start:test": "pnpm start:vite --open /tests/",
-    "test:ember": "NODE_ENV=development vite build --mode development && pnpm dist:ember:test",
-    "dist:ember:test": "ember test --path dist --config-file ./testem.cjs"
+    "test:ember": "pnpm build:tests && pnpm dist:ember:test",
+    "dist:ember:test": "testem ci --port 0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
@@ -72,6 +73,7 @@
     "qunit": "^2.24.1",
     "qunit-dom": "^3.5.0",
     "read-package-up": "^12.0.0",
+    "testem": "3.17.0",
     "tracked-built-ins": "^4.1.0",
     "typescript": "^5.9.3",
     "unplugin-info": "^1.2.4",
