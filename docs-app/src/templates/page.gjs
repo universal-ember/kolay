@@ -6,6 +6,10 @@ function removeLoader() {
   });
 }
 
+function hasReason(error) {
+  return typeof error === 'object' && error !== null && 'reason' in error && typeof error.reason === 'string';
+}
+
 /**
  * If page with '.md' is detected, try to load it, if it doesn't exist,
  * redirect to real route without the .md.
@@ -24,7 +28,15 @@ function removeLoader() {
 
     <:error as |error|>
       <div class="error" data-page-error role="alert">
-        {{error}}
+        {{#if (hasReason error)}}
+          {{error.reason}}
+          <details>
+            <summary>Original error</summary>
+            <pre>{{error.original.stack}}</pre>
+          </details>
+        {{else}}
+          {{error}}
+        {{/if}}
       </div>
       {{(removeLoader)}}
     </:error>

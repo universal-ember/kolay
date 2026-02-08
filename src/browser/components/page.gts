@@ -27,7 +27,7 @@ export class Page extends Component<{
      * </template>
      * ```
      */
-    error: [error: string];
+    error: [error: string | { reason: string, original: Error }];
 
     /**
      * Before the document is compiled (or errored), this block will be active.

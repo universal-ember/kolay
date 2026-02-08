@@ -2,6 +2,7 @@ import assert from 'node:assert';
 
 import { Preprocessor } from 'content-tag';
 import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
+import { visit } from 'unist-util-visit';
 
 const processor = new Preprocessor();
 
@@ -11,6 +12,44 @@ function componentNameFromId(id) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join('');
+}
+
+function rehypeInjectComponentInvocation() {
+  return (tree, file) => {
+    const liveCode = /** @type {unknown[]} */ (file?.data?.liveCode ?? []);
+
+    if (!Array.isArray(liveCode) || liveCode.length === 0) return;
+
+    const componentNamesById = new Map();
+
+    for (const block of liveCode) {
+      const demoId = block?.id ?? block?.placeholderId;
+
+      if (!demoId || typeof demoId !== 'string') continue;
+
+      const componentName = block?.componentName ?? componentNameFromId(demoId);
+
+      componentNamesById.set(demoId, componentName);
+    }
+
+    if (componentNamesById.size === 0) return;
+
+    visit(tree, 'element', (node) => {
+      if (node.type !== 'raw') return;
+
+      const id = node.value?.match(/id="([^"]+)"/)[1];
+
+      if (!id || typeof id !== 'string') return;
+
+      const componentName = componentNamesById.get(id);
+
+      if (!componentName) return;
+
+      const invocation = '<' + '${' + componentName + '} />';
+
+      node.value = node.value.replace(`</div>`, `${invocation}</div>`);
+    });
+  };
 }
 
 /**
@@ -42,9 +81,11 @@ export function gjsmd(options = {}) {
    */
   const virtualModulesByMarkdownFile = new Map();
 
+  const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
+
   const compiler = buildCompiler({
     remarkPlugins: options.remarkPlugins,
-    rehypePlugins: options.rehypePlugins,
+    rehypePlugins,
     isLive: (meta) => meta?.includes('live'),
     isPreview: (meta) => meta?.includes('preview'),
     isBelow: (meta) => meta.includes('below'),
@@ -152,7 +193,11 @@ export function gjsmd(options = {}) {
       }
 
       const built =
-        (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
+        (options?.scope ?? '') +
+        '\n\n' +
+        imports +
+        '\n\n' +
+        `<template>${result.text}</template>`;
 
       const { code, map } = processor.process(built, {
         filename: id,
