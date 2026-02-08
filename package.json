@@ -193,7 +193,7 @@
     },
     "overrides": {
       "@ember/test-waiters": "^4.0.0",
-      "@glint/template": "1.7.3",
+      "@glint/template": "1.7.4",
       "@glimmer/component": "^2.0.0",
       "@glimmer/validator": ">= 0.92.0",
       "ember-source": "6.10.0",
