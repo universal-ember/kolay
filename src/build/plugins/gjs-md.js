@@ -11,7 +11,8 @@ function componentNameFromId(id) {
     .split(/[^A-Za-z0-9_]/g)
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
+    .join('')
+    .toLowerCase();
 }
 
 function rehypeInjectComponentInvocation() {
@@ -46,7 +47,6 @@ function rehypeInjectComponentInvocation() {
 
       if (!componentName) return;
 
-      node.type = 'glimmer_raw';
       node.value = node.value.replace(`</div>`, `<${componentName} /></div>`);
     });
   };
