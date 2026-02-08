@@ -103,20 +103,6 @@ export const setup = (options = {}) => {
         `,
       },
       {
-        importPath: 'kolay/test-support',
-        content: stripIndent`
-          import { setupKolay as setup } from 'kolay/setup';
-
-          export function setupKolay(hooks, config) {
-            hooks.beforeEach(async function () {
-              let docs = this.owner.lookup('service:kolay/docs');
-
-              await setup(this, config);
-            });
-          }
-        `,
-      },
-      {
         importPath: 'kolay/compiled-docs:virtual',
         content: async () => {
           const result = {};

@@ -34,6 +34,14 @@ function componentNameFromId(id) {
 export function gjsmd(options = {}) {
   const VIRTUAL_PREFIX = 'kolay/virtual:gjs-md:';
 
+  /**
+   * Map of:
+   *   .gjs.md -> Map of
+   *                virtual module id -> CodeBlock
+   * @type {Map<string, Map<string, CodeBlock>>>}
+   */
+  const virtualModulesByMarkdownFile = new Map();
+
   const compiler = buildCompiler({
     remarkPlugins: options.remarkPlugins,
     rehypePlugins: options.rehypePlugins,
@@ -44,14 +52,6 @@ export function gjsmd(options = {}) {
     ALLOWED_FORMATS: ['gjs', 'hbs'],
     getFlavorFromMeta: () => null,
   });
-
-  /**
-   * Map of:
-   *   .gjs.md -> Map of
-   *                virtual module id -> CodeBlock
-   * @type {Map<string, Map<string, CodeBlock>>>}
-   */
-  const virtualModulesByMarkdownFile = new Map();
 
   /**
    * @param {CodeBlock} block
@@ -75,6 +75,10 @@ export function gjsmd(options = {}) {
 
       return null;
     },
+
+    /**
+     * Only handles loading of virtual content from live code fences
+     */
     load(id) {
       if (typeof id === 'string' && id.startsWith(VIRTUAL_PREFIX)) {
         const [actualId, qps] = id.split('?');
@@ -105,6 +109,13 @@ export function gjsmd(options = {}) {
 
       return null;
     },
+
+    /**
+     * Transforms .gjs.md -> .gjs -> .js
+     *
+     * Also sets up the imports for any live code fences.
+     *   The content for these liv imports will be handled in the above load hook
+     */
     async transform(input, id) {
       if (id.startsWith(VIRTUAL_PREFIX)) {
         return null;

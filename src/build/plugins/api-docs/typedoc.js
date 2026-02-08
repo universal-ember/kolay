@@ -118,6 +118,7 @@ export async function generateTypeDocJSON({ packageName }) {
     excludeExternals: false,
     skipErrorChecking: true,
     showConfig: false,
+    logLevel: 'None',
     // All types to be referenced in docs must be exported.
     // This plugin does not work with the latest typedoc
     // plugin: ['@zamiell/typedoc-plugin-not-exported'],
