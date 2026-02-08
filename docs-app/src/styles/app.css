@@ -9,7 +9,7 @@ pre.shiki {
   /* overflow: hidden; */
 }
 
-pre.shiki>code {
+pre.shiki > code {
   /* padding-right: 1rem; */
   /* overflow: auto; */
 }
@@ -25,12 +25,10 @@ fieldset summary {
   border-bottom: 1px solid #888;
 }
 
-
 /*
 * WIP migration to nvp.ui styles
 */
 html {
-
   &:root,
   body.theme-light,
   body.theme-dark {
