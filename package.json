@@ -196,7 +196,7 @@
       "@glint/template": "1.7.3",
       "@glimmer/component": "^2.0.0",
       "@glimmer/validator": ">= 0.92.0",
-      "ember-source": "6.10.0",
+      "ember-source": "6.10.1",
       "reactiveweb": "1.9.1"
     },
     "packageExtensions": {
