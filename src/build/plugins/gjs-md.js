@@ -34,7 +34,8 @@ function rehypeInjectComponentInvocation() {
 
     if (componentNamesById.size === 0) return;
 
-    visit(tree, 'element', (node) => {
+    visit(tree, 'raw', (node) => {
+      if (node.tagName === 'code') return 'skip';
       if (node.type !== 'raw') return;
 
       const id = node.value?.match(/id="([^"]+)"/)[1];
@@ -45,9 +46,8 @@ function rehypeInjectComponentInvocation() {
 
       if (!componentName) return;
 
-      const invocation = '<' + '${' + componentName + '} />';
-
-      node.value = node.value.replace(`</div>`, `${invocation}</div>`);
+      node.type = 'glimmer_raw';
+      node.value = node.value.replace(`</div>`, `<${componentName} /></div>`);
     });
   };
 }
