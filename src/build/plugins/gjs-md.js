@@ -38,7 +38,7 @@ function rehypeInjectComponentInvocation() {
       if (node.tagName === 'code') return 'skip';
       if (node.type !== 'raw') return;
 
-      const id = node.value?.match(/id="([^"]+)"/)[1];
+      const id = node.value?.match(/id="([^"]+)"/)?.[1];
 
       if (!id || typeof id !== 'string') return;
 
@@ -193,11 +193,7 @@ export function gjsmd(options = {}) {
       }
 
       const built =
-        (options?.scope ?? '') +
-        '\n\n' +
-        imports +
-        '\n\n' +
-        `<template>${result.text}</template>`;
+        (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
 
       const { code, map } = processor.process(built, {
         filename: id,
