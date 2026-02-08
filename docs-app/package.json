@@ -63,7 +63,7 @@
     "ember-qunit": "^9.0.4",
     "ember-resolver": "^13.1.0",
     "ember-resources": "^7.0.4",
-    "ember-source": "6.10.1",
+    "ember-source": "^6.12.0-alpha.3",
     "ember-template-lint": "^7.9.3",
     "eslint": "^9.39.2",
     "loader.js": "^4.7.0",
@@ -100,6 +100,7 @@
     "ember-mobile-menu": "^6.0.0",
     "ember-route-template": "^1.0.3",
     "kolay": "workspace:^",
+    "nvp.ui": "^0.5.3",
     "reactiveweb": "1.9.1",
     "shiki": "^3.20.0"
   }

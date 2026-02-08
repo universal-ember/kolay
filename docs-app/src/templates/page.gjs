@@ -7,7 +7,12 @@ function removeLoader() {
 }
 
 function hasReason(error) {
-  return typeof error === 'object' && error !== null && 'reason' in error && typeof error.reason === 'string';
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'reason' in error &&
+    typeof error.reason === 'string'
+  );
 }
 
 /**

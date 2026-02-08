@@ -8,6 +8,7 @@ import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 import { GroupNav, PageNav } from 'kolay/components';
+import { ExternalLink } from 'nvp.ui';
 
 import { abbreviatedSha } from '~build/git';
 
@@ -59,9 +60,14 @@ export default Route(
       </mmw.MobileMenu>
 
       <mmw.Content class="container">
-        <header style="display: flex; align-items: baseline; gap: 1rem;">
-          <mmw.Toggle><Menu /></mmw.Toggle>
-          <GroupNav />
+        <header>
+          <div>
+            <mmw.Toggle><Menu /></mmw.Toggle>
+            <GroupNav />
+          </div>
+          <div>
+            <ExternalLink href="https://github.com/universal-ember/kolay">GitHub</ExternalLink>
+          </div>
         </header>
 
         <div class="big-layout">
@@ -83,6 +89,10 @@ export default Route(
 
       header {
         border-bottom: 1px solid currentColor;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
       }
 
       header button.mobile-menu__toggle {
