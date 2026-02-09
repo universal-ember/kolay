@@ -52,7 +52,7 @@
     },
     "test:node": {
       "outputs": [],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "build"]
     },
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
