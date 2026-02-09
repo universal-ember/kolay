@@ -15,10 +15,6 @@ export default defineConfig(async ({ mode }) => {
       inspect(),
       info(),
       ember(),
-      babel({
-        babelHelpers: 'runtime',
-        extensions,
-      }),
       kolay({
         groups: [
           {
@@ -45,23 +41,21 @@ export default defineConfig(async ({ mode }) => {
         import { InViewport } from 'ember-primitives/viewport';
         `,
       }),
+      babel({
+        babelHelpers: 'runtime',
+        extensions,
+      }),
     ],
     build: {
       ...(isDev ? { minify: false } : {}),
-      rollupOptions: {
+      rolldownOptions: {
         output: {
-          manualChunks(id) {
-            if (
-              id.includes('hast') ||
-              id.includes('mdast') ||
-              id.includes('remark') ||
-              id.includes('rehype') ||
-              id.includes('unified') ||
-              id.includes('vfile')
-            ) {
-              return 'unified';
-            }
-          },
+          groups: [
+            {
+              name: 'unified',
+              test: /hast|mdast|remark|rehype|unified|vfile/,
+            },
+          ],
         },
       },
     },

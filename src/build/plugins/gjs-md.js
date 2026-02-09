@@ -1,8 +1,12 @@
 import assert from 'node:assert';
+import { readFile } from 'node:fs/promises';
 
+import * as babel from '@babel/core';
 import { Preprocessor } from 'content-tag';
 import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 import { visit } from 'unist-util-visit';
+
+import { extFilter } from './utils.js';
 
 const processor = new Preprocessor();
 
@@ -71,7 +75,7 @@ function rehypeInjectComponentInvocation() {
  * @param {Options} options - Plugin options.
  */
 export function gjsmd(options = {}) {
-  const VIRTUAL_PREFIX = 'kolay/virtual:gjs-md:';
+  const VIRTUAL_PREFIX_EMBEDDED = 'kolay/virtual:live:';
 
   /**
    * Map of:
@@ -100,55 +104,54 @@ export function gjsmd(options = {}) {
   function toVirtualId(block) {
     const ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
 
-    return `${VIRTUAL_PREFIX}${block.placeholderId}.${ext}`;
+    return `${VIRTUAL_PREFIX_EMBEDDED}${block.placeholderId}.${ext}`;
   }
 
-  return {
-    name: 'kolay:gjs.md',
-    /**
-     * We need to run before babel *and* embroider's gjs processing.
-     * */
-    // enforce: 'pre',
-    resolveId(id, parent) {
-      if (typeof id === 'string' && id.startsWith(VIRTUAL_PREFIX)) {
-        return `${id}?from=${parent}`;
-      }
-
-      return null;
-    },
-
+  return [
     /**
      * Only handles loading of virtual content from live code fences
      */
-    load(id) {
-      if (typeof id === 'string' && id.startsWith(VIRTUAL_PREFIX)) {
-        const [actualId, qps] = id.split('?');
-        const search = new URLSearchParams(qps);
-        const fromId = search.get('from');
+    {
+      name: 'kolay:live',
+      resolveId: {
+        filter: {
+          id: new RegExp(`^${RegExp.escape(VIRTUAL_PREFIX_EMBEDDED)}`),
+        },
+        async handler(id, parent) {
+          return `${id}?from=${parent}`;
+        },
+      },
+      load: {
+        filter: {
+          id: new RegExp(`^${RegExp.escape(VIRTUAL_PREFIX_EMBEDDED)}`),
+        },
+        async handler(id) {
+          const [actualId, qps] = id.split('?');
+          const search = new URLSearchParams(qps);
+          const fromId = search.get('from');
 
-        const virtualModules = virtualModulesByMarkdownFile.get(fromId);
+          const virtualModules = virtualModulesByMarkdownFile.get(fromId);
 
-        const block = virtualModules.get(actualId);
+          const block = virtualModules.get(actualId);
 
-        assert(block?.code, `Could not find virtual module for id ${actualId} from ${fromId}`);
+          assert(block?.code, `Could not find virtual module for id ${actualId} from ${fromId}`);
 
-        let hbsCode;
+          let hbsCode;
 
-        if (block.format === 'hbs') {
-          hbsCode = (options.scope ?? '') + `\n\n<template>\n${block.code}\n</template>`;
-        }
+          if (block.format === 'hbs') {
+            hbsCode = (options.scope ?? '') + `\n\n<template>\n${block.code}\n</template>`;
+          }
 
-        const { code, map } = processor.process(hbsCode ?? block.code, {
-          filename: id,
-        });
+          const { code, map } = processor.process(hbsCode ?? block.code, {
+            filename: id,
+          });
 
-        return {
-          code,
-          map,
-        };
-      }
-
-      return null;
+          return {
+            code,
+            map,
+          };
+        },
+      },
     },
 
     /**
@@ -157,52 +160,64 @@ export function gjsmd(options = {}) {
      * Also sets up the imports for any live code fences.
      *   The content for these liv imports will be handled in the above load hook
      */
-    async transform(input, id) {
-      if (id.startsWith(VIRTUAL_PREFIX)) {
-        return null;
-      }
-
-      if (!id.endsWith('.gjs.md')) return;
-
+    {
+      name: 'kolay:gjs.md',
       /**
-       * Convert to GJS!
-       */
-      const result = await parseMarkdown(input, {
-        compiler,
-      });
+       * We need to run before babel *and* embroider's gjs processing.
+       * */
+      enforce: 'pre',
+      load: {
+        filter: extFilter('.gjs.md'),
+        async handler(id) {
+          const input = await readFile(id);
 
-      let imports = '';
+          /**
+           * Convert to GJS!
+           */
+          const result = await parseMarkdown(input, {
+            compiler,
+          });
 
-      virtualModulesByMarkdownFile.delete(id);
+          let imports = '';
 
-      const virtualModules = new Map();
+          virtualModulesByMarkdownFile.delete(id);
 
-      virtualModulesByMarkdownFile.set(id, virtualModules);
+          const virtualModules = new Map();
 
-      for (const block of result.codeBlocks ?? []) {
-        const demoId = block?.id ?? block?.placeholderId;
+          virtualModulesByMarkdownFile.set(id, virtualModules);
 
-        if (!demoId) continue;
+          for (const block of result.codeBlocks ?? []) {
+            const demoId = block?.id ?? block?.placeholderId;
 
-        const componentName = block?.componentName ?? componentNameFromId(demoId);
-        const virtualId = toVirtualId(block);
+            if (!demoId) continue;
 
-        virtualModules.set(virtualId, block);
+            const componentName = block?.componentName ?? componentNameFromId(demoId);
+            const virtualId = toVirtualId(block);
 
-        imports += `\nimport ${componentName} from '${virtualId}';`;
-      }
+            virtualModules.set(virtualId, block);
 
-      const built =
-        (options?.scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
+            imports += `\nimport ${componentName} from '${virtualId}';`;
+          }
 
-      const { code, map } = processor.process(built, {
-        filename: id,
-      });
+          const built =
+            (options?.scope ?? '') +
+            '\n\n' +
+            imports +
+            '\n\n' +
+            `<template>${result.text}</template>`;
 
-      return {
-        code,
-        map,
-      };
+          const { code, map } = processor.process(built, {
+            filename: id,
+          });
+
+          return babel.transformAsync(code, {
+            inputSourceMap: map.mapping, //new SourceMapConsumer(map),
+            sourceType: 'module',
+            sourceMap: true,
+            filename: id,
+          });
+        },
+      },
     },
-  };
+  ];
 }
