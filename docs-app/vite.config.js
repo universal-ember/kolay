@@ -50,12 +50,14 @@ export default defineConfig(async ({ mode }) => {
       ...(isDev ? { minify: false } : {}),
       rolldownOptions: {
         output: {
-          groups: [
-            {
-              name: 'unified',
-              test: /hast|mdast|remark|rehype|unified|vfile/,
-            },
-          ],
+          codeSplitting: {
+            groups: [
+              {
+                name: 'unified',
+                test: /hast|mdast|remark|rehype|unified|vfile/,
+              },
+            ],
+          },
         },
       },
     },
