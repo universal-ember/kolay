@@ -47,15 +47,18 @@ export default defineConfig(async ({ mode }) => {
       }),
     ],
     build: {
-      ...(isDev ? { minify: false } : {}),
+      reportCompressedSize: false,
+      ...(isDev ? { minify: false } : { minify: 'oxc' }),
       rolldownOptions: {
         output: {
-          groups: [
-            {
-              name: 'unified',
-              test: /hast|mdast|remark|rehype|unified|vfile/,
-            },
-          ],
+          codeSplitting: {
+            groups: [
+              {
+                name: 'unified',
+                test: /hast|mdast|remark|rehype|unified|vfile/,
+              },
+            ],
+          },
         },
       },
     },

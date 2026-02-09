@@ -1,7 +1,5 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  // Required, because the root is a workspace
-  "extends": ["//"],
   // Additive to package.json and turbo.json
   //
   // https://turbo.build/repo/docs/core-concepts/caching/file-inputs#specifying-additional-inputs
@@ -54,7 +52,7 @@
     },
     "test:node": {
       "outputs": [],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build", "build"]
     },
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],

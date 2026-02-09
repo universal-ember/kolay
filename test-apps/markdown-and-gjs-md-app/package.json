@@ -51,7 +51,7 @@
     "@ember/test-helpers": "5.4.1",
     "@ember/test-waiters": "^4.0.0",
     "@embroider/core": "4.4.3",
-    "@embroider/vite": "1.5.1",
+    "@embroider/vite": "1.5.2",
     "@glint/ember-tsc": "1.1.1",
     "@glint/template": "1.7.4",
     "@glint/tsserver-plugin": "2.1.0",
