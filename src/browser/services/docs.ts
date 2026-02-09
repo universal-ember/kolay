@@ -12,9 +12,11 @@ import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
+import { selected } from './selected.ts';
 
 import type { LoadManifest, LoadTypedoc, Manifest } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
+import type { ComponentLike } from '@glint/template';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
 
@@ -79,22 +81,29 @@ class DocsService {
     return typedocLoader(this);
   }
 
+  get #selected() {
+    return selected(this);
+  }
+
   _docs: Manifest | undefined;
 
   loadManifest: LoadManifest = () => Promise.resolve({ groups: [] });
 
   setup = async (options: {
     /**
-     * The module of the manifest virtual module.
-     * This should be set to `await import('kolay/manifest:virtual')
-     */
-    manifest?: Promise<{ load: LoadManifest }>;
-
-    /**
      * The module of the api docs virtual module.
      * This should be set to `await import('kolay/api-docs:virtual')
      */
     apiDocs?: Promise<{ packageNames: string[]; loadApiDocs: LoadTypedoc }>;
+
+    /**
+     * The module of the compiled docs virtual module.
+     * This should be set to `await import('kolay/compiled-docs:virtual')
+     */
+    compiledDocs?: {
+      manifest: Manifest;
+      pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+    };
 
     /**
      * Additional invokables that you'd like to have access to
@@ -130,9 +139,9 @@ class DocsService {
      */
     rehypePlugins?: unknown[];
   }) => {
-    const [manifest, apiDocs] = await Promise.all([options.manifest, options.apiDocs]);
+    const [apiDocs, compiledDocs] = await Promise.all([options.apiDocs, options.compiledDocs]);
 
-    this[PREPARE_DOCS](manifest, apiDocs);
+    this[PREPARE_DOCS](apiDocs, compiledDocs);
 
     const optionsForCompiler = compilerOptions({
       topLevelScope: options.topLevelScope,
@@ -141,28 +150,33 @@ class DocsService {
       modules: options.modules,
     });
 
-    await Promise.all([this[LOAD_MANIFEST](), setupCompiler(this, optionsForCompiler)]);
+    setupCompiler(this, optionsForCompiler);
 
     // type-narrowed version of _docs, above
     return this.manifest;
   };
 
   [PREPARE_DOCS](
-    manifest: { load: LoadManifest } | undefined,
-    apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined
+    apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined,
+    compiledDocs:
+      | {
+          manifest: Manifest;
+          pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+        }
+      | undefined
   ) {
-    if (manifest) {
-      this.loadManifest = manifest.load;
-    }
-
     if (apiDocs) {
       this.apiDocs._packages = apiDocs.packageNames;
       this.apiDocs.loadApiDocs = apiDocs.loadApiDocs;
     }
-  }
 
-  async [LOAD_MANIFEST]() {
-    this._docs = await this.loadManifest();
+    if (compiledDocs?.pages) {
+      this.#selected.compiledDocs = compiledDocs.pages;
+    }
+
+    if (compiledDocs?.manifest) {
+      this._docs = compiledDocs.manifest;
+    }
   }
 
   get docs() {
@@ -179,7 +193,7 @@ class DocsService {
   }
 
   /**
-   * The flat list of all pages.
+   * The flat list of all pages for the current group.
    * Each page knows the name of its immediate parent.
    */
   get pages() {
@@ -187,7 +201,7 @@ class DocsService {
   }
 
   /**
-   * The full page hierachy
+   * The full page hierachy for the current group.
    */
   get tree() {
     return this.currentGroup?.tree ?? {};
@@ -205,9 +219,9 @@ class DocsService {
   get selectedGroup() {
     const [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
 
-    if (!first) return 'root';
+    if (!first) return this.availableGroups[0];
 
-    if (!this.availableGroups.includes(first)) return 'root';
+    if (!this.availableGroups.includes(first)) return this.availableGroups[0];
 
     return first;
   }
@@ -238,7 +252,7 @@ class DocsService {
     return this.groupFor(this.selectedGroup);
   }
 
-  groupFor = (groupName: string) => {
+  groupFor = (groupName: string | undefined) => {
     const groups = this.manifest?.groups ?? [];
 
     const group = groups.find((group) => group.name === groupName);
@@ -266,5 +280,12 @@ class DocsService {
     }
 
     return false;
+  };
+
+  /**
+   * Returns the page entry for the current group
+   */
+  findByPath = (path: string) => {
+    return this.pages.find((page) => page.path === path || page.path === path + '.md');
   };
 }

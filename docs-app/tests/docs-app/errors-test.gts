@@ -19,7 +19,6 @@ module('Errors', function (hooks) {
 
       assert.dom(`[data-page-error]`).containsText(`Page not found for path`);
       assert.dom(`[data-page-error]`).containsText(`/usage/does-not-exist`);
-      assert.dom(`[data-page-error]`).containsText(`Using group: root`);
     });
 
     test(`can recover after an error`, async function (assert) {
@@ -27,7 +26,7 @@ module('Errors', function (hooks) {
 
       assert.dom(`[data-page-error]`).containsText(`Page not found for path`);
 
-      await click(`a[href="/usage/setup.md"]`);
+      await click(`a[href="/usage/setup"]`);
 
       assert.dom().doesNotContainText(`Page not found for path`);
     });

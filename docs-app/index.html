@@ -10,6 +10,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
     />
+    <script type="module">
+      // for styles
+      import "nvp.ui";
+    </script>
     <link integrity="" rel="stylesheet" href="./src/styles/app.css" />
 
     <style>
@@ -36,8 +40,8 @@
   <body>
     <script src="/@embroider/virtual/vendor.js"></script>
     <script type="module">
-      import Application from "./src/app.ts";
-      import environment from "./src/config.ts";
+      import Application from "#src/app.ts";
+      import environment from "#config";
 
       Application.create(environment.APP);
     </script>

@@ -11,7 +11,7 @@ export function isCollection(x: Page | Collection): x is Collection {
 export function isIndex(x: Page | Collection) {
   if (isCollection(x)) return false;
 
-  return x.path.endsWith('index.md');
+  return x.path.endsWith('index');
 }
 
 export function getIndexPage(x: Collection): Page | undefined {

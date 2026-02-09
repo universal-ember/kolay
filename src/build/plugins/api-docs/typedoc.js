@@ -37,7 +37,9 @@ export async function generateTypeDocJSON({ packageName }) {
   );
 
   const resolvedEntries = await resolveFiles(typeInfo.dir, entries);
-  const absoluteResolved = resolvedEntries.map((entry) => join(typeInfo.dir, entry));
+  const absoluteResolved = resolvedEntries
+    .map((entry) => join(typeInfo.dir, entry))
+    .filter((entry) => entry.endsWith('.ts'));
 
   const typedoc = await import('typedoc');
   const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
@@ -46,9 +48,9 @@ export async function generateTypeDocJSON({ packageName }) {
   // const home = process.cwd();
   // const homeRequire = createRequire(home);
   const types = [
-    'ember-source/types',
-    'ember-source/types/stable',
+    'ember-source/types/stable/index.d.ts',
     '@glint/ember-tsc/types',
+    // '@glint/template',
     'ember-modifier',
     '@glimmer/component',
     // homeRequire.resolve('ember-source/types/stable/index.d.ts')
@@ -74,13 +76,24 @@ export async function generateTypeDocJSON({ packageName }) {
 
   resolvedTypes.push(resolve(__dirname, '..', '..', '..', 'fake-glint-template.d.ts'));
 
+  // const tsc = resolve('@glint/tsserver-plugin');
+
   const tsConfig = {
     extends: extendsTsConfig,
     include: [...new Set(absoluteResolved.map((entry) => dirname(entry)))],
+    exclude: ['dne'],
     compilerOptions: {
+      allowJs: true,
+      preserveSymlinks: false,
       baseUrl: typeInfo.dir,
       noEmitOnError: false,
       types: resolvedTypes,
+      // We disable skipLibCheck so that we can slurp up types from
+      // dependencies.
+      skipLibCheck: false,
+      allowImportingTsExtensions: true,
+      verbatimModuleSyntax: false,
+      allowArbitraryExtensions: true,
     },
   };
 
@@ -88,13 +101,24 @@ export async function generateTypeDocJSON({ packageName }) {
 
   const typedocApp = await typedoc.Application.bootstrapWithPlugins({
     entryPoints: absoluteResolved,
+    // exclude: [],
+    compilerOptions: {
+      preserveSymlinks: false,
+    },
     tsconfig: tmpTSConfigPath,
     basePath: typeInfo.dir,
+    disableGit: true,
+    sourceLinkExternal: false,
+    disableSources: true,
     cleanOutputDir: false,
     pretty: false,
+    commentStyle: 'all',
+    excludeNotDocumented: false,
     excludeInternal: false,
-    excludeExternals: true,
+    excludeExternals: false,
     skipErrorChecking: true,
+    showConfig: false,
+    logLevel: 'None',
     // All types to be referenced in docs must be exported.
     // This plugin does not work with the latest typedoc
     // plugin: ['@zamiell/typedoc-plugin-not-exported'],

@@ -10,7 +10,7 @@ export {
 } from './typedoc/index.ts';
 
 // Required to use Kolay
-export { addRoutes } from './router.ts';
+export { addRoutes, handlePotentialIndexVisit } from './router.ts';
 export { typedocLoader } from './services/api-docs.ts';
 export { Compiled } from './services/compiler/reactive.ts';
 export { docsManager } from './services/docs.ts';

@@ -8,6 +8,7 @@ pre.shiki {
   white-space: pre-wrap;
   /* overflow: hidden; */
 }
+
 pre.shiki > code {
   /* padding-right: 1rem; */
   /* overflow: auto; */
@@ -16,9 +17,22 @@ pre.shiki > code {
 fieldset {
   padding: 1rem;
 }
+
 fieldset summary {
   font-weight: bold;
   font-style: italic;
   font-size: 1.2rem;
   border-bottom: 1px solid #888;
+}
+
+/*
+* WIP migration to nvp.ui styles
+*/
+html {
+  &:root,
+  body.theme-light,
+  body.theme-dark {
+    --color-page-background: var(--pico-background-color);
+    --color-text: var(--pico-color);
+  }
 }

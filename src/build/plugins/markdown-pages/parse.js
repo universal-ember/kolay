@@ -47,7 +47,7 @@ function deepSort(input) {
  * @param {string} segment
  * @returns {string}
  */
-function cleanSegment(segment) {
+export function cleanSegment(segment) {
   return stripExt(segment.replaceAll(/\d/g, '').replaceAll('-', ' ')).trim();
 }
 
@@ -59,13 +59,16 @@ export function build(docs) {
   /** @type {import('./types.ts').Collection} */
   const result = { name: 'root', pages: [], path: 'root' };
 
-  for (const { mdPath, config } of docs) {
+  for (let { mdPath, config } of docs) {
     if (!mdPath.includes('/')) {
       console.warn(
         `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
       );
       continue;
     }
+
+    mdPath = mdPath.replace(/^\.\/(src|app)\/templates\//, '');
+    mdPath = mdPath.replace(/^\.\.\//, '');
 
     const parts = mdPath.split('/');
     const [name, ...reversedGroups] = parts.reverse();
@@ -122,12 +125,13 @@ export function build(docs) {
 
     const groupName = cleanSegment(leafestGroupName);
     const cleanedName = cleanSegment(name);
+    const path = '/' + mdPath.replace(/\.g(j|t)s\.md$/, '');
 
     const pageInfo = {
       ...config,
-      path: `/${mdPath}`,
+      path,
       // Removes the file extension
-      name: name.replace(/\.\w+$/, ''),
+      name: stripExt(name),
       groupName,
       cleanedName,
     };
@@ -222,8 +226,9 @@ async function gather(paths, cwd) {
  */
 function stripExt(str) {
   const parsed = parsePath(str);
+  const doubleExt = parsePath(parsed.name);
 
-  return join(parsed.dir, parsed.name);
+  return join(parsed.dir, doubleExt.name);
 }
 
 /**

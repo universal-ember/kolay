@@ -1,9 +1,10 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
-import { waitForPromise } from '@ember/test-waiters';
 
 import { Provide } from 'ember-primitives/dom-context';
-import { trackedFunction } from 'reactiveweb/function';
+import { use } from 'ember-resources';
+import { getPromiseState } from 'reactiveweb/get-promise-state';
+import { keepLatest } from 'reactiveweb/keep-latest';
 import { ConsoleLogger, Deserializer, FileRegistry, type ProjectReflection } from 'typedoc/browser';
 
 import { typedocLoader } from '../services/api-docs.ts';
@@ -49,9 +50,7 @@ export const Query: TOC<{
   {{/let}}
 </template>;
 
-const stringify = (x: unknown) => String(x);
-
-const cache = new Map<string, Promise<ProjectReflection>>();
+const cache = new Map<string, () => Promise<ProjectReflection>>();
 
 export class Load extends Component<{
   Args: {
@@ -65,17 +64,23 @@ export class Load extends Component<{
     return typedocLoader(this);
   }
 
-  /**
-   * TODO: move this to the service and dedupe requests
-   */
-  request = trackedFunction(this, async () => {
+  get request() {
+    return getPromiseState(this.#createProject);
+  }
+
+  @use resolved = keepLatest({
+    value: () => this.request.resolved,
+    when: () => this.request.isLoading,
+  });
+
+  get #createProject() {
     const { package: pkg } = this.args;
 
     if (!pkg) {
       throw new Error(`A @package must be specified to load.`);
     }
 
-    let seen = cache.get(pkg);
+    const seen = cache.get(pkg);
 
     if (seen) {
       return seen;
@@ -95,30 +100,42 @@ export class Load extends Component<{
       return project;
     };
 
-    seen = waitForPromise(loadNew());
+    cache.set(pkg, loadNew);
 
-    cache.set(pkg, seen);
-
-    return seen;
-  });
+    return loadNew;
+  }
 
   <template>
     {{#if this.request.isLoading}}
       Loading api docs...
     {{/if}}
 
-    {{#if this.request.isError}}
-      {{stringify this.request.error}}
+    {{#if this.request.error}}
+      {{errorFor this.request.error}}
     {{/if}}
 
-    {{#if this.request.value}}
+    {{#if this.request.resolved}}
       <section>
-        <Query @info={{this.request.value}} @module={{@module}} @name={{@name}} as |type|>
-          <Provide @data={{this.request.value}} @key='project'>
-            {{yield type this.request.value}}
+        <Query @info={{this.request.resolved}} @module={{@module}} @name={{@name}} as |type|>
+          <Provide @data={{this.request.resolved}} @key='project'>
+            {{yield type this.request.resolved}}
           </Provide>
         </Query>
       </section>
     {{/if}}
   </template>
+}
+
+function errorFor(error: unknown): string | undefined {
+  if (typeof error === 'object' && null !== error) {
+    if ('reason' in error && typeof error.reason === 'string') {
+      return error.reason;
+    }
+  }
+
+  if (error instanceof Error) {
+    return `Error loading API docs: ${error.message}`;
+  }
+
+  return `Error loading API docs: ${String(error)}`;
 }

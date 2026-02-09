@@ -1,14 +1,43 @@
 /**
  * This plugin is *basically* what v1 addons did.
  */
+import { glob } from 'node:fs/promises';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { stripIndent } from 'common-tags';
 
 import { virtualFile } from './helpers.js';
+import { reshape } from './markdown-pages/hydrate.js';
+
+function normalizePath(path) {
+  if (path.startsWith('file:/')) {
+    return fileURLToPath(path);
+  }
+
+  return path;
+}
 
 /** @type {() => import('unplugin').UnpluginOptions} */
-export const setup = () => {
+export const setup = (options = {}) => {
+  const cwd = process.cwd();
+  let baseUrl = '/';
+
   return {
-    name: 'kolay-setup',
+    name: 'kolay:setup',
+    vite: {
+      configResolved(resolvedConfig) {
+        baseUrl = resolvedConfig.base;
+
+        resolvedConfig.server ||= {};
+        resolvedConfig.server.fs ||= {};
+        resolvedConfig.server.fs.allow ||= [];
+
+        options.groups.forEach((group) => {
+          resolvedConfig.server.fs.allow.push(normalizePath(group.src));
+        });
+      },
+    },
     ...virtualFile([
       {
         importPath: 'kolay/setup',
@@ -57,34 +86,109 @@ export const setup = () => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, manifest] = await Promise.all([
+            let [apiDocs, compiledDocs] = await Promise.all([
               import('kolay/api-docs:virtual'),
-              import('kolay/manifest:virtual'),
+              import('kolay/compiled-docs:virtual'),
             ]);
 
             await docs.setup({
               apiDocs,
-              manifest,
+              compiledDocs,
               ...options,
             });
+
 
             return docs.manifest;
           }
         `,
       },
       {
-        importPath: 'kolay/test-support',
-        content: stripIndent`
-          import { setupKolay as setup } from 'kolay/setup';
+        importPath: 'kolay/compiled-docs:virtual',
+        content: async () => {
+          const result = {};
+          const globs = [
+            {
+              name: '',
+              path: './',
+              cwd,
+              glob: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md}', {
+                cwd,
+                exclude: ['node_modules'],
+              }),
+            },
+          ];
 
-          export function setupKolay(hooks, config) {
-            hooks.beforeEach(async function () {
-              let docs = this.owner.lookup('service:kolay/docs');
+          /**
+           * TODO: support `onlyDirectories` of what globby provides
+           */
+          for (const group of options?.groups ?? []) {
+            const path = relative(cwd, group.src);
 
-              await setup(this, config);
+            globs.push({
+              name: group.name,
+              path,
+              cwd: group.src,
+              glob: glob('**/*.{md,gjs.md,gts.md}', {
+                cwd: normalizePath(group.src),
+                exclude: ['node_modules'],
+              }),
             });
           }
-        `,
+
+          const manifest = {
+            groups: [],
+          };
+
+          function removeUnwantedPrexix(path) {
+            return path.replace(/^(app|src)\/templates\//, '');
+          }
+
+          for (const config of globs) {
+            const paths = [];
+
+            for await (const entry of config.glob) {
+              const name =
+                baseUrl +
+                (config.name ? config.name + '/' : '') +
+                removeUnwantedPrexix(entry).replace(/\.(gjs|gts)\.md$/, '');
+              const full = '/@fs' + join(normalizePath(config.cwd), entry);
+
+              let query = '';
+
+              if (entry.endsWith('.md')) {
+                if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
+                  query = '?raw';
+                }
+              }
+
+              result[name] = `() => import("${full}${query}")`;
+              paths.push(removeUnwantedPrexix(entry));
+            }
+
+            const found = await reshape({
+              cwd: config.cwd,
+              paths,
+              prefix: join(baseUrl, config.name),
+            });
+
+            manifest.groups.push({
+              name: config.name || 'Home',
+              ...found,
+            });
+          }
+
+          const virtualFile = stripIndent`
+            export const manifest = ${JSON.stringify(manifest)};
+
+            export const pages = {
+              ${Object.entries(result)
+                .map(([name, importer]) => `"${name}": ${importer}`)
+                .join(',\n')}
+            };
+          `;
+
+          return virtualFile;
+        },
       },
     ]),
   };
