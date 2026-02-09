@@ -48,6 +48,10 @@
       "outputs": ["dist/**"],
       "dependsOn": ["^build"]
     },
+    "build:tests": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
     "test:node": {
       "outputs": [],
       "dependsOn": ["^build"]
@@ -55,6 +59,9 @@
     "test:ember": {
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
       "dependsOn": ["^build"]
+    },
+    "test:ci": {
+      "dependsOn": ["^build", "build:tests"]
     },
 
     /////////////////////////////////////////////////

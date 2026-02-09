@@ -29,8 +29,8 @@
     "start": "pnpm start:vite",
     "start:vite": "vite",
     "start:test": "pnpm start:vite --open /tests/",
-    "test:ember": "pnpm build:tests && pnpm dist:ember:test",
-    "dist:ember:test": "testem ci --port 0"
+    "test:ember": "pnpm build:tests && pnpm test:ci",
+    "test:ci": "testem ci --port 0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
