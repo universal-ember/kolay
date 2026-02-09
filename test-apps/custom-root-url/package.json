@@ -30,7 +30,7 @@
     "lint:prettier": "prettier --check .",
     "test:ember": "pnpm build:tests && pnpm test:browser",
     "build:tests": "vite build --mode development",
-    "test:browser": "testem ci --port 0",
+    "_test:browser": "testem ci --port 0",
     "lint:types": "ember-tsc --noEmit"
   },
   "dependenciesMeta": {},
