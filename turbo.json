@@ -60,7 +60,7 @@
       "env": ["CI_BROWSER", "EMBER_TRY_CURRENT_SCENARIO", "EMBROIDER_TEST_SETUP_OPTIONS"],
       "dependsOn": ["^build"]
     },
-    "test:ci": {
+    "test:browser": {
       "dependsOn": ["^build", "build:tests"]
     },
 

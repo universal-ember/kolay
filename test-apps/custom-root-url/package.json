@@ -28,9 +28,9 @@
     "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" --prefixColors auto && pnpm format",
     "format": "prettier --write .",
     "lint:prettier": "prettier --check .",
-    "test:ember": "pnpm build:tests && pnpm test:ci",
+    "test:ember": "pnpm build:tests && pnpm test:browser",
     "build:tests": "vite build --mode development",
-    "test:ci": "testem ci --port 0",
+    "test:browser": "testem ci --port 0",
     "lint:types": "ember-tsc --noEmit"
   },
   "dependenciesMeta": {},
