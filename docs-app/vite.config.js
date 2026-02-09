@@ -47,7 +47,8 @@ export default defineConfig(async ({ mode }) => {
       }),
     ],
     build: {
-      ...(isDev ? { minify: false } : {}),
+      reportCompressedSize: false,
+      ...(isDev ? { minify: false } : { minify: 'oxc' }),
       rolldownOptions: {
         output: {
           codeSplitting: {
