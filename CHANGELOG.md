@@ -1,5 +1,38 @@
 # Changelog
 
+## Release (2026-02-10)
+
+* kolay 5.0.0 (major)
+
+#### :boom: Breaking Change
+* `kolay`
+  * [#264](https://github.com/universal-ember/kolay/pull/264) Add support for .gjs.md files -- a less runtime way of writing docs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#273](https://github.com/universal-ember/kolay/pull/273) Update kolay plugin docs + typedoc style updates ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#221](https://github.com/universal-ember/kolay/pull/221) support typedoc.json ([@patricklx](https://github.com/patricklx))
+  * [#270](https://github.com/universal-ember/kolay/pull/270) Improve repeat docs-rendering perf ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#271](https://github.com/universal-ember/kolay/pull/271) Fix sorting ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* `kolay`
+  * [#272](https://github.com/universal-ember/kolay/pull/272) Docs/tests ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `kolay`
+  * [#274](https://github.com/universal-ember/kolay/pull/274) More tests (ensuring rootURL is tested) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#269](https://github.com/universal-ember/kolay/pull/269) Fix deployment ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#260](https://github.com/universal-ember/kolay/pull/260) Configure Copilot agent firewall allowlist for Astro telemetry ([@Copilot](https://github.com/apps/copilot-swe-agent))
+
+#### Committers: 3
+- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-01-10)
 
 * kolay 4.1.0 (minor)
