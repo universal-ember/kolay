@@ -37,7 +37,9 @@ export function betterSort(property) {
 
     if ('path' in a && 'path' in b && typeof a.path === 'string' && typeof b.path === 'string') {
       if (a.path.endsWith('index.md')) return -1;
+      if (a.path.endsWith('index.gjs.md')) return -1;
       if (b.path.endsWith('index.md')) return 1;
+      if (b.path.endsWith('index.gjs.md')) return 1;
     }
 
     const [aNumStr, ...aRest] = aFull.split('-');
