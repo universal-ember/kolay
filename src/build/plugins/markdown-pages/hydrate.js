@@ -1,19 +1,19 @@
 import { join } from 'node:path';
 
-import { configsFrom, parse } from './parse.js';
+import { parse } from './parse.js';
 import { sortTree } from './sort.js';
 
 /**
  * @typedef {object} ReshapeOptions
  * @property {string[]} paths
+ * @property {string[]} configs
  * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @property {string | undefined} [prefix]
  *
  * @param {ReshapeOptions} options
  */
-export async function reshape({ paths, cwd, prefix }) {
+export async function reshape({ paths, configs, cwd, prefix }) {
   let tree = await parse(paths, cwd);
-  const configs = await configsFrom(paths, cwd);
 
   tree = sortTree(tree, configs);
 

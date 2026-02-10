@@ -9,6 +9,7 @@ import { stripIndent } from 'common-tags';
 
 import { virtualFile } from './helpers.js';
 import { reshape } from './markdown-pages/hydrate.js';
+import { readJSONC } from './markdown-pages/parse.js';
 
 function normalizePath(path) {
   if (path.startsWith('file:/')) {
@@ -111,7 +112,7 @@ export const setup = (options = {}) => {
               name: '',
               path: './',
               cwd,
-              glob: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md}', {
+              glob: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md,json,jsonc}', {
                 cwd,
                 exclude: ['node_modules'],
               }),
@@ -127,8 +128,8 @@ export const setup = (options = {}) => {
             globs.push({
               name: group.name,
               path,
-              cwd: group.src,
-              glob: glob('**/*.{md,gjs.md,gts.md}', {
+              cwd: normalizePath(group.src),
+              glob: glob('**/*.{md,gjs.md,gts.md,json,jsonc}', {
                 cwd: normalizePath(group.src),
                 exclude: ['node_modules'],
               }),
@@ -145,8 +146,20 @@ export const setup = (options = {}) => {
 
           for (const config of globs) {
             const paths = [];
+            const configs = [];
 
             for await (const entry of config.glob) {
+              if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
+                const configPath = join(config.cwd, entry);
+
+                configs.push({
+                  path: removeUnwantedPrexix(entry),
+                  config: await readJSONC(configPath),
+                  cwd: config.cwd,
+                });
+                continue;
+              }
+
               const name =
                 baseUrl +
                 (config.name ? config.name + '/' : '') +
@@ -168,6 +181,7 @@ export const setup = (options = {}) => {
             const found = await reshape({
               cwd: config.cwd,
               paths,
+              configs,
               prefix: join(baseUrl, config.name),
             });
 

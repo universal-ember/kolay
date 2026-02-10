@@ -37,7 +37,9 @@ export function betterSort(property) {
 
     if ('path' in a && 'path' in b && typeof a.path === 'string' && typeof b.path === 'string') {
       if (a.path.endsWith('index.md')) return -1;
+      if (a.path.endsWith('index.gjs.md')) return -1;
       if (b.path.endsWith('index.md')) return 1;
+      if (b.path.endsWith('index.gjs.md')) return 1;
     }
 
     const [aNumStr, ...aRest] = aFull.split('-');
@@ -85,7 +87,9 @@ Actual: ${JSON.stringify(list.map(find))}`);
   if (order.length !== list.length)
     throw new Error(`Order configuration specified different number of arguments than available pages:
 Order: ${JSON.stringify(order)}
-Actual: ${JSON.stringify(list.map(find))}`);
+Actual: ${JSON.stringify(list.map(find))}
+
+When specifying order, all pages (listed under "Actual") must be specified.`);
 
   for (let i = 0; i < order.length; i++) {
     const current = order[i];
@@ -130,7 +134,7 @@ export function sortTree(tree, configs, parents = []) {
   tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.path]));
 
   if (configs.length > 0) {
-    const subPath = `${[...parents, tree.path].join('/')}`;
+    const subPath = `${[...parents, tree.path].join('/')}`.replace(/^root\//, '');
     const config = configs
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;

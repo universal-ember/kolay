@@ -30,6 +30,38 @@ return require("@embroider/compat").compatBuild(app, Webpack, {
 <APIDocs @package="kolay" @module="declarations/types" @name="Options" />
 ```
 
+## `scope`
+
+The `scope` option lets you make components, helpers, or other values available inside `.gjs.md` live codefences _at build time_, without needing to import them in each codefence.
+
+This is a string of import statements that gets prepended to every `.gjs.md` file during compilation. Anything imported via `scope` can be used directly in `hbs` and `gjs` live codefences.
+
+```js
+kolay({
+  src: "public/docs",
+  packages: ["my-library"],
+  scope: `
+    import { APIDocs, ComponentSignature } from 'kolay';
+    import { Shadowed } from 'ember-primitives/components/shadowed';
+    import { MyCustomComponent } from 'my-library';
+  `,
+});
+```
+
+With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `<MyCustomComponent />` in live codefences without an explicit import:
+
+````md
+# My Page
+
+```hbs live
+<Shadowed>
+  <MyCustomComponent @foo="bar" />
+</Shadowed>
+```
+````
+
+> **Note:** `scope` only applies to `.gjs.md` files (build-time compiled). For `.md` files (runtime compiled), use the `topLevelScope` option in `setupKolay()` instead.
+
 ## Conventions
 
 There are a few ways you can collect docs:
