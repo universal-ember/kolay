@@ -80,3 +80,73 @@ export function forceFindOwner(contextOrOwner: unknown): Owner {
 
   return maybe;
 }
+
+interface LRUNode<V> {
+  key: unknown;
+  value: V;
+  prev: LRUNode<V>;
+  next: LRUNode<V>;
+}
+
+class LRUCache<Value> {
+  #max: number;
+  #map = new Map<unknown, LRUNode<Value>>();
+  #head = {} as LRUNode<Value>;
+  #tail = {} as LRUNode<Value>;
+
+  constructor(max = 128) {
+    this.#max = max;
+    this.#head.next = this.#tail;
+    this.#tail.prev = this.#head;
+  }
+
+  get(key: unknown): Value | undefined {
+    const node = this.#map.get(key);
+
+    if (!node) return undefined;
+
+    this.#remove(node);
+    this.#insertAfterHead(node);
+
+    return node.value;
+  }
+
+  set(key: unknown, value: Value): void {
+    if (this.#map.has(key)) return;
+
+    const node = { key, value } as LRUNode<Value>;
+
+    this.#map.set(key, node);
+    this.#insertAfterHead(node);
+
+    if (this.#map.size > this.#max) {
+      this.#map.delete(this.#tail.prev.key);
+      this.#remove(this.#tail.prev);
+    }
+  }
+
+  #remove(node: LRUNode<Value>): void {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+  }
+
+  #insertAfterHead(node: LRUNode<Value>): void {
+    node.next = this.#head.next;
+    node.prev = this.#head;
+    this.#head.next.prev = node;
+    this.#head.next = node;
+  }
+}
+
+const defaultCache = new LRUCache<unknown>();
+
+export function lru<Value, Key = unknown>(key: Key, compute: (key: Key) => Value): Value {
+  let value = defaultCache.get(key) as Value | undefined;
+
+  if (value === undefined) {
+    value = compute(key);
+    defaultCache.set(key, value);
+  }
+
+  return value;
+}

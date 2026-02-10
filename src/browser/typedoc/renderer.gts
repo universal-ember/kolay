@@ -1,11 +1,14 @@
 // Glint broke glint-directives... _but_ this file is a mess anyway
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import Component from '@glimmer/component';
+import { assert } from '@ember/debug';
 import { hash } from '@ember/helper';
+import { getOwner } from '@ember/owner';
 
 import { Consume } from 'ember-primitives/dom-context';
 
-import { Compiled } from '../services/compiler/reactive.ts';
+import { compileText } from '../services/compiler/reactive.ts';
 import { isLiteral } from './narrowing.ts';
 import {
   ComponentDeclaration,
@@ -93,9 +96,6 @@ export const CommentQuery: TOC<{
   </Load>
 </template>;
 
-const join = (lines: string[]) => lines.join('\n');
-const text = (lines: { text: string }[]) => lines.map((line) => line.text);
-
 export function isGlimmerComponent(info: DeclarationReference) {
   const extended = (info as any)?.extendedTypes?.[0];
 
@@ -104,7 +104,7 @@ export function isGlimmerComponent(info: DeclarationReference) {
   return extended.name === 'default' && extended.package === '@glimmer/component';
 }
 
-export const Comment: TOC<{
+interface CommentSignature {
   Args: {
     info: {
       comment?: {
@@ -112,17 +112,30 @@ export const Comment: TOC<{
       };
     };
   };
-}> = <template>
-  {{#if @info.comment.summary}}
-    {{#let (Compiled (join (text @info.comment.summary))) as |compiled|}}
-      {{#if compiled.isReady}}
-        <div class='typedoc-rendered-comment'>
-          <compiled.component />
-        </div>
-      {{/if}}
-    {{/let}}
-  {{/if}}
-</template>;
+}
+
+export class Comment extends Component<CommentSignature> {
+  get compiled() {
+    const summary = this.args.info?.comment?.summary;
+
+    if (!summary) return null;
+
+    const input = summary.map((x) => x.text).join('\n');
+    const owner = getOwner(this);
+
+    assert(`[Bug]: owner is missing`, owner);
+
+    return compileText(owner, input);
+  }
+
+  <template>
+    {{#if this.compiled.isReady}}
+      <div class='typedoc-rendered-comment'>
+        <this.compiled.component />
+      </div>
+    {{/if}}
+  </template>
+}
 
 const isIgnored = (name: string) => ['__type', 'TOC', 'TemplateOnlyComponent'].includes(name);
 const isConst = (x: { flags: { isConst: boolean } }) => x.flags.isConst;

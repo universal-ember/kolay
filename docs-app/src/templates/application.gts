@@ -93,6 +93,11 @@ export default Route(
         align-items: baseline;
         justify-content: space-between;
         gap: 1rem;
+
+        div:first-child {
+          display: flex; gap: 1rem;
+          align-items: baseline;
+        }
       }
 
       header button.mobile-menu__toggle {
