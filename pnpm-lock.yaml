@@ -30,9 +30,6 @@ importers:
       '@glint/template':
         specifier: 1.7.4
         version: 1.7.4
-      '@universal-ember/test-support':
-        specifier: link:../test-support/test-support
-        version: link:../test-support/test-support
       change-case:
         specifier: ^5.4.4
         version: 5.4.4
