@@ -87,7 +87,9 @@ Actual: ${JSON.stringify(list.map(find))}`);
   if (order.length !== list.length)
     throw new Error(`Order configuration specified different number of arguments than available pages:
 Order: ${JSON.stringify(order)}
-Actual: ${JSON.stringify(list.map(find))}`);
+Actual: ${JSON.stringify(list.map(find))}
+
+When specifying order, all pages (listed under "Actual") must be specified.`);
 
   for (let i = 0; i < order.length; i++) {
     const current = order[i];
@@ -132,7 +134,7 @@ export function sortTree(tree, configs, parents = []) {
   tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.path]));
 
   if (configs.length > 0) {
-    const subPath = `${[...parents, tree.path].join('/')}`;
+    const subPath = `${[...parents, tree.path].join('/')}`.replace(/^root\//, '');
     const config = configs
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;

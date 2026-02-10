@@ -10,19 +10,19 @@ Returns the short git SHA of the current commit. Useful for displaying the deplo
 In an ESM environment:
 
 ```js
-import { gitRef } from 'kolay/build';
+import { gitRef } from "kolay/build";
 
 // in some config
-version: gitRef()
+version: gitRef();
 ```
 
 In a CJS environment (e.g. `ember-cli-build.js`):
 
 ```js
-const { gitRef } = require('kolay/build/legacy');
+const { gitRef } = require("kolay/build/legacy");
 
 // in some config
-version: gitRef()
+version: gitRef();
 ```
 
 <APIDocs @module="declarations/build/plugins" @name="gitRef" @package="kolay" />

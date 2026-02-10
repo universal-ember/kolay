@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
-import { dirname, join, parse as parsePath } from 'node:path';
+import { join, parse as parsePath } from 'node:path';
 
 import JSON5 from 'json5';
 
@@ -239,31 +239,9 @@ function filterConfigs(paths) {
 }
 
 /**
- * @param {string[]} paths
- * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
- */
-export async function configsFrom(paths, cwd) {
-  const configs = filterConfigs(paths);
-
-  const result = [];
-
-  for (const foundPath of configs) {
-    const fullPath = join(cwd, foundPath);
-    const config = await readJSONC(fullPath);
-
-    const dir = dirname(foundPath);
-    const path = dir === '.' ? 'root' : join('root', dir);
-
-    result.push({ path: path, config });
-  }
-
-  return result;
-}
-
-/**
  * @param {string} filePath
  */
-async function readJSONC(filePath) {
+export async function readJSONC(filePath) {
   const buffer = await readFile(filePath);
   const str = buffer.toString();
   const config = JSON5.parse(str);

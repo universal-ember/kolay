@@ -38,8 +38,8 @@ This is a string of import statements that gets prepended to every `.gjs.md` fil
 
 ```js
 kolay({
-  src: 'public/docs',
-  packages: ['my-library'],
+  src: "public/docs",
+  packages: ["my-library"],
   scope: `
     import { APIDocs, ComponentSignature } from 'kolay';
     import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -50,7 +50,7 @@ kolay({
 
 With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `<MyCustomComponent />` in live codefences without an explicit import:
 
-~~~md
+````md
 # My Page
 
 ```hbs live
@@ -58,7 +58,7 @@ With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `
   <MyCustomComponent @foo="bar" />
 </Shadowed>
 ```
-~~~
+````
 
 > **Note:** `scope` only applies to `.gjs.md` files (build-time compiled). For `.md` files (runtime compiled), use the `topLevelScope` option in `setupKolay()` instead.
 
