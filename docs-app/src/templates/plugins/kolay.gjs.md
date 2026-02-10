@@ -8,21 +8,19 @@ Kolay requires some build-time static analysis to function.
 [ui-signature]: /Runtime/docs/component-signature.md
 [ui-apiDocs]: /Runtime/docs/api-docs.md
 
-Usage in embroider / webpack:
+Usage with Vite:
 
 ```js
-// ember-cli-build.js
+// vite.config.js
+import { kolay } from "kolay/vite";
+import { defineConfig } from "vite";
 
-const { kolay } = await import("kolay/webpack");
-
-return require("@embroider/compat").compatBuild(app, Webpack, {
-  /* ... */
-  packagerOptions: {
-    webpackConfig: {
-      /* ... */
-      plugins: [kolay(/* Options, see below */)],
-    },
-  },
+export default defineConfig({
+  plugins: [
+    kolay({
+      /* Options, see below */
+    }),
+  ],
 });
 ```
 
@@ -37,14 +35,22 @@ The `scope` option lets you make components, helpers, or other values available 
 This is a string of import statements that gets prepended to every `.gjs.md` file during compilation. Anything imported via `scope` can be used directly in `hbs` and `gjs` live codefences.
 
 ```js
-kolay({
-  src: "public/docs",
-  packages: ["my-library"],
-  scope: `
-    import { APIDocs, ComponentSignature } from 'kolay';
-    import { Shadowed } from 'ember-primitives/components/shadowed';
-    import { MyCustomComponent } from 'my-library';
-  `,
+// vite.config.js
+import { kolay } from "kolay/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    kolay({
+      src: "public/docs",
+      packages: ["my-library"],
+      scope: `
+        import { APIDocs, ComponentSignature } from 'kolay';
+        import { Shadowed } from 'ember-primitives/components/shadowed';
+        import { MyCustomComponent } from 'my-library';
+      `,
+    }),
+  ],
 });
 ```
 
