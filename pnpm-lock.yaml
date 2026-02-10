@@ -30,6 +30,9 @@ importers:
       '@glint/template':
         specifier: 1.7.4
         version: 1.7.4
+      '@universal-ember/test-support':
+        specifier: link:../test-support/test-support
+        version: link:../test-support/test-support
       change-case:
         specifier: ^5.4.4
         version: 5.4.4
@@ -472,8 +475,8 @@ importers:
         specifier: 2.19.13
         version: 2.19.13
       '@universal-ember/test-support':
-        specifier: ^0.6.1
-        version: 0.6.1(109b94cfef4fa6f8e96512756d4e265e)
+        specifier: link:/home/nvp/Development/NullVoxPopuli/test-support/test-support
+        version: link:../../../test-support/test-support
       babel-plugin-ember-template-compilation:
         specifier: 4.0.0
         version: 4.0.0
