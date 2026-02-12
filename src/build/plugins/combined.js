@@ -17,7 +17,7 @@ import { fixViteForIssue362 } from './vite-issue-362.js';
 export function combinedPlugins(options) {
   return [
     setup({
-      groups: options.groups,
+      groups: options.groups ?? [],
     }),
     apiDocs({ packages: options.packages ?? [], dest: options.dest }),
     fixViteForIssue362(),
