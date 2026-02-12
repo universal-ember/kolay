@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-02-12)
+
+* kolay 5.0.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#275](https://github.com/universal-ember/kolay/pull/275) Allow groups to be optional ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-02-10)
 
 * kolay 5.0.0 (major)
