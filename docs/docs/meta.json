@@ -1,0 +1,9 @@
+{
+  "order": [
+    "component-signature",
+    "modifier-signature",
+    "helper-signature",
+    "api-docs",
+    "comment-query"
+  ]
+}
