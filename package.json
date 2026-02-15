@@ -165,7 +165,7 @@
     "release-plan": "^0.17.2",
     "rollup": "^4.54.0",
     "rollup-plugin-import-css": "^4.1.2",
-    "turbo": "2.8.3",
+    "turbo": "2.8.7",
     "typescript": "^5.9.3",
     "unified": "^11.0.5",
     "vite": "^7.3.0",
