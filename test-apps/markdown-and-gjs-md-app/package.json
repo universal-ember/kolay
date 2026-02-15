@@ -71,7 +71,7 @@
     "qunit-theme-ember": "1.0.0",
     "testem": "3.17.0",
     "typescript": "5.9.3",
-    "vite": "8.0.0-beta.11"
+    "vite": "8.0.0-beta.14"
   },
   "engines": {
     "node": ">= 24"
