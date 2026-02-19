@@ -44,7 +44,7 @@ kolay({
   groups: [
     {
       name: 'Runtime',
-      src: '../ui/docs',
+      src: import.meta.resolve('../ui/docs', import.meta.url),
     },
   ],
   // Generate API docs from JSDoc
