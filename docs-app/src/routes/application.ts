@@ -1,4 +1,3 @@
-import { getOwner } from '@ember/owner';
 import Route from '@ember/routing/route';
 
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
@@ -34,7 +33,6 @@ export default class ApplicationRoute extends Route {
     });
 
     const manifest = await setupKolay(this, {
-      owner: getOwner(this),
       modules: {
         'ember-primitives': () => import('ember-primitives'),
         'ember-modifier': () => import('ember-modifier'),
