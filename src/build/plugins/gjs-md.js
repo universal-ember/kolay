@@ -57,6 +57,78 @@ function rehypeInjectComponentInvocation() {
 }
 
 /**
+ * @porom {Options} options
+ */
+export function createCompiler(options) {
+  const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
+
+  const compiler = buildCompiler({
+    remarkPlugins: options.remarkPlugins,
+    rehypePlugins,
+    isLive: (meta) => meta?.includes('live'),
+    isPreview: (meta) => meta?.includes('preview'),
+    isBelow: (meta) => meta.includes('below'),
+    needsLive: () => true,
+    ALLOWED_FORMATS: ['gjs', 'hbs'],
+    getFlavorFromMeta: () => null,
+  });
+
+  return compiler;
+}
+
+/**
+ * @param {string} input
+ * @param {{ compiler: unknown; virtualModulesByMarkdownFile: unknown; id: string; scope?: string }} options
+ * @return {Promise<{ code: string, map: unknown }>}
+ */
+export async function mdToGJS(input, { compiler, virtualModulesByMarkdownFile, id, scope }) {
+  /**
+   * Convert to GJS!
+   */
+  const result = await parseMarkdown(input, {
+    compiler,
+  });
+
+  let imports = '';
+
+  virtualModulesByMarkdownFile.delete(id);
+
+  const virtualModules = new Map();
+
+  virtualModulesByMarkdownFile.set(id, virtualModules);
+
+  for (const block of result.codeBlocks ?? []) {
+    const demoId = block?.id ?? block?.placeholderId;
+
+    if (!demoId) continue;
+
+    const componentName = block?.componentName ?? componentNameFromId(demoId);
+    const virtualId = toVirtualId(block);
+
+    virtualModules.set(virtualId, block);
+
+    imports += `\nimport ${componentName} from '${virtualId}';`;
+  }
+
+  const built = (scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
+
+  return processor.process(built, {
+    filename: id,
+  });
+}
+
+const VIRTUAL_PREFIX_EMBEDDED = 'kolay/virtual:live:';
+
+/**
+ * @param {CodeBlock} block
+ */
+function toVirtualId(block) {
+  const ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
+
+  return `${VIRTUAL_PREFIX_EMBEDDED}${block.placeholderId}.${ext}`;
+}
+
+/**
  * @typedof {Object} CodeBlock
  * @property {string} format
  * @property {string} code
@@ -75,8 +147,6 @@ function rehypeInjectComponentInvocation() {
  * @param {Options} options - Plugin options.
  */
 export function gjsmd(options = {}) {
-  const VIRTUAL_PREFIX_EMBEDDED = 'kolay/virtual:live:';
-
   /**
    * Map of:
    *   .gjs.md -> Map of
@@ -85,27 +155,7 @@ export function gjsmd(options = {}) {
    */
   const virtualModulesByMarkdownFile = new Map();
 
-  const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
-
-  const compiler = buildCompiler({
-    remarkPlugins: options.remarkPlugins,
-    rehypePlugins,
-    isLive: (meta) => meta?.includes('live'),
-    isPreview: (meta) => meta?.includes('preview'),
-    isBelow: (meta) => meta.includes('below'),
-    needsLive: () => true,
-    ALLOWED_FORMATS: ['gjs', 'hbs'],
-    getFlavorFromMeta: () => null,
-  });
-
-  /**
-   * @param {CodeBlock} block
-   */
-  function toVirtualId(block) {
-    const ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
-
-    return `${VIRTUAL_PREFIX_EMBEDDED}${block.placeholderId}.${ext}`;
-  }
+  const compiler = createCompiler(options);
 
   return [
     /**
@@ -171,43 +221,11 @@ export function gjsmd(options = {}) {
         async handler(id) {
           const input = await readFile(id);
 
-          /**
-           * Convert to GJS!
-           */
-          const result = await parseMarkdown(input, {
+          const { code, map } = await mdToGJS(input, {
+            id,
             compiler,
-          });
-
-          let imports = '';
-
-          virtualModulesByMarkdownFile.delete(id);
-
-          const virtualModules = new Map();
-
-          virtualModulesByMarkdownFile.set(id, virtualModules);
-
-          for (const block of result.codeBlocks ?? []) {
-            const demoId = block?.id ?? block?.placeholderId;
-
-            if (!demoId) continue;
-
-            const componentName = block?.componentName ?? componentNameFromId(demoId);
-            const virtualId = toVirtualId(block);
-
-            virtualModules.set(virtualId, block);
-
-            imports += `\nimport ${componentName} from '${virtualId}';`;
-          }
-
-          const built =
-            (options?.scope ?? '') +
-            '\n\n' +
-            imports +
-            '\n\n' +
-            `<template>${result.text}</template>`;
-
-          const { code, map } = processor.process(built, {
-            filename: id,
+            virtualModulesByMarkdownFile,
+            scope: options.scope,
           });
 
           return babel.transformAsync(code, {

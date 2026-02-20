@@ -25,16 +25,24 @@ const { gitRef } = require("kolay/build/legacy");
 version: gitRef();
 ```
 
+```hbs live
 <APIDocs @module="declarations/build/plugins" @name="gitRef" @package="kolay" />
+```
 
 ## `packageTypes`
 
+```hbs live
 <APIDocs @module="declarations/build/plugins" @name="packageTypes" @package="kolay" />
+```
 
 ## `virtualFile`
 
+```hbs live
 <APIDocs @module="declarations/build/plugins" @name="virtualFile" @package="kolay" />
+```
 
 ## `generateTypeDocJSON`
 
+```hbs live
 <APIDocs @module="declarations/build/plugins" @name="generateTypeDocJSON" @package="kolay" />
+```

@@ -1,18 +1,17 @@
 import Route from '@ember/routing/route';
 
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
+import { sentenceCase } from 'change-case';
 import { colorScheme, sync } from 'ember-primitives/color-scheme';
 import { setupKolay } from 'kolay/setup';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 
-sync();
-
-import { sentenceCase } from 'change-case';
-
 import { nameFor } from '../templates/application.gts';
 
 import type { Manifest } from 'kolay';
+
+sync();
 
 export default class ApplicationRoute extends Route {
   async model(): Promise<{ manifest: Manifest }> {
