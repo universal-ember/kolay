@@ -43,7 +43,7 @@ describe('md to gjs', () => {
       "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
       import repl_1 from 'kolay/virtual:live:repl_1.gjs.hbs';
       export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="portal-targets">PortalTargets</h1>
-      <p>You can reference these defaults by passing their names to <code>&lt;Portal @to="popover"></code>, <code>&lt;Portal @to="tooltip"></code>, or <code>&lt;Portal @to="modal"></code>.</p>
+      <p>You can reference these defaults by passing their names to <code>&#x3C;Portal @to="popover"></code>, <code>&#x3C;Portal @to="tooltip"></code>, or <code>&#x3C;Portal @to="modal"></code>.</p>
       <h2 id="install">Install</h2>
       <div id="repl_1" class="repl-sdk__demo"><repl_1></repl_1></div>\`, {
           eval () {
