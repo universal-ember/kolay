@@ -1,30 +1,29 @@
-const doc = `
-
-# PortalTargets
-
-You can reference these defaults by passing their names to \`<Portal @to="popover">\`, \`<Portal @to="tooltip">\`, or \`<Portal @to="modal">\`.
-
-## Install
-
-\`\`\`hbs live
-<SetupInstructions @src="components/portal-targets.gts" />
-\`\`\`
-`;
-
 import { describe, expect, test } from 'vitest';
 
 import { createCompiler, mdToGJS } from './gjs-md.js';
 
+const compiler = createCompiler({});
+
 describe('md to gjs', () => {
   test('it works', async () => {
-    const compiler = createCompiler({});
-
     const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
-    const result = await mdToGJS(doc, {
-      compiler,
-      id: 'test.gjs.md',
-      virtualModulesByMarkdownFile,
-    });
+    const result = await mdToGJS(
+      `# Heading
+
+inline code \`<Portal @to="popover">\`
+
+## code fence
+
+\`\`\`hbs live
+<SetupInstructions @src="components/portal-targets.gts" />
+\`\`\`
+`,
+      {
+        compiler,
+        id: 'test.gjs.md',
+        virtualModulesByMarkdownFile,
+      }
+    );
 
     expect(virtualModulesByMarkdownFile).toMatchInlineSnapshot(`
       Map {
@@ -42,10 +41,48 @@ describe('md to gjs', () => {
     expect(result.code).toMatchInlineSnapshot(`
       "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
       import repl_1 from 'kolay/virtual:live:repl_1.gjs.hbs';
-      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="portal-targets">PortalTargets</h1>
-      <p>You can reference these defaults by passing their names to <code>&#x3C;Portal @to="popover"></code>, <code>&#x3C;Portal @to="tooltip"></code>, or <code>&#x3C;Portal @to="modal"></code>.</p>
-      <h2 id="install">Install</h2>
+      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="heading">Heading</h1>
+      <p>inline code <code>&#x3C;Portal @to="popover"></code></p>
+      <h2 id="code-fence">code fence</h2>
       <div id="repl_1" class="repl-sdk__demo"><repl_1></repl_1></div>\`, {
+          eval () {
+              return eval(arguments[0]);
+          }
+      });
+      "
+    `);
+  });
+
+  test('it allows top-level component invocation', async () => {
+    const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
+    const result = await mdToGJS(
+      `# Heading
+
+<APIDocs @module="declarations/browser" @name="isCollection" @package="kolay" />`,
+      {
+        compiler,
+        id: 'test.gjs.md',
+        virtualModulesByMarkdownFile,
+        scope: `
+        import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
+        import { Shadowed } from 'ember-primitives/components/shadowed';
+        import { InViewport } from 'ember-primitives/viewport';
+        `,
+      }
+    );
+
+    expect(virtualModulesByMarkdownFile).toMatchInlineSnapshot(`
+      Map {
+        "test.gjs.md" => Map {},
+      }
+    `);
+    expect(result.code).toMatchInlineSnapshot(`
+      "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
+      import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
+      import { Shadowed } from 'ember-primitives/components/shadowed';
+      import { InViewport } from 'ember-primitives/viewport';
+      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="heading">Heading</h1>
+      <p><APIDocs @module="declarations/browser" @name="isCollection" @package="kolay" /></p>\`, {
           eval () {
               return eval(arguments[0]);
           }
