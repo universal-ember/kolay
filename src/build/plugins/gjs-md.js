@@ -225,6 +225,7 @@ export function gjsmd(options = {}) {
             id,
             compiler,
             virtualModulesByMarkdownFile,
+            scope: options.scope,
           });
 
           return babel.transformAsync(code, {
