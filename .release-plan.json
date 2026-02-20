@@ -1,18 +1,18 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "5.0.1",
-      "newVersion": "5.1.0",
+      "impact": "patch",
+      "oldVersion": "5.1.0",
+      "newVersion": "5.1.1",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2026-02-19)\n\n* kolay 5.1.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#279](https://github.com/universal-ember/kolay/pull/279) Upgrade ember-repl ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2026-02-20)\n\n* kolay 5.1.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#281](https://github.com/universal-ember/kolay/pull/281) Update some deps and documentation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }

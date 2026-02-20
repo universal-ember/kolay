@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-02-20)
+
+* kolay 5.1.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#281](https://github.com/universal-ember/kolay/pull/281) Update some deps and documentation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-02-19)
 
 * kolay 5.1.0 (minor)
