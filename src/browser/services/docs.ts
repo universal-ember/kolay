@@ -45,13 +45,13 @@ export function compilerOptions({
     rehypePlugins,
   };
   const scope = {
-    ...topLevelScope,
     Shadowed,
     APIDocs,
     CommentQuery,
     ComponentSignature,
     ModifierSignature,
     HelperSignature,
+    ...topLevelScope,
   };
 
   return {
