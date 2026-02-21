@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-02-21)
+
+* kolay 5.1.2 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#283](https://github.com/universal-ember/kolay/pull/283) Fix topLevelScope ordering ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-02-20)
 
 * kolay 5.1.1 (patch)
