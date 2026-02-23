@@ -26,8 +26,6 @@ export function selected(context: unknown) {
 type File = { default: string | ComponentLike };
 type Loader = () => Promise<File>;
 
-const CACHE = new Map<string, ReturnType<typeof getPromiseState<ComponentLike | undefined>>>();
-
 /**
  * With .gjs.md and .gts.md documents, we have only one promise to deal with.
  * With .md documents, we have two promises.
@@ -41,10 +39,6 @@ const CACHE = new Map<string, ReturnType<typeof getPromiseState<ComponentLike | 
  */
 function loaderFor(selected: Selected, path: string | undefined) {
   if (!path) return;
-
-  const existing = CACHE.get(path);
-
-  if (existing) return existing;
 
   const docs = selected.compiledDocs;
   const owner = getOwner(selected);
@@ -72,8 +66,6 @@ function loaderFor(selected: Selected, path: string | undefined) {
 
   const wrapped = getPromiseState(wrapper);
 
-  CACHE.set(path, wrapped);
-
   return wrapped;
 }
 
@@ -86,7 +78,8 @@ class Selected {
     return docsManager(this);
   }
 
-  get #loader() {
+  @cached
+  get loader() {
     return loaderFor(this, this.#matchOrFirstPagePath);
   }
 
@@ -98,8 +91,8 @@ class Selected {
    *
    ********************************************************************/
   @use activeCompiled = keepLatest({
-    value: () => this.#loader,
-    when: () => Boolean(this.#loader?.isLoading),
+    value: () => this.loader,
+    when: () => Boolean(this.loader?.isLoading),
   });
 
   get prose() {
