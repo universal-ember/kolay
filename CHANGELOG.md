@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-02-23)
+
+* kolay 5.1.3 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#285](https://github.com/universal-ember/kolay/pull/285) Disable LRU cache as ember is not rendering cached components ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-02-21)
 
 * kolay 5.1.2 (patch)
