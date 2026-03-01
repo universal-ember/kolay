@@ -1,18 +1,8 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "5.1.2",
-      "newVersion": "5.1.3",
-      "tagName": "latest",
-      "constraints": [
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        }
-      ],
-      "pkgJSONPath": "./package.json"
+      "oldVersion": "5.1.3"
     }
   },
-  "description": "## Release (2026-02-23)\n\n* kolay 5.1.3 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#285](https://github.com/universal-ember/kolay/pull/285) Disable LRU cache as ember is not rendering cached components ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "\n\n\n\n"
 }
