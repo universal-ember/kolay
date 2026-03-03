@@ -130,7 +130,8 @@ class Selected {
     }
 
     const rawError = this.activeCompiled?.error;
-    const error = rawError instanceof Error ? rawError.message : typeof rawError === 'string' ? rawError : '';
+    const error =
+      rawError instanceof Error ? rawError.message : typeof rawError === 'string' ? rawError : '';
 
     if (!error) return '';
 
