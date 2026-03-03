@@ -129,7 +129,7 @@ class Selected {
       return message;
     }
 
-    const error = this.activeCompiled?.error ? String(this.activeCompiled?.error) : '';
+    const error = this.activeCompiled?.error ?? '';
 
     if (!error) return '';
 
