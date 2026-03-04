@@ -11,6 +11,7 @@ import { keepLatest } from 'reactiveweb/keep-latest';
 
 import { compileText } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
+import { extractErrorMessage } from './extract-error-message.ts';
 import { getKey } from './lazy-load.ts';
 
 import type { Page } from '../../types.ts';
@@ -129,7 +130,8 @@ class Selected {
       return message;
     }
 
-    const error = this.activeCompiled?.error ? String(this.activeCompiled?.error) : '';
+    const rawError = this.activeCompiled?.error;
+    const error = extractErrorMessage(rawError);
 
     if (!error) return '';
 
