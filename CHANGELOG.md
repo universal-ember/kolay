@@ -1,5 +1,18 @@
 # Changelog
 
+## Release (2026-03-04)
+
+* kolay 5.1.4 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#289](https://github.com/universal-ember/kolay/pull/289) Don't allow `[object Object]` to be seen as an error ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#290](https://github.com/universal-ember/kolay/pull/290) Fix type-safe error string extraction to avoid `[object Object]` ([@Copilot](https://github.com/apps/copilot-swe-agent))
+
+#### Committers: 2
+- Copilot [Bot] ([@copilot-swe-agent](https://github.com/apps/copilot-swe-agent))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-02-23)
 
 * kolay 5.1.3 (patch)
