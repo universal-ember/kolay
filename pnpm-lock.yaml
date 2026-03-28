@@ -274,9 +274,6 @@ importers:
       shiki:
         specifier: ^3.20.0
         version: 3.22.0
-      vite-ember-ssr:
-        specifier: github:evoactivity/vite-ember-ssr#main&path:packages/vite-ember-ssr
-        version: https://codeload.github.com/evoactivity/vite-ember-ssr/tar.gz/dd574660de59249818e8d41c78a8c4b5671e72b7#path:packages/vite-ember-ssr(7fd406540df10f39e19ae8fa4b93378b)
     devDependencies:
       '@babel/core':
         specifier: ^7.29.0
@@ -413,6 +410,9 @@ importers:
       vite:
         specifier: 8.0.0-beta.13
         version: 8.0.0-beta.13(050a6ec760bdf6c8475789235dc875ef)
+      vite-ember-ssr:
+        specifier: github:evoactivity/vite-ember-ssr#main&path:packages/vite-ember-ssr
+        version: https://codeload.github.com/evoactivity/vite-ember-ssr/tar.gz/dd574660de59249818e8d41c78a8c4b5671e72b7#path:packages/vite-ember-ssr(7fd406540df10f39e19ae8fa4b93378b)
       vite-plugin-inspect:
         specifier: ^11.3.3
         version: 11.3.3(7fd406540df10f39e19ae8fa4b93378b)

@@ -82,6 +82,7 @@
     "typescript": "^5.9.3",
     "unplugin-info": "^1.2.4",
     "vite": "8.0.0-beta.13",
+    "vite-ember-ssr": "github:evoactivity/vite-ember-ssr#main&path:packages/vite-ember-ssr",
     "vite-plugin-inspect": "^11.3.3",
     "vite-plugin-wasm": "^3.5.0"
   },
@@ -113,7 +114,6 @@
     "kolay": "workspace:^",
     "nvp.ui": "^0.5.3",
     "reactiveweb": "1.9.1",
-    "shiki": "^3.20.0",
-    "vite-ember-ssr": "github:evoactivity/vite-ember-ssr#main&path:packages/vite-ember-ssr"
+    "shiki": "^3.20.0"
   }
 }

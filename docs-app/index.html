@@ -43,10 +43,22 @@
     <!-- VITE_EMBER_SSR_BODY -->
     <script src="/@embroider/virtual/vendor.js"></script>
     <script type="module">
-      import { installShoebox, cleanupSSRContent } from "vite-ember-ssr/client";
-
-      installShoebox();
-      cleanupSSRContent();
+      // Clean up SSR-rendered content before Ember boots.
+      // Inlined from vite-ember-ssr/client to avoid requiring the
+      // package in the client build (it's only needed server-side).
+      {
+        const start = document.getElementById("ssr-body-start");
+        const end = document.getElementById("ssr-body-end");
+        if (start && end && start.parentNode) {
+          let node = start;
+          while (node) {
+            const next = node.nextSibling;
+            start.parentNode.removeChild(node);
+            if (node === end) break;
+            node = next;
+          }
+        }
+      }
 
       const { default: Application } = await import("#src/app.ts");
       const { default: environment } = await import("#config");

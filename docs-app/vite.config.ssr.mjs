@@ -1,10 +1,10 @@
-import { ember, extensions } from '@embroider/vite';
+import { ember, extensions } from "@embroider/vite";
 
-import { babel } from '@rollup/plugin-babel';
-import rehypeShiki from '@shikijs/rehype';
-import { kolay } from 'kolay/vite';
-import { emberSsr } from 'vite-ember-ssr/vite-plugin';
-import { defineConfig } from 'vite';
+import { babel } from "@rollup/plugin-babel";
+import rehypeShiki from "@shikijs/rehype";
+import { kolay } from "kolay/vite";
+import { emberSsr } from "vite-ember-ssr/vite-plugin";
+import { defineConfig } from "vite";
 
 export default defineConfig(async () => {
   return {
@@ -13,8 +13,8 @@ export default defineConfig(async () => {
       kolay({
         groups: [
           {
-            name: 'Runtime',
-            src: import.meta.resolve('../docs', import.meta.url),
+            name: "Runtime",
+            src: import.meta.resolve("../docs", import.meta.url),
           },
         ],
         rehypePlugins: [
@@ -22,14 +22,14 @@ export default defineConfig(async () => {
             rehypeShiki,
             {
               themes: {
-                light: 'github-light',
-                dark: 'github-dark',
+                light: "github-light",
+                dark: "github-dark",
               },
-              defaultColor: 'light-dark()',
+              defaultColor: "light-dark()",
             },
           ],
         ],
-        packages: ['kolay', 'ember-primitives', 'ember-resources'],
+        packages: ["kolay", "ember-primitives", "ember-resources"],
         scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -37,15 +37,15 @@ export default defineConfig(async () => {
         `,
       }),
       babel({
-        babelHelpers: 'runtime',
+        babelHelpers: "runtime",
         extensions,
       }),
-      ...emberSsr({ appName: 'docs-app' }),
+      ...emberSsr({ appName: "docs-app" }),
     ],
     build: {
-      ssr: 'src/app-ssr.ts',
-      outDir: 'dist/server',
-      target: 'node22',
+      ssr: "src/app-ssr.ts",
+      outDir: "dist/server",
+      target: "node22",
       sourcemap: true,
       minify: false,
     },
@@ -55,15 +55,15 @@ export default defineConfig(async () => {
         /^@glimmer\//,
         /^@embroider\//,
         /^ember-/,
-        'decorator-transforms',
-        'kolay',
+        "decorator-transforms",
+        "kolay",
         /^nvp\./,
         /^reactiveweb/,
-        'change-case',
+        "change-case",
       ],
     },
     optimizeDeps: {
-      exclude: ['kolay'],
+      exclude: ["kolay"],
     },
   };
 });
