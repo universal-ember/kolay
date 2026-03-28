@@ -16,6 +16,8 @@
     </script>
     <link integrity="" rel="stylesheet" href="./src/styles/app.css" />
 
+    <!-- VITE_EMBER_SSR_HEAD -->
+
     <style>
       #kolay__loading {
         position: fixed;
@@ -38,10 +40,16 @@
     </style>
   </head>
   <body>
+    <!-- VITE_EMBER_SSR_BODY -->
     <script src="/@embroider/virtual/vendor.js"></script>
     <script type="module">
-      import Application from "#src/app.ts";
-      import environment from "#config";
+      import { installShoebox, cleanupSSRContent } from "vite-ember-ssr/client";
+
+      installShoebox();
+      cleanupSSRContent();
+
+      const { default: Application } = await import("#src/app.ts");
+      const { default: environment } = await import("#config");
 
       Application.create(environment.APP);
     </script>
