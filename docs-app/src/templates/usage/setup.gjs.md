@@ -18,8 +18,6 @@ import `kolay/vite`
 import { kolay } from "kolay/vite";
 
 export default defineConfig(({ mode }) => {
-  const replSdkDependencies =
-
   return {
     plugins: [
       kolay({
