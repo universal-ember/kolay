@@ -7,7 +7,11 @@ import { Args } from './args.gts';
 import { Element } from './element.gts';
 
 import type { TOC } from '@ember/component/template-only';
-import type { ProjectReflection, Reflection } from 'typedoc';
+import type { ProjectReflection, Reflection, SomeType } from 'typedoc';
+
+type SingleSignature = { Element: any; Args: any; Blocks: any };
+type UnionSignature = { variants: SingleSignature[] };
+type SignatureResult = SingleSignature | UnionSignature;
 
 function getSignatureType(info: Reflection, project: ProjectReflection) {
   /**
@@ -65,7 +69,7 @@ function getSignatureType(info: Reflection, project: ProjectReflection) {
   return info;
 }
 
-function getSignatureFromType(type: Reflection) {
+function getSignatureFromType(type: Reflection): SingleSignature | undefined {
   const Element = findChildDeclaration(type, 'Element');
   const Args = findChildDeclaration(type, 'Args');
   const Blocks = findChildDeclaration(type, 'Blocks');
@@ -77,7 +81,10 @@ function getSignatureFromType(type: Reflection) {
   return { Element, Args, Blocks };
 }
 
-export function getSignature(info: Reflection | undefined, project: ProjectReflection) {
+export function getSignature(
+  info: Reflection | undefined,
+  project: ProjectReflection
+): SignatureResult | undefined {
   if (!info) return;
 
   const type = getSignatureType(info, project);
@@ -91,15 +98,15 @@ export function getSignature(info: Reflection | undefined, project: ProjectRefle
    * Each member of the union is a separate signature variant.
    */
   if (type.isDeclaration() && type.type?.type === 'union' && type.type.types) {
-    const variants = type.type.types
-      .map((unionMember: any) => {
-        if (unionMember.type === 'reflection' && unionMember.declaration) {
-          return getSignatureFromType(unionMember.declaration);
+    const variants = (type.type.types as SomeType[])
+      .map((unionMember) => {
+        if (unionMember.type === 'reflection' && 'declaration' in unionMember && unionMember.declaration) {
+          return getSignatureFromType(unionMember.declaration as Reflection);
         }
 
         return undefined;
       })
-      .filter(Boolean);
+      .filter((v): v is SingleSignature => v !== undefined);
 
     if (variants.length > 0) {
       return { variants };
@@ -109,8 +116,8 @@ export function getSignature(info: Reflection | undefined, project: ProjectRefle
   return getSignatureFromType(type);
 }
 
-function hasVariants(info: any): boolean {
-  return Array.isArray(info?.variants);
+function isUnionSignature(info: SignatureResult | undefined): info is UnionSignature {
+  return info !== undefined && 'variants' in info;
 }
 
 export const ComponentSignature: TOC<{
@@ -131,7 +138,7 @@ export const ComponentSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      {{#if (hasVariants info)}}
+      {{#if (isUnionSignature info)}}
         {{#each info.variants as |variant|}}
           <div class='typedoc__union-variant'>
             <ComponentDeclaration @signature={{variant}} />
@@ -146,7 +153,7 @@ export const ComponentSignature: TOC<{
 
 export const ComponentDeclaration: TOC<{
   Args: {
-    signature: any;
+    signature: SingleSignature;
   };
 }> = <template>
   <Element @kind='component' @info={{@signature.Element}} />
