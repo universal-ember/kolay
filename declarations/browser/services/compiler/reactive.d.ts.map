@@ -1,0 +1,1 @@
+{"version":3,"file":"reactive.d.ts","sourceRoot":"","sources":["../../../../src/browser/services/compiler/reactive.ts"],"names":[],"mappings":"AAIA,OAAO,KAAK,KAAK,MAAM,cAAc,CAAC;AAEtC,wBAAgB,WAAW,CAAC,KAAK,EAAE,KAAK,EAAE,IAAI,EAAE,MAAM,GAAG,IAAI,qCAS5D;AAED,wBAAgB,QAAQ,CAAC,MAAM,EAAE,MAAM,GAAG,IAAI,GAAG,CAAC,MAAM,MAAM,GAAG,IAAI,CAAC,qCAMrE"}
