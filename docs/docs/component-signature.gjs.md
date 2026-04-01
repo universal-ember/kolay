@@ -132,3 +132,42 @@ export const TemplateOnlyD: TOC<{
 
 
 </fieldset>
+
+<fieldset>
+  <summary>Union Type (Discriminated Union)</summary>
+
+A component signature can be a discriminated union to express multiple usage modes. Each variant is rendered separately.
+
+```gts
+export type UnionSignature =
+  | {
+      Element: HTMLDivElement;
+      Args: {
+        status?: 'complete' | 'current' | 'incomplete';
+        indicator: string | ComponentLike;
+      };
+      Blocks: {
+        default: [];
+      };
+    }
+  | {
+      Element: HTMLDivElement;
+      Args: {
+        status?: 'complete' | 'current' | 'incomplete';
+      };
+      Blocks: {
+        indicator: [];
+        summary: [];
+        content: [];
+      };
+    };
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='UnionSignature'
+  @package='kolay'
+/>
+
+
+</fieldset>

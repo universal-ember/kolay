@@ -100,6 +100,48 @@ export const TemplateOnlyD: TOC<{
   };
 }> = <template>hi</template>;
 
+/**
+ * A component with two usage modes expressed as a discriminated union.
+ *
+ * **Compact:** `@indicator` arg + default block.
+ * **Named blocks:** `<:indicator>`, `<:summary>`, and `<:content>`.
+ */
+export type UnionSignature =
+  | {
+      Element: HTMLDivElement;
+      Args: {
+        /**
+         * Visual status of the entry.
+         */
+        status?: 'complete' | 'current' | 'incomplete';
+        /**
+         * Icon rendered inside the indicator dot.
+         */
+        indicator: string | ComponentLike;
+      };
+      Blocks: {
+        /** Main content for the entry. */
+        default: [];
+      };
+    }
+  | {
+      Element: HTMLDivElement;
+      Args: {
+        /**
+         * Visual status of the entry.
+         */
+        status?: 'complete' | 'current' | 'incomplete';
+      };
+      Blocks: {
+        /** Custom icon inside the indicator dot. */
+        indicator: [];
+        /** Brief headline. */
+        summary: [];
+        /** Expanded detail content. */
+        content: [];
+      };
+    };
+
 export default class ClassE extends Component<{
   Element: HTMLDivElement;
   Args: {
