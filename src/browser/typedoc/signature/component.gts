@@ -98,8 +98,8 @@ export function getSignature(
    * Each member of the union is a separate signature variant.
    */
   if (type.isDeclaration() && type.type?.type === 'union' && type.type.types) {
-    const variants = (type.type.types as SomeType[])
-      .map((unionMember) => {
+    const variants = type.type.types
+      .map((unionMember: SomeType) => {
         if (
           unionMember.type === 'reflection' &&
           'declaration' in unionMember &&
