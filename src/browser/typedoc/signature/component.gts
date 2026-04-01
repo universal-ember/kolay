@@ -100,7 +100,11 @@ export function getSignature(
   if (type.isDeclaration() && type.type?.type === 'union' && type.type.types) {
     const variants = (type.type.types as SomeType[])
       .map((unionMember) => {
-        if (unionMember.type === 'reflection' && 'declaration' in unionMember && unionMember.declaration) {
+        if (
+          unionMember.type === 'reflection' &&
+          'declaration' in unionMember &&
+          unionMember.declaration
+        ) {
           return getSignatureFromType(unionMember.declaration as Reflection);
         }
 
