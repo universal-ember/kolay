@@ -65,13 +65,7 @@ function getSignatureType(info: Reflection, project: ProjectReflection) {
   return info;
 }
 
-export function getSignature(info: Reflection | undefined, project: ProjectReflection) {
-  if (!info) return;
-
-  const type = getSignatureType(info, project);
-
-  if (!type) return;
-
+function getSignatureFromType(type: Reflection) {
   const Element = findChildDeclaration(type, 'Element');
   const Args = findChildDeclaration(type, 'Args');
   const Blocks = findChildDeclaration(type, 'Blocks');
@@ -80,11 +74,43 @@ export function getSignature(info: Reflection | undefined, project: ProjectRefle
 
   if (!hasAny) return;
 
-  return {
-    Element,
-    Args,
-    Blocks,
-  };
+  return { Element, Args, Blocks };
+}
+
+export function getSignature(info: Reflection | undefined, project: ProjectReflection) {
+  if (!info) return;
+
+  const type = getSignatureType(info, project);
+
+  if (!type) return;
+
+  /**
+   * Union type signatures, e.g.:
+   *   export type Signature = { Element: ...; Args: { a: string } } | { Element: ...; Args: { b: number } }
+   *
+   * Each member of the union is a separate signature variant.
+   */
+  if (type.isDeclaration() && type.type?.type === 'union' && type.type.types) {
+    const variants = type.type.types
+      .map((unionMember: any) => {
+        if (unionMember.type === 'reflection' && unionMember.declaration) {
+          return getSignatureFromType(unionMember.declaration);
+        }
+
+        return undefined;
+      })
+      .filter(Boolean);
+
+    if (variants.length > 0) {
+      return { variants };
+    }
+  }
+
+  return getSignatureFromType(type);
+}
+
+function hasVariants(info: any): boolean {
+  return Array.isArray(info?.variants);
 }
 
 export const ComponentSignature: TOC<{
@@ -105,14 +131,22 @@ export const ComponentSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      <ComponentDeclaration @signature={{info}} />
+      {{#if (hasVariants info)}}
+        {{#each info.variants as |variant|}}
+          <div class='typedoc__union-variant'>
+            <ComponentDeclaration @signature={{variant}} />
+          </div>
+        {{/each}}
+      {{else}}
+        <ComponentDeclaration @signature={{info}} />
+      {{/if}}
     {{/let}}
   </Load>
 </template>;
 
 export const ComponentDeclaration: TOC<{
   Args: {
-    signature: NonNullable<ReturnType<typeof getSignature>>;
+    signature: any;
   };
 }> = <template>
   <Element @kind='component' @info={{@signature.Element}} />
