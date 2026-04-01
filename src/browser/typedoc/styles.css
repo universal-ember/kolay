@@ -373,3 +373,12 @@ section {
 .typedoc__union .typedoc__union__type:first-child::before {
   display: none;
 }
+
+/**
+ * Union Variant (discriminated union signatures)
+ */
+.typedoc__union-variant + .typedoc__union-variant {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid light-dark(#e4e4e7, #3f3f46);
+}
