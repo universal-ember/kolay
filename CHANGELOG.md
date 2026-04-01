@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-04-01)
+
+* kolay 5.2.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#294](https://github.com/universal-ember/kolay/pull/294) Support union type signatures in ComponentSignature ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 1
+- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
 ## Release (2026-03-04)
 
 * kolay 5.1.4 (patch)
