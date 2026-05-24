@@ -1,0 +1,20 @@
+diff --git a/dist/services/known-modules.js b/dist/services/known-modules.js
+index 0e7a25daf57f7376edc1d839f8277b764d4597e1..7206f100107a6366b414b7f04195b3fc1d61245c 100644
+--- a/dist/services/known-modules.js
++++ b/dist/services/known-modules.js
+@@ -49,7 +49,14 @@ const emberCompilationModules = {
+   'ember-source/ember-template-compiler/index.js'),
+   // Direct Dependencies
+   '@babel/standalone': () => import('../babel-DbH-RlNa.js').then(function (n) { return n.b; }),
+-  'content-tag': () => import('content-tag'),
++  // Use the WASM standalone build. The default `.` export points at
++  // `pkg/node.cjs` (a native binding), but `node.cjs` is unambiguously
++  // CJS and vite-ember-ssr's CJS-to-ESM shim wraps it with an
++  // `export default` that rolldown rejects for `.cjs` files. The
++  // standalone build is pure ESM and works in both browser and Node
++  // (the Node side needs its WASM file read from disk; see the
++  // file:// handler in docs-app/src/app-ssr.ts).
++  'content-tag': () => import('content-tag/standalone'),
+   'decorator-transforms': () => import('decorator-transforms'),
+   'decorator-transforms/runtime': () => import('decorator-transforms/runtime'),
+   'decorator-transforms/runtime-esm': () => import('decorator-transforms/runtime-esm'),

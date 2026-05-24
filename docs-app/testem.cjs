@@ -3,7 +3,10 @@
 if (typeof module !== 'undefined') {
   module.exports = {
     test_page: 'tests/index.html?hidepassed&skipAllLinks',
-    cwd: 'dist',
+    // vite-ember-ssr's emberSsr() plugin sets build.outDir to 'dist/client'
+    // for non-SSR builds so the prod fastify server can serve client/ and
+    // load server/. build:tests inherits the same outDir.
+    cwd: 'dist/client',
     disable_watching: true,
     launch_in_ci: ['Chrome'],
     launch_in_dev: ['Chrome'],

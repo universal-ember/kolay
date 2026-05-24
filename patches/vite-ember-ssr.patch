@@ -1,0 +1,75 @@
+diff --git a/dist/vite-plugin-9BSJgEL9.js b/dist/vite-plugin-9BSJgEL9.js
+index e74e1f1c9537eb0d7239722f39fbbf053b3cb2ff..e1001ed0fca88bd5ec23a105004580b6ed172575 100644
+--- a/dist/vite-plugin-9BSJgEL9.js
++++ b/dist/vite-plugin-9BSJgEL9.js
+@@ -352,7 +352,7 @@ function emberSsg(options) {
+ 					ssrBundlePath = join(ssrOutDir, `${entryBasename}.js`);
+ 				}
+ 				const ssrBundleURL = pathToFileURL(ssrBundlePath).href;
+-				const app = await createEmberApp(ssrBundleURL, { workers: cpus().length });
++				const app = await createEmberApp(ssrBundleURL, { workers: cpus().length, isolateWorkers: true });
+ 				try {
+ 					await Promise.all(routes.map(async (route) => {
+ 						const url = route === "index" ? "/" : `/${route}`;
+diff --git a/dist/worker.js b/dist/worker.js
+index b2d021e7b72b0fddbd96a98179f80055c2404858..20c446db7782ec58cd2c3ba51a2e610e47bcfd99 100644
+--- a/dist/worker.js
++++ b/dist/worker.js
+@@ -41,7 +41,15 @@ const BROWSER_GLOBALS = [
+ 	"PointerEvent",
+ 	"IntersectionObserver",
+ 	"ResizeObserver",
+-	"CSSStyleSheet"
++	"CSSStyleSheet",
++	"HTMLScriptElement",
++	"HTMLLinkElement",
++	"HTMLStyleElement",
++	"HTMLIFrameElement",
++	"HTMLImageElement",
++	"MessageEvent",
++	"EventTarget",
++	"ShadowRoot"
+ ];
+ function installGlobals(win) {
+ 	for (const name of BROWSER_GLOBALS) try {
+@@ -65,6 +73,40 @@ const win = new Window({
+ 	}
+ });
+ installGlobals(win);
++// HappyDOM doesn't ship Worker but the SSR bundle's import graph includes
++// code that does `new Worker(...)` at module-top-level (e.g. repl-sdk's
++// tar.js for runtime markdown compilation, then wrapped with comlink).
++//
++// We can't use Node's `worker_threads.Worker` directly because:
++//   1. Its API is EventEmitter (.on('message',...)) not EventTarget
++//      (.addEventListener('message',...)), and comlink expects the latter.
++//   2. The bundled URL like `new URL("./tar-worker.js", import.meta.url)`
++//      resolves to a path inside .ssg-tmp/assets/ where Vite never emits
++//      the worker file (it only lands in the *client* build output), so
++//      Node.js's worker thread spawn fails with `Cannot find module`.
++//
++// Since SSG never reaches the runtime markdown compiler (pages are
++// pre-compiled by `kolay/vite`), the Worker is constructed at module-eval
++// but never actually messaged. Provide an inert EventTarget that swallows
++// postMessage/terminate calls — comlink's `wrap()` runs, the parent-side
++// proxy gets created, but no messages ever flow.
++class InertWebWorker extends EventTarget {
++  postMessage() {}
++  terminate() {}
++}
++if (typeof globalThis.Worker === "undefined") globalThis.Worker = InertWebWorker;
++// Worker-only browser globals referenced as bare identifiers (not via
++// `globalThis.x`) in the SSR bundle's `standardScope` object literal —
++// e.g. `var standardScope = { ..., postMessage, ... }` in ember-repl's
++// compile.js. JavaScript identifier resolution walks lexical scope and
++// falls through to the global object, so installing them on globalThis
++// is enough to keep the module from throwing ReferenceError at evaluation.
++// These are no-ops because no code path through SSG actually invokes
++// the runtime markdown compiler that would use them.
++if (typeof globalThis.postMessage === "undefined")
++  globalThis.postMessage = () => {};
++if (typeof globalThis.isSecureContext === "undefined")
++  globalThis.isSecureContext = false;
+ const { ssrBundlePath: startupBundlePath } = process.__tinypool_state__.workerData;
+ const startupMod = await import(startupBundlePath);
+ if (typeof startupMod.createSsrApp !== "function") throw new Error(`SSR bundle '${startupBundlePath}' does not export a 'createSsrApp' function. Found exports: ${Object.keys(startupMod).join(", ")}`);

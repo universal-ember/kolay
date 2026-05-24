@@ -6,6 +6,26 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <script>
+      // Set the color scheme BEFORE any CSS loads, so the first paint matches
+      // the user's preference. ember-primitives/color-scheme reads the same
+      // localStorage key when it boots, so this stays in sync afterward.
+      // Without this, SSR'd HTML renders with the server's default scheme
+      // and the page flashes when client JS detects the real preference.
+      (function () {
+        try {
+          var key = "ember-primitives/color-scheme#local-preference";
+          var pref =
+            localStorage.getItem(key) ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.style.colorScheme = pref;
+          document.documentElement.dataset.theme = pref;
+        } catch (_) {
+          /* localStorage may be unavailable; skip */
+        }
+      })();
+    </script>
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
@@ -16,39 +36,11 @@
     </script>
     <link integrity="" rel="stylesheet" href="./src/styles/app.css" />
 
-    <style>
-      #kolay__loading {
-        position: fixed;
-        inset: 0;
-        background: #111;
-        color: white;
-        font-size: 4rem;
-        z-index: 10;
-        font-family: "System UI", "System";
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 4rem;
-
-        [aria-busy="true"] {
-          background: #111;
-        }
-      }
-    </style>
+    <!-- VITE_EMBER_SSR_HEAD -->
   </head>
   <body>
+    <!-- VITE_EMBER_SSR_BODY -->
     <script src="/@embroider/virtual/vendor.js"></script>
-    <script type="module">
-      import Application from "#src/app.ts";
-      import environment from "#config";
-
-      Application.create(environment.APP);
-    </script>
-
-    <div id="kolay__loading">
-      Kolay
-      <div aria-busy="true"></div>
-    </div>
+    <script type="module" src="/src/entry.ts"></script>
   </body>
 </html>

@@ -6,7 +6,6 @@ import { pascalCase, sentenceCase } from 'change-case';
 // @ts-expect-error no types for the mobile-menu
 import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
-import Route from 'ember-route-template';
 import { GroupNav, PageNav } from 'kolay/components';
 import { ExternalLink } from 'nvp.ui';
 
@@ -42,46 +41,37 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
   </aside>
 </template>;
 
-function removeLoader() {
-  requestAnimationFrame(() => {
-    document.querySelector('#kolay__loading')?.remove();
-  });
-}
+<template>
+  {{pageTitle "Docs :: " abbreviatedSha}}
 
-export default Route(
-  <template>
-    {{(removeLoader)}}
+  <MenuWrapper as |mmw|>
+    <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
+      <SideNav {{on "click" mm.actions.close}} />
+    </mmw.MobileMenu>
 
-    {{pageTitle "Docs :: " abbreviatedSha}}
-
-    <MenuWrapper as |mmw|>
-      <mmw.MobileMenu @mode="push" @maxWidth={{200}} as |mm|>
-        <SideNav {{on "click" mm.actions.close}} />
-      </mmw.MobileMenu>
-
-      <mmw.Content class="container">
-        <header>
-          <div>
-            <mmw.Toggle><Menu /></mmw.Toggle>
-            <GroupNav />
-          </div>
-          <div>
-            <ExternalLink href="https://github.com/universal-ember/kolay">GitHub</ExternalLink>
-          </div>
-        </header>
-
-        <div class="big-layout">
-          <SideNav />
-
-          <main style="padding-top: 1rem;">
-            {{outlet}}
-          </main>
+    <mmw.Content class="container">
+      <header>
+        <div>
+          <mmw.Toggle><Menu /></mmw.Toggle>
+          <GroupNav />
         </div>
-      </mmw.Content>
-    </MenuWrapper>
+        <div>
+          <ExternalLink href="https://github.com/universal-ember/kolay">GitHub</ExternalLink>
+        </div>
+      </header>
 
-    {{!-- prettier-ignore --}}
-    <style>
+      <div class="big-layout">
+        <SideNav />
+
+        <main style="padding-top: 1rem;">
+          {{outlet}}
+        </main>
+      </div>
+    </mmw.Content>
+  </MenuWrapper>
+
+  {{!-- prettier-ignore --}}
+  <style>
       .mobile-menu-wrapper__content,
       .mobile-menu__tray {
         background: none;
@@ -149,8 +139,7 @@ export default Route(
         }
       }
     </style>
-  </template>
-);
+</template>
 
 export function nameFor(x: Page) {
   // We defined componentName via json file

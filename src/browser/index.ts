@@ -14,7 +14,7 @@ export { addRoutes, handlePotentialIndexVisit } from './router.ts';
 export { typedocLoader } from './services/api-docs.ts';
 export { Compiled } from './services/compiler/reactive.ts';
 export { docsManager } from './services/docs.ts';
-export { selected } from './services/selected.ts';
+export { prefetchPage, selected } from './services/selected.ts';
 
 // Utilities
 export { getIndexPage, isCollection, isIndex } from './utils.ts';

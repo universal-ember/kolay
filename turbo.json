@@ -42,10 +42,6 @@
       "outputs": ["dist/**", "declarations/**"],
       "dependsOn": ["^build"]
     },
-    "build:app": {
-      "outputs": ["dist/**"],
-      "dependsOn": ["^build"]
-    },
     "build:tests": {
       "outputs": ["dist/**"],
       "dependsOn": ["^build"]
