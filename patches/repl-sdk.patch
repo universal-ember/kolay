@@ -13,10 +13,10 @@ index d56e59c82301b9a9999aa781ba382afa922897f8..b278201f98679035eca6b6b14ed2f029
    },
    "repository": {
 diff --git a/src/compilers/ember/gmd.js b/src/compilers/ember/gmd.js
-index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84ee8aef2fb 100644
+index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7de557ded 100644
 --- a/src/compilers/ember/gmd.js
 +++ b/src/compilers/ember/gmd.js
-@@ -1,10 +1,22 @@
+@@ -1,10 +1,25 @@
  /**
   * @typedef {import('unified').Plugin} Plugin
   */
@@ -29,18 +29,21 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84e
 +let scopeNonce = 0;
 +
 +/**
-+ * Symbol-keyed slot on `globalThis` where gmd's runtime path stashes the live
-+ * scope object so the emitted ES module can read it back at evaluation time.
++ * Virtual ES module specifier under which gmd's runtime path registers the
++ * live scope object via `api.provide`. The emitted module then imports its
++ * scope from this specifier — Compiler's existing `manual:` resolver takes
++ * care of handing the registered value back, so individual compilers don't
++ * need to know how the bridge is implemented.
 + *
 + * @param {number} id
 + */
-+function scopeKey(id) {
-+  return Symbol.for(`repl-sdk:gmd-scope:${id}`);
++function scopeSpecifier(id) {
++  return `repl-sdk:gmd-scope:${id}`;
 +}
  
  /**
   * @param {unknown} [ options ]
-@@ -55,6 +67,26 @@ export async function compiler(config, api) {
+@@ -55,6 +70,27 @@ export async function compiler(config, api) {
     * @type {import('../../types.ts').Compiler}
     */
    const gmdCompiler = {
@@ -59,15 +62,16 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84e
 +     *
 +     *   - How runtime scope crosses the source boundary. The build-time
 +     *     form can't reference a live JS object, so renderToString gets
-+     *     an empty scope. The runtime form stashes the live scope object
-+     *     on `globalThis[Symbol.for('repl-sdk:gmd-scope:N')]` and emits a
-+     *     module that reads it back and destructures its keys into the
-+     *     template's `scope: () => ({...})` call.
++     *     an empty scope. The runtime form registers the live scope object
++     *     behind a virtual ES module specifier via `api.provide` and emits
++     *     a module that `import * as __scope__ from '<specifier>'`. The
++     *     Compiler's existing `manual:` resolver handles the bridge, so
++     *     gmd never touches `globalThis` directly.
 +     */
      compile: async (text, options) => {
        const compileOptions = filterOptions(options);
        const result = await parseMarkdown(text, {
-@@ -68,22 +100,62 @@ export async function compiler(config, api) {
+@@ -68,22 +104,57 @@ export async function compiler(config, api) {
          getFlavorFromMeta,
        });
  
@@ -77,11 +81,8 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84e
 +
 +      let nth = 0;
 +
-+      for (const info of /** @type {Array<Record<string, unknown>>} */ (result.codeBlocks)) {
-+        const format = /** @type {string} */ (info.format);
-+        const flavor = /** @type {string | undefined} */ (info.flavor);
-+        const code = /** @type {string} */ (info.code);
-+        const placeholderId = /** @type {string} */ (info.placeholderId);
++      for (const info of result.codeBlocks) {
++        const { format, flavor, code, placeholderId } = info;
 +
 +        if (!api.canCompile(format, flavor).result) continue;
 +
@@ -120,27 +121,25 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84e
 +        return { source };
 +      }
 +
-+      const id = ++scopeNonce;
-+      const key = scopeKey(id);
-+
-+      /** @type {Record<symbol, unknown>} */ (globalThis)[key] = scope;
++      const specifier = scopeSpecifier(++scopeNonce);
++      const unregisterScope = api.provide(specifier, scope);
 +
 +      const source = buildGmdModule({
 +        prose: result.text,
 +        demos,
 +        templateModule: '@ember/template-compiler/runtime',
 +        scope: {
-+          expression: `globalThis[Symbol.for('repl-sdk:gmd-scope:${id}')]`,
++          specifier,
 +          keys: Object.keys(scope),
 +        },
        });
  
 -      return { compiled: component, ...result, scope };
-+      return { compiled: source, ...result, scope, __replSdkScopeNonce: id };
++      return { compiled: source, ...result, scope, __replSdkUnregisterScope: unregisterScope };
      },
      render: async (element, compiled, extra, compiler) => {
        /**
-@@ -98,70 +170,31 @@ export async function compiler(config, api) {
+@@ -98,70 +169,32 @@ export async function compiler(config, api) {
  
        const { renderComponent } = await compiler.tryResolve('@ember/renderer');
  
@@ -157,9 +156,7 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84e
        });
  
 -      const destroy = () => result.destroy();
-+      return () => {
-+        result.destroy();
- 
+-
 -      /**
 -       * @type {(() => void)[]}
 -       */
@@ -210,18 +207,22 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84e
 -          target.appendChild(subRender.element);
 -        })
 -      );
-+        // Release the stashed scope so it's eligible for GC. The nonce is
-+        // shape-typed on `extra` so we know exactly which slot to clear.
-+        const nonce =
-+          extra && typeof extra === 'object' && '__replSdkScopeNonce' in extra
-+            ? /** @type {number} */ (extra.__replSdkScopeNonce)
-+            : undefined;
- 
--      return () => {
+-
+       return () => {
 -        for (const subDestroy of destroyables) {
 -          subDestroy();
-+        if (typeof nonce === 'number') {
-+          delete /** @type {Record<symbol, unknown>} */ (globalThis)[scopeKey(nonce)];
++        result.destroy();
++
++        // Release the registered scope so it's eligible for GC. `compile()`
++        // attached the unregister callback to `extra` so we know which
++        // entry to clear.
++        if (
++          extra &&
++          typeof extra === 'object' &&
++          '__replSdkUnregisterScope' in extra &&
++          typeof extra.__replSdkUnregisterScope === 'function'
++        ) {
++          extra.__replSdkUnregisterScope();
          }
 -
 -        destroy();
@@ -276,52 +277,57 @@ index 49bd11da2a8da29087d9f28a8162c4a32b777f40..60c027a6c031e871bfa54cd881c6a7bb
  
        return () => result.destroy();
      },
-diff --git a/src/compilers/markdown.js b/src/compilers/markdown.js
-index a0088f943a401e69461933bf4267efd41d8b0427..1ee71c4e281c5c65804d6478ac689fef597feee8 100644
---- a/src/compilers/markdown.js
-+++ b/src/compilers/markdown.js
-@@ -89,13 +89,15 @@ export const md = {
-             }
+diff --git a/src/compilers/markdown/parse.d.ts b/src/compilers/markdown/parse.d.ts
+index 90ced9a4b028b5d8d38d379d7632cf1752cba078..77bf8bd73da51100870b89bf69065b0ac7308ab4 100644
+--- a/src/compilers/markdown/parse.d.ts
++++ b/src/compilers/markdown/parse.d.ts
+@@ -1,14 +1,28 @@
+ import type { InternalOptions } from './types';
  
-             const flavor = /** @type {string} */ (infoObj.flavor);
--            const subRender = await compiler.compile(
--              /** @type {string} */ (infoObj.format),
--              /** @type {string} */ (infoObj.code),
--              {
--                ...compiler.optionsFor(/** @type {string} */ (infoObj.format), flavor),
--                flavor: flavor,
--              }
-+            const subRender = /** @type {{ element: HTMLElement, destroy: () => void }} */ (
-+              await compiler.compile(
-+                /** @type {string} */ (infoObj.format),
-+                /** @type {string} */ (infoObj.code),
-+                {
-+                  ...compiler.optionsFor(/** @type {string} */ (infoObj.format), flavor),
-+                  flavor: flavor,
-+                }
-+              )
-             );
- 
-             const selector = `#${/** @type {string} */ (infoObj.placeholderId)}`;
++/**
++ * One live code fence's worth of information collected during the parse pass.
++ * Mirrors what `liveCodeExtraction` pushes onto `file.data.liveCode`.
++ */
++export interface LiveCodeBlock {
++  /** Language id from the code fence (e.g. `gjs`, `hbs`, `python`). */
++  format: string;
++  /** Optional flavor parsed from the meta (e.g. `ember`, `react`). */
++  flavor: string | undefined;
++  /** The fence body, trimmed. */
++  code: string;
++  /** Stable id used by the placeholder `<div id="…">` in the rendered HTML. */
++  placeholderId: string;
++  /** Raw meta string from the fence. */
++  meta: string | undefined;
++}
++
+ export function parseMarkdown(
+   input: string,
+   options: InternalOptions
+ ): Promise<{
+   text: string;
+-  codeBlocks: Array<{
+-    lang: string;
+-    format: string;
+-    code: string;
+-    name: string;
+-  }>;
++  codeBlocks: LiveCodeBlock[];
+ }>;
++
++export function buildCompiler(options: InternalOptions): unknown;
 diff --git a/src/index.d.ts b/src/index.d.ts
-index 2cb65ae12cd3f2aa5b41114336b12c40ca29b59f..a13522bce7a86cd071776c0192726b2e24b80e78 100644
+index 2cb65ae12cd3f2aa5b41114336b12c40ca29b59f..7578e7eefbf7e366bbb02f86470407229fa91a89 100644
 --- a/src/index.d.ts
 +++ b/src/index.d.ts
-@@ -15,8 +15,29 @@ export class Compiler {
+@@ -15,9 +15,24 @@ export class Compiler {
      options?: {
        flavor?: string;
        fileName?: string;
-+      /**
-+       * When true, returns `{ source: string }` instead of evaluating and
-+       * rendering. Most callers should use {@link Compiler.compileToSource}
-+       * instead.
-+       */
-+      renderToString?: boolean;
 +      [key: string]: unknown;
      }
--  ): Promise<{ element: HTMLElement; destroy: () => void }>;
-+  ): Promise<{ element: HTMLElement; destroy: () => void } | { source: string }>;
-+
+   ): Promise<{ element: HTMLElement; destroy: () => void }>;
+ 
 +  /**
 +   * Build-time variant of {@link Compiler.compile}: returns the compiled JS
 +   * module source as a string instead of evaluating and rendering.
@@ -335,41 +341,32 @@ index 2cb65ae12cd3f2aa5b41114336b12c40ca29b59f..a13522bce7a86cd071776c0192726b2e
 +    text: string,
 +    options?: Record<string, unknown>
 +  ): Promise<{ source: string }>;
- 
++
    optionsFor(format: string, flavor?: string): Omit<CompilerConfig, 'compiler'>;
  
+   /**
 diff --git a/src/index.js b/src/index.js
-index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579ca9342430 100644
+index edabc53c47a059a2c3247244aecbf75cbbe77b7c..b57335b56d7e1415e50fb0de50aa89924f5177d1 100644
 --- a/src/index.js
 +++ b/src/index.js
-@@ -345,13 +345,17 @@ export class Compiler {
+@@ -345,26 +345,107 @@ export class Compiler {
    /**
     * @param {string} format
     * @param {string} text
 -   * @param {{ fileName?: string, flavor?: string, [key: string]: unknown }} [ options ]
--   * @returns {Promise<{ element: HTMLElement, destroy: () => void }>}
-+   * @param {{ fileName?: string, flavor?: string, args?: Record<string, unknown>, renderToString?: boolean, [key: string]: unknown }} [ options ]
-+   * @returns {Promise<{ element: HTMLElement, destroy: () => void } | { source: string }>}
++   * @param {{ fileName?: string, flavor?: string, args?: Record<string, unknown>, [key: string]: unknown }} [ options ]
+    * @returns {Promise<{ element: HTMLElement, destroy: () => void }>}
     */
    async compile(format, text, options = {}) {
-     this.#announce('info', `Compiling ${format}`);
- 
-     try {
-+      if (options.renderToString) {
-+        return await this.#compileToSource(format, text, options);
-+      }
++    return this.#runCompile(this.#compile, format, text, options);
++  }
 +
-       return await this.#compile(format, text, options);
-     } catch (e) {
-       // for on.log usage
-@@ -365,6 +369,68 @@ export class Compiler {
-     }
-   }
- 
 +  /**
 +   * Build-time variant of {@link Compiler.compile}: returns the compiled JS
-+   * module source as a string instead of evaluating and rendering. Equivalent
-+   * to `compile(format, text, { ...options, renderToString: true })`.
++   * module source as a string instead of evaluating and rendering. Each
++   * configured compiler sees `renderToString: true` on its options and is
++   * expected to emit a source string (`string` or `{ source: string, … }`)
++   * rather than a runtime component.
 +   *
 +   * @param {string} format
 +   * @param {string} text
@@ -377,11 +374,40 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579c
 +   * @returns {Promise<{ source: string }>}
 +   */
 +  async compileToSource(format, text, options = {}) {
-+    return /** @type {{ source: string }} */ (
-+      await this.compile(format, text, { ...options, renderToString: true })
-+    );
++    return this.#runCompile(this.#compileToSource, format, text, options);
 +  }
 +
++  /**
++   * Shared wrapper for `compile` / `compileToSource`: announces lifecycle
++   * messages and forwards any thrown error through `on.log` before letting
++   * it propagate. Both public entry points share this so the user-visible
++   * logging is identical whether they're rendering or just getting source.
++   *
++   * @template T
++   * @param {(format: string, text: string, options: Record<string, unknown>) => Promise<T>} impl
++   * @param {string} format
++   * @param {string} text
++   * @param {Record<string, unknown>} options
++   * @returns {Promise<T>}
++   */
++  async #runCompile(impl, format, text, options) {
+     this.#announce('info', `Compiling ${format}`);
+ 
+     try {
+-      return await this.#compile(format, text, options);
++      return await impl.call(this, format, text, options);
+     } catch (e) {
+-      // for on.log usage
+       const message = e instanceof Error ? e.message : e;
+ 
+       this.#announce('error', String(message));
+-
+-      // Don't hide errors!
+       this.#error(e);
+       throw e;
+     }
+   }
+ 
 +  /**
 +   * Build-time variant of `#compile`: returns the compiled JavaScript source
 +   * as a string rather than loading it via a blob URL and rendering.
@@ -402,36 +428,41 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579c
 +   * @returns {Promise<{ source: string }>}
 +   */
 +  async #compileToSource(format, text, options) {
-+    /** @type {Record<string, unknown>} */
-+    const opts = { ...options, renderToString: true };
++    const flavor = typeof options.flavor === 'string' ? options.flavor : undefined;
++    const fileName = typeof options.fileName === 'string' ? options.fileName : `dynamic.${format}`;
++    const opts = { ...options, fileName, renderToString: true };
 +
-+    opts.fileName ||= `dynamic.${format}`;
-+
-+    const compiler = await this.#getCompiler(
-+      format,
-+      /** @type {string | undefined} */ (opts.flavor)
-+    );
++    const compiler = await this.#getCompiler(format, flavor);
 +    const compiled = await compiler.compile(text, opts);
 +
 +    if (typeof compiled === 'string') {
 +      return { source: compiled };
 +    }
 +
-+    if (compiled && typeof (/** @type {{source?: unknown}} */ (compiled).source) === 'string') {
-+      return /** @type {{source: string}} */ (compiled);
++    if (
++      compiled !== null &&
++      typeof compiled === 'object' &&
++      'source' in compiled &&
++      typeof compiled.source === 'string'
++    ) {
++      return { source: compiled.source };
 +    }
++
++    const shape =
++      compiled !== null && typeof compiled === 'object'
++        ? Object.keys(compiled).join(', ')
++        : typeof compiled;
 +
 +    throw new Error(
 +      `Compiler for format '${format}' was asked to renderToString but returned ` +
-+        `${typeof compiled === 'object' ? Object.keys(/** @type {object} */ (compiled)).join(', ') : typeof compiled} ` +
-+        `instead of a source string.`
++        `${shape} instead of a source string.`
 +    );
 +  }
 +
    /**
     * @param {string} format
     * @param {string} text
-@@ -411,6 +477,7 @@ export class Compiler {
+@@ -411,6 +492,7 @@ export class Compiler {
        return this.#render(compiler, value, {
          ...extras,
          compiled: value,
@@ -439,7 +470,7 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579c
        });
      }
  
-@@ -421,7 +488,10 @@ export class Compiler {
+@@ -421,7 +503,10 @@ export class Compiler {
  
      this.#log('[compile] preparing to render', defaultExport, extras);
  
@@ -451,7 +482,7 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579c
    }
  
    #compilerCache = new WeakMap();
-@@ -666,6 +736,14 @@ export class Compiler {
+@@ -666,6 +751,47 @@ export class Compiler {
       * @param {Parameters<Compiler['compile']>} args
       */
      compile: (...args) => this.compile(...args),
@@ -463,15 +494,48 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579c
 +     * @param {Parameters<Compiler['compileToSource']>} args
 +     */
 +    compileToSource: (...args) => this.compileToSource(...args),
++
++    /**
++     * Register a JS value to be resolvable as an ES module under a virtual
++     * import specifier. Returns a cleanup function that unregisters it.
++     *
++     * Compilers use this when their emitted source needs to reach back to a
++     * runtime value that can't be serialized into a module string —
++     * typically a live scope object. The emitted source can then
++     * `import * as scope from '${specifier}'` and rely on the compiler's
++     * resolver to fetch the value, instead of every compiler hand-rolling
++     * its own `globalThis` namespace.
++     *
++     * Under the hood this layers on the same `manual:` resolver +
++     * `cache.resolves` machinery the Compiler already uses for caller-
++     * supplied `options.resolve` entries.
++     *
++     * @param {string} specifier
++     * @param {unknown} value
++     * @returns {() => void}
++     */
++    provide: (specifier, value) => {
++      this.#options.resolve ??= {};
++      this.#options.resolve[specifier] = value;
++      cache.resolves[specifier] = value;
++
++      return () => {
++        if (this.#options.resolve) {
++          delete this.#options.resolve[specifier];
++        }
++
++        delete cache.resolves[specifier];
++      };
++    },
      /**
       * @param {Parameters<Compiler['optionsFor']>} args
       */
 diff --git a/src/render-to-string.js b/src/render-to-string.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..ef0e76bd30adf6d98f0c5856f8cf1fa9c2ae6853
+index 0000000000000000000000000000000000000000..b61f6e7564a788d019e7818ea40bb5ccc3d16ceb
 --- /dev/null
 +++ b/src/render-to-string.js
-@@ -0,0 +1,323 @@
+@@ -0,0 +1,325 @@
 +/**
 + * Shared helpers for the build-time `renderToString` code path.
 + *
@@ -699,28 +763,26 @@ index 0000000000000000000000000000000000000000..ef0e76bd30adf6d98f0c5856f8cf1fa9
 + *     evaluated at runtime, or `'@ember/template-compiler'` when a build-
 + *     time babel plugin is expected to precompile the `template(...)` call.
 + *
-+ *   - `scope`: a string expression (e.g.
-+ *     `globalThis[Symbol.for('repl-sdk:gmd-scope:42')]`) that, at module
-+ *     evaluation time, returns the live runtime scope object. The keys
-+ *     listed in `scopeKeys` are destructured from that expression and
-+ *     spread into the prose template's `scope: () => ({...})` call,
-+ *     letting helpers like `array`, `concat`, etc. cross the source
-+ *     boundary without needing dedicated imports. Pass `null` (the default)
-+ *     to skip scope-via-global entirely — used for renderToString, where
-+ *     there is no live scope.
++ *   - `scope`: a virtual ES module specifier that the emitted module will
++ *     `import * as __scope__ from '<specifier>'`, and the list of keys to
++ *     destructure off that namespace. The runtime path registers the live
++ *     scope object behind such a specifier via `api.provide`; the
++ *     renderToString path passes `null` because there is no live scope to
++ *     bridge.
 + *
 + * The placeholders in `prose` are replaced with `<name />` Glimmer
 + * invocations wrapped in a div that preserves the original placeholder's
 + * `class` attribute (e.g. `repl-sdk__demo`) so existing CSS still applies.
 + *
 + * This is a pure function — the caller is responsible for driving the
-+ * sub-compiles and stashing the scope object if it uses `scope`/`scopeKeys`.
++ * sub-compiles and (for the runtime path) for registering the scope value
++ * behind `scope.specifier` before this output is evaluated.
 + *
 + * @param {object} args
 + * @param {string} args.prose
 + * @param {Array<{ name: string, placeholderId: string, source: string }>} args.demos
 + * @param {string} [args.templateModule]
-+ * @param {{ expression: string, keys: string[] } | null} [args.scope]
++ * @param {{ specifier: string, keys: string[] } | null} [args.scope]
 + * @returns {string}
 + */
 +export function buildGmdModule({
@@ -731,6 +793,11 @@ index 0000000000000000000000000000000000000000..ef0e76bd30adf6d98f0c5856f8cf1fa9
 +}) {
 +  /** @type {string[][]} */
 +  const importGroups = [[`import { template } from '${templateModule}';`]];
++
++  if (scope && scope.keys.length) {
++    importGroups.push([`import * as __scope__ from '${scope.specifier}';`]);
++  }
++
 +  /** @type {string[]} */
 +  const bodyDecls = [];
 +  /** @type {string[]} */
@@ -754,7 +821,6 @@ index 0000000000000000000000000000000000000000..ef0e76bd30adf6d98f0c5856f8cf1fa9
 +  const preludeLines = [];
 +
 +  if (scope && scope.keys.length) {
-+    preludeLines.push(`const __scope__ = ${scope.expression};`);
 +    preludeLines.push(`const { ${scope.keys.join(', ')} } = __scope__;`);
 +  }
 +
@@ -796,23 +862,17 @@ index 0000000000000000000000000000000000000000..ef0e76bd30adf6d98f0c5856f8cf1fa9
 +  });
 +}
 diff --git a/src/types.ts b/src/types.ts
-index 89f8b8b71bcc1717ee81eb220a102946d921d166..f50a8ab22176cda0ca2949bf33e1bb4af6b10984 100644
+index 89f8b8b71bcc1717ee81eb220a102946d921d166..f1a7369f51c8af2c090b44f7336d14bc4ccab51f 100644
 --- a/src/types.ts
 +++ b/src/types.ts
-@@ -39,8 +39,29 @@ export interface PublicMethods {
+@@ -39,9 +39,39 @@ export interface PublicMethods {
      options?: {
        flavor?: string;
        fileName?: string;
-+      /**
-+       * When true, return `{ source: string }` instead of evaluating + rendering.
-+       * Most callers should use {@link PublicMethods.compileToSource} instead.
-+       */
-+      renderToString?: boolean;
 +      [key: string]: unknown;
      }
--  ) => Promise<{ element: HTMLElement; destroy: () => void }>;
-+  ) => Promise<{ element: HTMLElement; destroy: () => void } | { source: string }>;
-+
+   ) => Promise<{ element: HTMLElement; destroy: () => void }>;
+ 
 +  /**
 +   * Build-time variant of {@link PublicMethods.compile}: returns the compiled
 +   * source as a string rather than evaluating it and rendering to a DOM
@@ -827,10 +887,25 @@ index 89f8b8b71bcc1717ee81eb220a102946d921d166..f50a8ab22176cda0ca2949bf33e1bb4a
 +    text: string,
 +    options?: Record<string, unknown>
 +  ) => Promise<{ source: string }>;
- 
++
++  /**
++   * Register a JS value behind a virtual ES module specifier and return a
++   * cleanup function that unregisters it.
++   *
++   * Compilers reach for this when their emitted source has to talk to a
++   * runtime value that can't be serialized into the source itself — e.g.
++   * gmd's live `scope` object. The emitted module can then
++   * `import * as foo from '<specifier>'` and the Compiler's existing
++   * `manual:` resolver hands the value back.
++   *
++   * @returns A function that unregisters the entry.
++   */
++  provide: (specifier: string, value: unknown) => () => void;
++
    optionsFor: (
      format: string,
-@@ -76,7 +97,13 @@ type CompileResult =
+     flavor?: string
+@@ -76,7 +106,13 @@ type CompileResult =
    | {
        compiled: string;
        [option: string]: unknown;
