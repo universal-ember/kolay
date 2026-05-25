@@ -1,0 +1,847 @@
+diff --git a/package.json b/package.json
+index d56e59c82301b9a9999aa781ba382afa922897f8..b278201f98679035eca6b6b14ed2f0299f4d3af4 100644
+--- a/package.json
++++ b/package.json
+@@ -10,6 +10,9 @@
+     "./markdown/parse": {
+       "types": "./src/compilers/markdown/parse.d.ts",
+       "default": "./src/compilers/markdown/parse.js"
++    },
++    "./render-to-string": {
++      "default": "./src/render-to-string.js"
+     }
+   },
+   "repository": {
+diff --git a/src/compilers/ember/gmd.js b/src/compilers/ember/gmd.js
+index 87f925e75fc418c3b6885dfb049ba7dad488392b..85e141635aea68bc37877b9347e8c84ee8aef2fb 100644
+--- a/src/compilers/ember/gmd.js
++++ b/src/compilers/ember/gmd.js
+@@ -1,10 +1,22 @@
+ /**
+  * @typedef {import('unified').Plugin} Plugin
+  */
+-import { assert, isRecord } from '../../utils.js';
++import { buildGmdModule } from '../../render-to-string.js';
++import { isRecord } from '../../utils.js';
+ import { buildCodeFenceMetaUtils } from '../markdown/utils.js';
+ 
+ let elementId = 0;
++let scopeNonce = 0;
++
++/**
++ * Symbol-keyed slot on `globalThis` where gmd's runtime path stashes the live
++ * scope object so the emitted ES module can read it back at evaluation time.
++ *
++ * @param {number} id
++ */
++function scopeKey(id) {
++  return Symbol.for(`repl-sdk:gmd-scope:${id}`);
++}
+ 
+ /**
+  * @param {unknown} [ options ]
+@@ -55,6 +67,26 @@ export async function compiler(config, api) {
+    * @type {import('../../types.ts').Compiler}
+    */
+   const gmdCompiler = {
++    /**
++     * The runtime and renderToString paths share most of their work — both
++     * parse the markdown, recursively compile every live demo to a JS
++     * source string, then call `buildGmdModule` to inline those demos into
++     * a single `.gjs`-shaped module.
++     *
++     * The only forks are:
++     *
++     *   - Which `@ember/template-compiler` to import. Runtime form uses
++     *     `/runtime` (the parse-and-compile-at-execution-time variant);
++     *     renderToString uses the build-time form so the host app's babel
++     *     pipeline can precompile the `template()` call to wire format.
++     *
++     *   - How runtime scope crosses the source boundary. The build-time
++     *     form can't reference a live JS object, so renderToString gets
++     *     an empty scope. The runtime form stashes the live scope object
++     *     on `globalThis[Symbol.for('repl-sdk:gmd-scope:N')]` and emits a
++     *     module that reads it back and destructures its keys into the
++     *     template's `scope: () => ({...})` call.
++     */
+     compile: async (text, options) => {
+       const compileOptions = filterOptions(options);
+       const result = await parseMarkdown(text, {
+@@ -68,22 +100,62 @@ export async function compiler(config, api) {
+         getFlavorFromMeta,
+       });
+ 
+-      const { template } = await api.tryResolve('@ember/template-compiler/runtime');
++      /** @type {Array<{ name: string, placeholderId: string, source: string }>} */
++      const demos = [];
++
++      let nth = 0;
++
++      for (const info of /** @type {Array<Record<string, unknown>>} */ (result.codeBlocks)) {
++        const format = /** @type {string} */ (info.format);
++        const flavor = /** @type {string | undefined} */ (info.flavor);
++        const code = /** @type {string} */ (info.code);
++        const placeholderId = /** @type {string} */ (info.placeholderId);
++
++        if (!api.canCompile(format, flavor).result) continue;
++
++        nth++;
++
++        const sub = await api.compileToSource(format, code, {
++          ...(options ?? {}),
++          flavor,
++        });
+ 
++        demos.push({ name: `Demo${nth}`, placeholderId, source: sub.source });
++      }
++
++      const renderToString = isRecord(options) && options.renderToString === true;
+       const scope = {
+-        ...filterOptions(userOptions).scope,
+-        ...filterOptions(options).scope,
++        ...userOptions.scope,
++        ...compileOptions.scope,
+       };
+ 
+-      const component = template(result.text, {
+-        scope: () => ({
+-          ...scope,
+-          // TODO: compile all the components from "result" and add them to scope here
+-          //       would this be better than the markdown style multiple islands
+-        }),
++      if (renderToString) {
++        const source = buildGmdModule({
++          prose: result.text,
++          demos,
++          templateModule: '@ember/template-compiler',
++          scope: null,
++        });
++
++        return { source };
++      }
++
++      const id = ++scopeNonce;
++      const key = scopeKey(id);
++
++      /** @type {Record<symbol, unknown>} */ (globalThis)[key] = scope;
++
++      const source = buildGmdModule({
++        prose: result.text,
++        demos,
++        templateModule: '@ember/template-compiler/runtime',
++        scope: {
++          expression: `globalThis[Symbol.for('repl-sdk:gmd-scope:${id}')]`,
++          keys: Object.keys(scope),
++        },
+       });
+ 
+-      return { compiled: component, ...result, scope };
++      return { compiled: source, ...result, scope, __replSdkScopeNonce: id };
+     },
+     render: async (element, compiled, extra, compiler) => {
+       /**
+@@ -98,70 +170,31 @@ export async function compiler(config, api) {
+ 
+       const { renderComponent } = await compiler.tryResolve('@ember/renderer');
+ 
++      const args = /** @type {Record<string, unknown> | undefined} */ (
++        extra && typeof extra === 'object' && 'args' in extra
++          ? /** @type {Record<string, unknown>} */ (extra).args
++          : undefined
++      );
++
+       const result = renderComponent(compiled, {
+         into: element,
+         owner: userOptions.owner,
++        ...(args ? { args } : {}),
+       });
+ 
+-      const destroy = () => result.destroy();
++      return () => {
++        result.destroy();
+ 
+-      /**
+-       * @type {(() => void)[]}
+-       */
+-      const destroyables = [];
+-
+-      await Promise.all(
+-        /** @type {unknown[]} */ (extra.codeBlocks).map(async (/** @type {unknown} */ info) => {
+-          /** @type {Record<string, unknown>} */
+-          const infoObj = /** @type {Record<string, unknown>} */ (info);
+-
+-          if (
+-            !api.canCompile(
+-              /** @type {string} */ (infoObj.format),
+-              /** @type {string} */ (infoObj.flavor)
+-            )
+-          ) {
+-            return;
+-          }
+-
+-          const flavor = /** @type {string} */ (infoObj.flavor);
+-          const hasScope =
+-            flavor === 'ember' || infoObj.format === 'gjs' || infoObj.format === 'hbs';
+-          const subRender = await compiler.compile(
+-            /** @type {string} */ (infoObj.format),
+-            /** @type {string} */ (infoObj.code),
+-            {
+-              ...compiler.optionsFor(/** @type {string} */ (infoObj.format), flavor),
+-              flavor: flavor,
+-              // @ts-ignore
+-              ...(hasScope
+-                ? {
+-                    scope: extra.scope,
+-                  }
+-                : {}),
+-            }
+-          );
+-
+-          const selector = `#${/** @type {string} */ (infoObj.placeholderId)}`;
+-          const target = element.querySelector(selector);
+-
+-          assert(
+-            `Could not find placeholder / target element (using selector: \`${selector}\`). ` +
+-              `Could not render ${/** @type {string} */ (infoObj.format)} block.`,
+-            target
+-          );
+-
+-          destroyables.push(subRender.destroy);
+-          target.appendChild(subRender.element);
+-        })
+-      );
++        // Release the stashed scope so it's eligible for GC. The nonce is
++        // shape-typed on `extra` so we know exactly which slot to clear.
++        const nonce =
++          extra && typeof extra === 'object' && '__replSdkScopeNonce' in extra
++            ? /** @type {number} */ (extra.__replSdkScopeNonce)
++            : undefined;
+ 
+-      return () => {
+-        for (const subDestroy of destroyables) {
+-          subDestroy();
++        if (typeof nonce === 'number') {
++          delete /** @type {Record<symbol, unknown>} */ (globalThis)[scopeKey(nonce)];
+         }
+-
+-        destroy();
+       };
+     },
+   };
+diff --git a/src/compilers/ember/hbs.js b/src/compilers/ember/hbs.js
+index 49bd11da2a8da29087d9f28a8162c4a32b777f40..60c027a6c031e871bfa54cd881c6a7bb4d56a26f 100644
+--- a/src/compilers/ember/hbs.js
++++ b/src/compilers/ember/hbs.js
+@@ -26,6 +26,23 @@ export async function compiler(config, api) {
+    */
+   const hbsCompiler = {
+     compile: async (text, options) => {
++      if (isRecord(options) && options.renderToString) {
++        // Build-time form: emit a JS module that imports `template` from the
++        // build-time template-compiler. The host app's content-tag/babel
++        // pipeline will precompile the `template(...)` call to wire format.
++        //
++        // We can't serialize a runtime `scope` object, so renderToString
++        // ignores `options.scope` — any identifiers the hbs body references
++        // must be in scope at the *consumer* (e.g. provided by the gmd
++        // wrapper's own imports/locals).
++        const source =
++          `import { template } from '@ember/template-compiler';\n` +
++          `const _component = template(${JSON.stringify(text)}, { scope: () => ({}) });\n` +
++          `export default _component;\n`;
++
++        return source;
++      }
++
+       const { template } = await api.tryResolve('@ember/template-compiler/runtime');
+ 
+       const component = template(text, {
+@@ -67,7 +84,18 @@ export async function compiler(config, api) {
+ 
+       const { renderComponent } = await compiler.tryResolve('@ember/renderer');
+       const owner = makeOwner(config.owner);
+-      const result = renderComponent(compiled, { into: element, owner });
++      const args = /** @type {Record<string, unknown> | undefined} */ (
++        extra && typeof extra === 'object' && 'args' in extra
++          ? /** @type {Record<string, unknown>} */ (extra).args
++          : undefined
++      );
++      const result = renderComponent(compiled, {
++        into: element,
++        owner,
++        ...(args ? { args } : {}),
++      });
++
++      compiler.announce('info', 'Ember Island Rendered');
+ 
+       return () => result.destroy();
+     },
+diff --git a/src/compilers/markdown.js b/src/compilers/markdown.js
+index a0088f943a401e69461933bf4267efd41d8b0427..1ee71c4e281c5c65804d6478ac689fef597feee8 100644
+--- a/src/compilers/markdown.js
++++ b/src/compilers/markdown.js
+@@ -89,13 +89,15 @@ export const md = {
+             }
+ 
+             const flavor = /** @type {string} */ (infoObj.flavor);
+-            const subRender = await compiler.compile(
+-              /** @type {string} */ (infoObj.format),
+-              /** @type {string} */ (infoObj.code),
+-              {
+-                ...compiler.optionsFor(/** @type {string} */ (infoObj.format), flavor),
+-                flavor: flavor,
+-              }
++            const subRender = /** @type {{ element: HTMLElement, destroy: () => void }} */ (
++              await compiler.compile(
++                /** @type {string} */ (infoObj.format),
++                /** @type {string} */ (infoObj.code),
++                {
++                  ...compiler.optionsFor(/** @type {string} */ (infoObj.format), flavor),
++                  flavor: flavor,
++                }
++              )
+             );
+ 
+             const selector = `#${/** @type {string} */ (infoObj.placeholderId)}`;
+diff --git a/src/index.d.ts b/src/index.d.ts
+index 2cb65ae12cd3f2aa5b41114336b12c40ca29b59f..a13522bce7a86cd071776c0192726b2e24b80e78 100644
+--- a/src/index.d.ts
++++ b/src/index.d.ts
+@@ -15,8 +15,29 @@ export class Compiler {
+     options?: {
+       flavor?: string;
+       fileName?: string;
++      /**
++       * When true, returns `{ source: string }` instead of evaluating and
++       * rendering. Most callers should use {@link Compiler.compileToSource}
++       * instead.
++       */
++      renderToString?: boolean;
++      [key: string]: unknown;
+     }
+-  ): Promise<{ element: HTMLElement; destroy: () => void }>;
++  ): Promise<{ element: HTMLElement; destroy: () => void } | { source: string }>;
++
++  /**
++   * Build-time variant of {@link Compiler.compile}: returns the compiled JS
++   * module source as a string instead of evaluating and rendering.
++   *
++   * Intended for SSG / pre-rendering pipelines that want to hand the
++   * compiled output to their own bundler rather than evaluate it in the
++   * browser at boot.
++   */
++  compileToSource(
++    format: string,
++    text: string,
++    options?: Record<string, unknown>
++  ): Promise<{ source: string }>;
+ 
+   optionsFor(format: string, flavor?: string): Omit<CompilerConfig, 'compiler'>;
+ 
+diff --git a/src/index.js b/src/index.js
+index edabc53c47a059a2c3247244aecbf75cbbe77b7c..989ee3231dea1044d9bd142e0cbe579ca9342430 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -345,13 +345,17 @@ export class Compiler {
+   /**
+    * @param {string} format
+    * @param {string} text
+-   * @param {{ fileName?: string, flavor?: string, [key: string]: unknown }} [ options ]
+-   * @returns {Promise<{ element: HTMLElement, destroy: () => void }>}
++   * @param {{ fileName?: string, flavor?: string, args?: Record<string, unknown>, renderToString?: boolean, [key: string]: unknown }} [ options ]
++   * @returns {Promise<{ element: HTMLElement, destroy: () => void } | { source: string }>}
+    */
+   async compile(format, text, options = {}) {
+     this.#announce('info', `Compiling ${format}`);
+ 
+     try {
++      if (options.renderToString) {
++        return await this.#compileToSource(format, text, options);
++      }
++
+       return await this.#compile(format, text, options);
+     } catch (e) {
+       // for on.log usage
+@@ -365,6 +369,68 @@ export class Compiler {
+     }
+   }
+ 
++  /**
++   * Build-time variant of {@link Compiler.compile}: returns the compiled JS
++   * module source as a string instead of evaluating and rendering. Equivalent
++   * to `compile(format, text, { ...options, renderToString: true })`.
++   *
++   * @param {string} format
++   * @param {string} text
++   * @param {Record<string, unknown>} [options]
++   * @returns {Promise<{ source: string }>}
++   */
++  async compileToSource(format, text, options = {}) {
++    return /** @type {{ source: string }} */ (
++      await this.compile(format, text, { ...options, renderToString: true })
++    );
++  }
++
++  /**
++   * Build-time variant of `#compile`: returns the compiled JavaScript source
++   * as a string rather than loading it via a blob URL and rendering.
++   *
++   * Useful for SSG / pre-rendering pipelines that want to take the compiled
++   * output of a live demo (or a `gmd` document containing live demos) and
++   * hand it to their own bundler instead of evaluating it in the browser.
++   *
++   * Each compiler is asked to `compile(text, { renderToString: true, ... })`
++   * — it's the compiler's responsibility to honor the flag and return a
++   * source string (`string` or `{ source: string }`). The `gmd` compiler
++   * recursively threads `renderToString` through its per-format dispatch and
++   * inlines every demo into one self-contained module.
++   *
++   * @param {string} format
++   * @param {string} text
++   * @param {Record<string, unknown>} options
++   * @returns {Promise<{ source: string }>}
++   */
++  async #compileToSource(format, text, options) {
++    /** @type {Record<string, unknown>} */
++    const opts = { ...options, renderToString: true };
++
++    opts.fileName ||= `dynamic.${format}`;
++
++    const compiler = await this.#getCompiler(
++      format,
++      /** @type {string | undefined} */ (opts.flavor)
++    );
++    const compiled = await compiler.compile(text, opts);
++
++    if (typeof compiled === 'string') {
++      return { source: compiled };
++    }
++
++    if (compiled && typeof (/** @type {{source?: unknown}} */ (compiled).source) === 'string') {
++      return /** @type {{source: string}} */ (compiled);
++    }
++
++    throw new Error(
++      `Compiler for format '${format}' was asked to renderToString but returned ` +
++        `${typeof compiled === 'object' ? Object.keys(/** @type {object} */ (compiled)).join(', ') : typeof compiled} ` +
++        `instead of a source string.`
++    );
++  }
++
+   /**
+    * @param {string} format
+    * @param {string} text
+@@ -411,6 +477,7 @@ export class Compiler {
+       return this.#render(compiler, value, {
+         ...extras,
+         compiled: value,
++        ...(opts.args ? { args: opts.args } : {}),
+       });
+     }
+ 
+@@ -421,7 +488,10 @@ export class Compiler {
+ 
+     this.#log('[compile] preparing to render', defaultExport, extras);
+ 
+-    return this.#render(compiler, defaultExport, extras);
++    return this.#render(compiler, defaultExport, {
++      ...extras,
++      ...(opts.args ? { args: opts.args } : {}),
++    });
+   }
+ 
+   #compilerCache = new WeakMap();
+@@ -666,6 +736,14 @@ export class Compiler {
+      * @param {Parameters<Compiler['compile']>} args
+      */
+     compile: (...args) => this.compile(...args),
++    /**
++     * Build-time variant of `compile` — returns the compiled JS source as a
++     * string instead of rendering. Exposed on the public API so compilers
++     * (e.g. `gmd`) can recursively ask other compilers to renderToString.
++     *
++     * @param {Parameters<Compiler['compileToSource']>} args
++     */
++    compileToSource: (...args) => this.compileToSource(...args),
+     /**
+      * @param {Parameters<Compiler['optionsFor']>} args
+      */
+diff --git a/src/render-to-string.js b/src/render-to-string.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..ef0e76bd30adf6d98f0c5856f8cf1fa9c2ae6853
+--- /dev/null
++++ b/src/render-to-string.js
+@@ -0,0 +1,323 @@
++/**
++ * Shared helpers for the build-time `renderToString` code path.
++ *
++ * The job of these helpers is purely lexical — given the JS source emitted by
++ * a sub-compiler (e.g. gjs/hbs), split it into top-level imports + body so
++ * the caller (e.g. `gmd`) can merge many such modules into one self-contained
++ * module string that the host app's own bundler will then process.
++ *
++ * Nothing here parses JS into an AST — the input is expected to be the
++ * deterministic output of babel + content-tag, where imports are top-level
++ * and the module ends with a single `export default <expr>;`.
++ */
++
++/**
++ * @typedef {object} ModuleParts
++ * @property {string[]} imports - Top-level import statements (each ending in `;`)
++ * @property {string} body - Remaining module body with imports removed and
++ *   `export default <expr>;` rewritten to `return <expr>;`
++ */
++
++/**
++ * Split a JS module source into its top-level import statements and the rest
++ * of its body, rewriting any trailing `export default <expr>;` to a `return`
++ * so the body is suitable for IIFE-wrapping.
++ *
++ * Multi-line imports (`import {\n  a,\n  b\n} from 'x';`) are supported by
++ * brace-balanced continuation across lines.
++ *
++ * @param {string} source
++ * @returns {ModuleParts}
++ */
++export function splitModule(source) {
++  const lines = source.split('\n');
++  /** @type {string[]} */
++  const imports = [];
++  /** @type {string[]} */
++  const bodyLines = [];
++
++  let i = 0;
++
++  while (i < lines.length) {
++    const line = /** @type {string} */ (lines[i]);
++
++    if (!isImportStart(line)) {
++      bodyLines.push(line);
++      i++;
++      continue;
++    }
++
++    let chunk = line;
++    let depth = braceDelta(line);
++    let parenDepth = parenDelta(line);
++
++    while (
++      i + 1 < lines.length &&
++      (depth > 0 || parenDepth > 0 || !chunk.trimEnd().endsWith(';'))
++    ) {
++      i++;
++
++      const next = /** @type {string} */ (lines[i]);
++
++      chunk += '\n' + next;
++      depth += braceDelta(next);
++      parenDepth += parenDelta(next);
++    }
++
++    imports.push(chunk);
++    i++;
++  }
++
++  const body = rewriteDefaultExport(bodyLines.join('\n'));
++
++  return { imports, body };
++}
++
++/**
++ * @param {string} line
++ */
++function isImportStart(line) {
++  return /^\s*import(\s|\s*['"`{*])/.test(line);
++}
++
++/**
++ * Count `{` − `}` in a line, ignoring chars inside strings or line comments.
++ * Good enough for the small set of characters babel emits inside an import
++ * statement (no template literals, no regex literals).
++ *
++ * @param {string} line
++ */
++function braceDelta(line) {
++  return countCharsOutsideStrings(line, '{', '}');
++}
++
++/**
++ * @param {string} line
++ */
++function parenDelta(line) {
++  return countCharsOutsideStrings(line, '(', ')');
++}
++
++/**
++ * @param {string} line
++ * @param {string} open
++ * @param {string} close
++ */
++function countCharsOutsideStrings(line, open, close) {
++  let depth = 0;
++  /** @type {string | null} */
++  let stringChar = null;
++
++  for (let i = 0; i < line.length; i++) {
++    const ch = line[i];
++
++    if (stringChar) {
++      if (ch === '\\') {
++        i++;
++        continue;
++      }
++
++      if (ch === stringChar) {
++        stringChar = null;
++      }
++
++      continue;
++    }
++
++    if (ch === '"' || ch === "'" || ch === '`') {
++      stringChar = ch;
++      continue;
++    }
++
++    if (ch === '/' && line[i + 1] === '/') break;
++
++    if (ch === open) depth++;
++    else if (ch === close) depth--;
++  }
++
++  return depth;
++}
++
++/**
++ * Rewrite the final `export default <expr>;` to `return <expr>;` so the
++ * caller can wrap the body in an IIFE.
++ *
++ * If there is no `export default`, the body is returned unchanged.
++ *
++ * @param {string} body
++ * @returns {string}
++ */
++function rewriteDefaultExport(body) {
++  // Anchor with `/m` so we only match `export default` at the start of a
++  // statement line — never inside line comments, strings, or expressions.
++  // Babel never emits multiple top-level `export default`s, so first-match
++  // semantics are fine.
++  const match = body.match(/^\s*export\s+default\s+/m);
++
++  if (!match || match.index === undefined) {
++    return body;
++  }
++
++  const before = body.slice(0, match.index);
++  const after = body.slice(match.index + match[0].length);
++
++  return `${before}return ${after}`;
++}
++
++/**
++ * Deduplicate a list of import statements by their exact textual content
++ * (after trimming trailing whitespace). This is intentionally conservative —
++ * we'd rather emit two equivalent-but-different imports than collapse two
++ * imports that bind different things.
++ *
++ * @param {string[][]} groups
++ * @returns {string[]}
++ */
++export function mergeImports(groups) {
++  const seen = new Set();
++  /** @type {string[]} */
++  const out = [];
++
++  for (const group of groups) {
++    for (const imp of group) {
++      const key = imp.trim();
++
++      if (seen.has(key)) continue;
++
++      seen.add(key);
++      out.push(imp);
++    }
++  }
++
++  return out;
++}
++
++/**
++ * Wrap a module body in an IIFE that returns the (rewritten) default export.
++ *
++ * @param {string} body
++ * @param {string} name
++ */
++export function wrapAsConst(body, name) {
++  return `const ${name} = (() => {\n${indent(body)}\n})();`;
++}
++
++/**
++ * @param {string} text
++ */
++function indent(text) {
++  return text
++    .split('\n')
++    .map((line) => (line.length ? `  ${line}` : line))
++    .join('\n');
++}
++
++/**
++ * Inline one or more compiled sub-modules into the surrounding gmd prose,
++ * producing one self-contained ES module string.
++ *
++ * The same function is used by both the *runtime* compile path (the module
++ * gets blob-eval'd and rendered) and the *renderToString* path (the module
++ * gets handed back to the caller's bundler). The only differences are:
++ *
++ *   - `templateModule`: which `template` to import. Use
++ *     `'@ember/template-compiler/runtime'` when this module will be
++ *     evaluated at runtime, or `'@ember/template-compiler'` when a build-
++ *     time babel plugin is expected to precompile the `template(...)` call.
++ *
++ *   - `scope`: a string expression (e.g.
++ *     `globalThis[Symbol.for('repl-sdk:gmd-scope:42')]`) that, at module
++ *     evaluation time, returns the live runtime scope object. The keys
++ *     listed in `scopeKeys` are destructured from that expression and
++ *     spread into the prose template's `scope: () => ({...})` call,
++ *     letting helpers like `array`, `concat`, etc. cross the source
++ *     boundary without needing dedicated imports. Pass `null` (the default)
++ *     to skip scope-via-global entirely — used for renderToString, where
++ *     there is no live scope.
++ *
++ * The placeholders in `prose` are replaced with `<name />` Glimmer
++ * invocations wrapped in a div that preserves the original placeholder's
++ * `class` attribute (e.g. `repl-sdk__demo`) so existing CSS still applies.
++ *
++ * This is a pure function — the caller is responsible for driving the
++ * sub-compiles and stashing the scope object if it uses `scope`/`scopeKeys`.
++ *
++ * @param {object} args
++ * @param {string} args.prose
++ * @param {Array<{ name: string, placeholderId: string, source: string }>} args.demos
++ * @param {string} [args.templateModule]
++ * @param {{ expression: string, keys: string[] } | null} [args.scope]
++ * @returns {string}
++ */
++export function buildGmdModule({
++  prose,
++  demos,
++  templateModule = '@ember/template-compiler',
++  scope = null,
++}) {
++  /** @type {string[][]} */
++  const importGroups = [[`import { template } from '${templateModule}';`]];
++  /** @type {string[]} */
++  const bodyDecls = [];
++  /** @type {string[]} */
++  const scopeIdents = [];
++
++  let rewrittenProse = prose;
++
++  for (const demo of demos) {
++    const { imports, body } = splitModule(demo.source);
++
++    importGroups.push(imports);
++    bodyDecls.push(wrapAsConst(body, demo.name));
++    scopeIdents.push(demo.name);
++
++    rewrittenProse = replacePlaceholder(rewrittenProse, demo.placeholderId, demo.name);
++  }
++
++  const mergedImports = mergeImports(importGroups).join('\n');
++
++  /** @type {string[]} */
++  const preludeLines = [];
++
++  if (scope && scope.keys.length) {
++    preludeLines.push(`const __scope__ = ${scope.expression};`);
++    preludeLines.push(`const { ${scope.keys.join(', ')} } = __scope__;`);
++  }
++
++  const allScopeIdents = scope && scope.keys.length ? [...scope.keys, ...scopeIdents] : scopeIdents;
++  const scopeBody = allScopeIdents.length ? `{ ${allScopeIdents.join(', ')} }` : `{}`;
++
++  return (
++    `${mergedImports}\n\n` +
++    (preludeLines.length ? preludeLines.join('\n') + '\n\n' : '') +
++    (bodyDecls.length ? bodyDecls.join('\n\n') + '\n\n' : '') +
++    `const _component = template(${JSON.stringify(rewrittenProse)}, {\n` +
++    `  scope: () => (${scopeBody}),\n` +
++    `});\n` +
++    `export default _component;\n`
++  );
++}
++
++/**
++ * Replace the single `<div id="${id}" class="…"></div>` placeholder emitted
++ * by `liveCodeExtraction` with a Glimmer component invocation. The wrapping
++ * div is preserved (sans `id`) so the `repl-sdk__demo` (or
++ * caller-supplied) class still styles the demo container.
++ *
++ * @param {string} html
++ * @param {string} id
++ * @param {string} name
++ */
++export function replacePlaceholder(html, id, name) {
++  const escapedId = id.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
++  const pattern = new RegExp(
++    `<div\\s+id="${escapedId}"(\\s+class="([^"]*)")?[^>]*>\\s*</div>`,
++    'g'
++  );
++
++  return html.replace(pattern, (_match, _attr, classes) => {
++    const classAttr = classes !== undefined ? ` class="${classes}"` : '';
++
++    return `<div${classAttr}><${name} /></div>`;
++  });
++}
+diff --git a/src/types.ts b/src/types.ts
+index 89f8b8b71bcc1717ee81eb220a102946d921d166..f50a8ab22176cda0ca2949bf33e1bb4af6b10984 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -39,8 +39,29 @@ export interface PublicMethods {
+     options?: {
+       flavor?: string;
+       fileName?: string;
++      /**
++       * When true, return `{ source: string }` instead of evaluating + rendering.
++       * Most callers should use {@link PublicMethods.compileToSource} instead.
++       */
++      renderToString?: boolean;
++      [key: string]: unknown;
+     }
+-  ) => Promise<{ element: HTMLElement; destroy: () => void }>;
++  ) => Promise<{ element: HTMLElement; destroy: () => void } | { source: string }>;
++
++  /**
++   * Build-time variant of {@link PublicMethods.compile}: returns the compiled
++   * source as a string rather than evaluating it and rendering to a DOM
++   * element.
++   *
++   * Useful for SSG / pre-rendering pipelines that want to take a live demo's
++   * compiled output and hand it to their own bundler instead of executing it
++   * in the browser.
++   */
++  compileToSource: (
++    format: string,
++    text: string,
++    options?: Record<string, unknown>
++  ) => Promise<{ source: string }>;
+ 
+   optionsFor: (
+     format: string,
+@@ -76,7 +97,13 @@ type CompileResult =
+   | {
+       compiled: string;
+       [option: string]: unknown;
+-    };
++    }
++  /**
++   * Variant returned by compilers when invoked with `renderToString: true` —
++   * the build-time form, where no rendering happens and the caller receives
++   * the compiled JS module source as a string instead of a rendered element.
++   */
++  | { source: string; [option: string]: unknown };
+ 
+ export interface Compiler {
+   /**

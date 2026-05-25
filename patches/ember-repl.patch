@@ -1,3 +1,33 @@
+diff --git a/dist/services/compiler.js b/dist/services/compiler.js
+index 5487a3c86baaf5e3c2319ebb8d3077c749ebd09d..3b4c8572afe380833a77dc5db077096a4c94aa1a 100644
+--- a/dist/services/compiler.js
++++ b/dist/services/compiler.js
+@@ -741,6 +741,25 @@ class CompilerService {
+   static {
+     n(this.prototype, "compileMD", [waitFor]);
+   }
++
++  /**
++   * Build-time variant of `compile`: returns the compiled JS module source
++   * as a string rather than evaluating + rendering. Used by kolay's
++   * `.gjs.md` plugin to inline live demos into a single Glimmer template
++   * at build time.
++   */
++  async compileToSource(ext, text, options) {
++    this.messages = [];
++    await Promise.resolve();
++    const opts = { ...(options ?? {}) };
++    if (ext === 'hbs') {
++      opts.flavor = 'ember';
++    }
++    return this.compiler.compileToSource(ext, text, opts);
++  }
++  static {
++    n(this.prototype, "compileToSource", [waitFor]);
++  }
+ }
+ function getGlobal() {
+   return globalThis;
 diff --git a/dist/services/known-modules.js b/dist/services/known-modules.js
 index 0e7a25daf57f7376edc1d839f8277b764d4597e1..7206f100107a6366b414b7f04195b3fc1d61245c 100644
 --- a/dist/services/known-modules.js
