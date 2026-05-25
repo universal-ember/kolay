@@ -12,9 +12,10 @@ export {
 // Required to use Kolay
 export { addRoutes, handlePotentialIndexVisit } from './router.ts';
 export { typedocLoader } from './services/api-docs.ts';
+export { prewarmTypedocCache } from './typedoc/utils.gts';
 export { Compiled } from './services/compiler/reactive.ts';
 export { docsManager } from './services/docs.ts';
-export { prefetchPage, selected } from './services/selected.ts';
+export { prefetchPage, prewarmTypedocCaches, selected } from './services/selected.ts';
 
 // Utilities
 export { getIndexPage, isCollection, isIndex } from './utils.ts';

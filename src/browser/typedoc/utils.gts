@@ -50,7 +50,71 @@ export const Query: TOC<{
   {{/let}}
 </template>;
 
-const cache = new Map<string, () => Promise<ProjectReflection>>();
+const loaderCache = new Map<string, () => Promise<ProjectReflection>>();
+
+/**
+ * Resolved typedoc projects keyed by package name. Mirrors the moduleCache
+ * pattern in `services/selected.ts`: once a project is loaded + deserialized
+ * we hold onto it so subsequent `<Load>` invocations (and rehydration of any
+ * `<APIDocs>` block) skip both the `fetch` and the deserialize step entirely.
+ *
+ * Without this, every `<Load>` on rehydration starts with `request.isLoading
+ * = true` and the SSG-rendered `<section>` gets unmounted for the duration
+ * of the fetch — a visible FOUC of about a second on pages that render typedoc.
+ *
+ * Call {@link prewarmTypedocCache} from your client entry, before booting
+ * Ember, to populate this for the packages a page references.
+ */
+const projectCache = new Map<string, ProjectReflection>();
+
+/**
+ * Pre-load and deserialize the typedoc JSON for a given package so the
+ * `<APIDocs>` / `<Load>` first render on rehydration is synchronous.
+ *
+ * Intended to be called from a client entry like:
+ *
+ * ```ts
+ * import { prewarmTypedocCache } from 'kolay';
+ * await Promise.all([
+ *   prefetchPage(window.location.pathname),
+ *   prewarmTypedocCache('kolay'),
+ * ]);
+ * Application.create(config.APP);
+ * ```
+ *
+ * Safe to call repeatedly: subsequent calls for the same package return the
+ * cached project synchronously.
+ *
+ * @param pkg The package name configured in `apiDocs({ packages: [...] })`
+ * @param loader A fetcher that returns the typedoc JSON Response. In most
+ *   apps you'll plumb this from `typedocLoader(owner).load`; the helper is
+ *   factored out so it can also be driven from a context that doesn't yet
+ *   have an Ember owner (e.g. client entry before `Application.create`).
+ */
+export async function prewarmTypedocCache(
+  pkg: string,
+  loader: (name: string) => Promise<Response>
+): Promise<ProjectReflection | undefined> {
+  if (projectCache.has(pkg)) return projectCache.get(pkg);
+
+  try {
+    const req = await loader(pkg);
+    const json = await req.json();
+
+    const logger = new ConsoleLogger();
+    const deserializer = new Deserializer(logger);
+    const project = deserializer.reviveProject('API Docs', json, {
+      projectRoot: '/',
+      registry: new FileRegistry(),
+    });
+
+    projectCache.set(pkg, project);
+
+    return project;
+  } catch {
+    return;
+  }
+}
 
 export class Load extends Component<{
   Args: {
@@ -64,7 +128,30 @@ export class Load extends Component<{
     return typedocLoader(this);
   }
 
-  get request() {
+  /**
+   * Either a synchronous { resolved } state (when the project was already
+   * deserialized — common on rehydration thanks to `prewarmTypedocCache`)
+   * or a reactive promise state that hydrates a fresh fetch.
+   *
+   * The branch is important for rehydration: a synchronous resolved state
+   * lets `<section>` render on the very first Glimmer pass, matching the
+   * SSG-emitted DOM. Going through `getPromiseState` always starts in
+   * `isLoading: true` for at least one microtask, which is enough for
+   * Glimmer to render the "Loading api docs..." branch instead and unmount
+   * everything underneath.
+   */
+  get request():
+    | { isLoading: boolean; error: unknown; resolved: ProjectReflection | undefined } {
+    const { package: pkg } = this.args;
+
+    if (pkg) {
+      const cached = projectCache.get(pkg);
+
+      if (cached) {
+        return { isLoading: false, error: null, resolved: cached };
+      }
+    }
+
     return getPromiseState(this.#createProject);
   }
 
@@ -80,13 +167,17 @@ export class Load extends Component<{
       throw new Error(`A @package must be specified to load.`);
     }
 
-    const seen = cache.get(pkg);
+    const seen = loaderCache.get(pkg);
 
     if (seen) {
       return seen;
     }
 
     const loadNew = async (): Promise<ProjectReflection> => {
+      const cachedProject = projectCache.get(pkg);
+
+      if (cachedProject) return cachedProject;
+
       const req = await this.#apiDocs.load(pkg);
       const json = await req.json();
 
@@ -97,10 +188,12 @@ export class Load extends Component<{
         registry: new FileRegistry(),
       });
 
+      projectCache.set(pkg, project);
+
       return project;
     };
 
-    cache.set(pkg, loadNew);
+    loaderCache.set(pkg, loadNew);
 
     return loadNew;
   }

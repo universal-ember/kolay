@@ -28,6 +28,27 @@ type File = { default: string | ComponentLike };
 type Loader = () => Promise<File>;
 
 /**
+ * Normalize a page path into the form used as keys in `kolay/compiled-docs:virtual`
+ * and the manifest: no trailing slash (except for the root `/`), no `.md` suffix.
+ *
+ * Without this, an SSG'd URL like `/usage/setup/` (with the trailing slash that
+ * static-file servers add when serving `/usage/setup/index.html`) misses the
+ * `/usage/setup` manifest entry, causing Selected to error and stomp the
+ * server-rendered DOM during rehydration.
+ *
+ * @param path A URL pathname like `/usage/setup/`, `/usage/setup.md`, or `/usage/setup`
+ */
+function normalizePagePath(path: string): string {
+  let normalized = path.replace(/\.md$/, '');
+
+  if (normalized.length > 1 && normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+
+  return normalized;
+}
+
+/**
  * Resolved page modules, keyed by URL path. Module-scoped so it survives
  * Selected instance recreation (route transitions, SSR rehydration, etc.).
  *
@@ -58,13 +79,18 @@ const moduleCache = new Map<string, ComponentLike>();
  * ```
  */
 export async function prefetchPage(path: string): Promise<void> {
-  const trimmed = path.replace(/\.md$/, '');
+  const trimmed = normalizePagePath(path);
 
   if (moduleCache.has(trimmed)) return;
 
   // The virtual module is provided by kolay's vite/webpack plugin in the
-  // consumer's build, so this resolves at runtime through the bundler.
-  const mod = (await import(/* @vite-ignore */ 'kolay/compiled-docs:virtual' as string)) as {
+  // consumer's build. We let the bundler rewrite this specifier at build
+  // time — without that, the browser sees the raw `kolay/compiled-docs:virtual`
+  // specifier at runtime and bails with "Failed to resolve module specifier",
+  // moduleCache stays empty, and loaderFor falls through to the async
+  // getPromiseState path, which is the rehydration FOUC the prefetch was
+  // supposed to prevent in the first place.
+  const mod = (await import('kolay/compiled-docs:virtual')) as {
     pages: Record<string, Loader>;
   };
   const fn = mod.pages[trimmed] ?? mod.pages[trimmed + '.md'];
@@ -79,6 +105,63 @@ export async function prefetchPage(path: string): Promise<void> {
   if (typeof file.default !== 'string') {
     moduleCache.set(trimmed, file.default);
   }
+}
+
+/**
+ * Pre-load + deserialize the typedoc JSON for every configured
+ * `apiDocs({ packages: [...] })` entry, so the first `<APIDocs>` /
+ * `<Load>` render on rehydration is synchronous and matches the SSG'd
+ * `<section>`.
+ *
+ * Without this prewarm, every `<Load>` first-renders the
+ * "Loading api docs..." branch (because the fetch starts in
+ * `isLoading: true`), unmounting the SSG-rendered typedoc declarations
+ * for ~the duration of the fetch. With it, `<Load>` reads from the
+ * project cache synchronously.
+ *
+ * Safe to call before `Application.create`: it only needs `fetch` to
+ * be available, not an Ember owner.
+ *
+ * @example
+ * ```ts
+ * import { prefetchPage, prewarmTypedocCaches } from 'kolay';
+ *
+ * if (shouldRehydrate()) {
+ *   await Promise.all([
+ *     prefetchPage(window.location.pathname),
+ *     prewarmTypedocCaches(),
+ *   ]);
+ * }
+ * ```
+ */
+export async function prewarmTypedocCaches(): Promise<void> {
+  let mod: {
+    packageNames?: string[];
+    loadApiDocs?: Record<string, () => Promise<Response>>;
+  };
+
+  try {
+    mod = (await import('kolay/api-docs:virtual')) as typeof mod;
+  } catch {
+    return;
+  }
+
+  const names = mod.packageNames ?? [];
+  const loaders = mod.loadApiDocs ?? {};
+
+  if (names.length === 0) return;
+
+  const { prewarmTypedocCache } = await import('../typedoc/utils.gts');
+
+  await Promise.all(
+    names.map((name) => {
+      const loader = loaders[name];
+
+      if (!loader) return;
+
+      return prewarmTypedocCache(name, loader);
+    })
+  );
 }
 
 /**
@@ -226,7 +309,7 @@ class Selected {
       return;
     }
 
-    return path?.replace(/\.md$/, '');
+    return normalizePagePath(path);
   }
 
   get #matchOrFirstPagePath() {
