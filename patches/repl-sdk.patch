@@ -13,40 +13,22 @@ index d56e59c82301b9a9999aa781ba382afa922897f8..b278201f98679035eca6b6b14ed2f029
    },
    "repository": {
 diff --git a/src/compilers/ember/gmd.js b/src/compilers/ember/gmd.js
-index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7de557ded 100644
+index 87f925e75fc418c3b6885dfb049ba7dad488392b..74e4e3077c1e43513fd1d0ab67d8c0ab47fc481b 100644
 --- a/src/compilers/ember/gmd.js
 +++ b/src/compilers/ember/gmd.js
-@@ -1,10 +1,25 @@
+@@ -1,6 +1,7 @@
  /**
   * @typedef {import('unified').Plugin} Plugin
   */
--import { assert, isRecord } from '../../utils.js';
 +import { buildGmdModule } from '../../render-to-string.js';
-+import { isRecord } from '../../utils.js';
+ import { assert, isRecord } from '../../utils.js';
  import { buildCodeFenceMetaUtils } from '../markdown/utils.js';
  
- let elementId = 0;
-+let scopeNonce = 0;
-+
-+/**
-+ * Virtual ES module specifier under which gmd's runtime path registers the
-+ * live scope object via `api.provide`. The emitted module then imports its
-+ * scope from this specifier — Compiler's existing `manual:` resolver takes
-+ * care of handing the registered value back, so individual compilers don't
-+ * need to know how the bridge is implemented.
-+ *
-+ * @param {number} id
-+ */
-+function scopeSpecifier(id) {
-+  return `repl-sdk:gmd-scope:${id}`;
-+}
- 
- /**
-  * @param {unknown} [ options ]
-@@ -55,6 +70,27 @@ export async function compiler(config, api) {
+@@ -55,7 +56,28 @@ export async function compiler(config, api) {
     * @type {import('../../types.ts').Compiler}
     */
    const gmdCompiler = {
+-    compile: async (text, options) => {
 +    /**
 +     * The runtime and renderToString paths share most of their work — both
 +     * parse the markdown, recursively compile every live demo to a JS
@@ -68,17 +50,18 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7
 +     *     Compiler's existing `manual:` resolver handles the bridge, so
 +     *     gmd never touches `globalThis` directly.
 +     */
-     compile: async (text, options) => {
++    compile: async (text, options, compileApi) => {
        const compileOptions = filterOptions(options);
        const result = await parseMarkdown(text, {
-@@ -68,22 +104,57 @@ export async function compiler(config, api) {
+         remarkPlugins: [...userOptions.remarkPlugins, ...compileOptions.remarkPlugins],
+@@ -68,22 +90,66 @@ export async function compiler(config, api) {
          getFlavorFromMeta,
        });
  
 -      const { template } = await api.tryResolve('@ember/template-compiler/runtime');
 +      /** @type {Array<{ name: string, placeholderId: string, source: string }>} */
 +      const demos = [];
-+
+ 
 +      let nth = 0;
 +
 +      for (const info of result.codeBlocks) {
@@ -92,7 +75,7 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7
 +          ...(options ?? {}),
 +          flavor,
 +        });
- 
++
 +        demos.push({ name: `Demo${nth}`, placeholderId, source: sub.source });
 +      }
 +
@@ -121,8 +104,17 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7
 +        return { source };
 +      }
 +
-+      const specifier = scopeSpecifier(++scopeNonce);
-+      const unregisterScope = api.provide(specifier, scope);
++      // `compileApi.provideScope` registers the live scope behind a
++      // Compiler-generated specifier and tracks it as part of this
++      // compile's lifecycle. The Compiler releases it when destroy fires;
++      // gmd doesn't need to track an unregister callback.
++      assert(
++        `gmd needs the per-compile API (3rd argument to compile) to provide its scope. ` +
++          `It looks like the Compiler did not pass one.`,
++        compileApi
++      );
++
++      const { specifier } = compileApi.provideScope(scope);
 +
 +      const source = buildGmdModule({
 +        prose: result.text,
@@ -135,11 +127,11 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7
        });
  
 -      return { compiled: component, ...result, scope };
-+      return { compiled: source, ...result, scope, __replSdkUnregisterScope: unregisterScope };
++      return { compiled: source, ...result, scope };
      },
      render: async (element, compiled, extra, compiler) => {
        /**
-@@ -98,70 +169,32 @@ export async function compiler(config, api) {
+@@ -98,71 +164,19 @@ export async function compiler(config, api) {
  
        const { renderComponent } = await compiler.tryResolve('@ember/renderer');
  
@@ -208,27 +200,17 @@ index 87f925e75fc418c3b6885dfb049ba7dad488392b..027b9637df7e96face973efcd2459cc7
 -        })
 -      );
 -
-       return () => {
+-      return () => {
 -        for (const subDestroy of destroyables) {
 -          subDestroy();
-+        result.destroy();
-+
-+        // Release the registered scope so it's eligible for GC. `compile()`
-+        // attached the unregister callback to `extra` so we know which
-+        // entry to clear.
-+        if (
-+          extra &&
-+          typeof extra === 'object' &&
-+          '__replSdkUnregisterScope' in extra &&
-+          typeof extra.__replSdkUnregisterScope === 'function'
-+        ) {
-+          extra.__replSdkUnregisterScope();
-         }
+-        }
 -
 -        destroy();
-       };
+-      };
++      return () => result.destroy();
      },
    };
+ 
 diff --git a/src/compilers/ember/hbs.js b/src/compilers/ember/hbs.js
 index 49bd11da2a8da29087d9f28a8162c4a32b777f40..60c027a6c031e871bfa54cd881c6a7bb4d56a26f 100644
 --- a/src/compilers/ember/hbs.js
@@ -346,10 +328,80 @@ index 2cb65ae12cd3f2aa5b41114336b12c40ca29b59f..7578e7eefbf7e366bbb02f8647040722
  
    /**
 diff --git a/src/index.js b/src/index.js
-index edabc53c47a059a2c3247244aecbf75cbbe77b7c..b57335b56d7e1415e50fb0de50aa89924f5177d1 100644
+index edabc53c47a059a2c3247244aecbf75cbbe77b7c..3ca872b4afafd629b1704f4e5f9279fffa111f7c 100644
 --- a/src/index.js
 +++ b/src/index.js
-@@ -345,26 +345,107 @@ export class Compiler {
+@@ -24,6 +24,14 @@ export class Compiler {
+   /** @type {Options} */
+   #options;
+ 
++  /**
++   * Monotonic counter that namespaces the virtual specifiers
++   * `api.provideScope` hands back. Lives on the Compiler so concurrent
++   * compiles (or repeated compiles of the same source) never collide on
++   * the same `cache.resolves` entry.
++   */
++  #scopeCounter = 0;
++
+   /**
+    * Options may be passed to the compiler to add to its behavior.
+    * @param {Partial<Options>} options
+@@ -37,6 +45,54 @@ export class Compiler {
+     window.addEventListener('unhandledrejection', this.#handleUnhandledRejection);
+   }
+ 
++  /**
++   * Build a per-compile API: the same shape as the shared `PublicMethods`
++   * but with an extra `provideScope(value)` method whose registrations are
++   * tracked by `registry`. After the compile (and any render it triggers)
++   * finishes, the Compiler calls `dispose()` to release everything in
++   * `registry` — so individual compilers never have to remember to clean
++   * up the values they expose through `provideScope`.
++   *
++   * @returns {{
++   *   api: import('./types.ts').CompileAPI,
++   *   dispose: () => void,
++   * }}
++   */
++  #createCompileScope() {
++    /** @type {Set<string>} */
++    const registry = new Set();
++
++    const provideScope = (/** @type {unknown} */ value) => {
++      const specifier = `repl-sdk:scope:${++this.#scopeCounter}`;
++
++      this.#options.resolve ??= {};
++      this.#options.resolve[specifier] = value;
++      cache.resolves[specifier] = value;
++      registry.add(specifier);
++
++      return { specifier };
++    };
++
++    const dispose = () => {
++      for (const specifier of registry) {
++        if (this.#options.resolve) {
++          delete this.#options.resolve[specifier];
++        }
++
++        delete cache.resolves[specifier];
++      }
++
++      registry.clear();
++    };
++
++    const api = /** @type {import('./types.ts').CompileAPI} */ ({
++      ...this.#nestedPublicAPI,
++      provideScope,
++    });
++
++    return { api, dispose };
++  }
++
+   /**
+    *
+    * @param {HTMLElement} element
+@@ -345,26 +401,121 @@ export class Compiler {
    /**
     * @param {string} format
     * @param {string} text
@@ -433,56 +485,175 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..b57335b56d7e1415e50fb0de50aa8992
 +    const opts = { ...options, fileName, renderToString: true };
 +
 +    const compiler = await this.#getCompiler(format, flavor);
-+    const compiled = await compiler.compile(text, opts);
++    const { api, dispose } = this.#createCompileScope();
 +
-+    if (typeof compiled === 'string') {
-+      return { source: compiled };
++    try {
++      const compiled = await compiler.compile(text, opts, api);
++
++      if (typeof compiled === 'string') {
++        return { source: compiled };
++      }
++
++      if (
++        compiled !== null &&
++        typeof compiled === 'object' &&
++        'source' in compiled &&
++        typeof compiled.source === 'string'
++      ) {
++        return { source: compiled.source };
++      }
++
++      const shape =
++        compiled !== null && typeof compiled === 'object'
++          ? Object.keys(compiled).join(', ')
++          : typeof compiled;
++
++      throw new Error(
++        `Compiler for format '${format}' was asked to renderToString but returned ` +
++          `${shape} instead of a source string.`
++      );
++    } finally {
++      // renderToString never renders, so anything `provideScope` registered
++      // during this compile has no rendered-element lifecycle to attach to.
++      // Release it immediately — the emitted source string was constructed
++      // with the scope inlined as a virtual specifier reference, but the
++      // *value* behind that specifier is only meaningful while this compile
++      // is in flight (e.g. for gmd's nested renderToString sub-compiles to
++      // share helpers with their parent). The caller's bundler resolves the
++      // specifier statically at build time; runtime lookup is never used.
++      dispose();
 +    }
-+
-+    if (
-+      compiled !== null &&
-+      typeof compiled === 'object' &&
-+      'source' in compiled &&
-+      typeof compiled.source === 'string'
-+    ) {
-+      return { source: compiled.source };
-+    }
-+
-+    const shape =
-+      compiled !== null && typeof compiled === 'object'
-+        ? Object.keys(compiled).join(', ')
-+        : typeof compiled;
-+
-+    throw new Error(
-+      `Compiler for format '${format}' was asked to renderToString but returned ` +
-+        `${shape} instead of a source string.`
-+    );
 +  }
 +
    /**
     * @param {string} format
     * @param {string} text
-@@ -411,6 +492,7 @@ export class Compiler {
-       return this.#render(compiler, value, {
-         ...extras,
-         compiled: value,
-+        ...(opts.args ? { args: opts.args } : {}),
-       });
+@@ -384,7 +535,16 @@ export class Compiler {
+     this.#log('[compile] compiling');
+ 
+     const compiler = await this.#getCompiler(format, opts.flavor);
+-    const compiled = await compiler.compile(text, opts);
++    const { api, dispose } = this.#createCompileScope();
++
++    let compiled;
++
++    try {
++      compiled = await compiler.compile(text, opts, api);
++    } catch (e) {
++      dispose();
++      throw e;
++    }
+ 
+     let compiledText = 'export default "failed to compile"';
+     let extras = { compiled: '' };
+@@ -408,20 +568,42 @@ export class Compiler {
+         extras = compiled;
+       }
+ 
+-      return this.#render(compiler, value, {
+-        ...extras,
+-        compiled: value,
+-      });
++      return this.#render(
++        compiler,
++        value,
++        {
++          ...extras,
++          compiled: value,
++          ...(opts.args ? { args: opts.args } : {}),
++        },
++        api,
++        dispose
++      );
      }
  
-@@ -421,7 +503,10 @@ export class Compiler {
+-    const asBlobUrl = textToBlobUrl(compiledText);
++    let defaultExport;
+ 
+-    // @ts-ignore
+-    const { default: defaultExport } = await shimmedImport(/* @vite-ignore */ asBlobUrl);
++    try {
++      const asBlobUrl = textToBlobUrl(compiledText);
++      // @ts-ignore
++      ({ default: defaultExport } = await shimmedImport(/* @vite-ignore */ asBlobUrl));
++    } catch (e) {
++      dispose();
++      throw e;
++    }
  
      this.#log('[compile] preparing to render', defaultExport, extras);
  
 -    return this.#render(compiler, defaultExport, extras);
-+    return this.#render(compiler, defaultExport, {
-+      ...extras,
-+      ...(opts.args ? { args: opts.args } : {}),
-+    });
++    return this.#render(
++      compiler,
++      defaultExport,
++      {
++        ...extras,
++        ...(opts.args ? { args: opts.args } : {}),
++      },
++      api,
++      dispose
++    );
    }
  
    #compilerCache = new WeakMap();
-@@ -666,6 +751,47 @@ export class Compiler {
+@@ -507,28 +689,42 @@ export class Compiler {
+    * @param {import('./types.ts').Compiler} compiler
+    * @param {string} whatToRender
+    * @param {{ compiled: string } & Record<string, unknown>} extras
++   * @param {import('./types.ts').CompileAPI} api
++   * @param {() => void} dispose
+    * @returns {Promise<{ element: HTMLElement, destroy: () => void }>}
+    */
+-  async #render(compiler, whatToRender, extras) {
++  async #render(compiler, whatToRender, extras, api, dispose) {
+     this.#announce('info', 'Rendering');
+ 
+     const div = this.#createDiv();
+ 
+-    assert(`Cannot render falsey values. Did compilation succeed?`, whatToRender);
++    try {
++      assert(`Cannot render falsey values. Did compilation succeed?`, whatToRender);
+ 
+-    const destroy = await compiler.render(div, whatToRender, extras, this.#nestedPublicAPI);
++      const destroy = await compiler.render(div, whatToRender, extras, api);
+ 
+-    // Wait for render
+-    await new Promise((resolve) => requestAnimationFrame(resolve));
++      // Wait for render
++      await new Promise((resolve) => requestAnimationFrame(resolve));
+ 
+-    return {
+-      element: div,
+-      destroy: () => {
+-        if (destroy) {
+-          return destroy();
+-        }
+-      },
+-    };
++      return {
++        element: div,
++        // The caller's `destroy` releases everything this compile pinned —
++        // first the compiler's own teardown (DOM detach, framework
++        // destructors, …), then any scopes the compiler exposed via
++        // `api.provideScope`. Individual compilers don't (and shouldn't)
++        // know about the scope lifecycle; the Compiler owns it.
++        destroy: () => {
++          try {
++            if (destroy) destroy();
++          } finally {
++            dispose();
++          }
++        },
++      };
++    } catch (e) {
++      dispose();
++      throw e;
++    }
+   }
+ 
+   /**
+@@ -666,6 +862,15 @@ export class Compiler {
       * @param {Parameters<Compiler['compile']>} args
       */
      compile: (...args) => this.compile(...args),
@@ -495,38 +666,6 @@ index edabc53c47a059a2c3247244aecbf75cbbe77b7c..b57335b56d7e1415e50fb0de50aa8992
 +     */
 +    compileToSource: (...args) => this.compileToSource(...args),
 +
-+    /**
-+     * Register a JS value to be resolvable as an ES module under a virtual
-+     * import specifier. Returns a cleanup function that unregisters it.
-+     *
-+     * Compilers use this when their emitted source needs to reach back to a
-+     * runtime value that can't be serialized into a module string —
-+     * typically a live scope object. The emitted source can then
-+     * `import * as scope from '${specifier}'` and rely on the compiler's
-+     * resolver to fetch the value, instead of every compiler hand-rolling
-+     * its own `globalThis` namespace.
-+     *
-+     * Under the hood this layers on the same `manual:` resolver +
-+     * `cache.resolves` machinery the Compiler already uses for caller-
-+     * supplied `options.resolve` entries.
-+     *
-+     * @param {string} specifier
-+     * @param {unknown} value
-+     * @returns {() => void}
-+     */
-+    provide: (specifier, value) => {
-+      this.#options.resolve ??= {};
-+      this.#options.resolve[specifier] = value;
-+      cache.resolves[specifier] = value;
-+
-+      return () => {
-+        if (this.#options.resolve) {
-+          delete this.#options.resolve[specifier];
-+        }
-+
-+        delete cache.resolves[specifier];
-+      };
-+    },
      /**
       * @param {Parameters<Compiler['optionsFor']>} args
       */
@@ -862,10 +1001,10 @@ index 0000000000000000000000000000000000000000..b61f6e7564a788d019e7818ea40bb5cc
 +  });
 +}
 diff --git a/src/types.ts b/src/types.ts
-index 89f8b8b71bcc1717ee81eb220a102946d921d166..f1a7369f51c8af2c090b44f7336d14bc4ccab51f 100644
+index 89f8b8b71bcc1717ee81eb220a102946d921d166..3121877815bd873039187cb21f76907aad4c8f0b 100644
 --- a/src/types.ts
 +++ b/src/types.ts
-@@ -39,9 +39,39 @@ export interface PublicMethods {
+@@ -39,9 +39,25 @@ export interface PublicMethods {
      options?: {
        flavor?: string;
        fileName?: string;
@@ -888,24 +1027,10 @@ index 89f8b8b71bcc1717ee81eb220a102946d921d166..f1a7369f51c8af2c090b44f7336d14bc
 +    options?: Record<string, unknown>
 +  ) => Promise<{ source: string }>;
 +
-+  /**
-+   * Register a JS value behind a virtual ES module specifier and return a
-+   * cleanup function that unregisters it.
-+   *
-+   * Compilers reach for this when their emitted source has to talk to a
-+   * runtime value that can't be serialized into the source itself — e.g.
-+   * gmd's live `scope` object. The emitted module can then
-+   * `import * as foo from '<specifier>'` and the Compiler's existing
-+   * `manual:` resolver hands the value back.
-+   *
-+   * @returns A function that unregisters the entry.
-+   */
-+  provide: (specifier: string, value: unknown) => () => void;
-+
    optionsFor: (
      format: string,
      flavor?: string
-@@ -76,7 +106,13 @@ type CompileResult =
+@@ -76,7 +92,38 @@ type CompileResult =
    | {
        compiled: string;
        [option: string]: unknown;
@@ -917,6 +1042,59 @@ index 89f8b8b71bcc1717ee81eb220a102946d921d166..f1a7369f51c8af2c090b44f7336d14bc
 +   * the compiled JS module source as a string instead of a rendered element.
 +   */
 +  | { source: string; [option: string]: unknown };
++
++/**
++ * Per-compile API: everything in {@link PublicMethods}, plus the
++ * {@link CompileAPI.provideScope | provideScope} method whose registrations
++ * are scoped to the compile call (and any render it triggers).
++ *
++ * The Compiler hands a fresh `CompileAPI` to every `compile()` / `render()`
++ * invocation and disposes the registry it tracks after the compile's
++ * destroy fires — individual compilers never have to remember to release
++ * what they registered.
++ */
++export interface CompileAPI extends PublicMethods {
++  /**
++   * Register a JS value behind a Compiler-generated virtual ES module
++   * specifier, and return that specifier. The emitted source for this
++   * compile can then `import * as foo from '<specifier>'` and the
++   * Compiler's existing `manual:` resolver hands the value back.
++   *
++   * The registration is bound to this compile's lifecycle: when the
++   * compile's `destroy()` is called (or the compile throws before
++   * reaching a render), the Compiler releases the entry automatically.
++   * Compilers do not — and should not — track an unregister callback.
++   */
++  provideScope: (value: unknown) => { specifier: string };
++}
  
  export interface Compiler {
+   /**
+@@ -84,8 +131,17 @@ export interface Compiler {
+    * This will be loaded as a module and then passed to the render method.
+    *
+    * You may return either just a string, or an object with a `compiled` property that is a string -- any additional properties will be passde through to the render function -- which may be useful if there is accompanying CSS.
++   *
++   * The third `api` argument is a per-compile API: same surface as the
++   * factory-time `PublicMethods`, plus `provideScope(value)` whose
++   * registrations are auto-released by the Compiler when the compile's
++   * destroy fires. Existing implementations may ignore it.
+    */
+-  compile: (text: string, options: Record<string, unknown>) => Promise<CompileResult>;
++  compile: (
++    text: string,
++    options: Record<string, unknown>,
++    api?: CompileAPI
++  ) => Promise<CompileResult>;
+ 
+   /**
+    * For the root of a node rendered for this compiler,
+@@ -118,7 +174,7 @@ export interface Compiler {
+     element: HTMLElement,
+     defaultExport: unknown,
+     extras: { compiled: string } & Record<string, unknown>,
+-    compiler: PublicMethods
++    compiler: CompileAPI
+   ) => Promise<void | (() => void)>;
+ 
    /**

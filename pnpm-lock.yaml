@@ -19,7 +19,7 @@ patchedDependencies:
     hash: cbea90b2edadff3d670cd183117e59dd4b487b219e581bcb95eec2dc6dee9b7d
     path: patches/ember-repl.patch
   repl-sdk:
-    hash: 321af4d22aeb68169abddae0fa3d7d6be9a14e6896d7be7d2a65b269848571f6
+    hash: d1fe29012a6c4a614eefd0d05420d1fd33ddbf20f5fae22f803608d981e06891
     path: patches/repl-sdk.patch
   vite-ember-ssr:
     hash: f4ed313947273cab8416b3974a50ccfc3d9427eb6c90ad8e3725e51e6a68341f
@@ -94,7 +94,7 @@ importers:
         version: 11.1.2
       repl-sdk:
         specifier: ^1.5.2
-        version: 1.5.2(patch_hash=321af4d22aeb68169abddae0fa3d7d6be9a14e6896d7be7d2a65b269848571f6)(6f4bb085e066dcd1e8cba157a733f3a5)
+        version: 1.5.2(patch_hash=d1fe29012a6c4a614eefd0d05420d1fd33ddbf20f5fae22f803608d981e06891)(6f4bb085e066dcd1e8cba157a733f3a5)
       send:
         specifier: ^1.2.1
         version: 1.2.1
@@ -14396,7 +14396,7 @@ snapshots:
       ember-resources: 7.0.7(099a17061adaa39d579f1e156593ef5d)
       ember-source: 6.12.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)
       reactiveweb: 1.9.1(9dcb653de42b381c793197699ab8c1c6)
-      repl-sdk: 1.5.2(patch_hash=321af4d22aeb68169abddae0fa3d7d6be9a14e6896d7be7d2a65b269848571f6)(6f4bb085e066dcd1e8cba157a733f3a5)
+      repl-sdk: 1.5.2(patch_hash=d1fe29012a6c4a614eefd0d05420d1fd33ddbf20f5fae22f803608d981e06891)(6f4bb085e066dcd1e8cba157a733f3a5)
     optionalDependencies:
       '@glint/template': 1.7.4
     transitivePeerDependencies:
@@ -18063,7 +18063,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  repl-sdk@1.5.2(patch_hash=321af4d22aeb68169abddae0fa3d7d6be9a14e6896d7be7d2a65b269848571f6)(6f4bb085e066dcd1e8cba157a733f3a5):
+  repl-sdk@1.5.2(patch_hash=d1fe29012a6c4a614eefd0d05420d1fd33ddbf20f5fae22f803608d981e06891)(6f4bb085e066dcd1e8cba157a733f3a5):
     dependencies:
       '@codemirror/autocomplete': 6.20.0
       '@codemirror/commands': 6.10.2
