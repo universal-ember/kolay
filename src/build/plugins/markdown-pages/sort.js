@@ -11,7 +11,7 @@ function uniq(arr) {
  * @returns {string}
  */
 function findPathForJsonc(path) {
-  return path.replace(/\/meta\.jsonc?$/, '');
+  return path.replace(/\/?meta\.jsonc?$/, '');
 }
 
 /**
@@ -134,7 +134,7 @@ export function sortTree(tree, configs, parents = []) {
   tree.pages.map((subTree) => sortTree(subTree, configs, [...parents, tree.path]));
 
   if (configs.length > 0) {
-    const subPath = `${[...parents, tree.path].join('/')}`.replace(/^root\//, '');
+    const subPath = `${[...parents, tree.path].join('/')}`.replace(/^root\/?/, '');
     const config = configs
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;
