@@ -1,5 +1,21 @@
 # Changelog
 
+## Release (2026-05-27)
+
+* kolay 5.2.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#303](https://github.com/universal-ember/kolay/pull/303) Fix: apply root-level meta.jsonc order config ([@rmoodyab](https://github.com/rmoodyab))
+
+#### :house: Internal
+* `kolay`
+  * [#300](https://github.com/universal-ember/kolay/pull/300) Upgrade vite ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- Ross Moody ([@rmoodyab](https://github.com/rmoodyab))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-04-01)
 
 * kolay 5.2.0 (minor)

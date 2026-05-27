@@ -1,18 +1,22 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "5.1.4",
-      "newVersion": "5.2.0",
+      "impact": "patch",
+      "oldVersion": "5.2.0",
+      "newVersion": "5.2.1",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2026-04-01)\n\n* kolay 5.2.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#294](https://github.com/universal-ember/kolay/pull/294) Support union type signatures in ComponentSignature ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n\n#### Committers: 1\n- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n"
+  "description": "## Release (2026-05-27)\n\n* kolay 5.2.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#303](https://github.com/universal-ember/kolay/pull/303) Fix: apply root-level meta.jsonc order config ([@rmoodyab](https://github.com/rmoodyab))\n\n#### :house: Internal\n* `kolay`\n  * [#300](https://github.com/universal-ember/kolay/pull/300) Upgrade vite ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- Ross Moody ([@rmoodyab](https://github.com/rmoodyab))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
