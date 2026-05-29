@@ -226,7 +226,11 @@
         }
       }
     },
-    "patchedDependencies": {}
+    "patchedDependencies": {
+      "vite-ember-ssr": "patches/vite-ember-ssr.patch",
+      "ember-repl": "patches/ember-repl.patch",
+      "repl-sdk": "patches/repl-sdk.patch"
+    }
   },
   "ember": {
     "edition": "octane"

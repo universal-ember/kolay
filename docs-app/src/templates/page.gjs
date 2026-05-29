@@ -1,11 +1,5 @@
 import { Page } from 'kolay/components';
 
-function removeLoader() {
-  requestAnimationFrame(() => {
-    document.querySelector('#kolay__loading')?.remove();
-  });
-}
-
 function hasReason(error) {
   return (
     typeof error === 'object' &&
@@ -43,12 +37,10 @@ function hasReason(error) {
           {{error}}
         {{/if}}
       </div>
-      {{(removeLoader)}}
     </:error>
 
     <:success as |Prose|>
       <Prose />
-      {{(removeLoader)}}
     </:success>
 
   </Page>

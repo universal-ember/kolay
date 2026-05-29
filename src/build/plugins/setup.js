@@ -49,11 +49,19 @@ export const setup = (options = {}) => {
           import { registerDestructor } from '@ember/destroyable';
 
 
-          const secret = window[Symbol.for('__kolay__secret__context__')] ||= {};
-          secret.owners ||= new Set();
+          const SECRET = Symbol.for('__kolay__secret__context__');
 
           export async function setupKolay(context, options) {
             let owner = getOwner(context) ?? context.owner;
+
+            // Read window[SECRET] fresh on every call rather than caching at
+            // module load. Under SSR, vite-ember-ssr swaps globalThis.window to
+            // a fresh per-request HappyDOM Window before each render, so a
+            // module-level capture would pin to the previous (destroyed) window
+            // and getKey() — which reads window[SECRET] fresh — would not find
+            // owners we added. See src/browser/services/lazy-load.ts.
+            const secret = (window[SECRET] ||= {});
+            secret.owners ||= new Set();
 
             // This is needed because some of our components can be rendered with different owners.
             // But the fetching of API docs is unique per window, not per owner -- documents at an URL

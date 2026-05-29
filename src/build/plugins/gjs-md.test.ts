@@ -6,7 +6,6 @@ const compiler = createCompiler({});
 
 describe('md to gjs', () => {
   test('it works', async () => {
-    const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
     const result = await mdToGJS(
       `# Heading
 
@@ -21,30 +20,22 @@ inline code \`<Portal @to="popover">\`
       {
         compiler,
         id: 'test.gjs.md',
-        virtualModulesByMarkdownFile,
       }
     );
 
-    expect(virtualModulesByMarkdownFile).toMatchInlineSnapshot(`
-      Map {
-        "test.gjs.md" => Map {
-          "kolay/virtual:live:repl_1.gjs.hbs" => {
-            "code": "<SetupInstructions @src="components/portal-targets.gts" />",
-            "flavor": null,
-            "format": "hbs",
-            "meta": "live",
-            "placeholderId": "repl_1",
-          },
-        },
-      }
-    `);
     expect(result.code).toMatchInlineSnapshot(`
       "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
-      import repl_1 from 'kolay/virtual:live:repl_1.gjs.hbs';
+      const Demo1_repl_1 = (()=>{
+          return template_fd9b2463e5f141cfb5666b64daa1f11a(\`<SetupInstructions @src="components/portal-targets.gts" />\`, {
+              eval () {
+                  return eval(arguments[0]);
+              }
+          });
+      })();
       export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="heading">Heading</h1>
       <p>inline code <code>&#x3C;Portal @to="popover"></code></p>
       <h2 id="code-fence">code fence</h2>
-      <div id="repl_1" class="repl-sdk__demo"><repl_1></repl_1></div>\`, {
+      <div class="repl-sdk__demo"><Demo1_repl_1 /></div>\`, {
           eval () {
               return eval(arguments[0]);
           }
@@ -54,7 +45,6 @@ inline code \`<Portal @to="popover">\`
   });
 
   test('it allows top-level component invocation', async () => {
-    const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
     const result = await mdToGJS(
       `# Heading
 
@@ -62,7 +52,6 @@ inline code \`<Portal @to="popover">\`
       {
         compiler,
         id: 'test.gjs.md',
-        virtualModulesByMarkdownFile,
         scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -71,11 +60,6 @@ inline code \`<Portal @to="popover">\`
       }
     );
 
-    expect(virtualModulesByMarkdownFile).toMatchInlineSnapshot(`
-      Map {
-        "test.gjs.md" => Map {},
-      }
-    `);
     expect(result.code).toMatchInlineSnapshot(`
       "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
       import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
@@ -92,7 +76,6 @@ inline code \`<Portal @to="popover">\`
   });
 
   test('handles a big dog with top-level component invocation', async () => {
-    const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
     const result = await mdToGJS(
       `
 
@@ -139,7 +122,6 @@ When a user visits \`/Runtime\` and the \`Runtime\` group has pages, they'll be 
       {
         compiler,
         id: 'test.gjs.md',
-        virtualModulesByMarkdownFile,
         scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -148,11 +130,6 @@ When a user visits \`/Runtime\` and the \`Runtime\` group has pages, they'll be 
       }
     );
 
-    expect(virtualModulesByMarkdownFile).toMatchInlineSnapshot(`
-      Map {
-        "test.gjs.md" => Map {},
-      }
-    `);
     expect(result.code).toMatchInlineSnapshot(`
       "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
       import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';

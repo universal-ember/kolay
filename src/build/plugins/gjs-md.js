@@ -1,70 +1,37 @@
-import assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
 
 import * as babel from '@babel/core';
 import { Preprocessor } from 'content-tag';
 import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
-import { visit } from 'unist-util-visit';
+import {
+  mergeImports,
+  replacePlaceholder,
+  splitModule,
+  wrapAsConst,
+} from 'repl-sdk/render-to-string';
 
 import { extFilter } from './utils.js';
 
 const processor = new Preprocessor();
 
-function componentNameFromId(id) {
-  return id
-    .split(/[^A-Za-z0-9_]/g)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('')
-    .toLowerCase();
-}
-
-function rehypeInjectComponentInvocation() {
-  return (tree, file) => {
-    const liveCode = /** @type {unknown[]} */ (file?.data?.liveCode ?? []);
-
-    if (!Array.isArray(liveCode) || liveCode.length === 0) return;
-
-    const componentNamesById = new Map();
-
-    for (const block of liveCode) {
-      const demoId = block?.id ?? block?.placeholderId;
-
-      if (!demoId || typeof demoId !== 'string') continue;
-
-      const componentName = block?.componentName ?? componentNameFromId(demoId);
-
-      componentNamesById.set(demoId, componentName);
-    }
-
-    if (componentNamesById.size === 0) return;
-
-    visit(tree, 'raw', (node) => {
-      if (node.tagName === 'code') return 'skip';
-      if (node.type !== 'raw') return;
-
-      const id = node.value?.match(/id="([^"]+)"/)?.[1];
-
-      if (!id || typeof id !== 'string') return;
-
-      const componentName = componentNamesById.get(id);
-
-      if (!componentName) return;
-
-      node.value = node.value.replace(`</div>`, `<${componentName} /></div>`);
-    });
-  };
+/**
+ * Turn a placeholder id like `repl_1` into a Glimmer-invokable PascalCase
+ * tag name. We keep the per-document numbering stable so debugging is easier.
+ *
+ * @param {string} id
+ * @param {number} nth
+ */
+function demoName(id, nth) {
+  return `Demo${nth}_${id.replace(/[^A-Za-z0-9_]/g, '_')}`;
 }
 
 /**
- * @porom {Options} options
+ * @param {Options} options
  */
 export function createCompiler(options) {
-  const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
-
-  const compiler = buildCompiler({
+  return buildCompiler({
     remarkPlugins: options.remarkPlugins,
-    rehypePlugins,
+    rehypePlugins: options.rehypePlugins,
     isLive: (meta) => meta?.includes('live'),
     isPreview: (meta) => meta?.includes('preview'),
     isBelow: (meta) => meta.includes('below'),
@@ -72,60 +39,127 @@ export function createCompiler(options) {
     ALLOWED_FORMATS: ['gjs', 'hbs'],
     getFlavorFromMeta: () => null,
   });
-
-  return compiler;
 }
 
 /**
- * @param {string} input
- * @param {{ compiler: unknown; virtualModulesByMarkdownFile: unknown; id: string; scope?: string }} options
- * @return {Promise<{ code: string, map: unknown }>}
+ * Transform a `.gjs.md` document into a single `.gjs` module that inlines
+ * every live code fence as a Glimmer component sibling of the prose.
+ *
+ * Pipeline:
+ *
+ *   1. `parseMarkdown` (from repl-sdk) returns the HTML body + an array of
+ *      `liveCode` blocks, with `<div id="placeholderId">…</div>` holes
+ *      where each demo should land.
+ *   2. For every live block we preprocess its code with `content-tag` so
+ *      `<template>` syntax becomes plain JS. The block's source code is now
+ *      a regular ES module ending in `export default _component;`.
+ *   3. `splitModule` lifts each demo's top-level imports out of its body
+ *      and rewrites `export default <expr>` to `return <expr>`; the body
+ *      goes inside an IIFE bound to a unique PascalCase const (e.g.
+ *      `const Demo1_repl_1 = (() => { …; return _component; })();`).
+ *   4. `replacePlaceholder` rewrites each `<div id="placeholderId">` in the
+ *      prose to a Glimmer invocation of the const, wrapped in a div that
+ *      preserves the original placeholder's class so existing demo CSS
+ *      still applies.
+ *   5. The final output is:
+ *
+ *        <user-supplied scope JS>
+ *        <merged imports from every demo, deduped>
+ *        <one IIFE-const per demo>
+ *        <template>{ rewritten prose with <DemoX /> invocations }</template>
+ *
+ *      which we hand back to `content-tag` once more to turn the trailing
+ *      `<template>` into a `template(...)` call. Because that `<template>`
+ *      sits at module scope, content-tag's auto-scope picks up every demo
+ *      const AND every identifier defined in the user-supplied scope JS —
+ *      no manual `scope: () => ({...})` list needed.
+ *
+ * @param {string | Buffer} input
+ * @param {{ compiler: unknown; id: string; scope?: string }} options
+ * @returns {Promise<{ code: string, map: unknown }>}
  */
-export async function mdToGJS(input, { compiler, virtualModulesByMarkdownFile, id, scope }) {
-  /**
-   * Convert to GJS!
-   */
-  const result = await parseMarkdown(input, {
-    compiler,
-  });
+export async function mdToGJS(input, { compiler, id, scope }) {
+  const result = await parseMarkdown(input.toString(), { compiler });
 
-  let imports = '';
-
-  virtualModulesByMarkdownFile.delete(id);
-
-  const virtualModules = new Map();
-
-  virtualModulesByMarkdownFile.set(id, virtualModules);
+  const importGroups = [];
+  const demoDecls = [];
+  let rewrittenProse = result.text;
+  let nth = 0;
 
   for (const block of result.codeBlocks ?? []) {
-    const demoId = block?.id ?? block?.placeholderId;
+    const placeholderId = block?.id ?? block?.placeholderId;
 
-    if (!demoId) continue;
+    if (!placeholderId) continue;
 
-    const componentName = block?.componentName ?? componentNameFromId(demoId);
-    const virtualId = toVirtualId(block);
+    nth++;
 
-    virtualModules.set(virtualId, block);
+    const name = demoName(placeholderId, nth);
+    const isHbs = block.format === 'hbs';
+    const demoInput = isHbs
+      ? `${scope ?? ''}\n\n<template>\n${block.code}\n</template>`
+      : block.code;
 
-    imports += `\nimport ${componentName} from '${virtualId}';`;
+    const { code: preprocessed } = processor.process(demoInput, {
+      filename: `${id}#${placeholderId}`,
+    });
+
+    const { imports, body } = splitModule(preprocessed);
+
+    importGroups.push(imports);
+    demoDecls.push(wrapAsConst(body, name));
+
+    rewrittenProse = replacePlaceholder(rewrittenProse, placeholderId, name);
   }
 
-  const built = (scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;
+  const mergedImports = mergeImports(importGroups).join('\n');
 
-  return processor.process(built, {
-    filename: id,
-  });
+  const built =
+    `${scope ?? ''}\n\n` +
+    `${mergedImports}\n\n` +
+    `${demoDecls.join('\n\n')}\n\n` +
+    `<template>${rewrittenProse}</template>\n`;
+
+  const processed = processor.process(built, { filename: id });
+
+  // content-tag emits a fresh `import { template as template_<hash> } from
+  // '@ember/template-compiler'` every time it runs. Each demo went through
+  // its own preprocess pass, and the final pass over the assembled module
+  // adds one more — same hash since the filename is shared, but JS still
+  // rejects two imports binding the same identifier. Collapse them.
+  return {
+    code: dedupeTopLevelImports(processed.code),
+    map: processed.map,
+  };
 }
 
-const VIRTUAL_PREFIX_EMBEDDED = 'kolay/virtual:live:';
-
 /**
- * @param {CodeBlock} block
+ * Deduplicate identical top-level `import` statements in a JS module string,
+ * preserving the first occurrence and dropping subsequent exact-text matches.
+ *
+ * This is a textual dedup — it only removes lines that match character-for-
+ * character, which is exactly the failure case we care about (content-tag's
+ * deterministic hashed-template import emitted multiple times).
+ *
+ * @param {string} code
  */
-function toVirtualId(block) {
-  const ext = block.format === 'hbs' ? 'gjs.hbs' : 'gjs';
+function dedupeTopLevelImports(code) {
+  const seen = new Set();
+  /** @type {string[]} */
+  const out = [];
 
-  return `${VIRTUAL_PREFIX_EMBEDDED}${block.placeholderId}.${ext}`;
+  for (const line of code.split('\n')) {
+    if (/^\s*import\s/.test(line) && line.trimEnd().endsWith(';')) {
+      const key = line.trim();
+
+      if (seen.has(key)) continue;
+
+      seen.add(key);
+    }
+
+    out.push(line);
+  }
+
+  return out.join('\n');
 }
 
 /**
@@ -147,89 +181,27 @@ function toVirtualId(block) {
  * @param {Options} options - Plugin options.
  */
 export function gjsmd(options = {}) {
-  /**
-   * Map of:
-   *   .gjs.md -> Map of
-   *                virtual module id -> CodeBlock
-   * @type {Map<string, Map<string, CodeBlock>>>}
-   */
-  const virtualModulesByMarkdownFile = new Map();
-
   const compiler = createCompiler(options);
 
   return [
-    /**
-     * Only handles loading of virtual content from live code fences
-     */
-    {
-      name: 'kolay:live',
-      resolveId: {
-        filter: {
-          id: new RegExp(`^${RegExp.escape(VIRTUAL_PREFIX_EMBEDDED)}`),
-        },
-        async handler(id, parent) {
-          return `${id}?from=${parent}`;
-        },
-      },
-      load: {
-        filter: {
-          id: new RegExp(`^${RegExp.escape(VIRTUAL_PREFIX_EMBEDDED)}`),
-        },
-        async handler(id) {
-          const [actualId, qps] = id.split('?');
-          const search = new URLSearchParams(qps);
-          const fromId = search.get('from');
-
-          const virtualModules = virtualModulesByMarkdownFile.get(fromId);
-
-          const block = virtualModules.get(actualId);
-
-          assert(block?.code, `Could not find virtual module for id ${actualId} from ${fromId}`);
-
-          let hbsCode;
-
-          if (block.format === 'hbs') {
-            hbsCode = (options.scope ?? '') + `\n\n<template>\n${block.code}\n</template>`;
-          }
-
-          const { code, map } = processor.process(hbsCode ?? block.code, {
-            filename: id,
-          });
-
-          return {
-            code,
-            map,
-          };
-        },
-      },
-    },
-
-    /**
-     * Transforms .gjs.md -> .gjs -> .js
-     *
-     * Also sets up the imports for any live code fences.
-     *   The content for these liv imports will be handled in the above load hook
-     */
     {
       name: 'kolay:gjs.md',
       /**
        * We need to run before babel *and* embroider's gjs processing.
-       * */
+       */
       enforce: 'pre',
       load: {
         filter: extFilter('.gjs.md'),
         async handler(id) {
           const input = await readFile(id);
-
           const { code, map } = await mdToGJS(input, {
             id,
             compiler,
-            virtualModulesByMarkdownFile,
             scope: options.scope,
           });
 
           return babel.transformAsync(code, {
-            inputSourceMap: map.mapping, //new SourceMapConsumer(map),
+            inputSourceMap: map.mapping,
             sourceType: 'module',
             sourceMap: true,
             filename: id,
