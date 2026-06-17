@@ -1,22 +1,8 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "5.2.0",
-      "newVersion": "5.2.1",
-      "tagName": "latest",
-      "constraints": [
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
-        }
-      ],
-      "pkgJSONPath": "./package.json"
+      "oldVersion": "5.2.1"
     }
   },
-  "description": "## Release (2026-05-27)\n\n* kolay 5.2.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#303](https://github.com/universal-ember/kolay/pull/303) Fix: apply root-level meta.jsonc order config ([@rmoodyab](https://github.com/rmoodyab))\n\n#### :house: Internal\n* `kolay`\n  * [#300](https://github.com/universal-ember/kolay/pull/300) Upgrade vite ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- Ross Moody ([@rmoodyab](https://github.com/rmoodyab))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "\n\n\n\n"
 }
