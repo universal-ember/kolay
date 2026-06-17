@@ -1,5 +1,10 @@
 # Changelog
 
+
+
+
+
+
 ## Release (2026-05-27)
 
 * kolay 5.2.1 (patch)
