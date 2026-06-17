@@ -1,0 +1,1 @@
+{"version":3,"file":"element.d.ts","sourceRoot":"","sources":["../../../../src/browser/typedoc/signature/element.gts"],"names":[],"mappings":"AAgDA,OAAO,KAAK,EAAE,GAAG,EAAE,MAAM,gCAAgC,CAAC;AAY1D,eAAO,MAAM,OAAO,EAAE,GAAG,CAAC;IACxB,IAAI,EAAE;QAAE,IAAI,EAAE,WAAW,GAAG,UAAU,CAAC;QAAC,IAAI,EAAE,GAAG,CAAA;KAAE,CAAC;CACrD,CAmEC,CAAC"}

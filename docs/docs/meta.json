@@ -1,0 +1,10 @@
+{
+  "order": [
+    "owner",
+    "component-signature",
+    "modifier-signature",
+    "helper-signature",
+    "api-docs",
+    "comment-query"
+  ]
+}
