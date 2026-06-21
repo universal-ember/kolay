@@ -176,7 +176,7 @@
     "node": ">= 18"
   },
   "volta": {
-    "node": "24.13.0",
+    "node": "24.16.0",
     "pnpm": "10.33.0"
   },
   "publishConfig": {
