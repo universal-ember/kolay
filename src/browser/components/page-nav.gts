@@ -3,7 +3,7 @@ import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isCollection, isIndex } from '../utils.ts';
+import { getIndexPage, isCollection, isIndex, stripRootURL } from '../utils.ts';
 
 import type { Collection, Page } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -226,7 +226,9 @@ class PageLink extends Component<{
   }
 
   get isActive() {
-    const subPath = this.args.item.path;
+    // Manifest paths include the rootURL, but currentURL is app-relative —
+    // compare both in app-relative space.
+    const subPath = stripRootURL(this.args.item.path, this.router.rootURL);
 
     if (subPath === '/') return false;
 
