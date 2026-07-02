@@ -1,11 +1,13 @@
 /**
  * This plugin is *basically* what v1 addons did.
  */
-import { glob } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { glob, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { stripIndent } from 'common-tags';
+import send from 'send';
 
 import { virtualFile } from './helpers.js';
 import { reshape } from './markdown-pages/hydrate.js';
@@ -19,16 +21,41 @@ function normalizePath(path) {
   return path;
 }
 
+const ASSET_GLOB = '**/*.{svg,png,jpg,jpeg,gif,webp,avif}';
+const ASSET_EXT = /\.(svg|png|jpe?g|gif|webp|avif)$/i;
+
+/**
+ * The directories whose non-markdown assets are served/emitted at their
+ * manifest-space URLs (`<base><groupName>/<relative path>`), so images
+ * co-located with docs resolve both relatively (against the rendered page
+ * URL) and root-absolutely (via the authored-link rebasing).
+ *
+ * The unnamed entries are the co-located pages roots (app|src)/templates,
+ * whose page URLs have that prefix stripped.
+ */
+function assetRoots(options, cwd) {
+  return [
+    { name: '', dir: join(cwd, 'app', 'templates') },
+    { name: '', dir: join(cwd, 'src', 'templates') },
+    ...(options?.groups ?? []).map((group) => ({
+      name: group.name,
+      dir: normalizePath(group.src),
+    })),
+  ];
+}
+
 /** @type {() => import('unplugin').UnpluginOptions} */
 export const setup = (options = {}) => {
   const cwd = process.cwd();
   let baseUrl = '/';
+  let isBuild = false;
 
   return {
     name: 'kolay:setup',
     vite: {
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
+        isBuild = resolvedConfig.command === 'build';
 
         resolvedConfig.server ||= {};
         resolvedConfig.server.fs ||= {};
@@ -37,6 +64,67 @@ export const setup = (options = {}) => {
         options.groups.forEach((group) => {
           resolvedConfig.server.fs.allow.push(normalizePath(group.src));
         });
+      },
+      /**
+       * Serve co-located doc assets at their manifest-space URLs in dev.
+       * Registered directly (not via a returned function) so it runs before
+       * vite's internal static-file middleware.
+       */
+      configureServer(server) {
+        const roots = assetRoots(options, cwd);
+
+        server.middlewares.use((req, res, next) => {
+          const [urlPath = ''] = (req.url ?? '').split('?');
+
+          if (!ASSET_EXT.test(urlPath)) return next();
+
+          for (const { name, dir } of roots) {
+            const prefix = baseUrl + (name ? name + '/' : '');
+
+            if (!urlPath.startsWith(prefix)) continue;
+
+            const rel = urlPath.slice(prefix.length);
+            const candidate = join(dir, decodeURIComponent(rel));
+
+            // Path-traversal guard, and fall through to the other roots when
+            // this one doesn't have the file — the unnamed templates roots
+            // match every URL under the base.
+            if (relative(dir, candidate).startsWith('..')) continue;
+            if (!existsSync(candidate)) continue;
+
+            send(req, rel, { root: dir })
+              .on('error', () => next())
+              .pipe(res);
+
+            return;
+          }
+
+          next();
+        });
+      },
+      /**
+       * Emit co-located doc assets into dist at their manifest-space paths
+       * (`<groupName>/<relative path>`, no base prefix — fileName is
+       * dist-relative) so production serves them at the same URLs dev does.
+       */
+      async buildStart() {
+        if (!isBuild) return;
+
+        for (const { name, dir } of assetRoots(options, cwd)) {
+          try {
+            for await (const entry of glob(ASSET_GLOB, { cwd: dir, exclude: ['node_modules'] })) {
+              const posixEntry = entry.replaceAll('\\', '/');
+
+              this.emitFile({
+                type: 'asset',
+                fileName: name ? `${name}/${posixEntry}` : posixEntry,
+                source: await readFile(join(dir, entry)),
+              });
+            }
+          } catch {
+            // root directory doesn't exist (e.g. no src/templates) — nothing to emit
+          }
+        }
       },
     },
     ...virtualFile([
