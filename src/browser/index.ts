@@ -17,7 +17,8 @@ export { docsManager } from './services/docs.ts';
 export { selected } from './services/selected.ts';
 
 // Utilities
-export { getIndexPage, isCollection, isIndex } from './utils.ts';
+export { rebaseAuthoredLinks } from './rebase-links.ts';
+export { getIndexPage, isCollection, isIndex, stripRootURL } from './utils.ts';
 
 // Types
 export type { Collection, Manifest, Page } from '../types.ts';
