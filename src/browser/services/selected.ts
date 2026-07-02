@@ -9,6 +9,7 @@ import { use } from 'ember-resources';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import { keepLatest } from 'reactiveweb/keep-latest';
 
+import { stripRootURL } from '../utils.ts';
 import { compileText } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
 import { extractErrorMessage } from './extract-error-message.ts';
@@ -148,13 +149,13 @@ class Selected {
     if (!this.router.currentURL) return;
 
     const url = new URL(this.router.currentURL, window.location.origin);
-    const path = url.pathname;
+    const path = stripRootURL(url.pathname, this.router.rootURL);
 
-    if (path === '/') {
+    if (!path || path === '/') {
       return;
     }
 
-    return path?.replace(/\.md$/, '');
+    return path.replace(/\.md$/, '');
   }
 
   get #matchOrFirstPagePath() {

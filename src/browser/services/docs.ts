@@ -10,6 +10,7 @@ import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
+import { stripRootURL } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
@@ -217,7 +218,8 @@ class DocsService {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    const [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
+    const [, /* leading slash */ first] =
+      stripRootURL(this.router.currentURL, this.router.rootURL)?.split('/') || [];
 
     if (!first) return this.availableGroups[0];
 
@@ -286,6 +288,17 @@ class DocsService {
    * Returns the page entry for the current group
    */
   findByPath = (path: string) => {
-    return this.pages.find((page) => page.path === path || page.path === path + '.md');
+    // Manifest page paths include the app's rootURL, but lookups may come in
+    // app-relative. Match against both forms.
+    const rootURL = this.router.rootURL;
+    const prefixedPath = rootURL !== '/' ? rootURL.replace(/\/$/, '') + path : path;
+
+    return this.pages.find(
+      (page) =>
+        page.path === path ||
+        page.path === path + '.md' ||
+        page.path === prefixedPath ||
+        page.path === prefixedPath + '.md'
+    );
   };
 }
