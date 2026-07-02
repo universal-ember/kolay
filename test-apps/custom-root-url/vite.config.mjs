@@ -9,7 +9,8 @@ export default defineConfig({
     kolay({
       groups: [
         {
-          name: "Docs",
+          // Use something other than "Docs" so md files don't load raw
+          name: "Documentation",
           src: import.meta.resolve("./docs", import.meta.url),
         },
       ],
