@@ -193,10 +193,10 @@
     },
     "overrides": {
       "@ember/test-waiters": "^4.0.0",
-      "@glint/template": "1.7.7",
+      "@glint/template": "1.7.8",
       "@glimmer/component": "^2.0.0",
       "@glimmer/validator": ">= 0.92.0",
-      "reactiveweb": "1.9.1"
+      "reactiveweb": "1.9.3"
     },
     "packageExtensions": {
       "ember-async-data": {
