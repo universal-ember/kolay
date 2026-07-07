@@ -10,19 +10,12 @@ interface MdastNode {
 }
 
 /**
- * Rebase root-absolute link/image/definition URLs in authored markdown onto
- * the given prefix (typically the app's rootURL), so cross-doc links written
- * like `[icon library](/Docs/icons/icon-library.md)` and images like
- * `![logo](/Docs/images/logo.svg)` keep working when the app is served at a
- * non-root path (e.g. `/pr-previews/pr-1234/`).
+ * Remark plugin that rebases root-absolute link/image/definition URLs in
+ * authored markdown (e.g. `[x](/Docs/a.md)`) onto the given prefix, so they
+ * keep working when the app is served at a non-root rootURL.
  *
- * Kolay prepends this to its markdown pipeline automatically (see the docs
- * service `setup()`), which also guarantees it runs before any consumer
- * plugin that serializes paragraphs to raw HTML — rebasing has to happen
- * while the links are still mdast nodes. Operating on mdast also means
- * fenced code blocks (`code` nodes) are structurally unreachable, so
- * `href="/..."` in code samples is never rewritten.
- *
+ * Kolay prepends this to its markdown pipeline automatically. It must run
+ * while links are still mdast nodes; this also keeps code blocks untouched.
  * Exported for consumers with custom compile pipelines.
  */
 export function rebaseAuthoredLinks(prefix: string) {

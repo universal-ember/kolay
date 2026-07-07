@@ -44,9 +44,7 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   assert(`Expected to find the router service, but did not`, router);
 
-  // Manifest page paths include the app's rootURL (e.g. /pr-previews/pr-1234/…).
-  // `transitionTo` expects an app-relative URL and re-prepends the rootURL, so
-  // passing the manifest path verbatim doubles the prefix when rootURL is
-  // overridden. Strip it first; a no-op when rootURL is the default '/'.
+  // Manifest paths include the rootURL, but `transitionTo` re-prepends it —
+  // strip it first so the prefix isn't doubled under a non-default rootURL.
   router.transitionTo(stripRootURL(first.path, router.rootURL));
 }

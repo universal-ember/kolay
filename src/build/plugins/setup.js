@@ -25,13 +25,9 @@ const ASSET_GLOB = '**/*.{svg,png,jpg,jpeg,gif,webp,avif}';
 const ASSET_EXT = /\.(svg|png|jpe?g|gif|webp|avif)$/i;
 
 /**
- * The directories whose non-markdown assets are served/emitted at their
- * manifest-space URLs (`<base><groupName>/<relative path>`), so images
- * co-located with docs resolve both relatively (against the rendered page
- * URL) and root-absolutely (via the authored-link rebasing).
- *
- * The unnamed entries are the co-located pages roots (app|src)/templates,
- * whose page URLs have that prefix stripped.
+ * Directories whose non-markdown assets are served/emitted at their
+ * manifest-space URLs (`<base><groupName>/<relative path>`). The unnamed
+ * entries are the co-located pages roots, whose page URLs drop that prefix.
  */
 function assetRoots(options, cwd) {
   return [
