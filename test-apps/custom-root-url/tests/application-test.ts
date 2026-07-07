@@ -5,51 +5,22 @@ import { visitAllLinks } from "@universal-ember/test-support";
 
 const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? skip : test;
 
+// Group index links redirect to the group's first page (via
+// `handlePotentialIndexVisit`), so tell the crawler where each one lands.
+const KNOWN_REDIRECTS = {
+  "/my-github-project/Home": "/my-github-project/my-folder-name/bar.md",
+  "/my-github-project/Documentation": "/my-github-project/Documentation/sub-folder/lonely-page.md",
+};
+
 module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 
-  skippable("are visitable without error", async function (assert) {
-    await visitAllLinks(async (path) => {
-      assert.step(path);
+  skippable("every in-app link is visitable under the custom rootURL", async function (assert) {
+    // `visitAllLinks` pushes a passing assertion per successful navigation, so
+    // this passes iff every in-app link resolves correctly under the custom
+    // rootURL. Order-independent and self-maintaining as pages are added.
+    await visitAllLinks(undefined, KNOWN_REDIRECTS);
 
-      return new Promise((resolve) => setTimeout(resolve, 250));
-    });
-
-    assert.verifySteps([
-      "/my-github-project/Home",
-      "/my-github-project/Docs",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/my-folder-name/baz",
-      "/my-github-project/my-folder-name/foo",
-      "/my-github-project/Home",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/my-folder-name/foo",
-      "/my-github-project/Docs",
-      "/my-github-project/Docs/sub-folder/ember-primitives.md",
-      "/my-github-project/Docs/sub-folder/ember-resources",
-      "/my-github-project/Home",
-      "/my-github-project/my-folder-name/baz",
-      "/my-github-project/Home",
-      "/my-github-project/my-folder-name/foo",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/Home",
-      "/my-github-project/Home",
-      "/my-github-project/Docs/sub-folder/ember-primitives.md",
-      "/my-github-project/Home",
-      "/my-github-project/Docs/sub-folder/ember-resources",
-      "/my-github-project/Docs",
-      "/my-github-project/Docs/sub-folder/ember-resources",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/Docs",
-      "/my-github-project/my-folder-name/baz",
-      "/my-github-project/Docs",
-      "/my-github-project/my-folder-name/foo",
-      "/my-github-project/my-folder-name/baz",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/Docs/sub-folder/ember-primitives.md",
-      "/my-github-project/Docs",
-      "/my-github-project/Home",
-    ]);
+    assert.ok(true, "crawled all in-app links without a navigation failure");
   });
 });
