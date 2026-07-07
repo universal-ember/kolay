@@ -78,6 +78,8 @@ Router.map(function () {
 
 In the spirit of dynamically compiled and discovered docs, this adds a `*wildcard` route that matches all paths and then tries to derive which file to load from there.
 
+Deploying under a custom `rootURL` (e.g. a PR preview at `/pr-1234/`) is fully supported: navigation, redirects, and root-absolute links and images in authored markdown are all rebased onto the `rootURL` automatically. See [Links and images](/usage/authoring.md) for how to write paths in your content.
+
 ### Runtime: Rendering and Highlighting
 
 Here is what this site does
