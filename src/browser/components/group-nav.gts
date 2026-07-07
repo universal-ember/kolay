@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
+import { applyRootURL } from '../root-url.ts';
 import { docsManager } from '../services/docs.ts';
 
 import type RouterService from '@ember/routing/router-service';
@@ -59,10 +60,6 @@ export class GroupNav extends Component<{
     return this.args.homeName ?? 'Home';
   }
 
-  get rootURL() {
-    return this.router.rootURL;
-  }
-
   get groups() {
     return this.#docs.availableGroups.map((groupName) => {
       if (groupName === 'root') return { text: this.homeName, value: '/' };
@@ -74,12 +71,21 @@ export class GroupNav extends Component<{
   isActive = (subPath: string) => {
     if (subPath === '/') return false;
 
-    return this.router.currentURL?.startsWith(subPath);
+    // The group is derived from the URL by the docs service, rather than
+    // comparing the group name against currentURL directly (which always
+    // failed: 'Docs' never prefixes '/Docs/...').
+    return this.#docs.selectedGroup === subPath;
   };
 
   get activeClass() {
     return this.args.activeClass ?? 'active';
   }
+
+  hrefFor = (subPath: string) => {
+    const appRelative = subPath === '/' ? '/' : `/${subPath}`;
+
+    return applyRootURL(appRelative, this.router.rootURL);
+  };
 
   <template>
     <nav aria-label='Groups' ...attributes>
@@ -87,7 +93,7 @@ export class GroupNav extends Component<{
         {{#each this.groups as |group|}}
           <li>
             <a
-              href='{{this.rootURL}}{{group.value}}'
+              href={{this.hrefFor group.value}}
               class={{if (this.isActive group.value) this.activeClass}}
             >
 

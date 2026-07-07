@@ -6,6 +6,7 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
+import { rebaseAuthoredLinks } from '../root-url.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
@@ -145,7 +146,9 @@ class DocsService {
 
     const optionsForCompiler = compilerOptions({
       topLevelScope: options.topLevelScope,
-      remarkPlugins: options.remarkPlugins ?? [],
+      // Prepended so authored root-absolute URLs are rebased onto the rootURL
+      // before any consumer plugin serializes mdast nodes to raw HTML.
+      remarkPlugins: [rebaseAuthoredLinks(this.router.rootURL), ...(options.remarkPlugins ?? [])],
       rehypePlugins: options.rehypePlugins ?? [],
       modules: options.modules,
     });

@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { applyRootURL } from '../root-url.ts';
 import { docsManager } from '../services/docs.ts';
 import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
@@ -233,8 +234,12 @@ class PageLink extends Component<{
     return this.router.currentURL?.startsWith(subPath) ?? false;
   }
 
+  get href() {
+    return applyRootURL(this.args.item.path, this.router.rootURL);
+  }
+
   <template>
-    <a href={{@item.path}} class={{if this.isActive this.activeClass}} ...attributes>{{yield
+    <a href={{this.href}} class={{if this.isActive this.activeClass}} ...attributes>{{yield
         @item
         this.isActive
       }}</a>
