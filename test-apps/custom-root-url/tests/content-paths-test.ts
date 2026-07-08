@@ -7,7 +7,9 @@ module("Content paths under a custom rootURL", function (hooks) {
 
   test("authored root-absolute links/images are rebased onto the rootURL; relative ones are left alone", async function (assert) {
     await visit("/Documentation/sub-folder/content-paths.md");
-    await waitFor('main img[alt="Ember logo"]');
+    // Generous timeout: the in-browser markdown compiler can be working
+    // through a backlog when this runs after the all-links crawl.
+    await waitFor('main img[alt="Ember logo"]', { timeout: 10_000 });
 
     assert
       .dom('main a[href="/my-github-project/Documentation/sub-folder/lonely-page.md"]')
