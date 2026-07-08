@@ -9,3 +9,8 @@ Image paths also need to consider relative paths.
 And absolute paths.
 
 ![Ember logo with Tomster the hamster](/Documentation/sub-folder/ember-tomster.svg)
+
+Raw HTML with a root-absolute src also needs rebasing.
+
+<img alt="Raw HTML logo" src="/Documentation/sub-folder/ember-logo.svg" width="40">
+

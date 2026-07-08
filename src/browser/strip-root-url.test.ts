@@ -31,6 +31,27 @@ describe('stripRootURL', () => {
     );
   });
 
+  test('accepts a rootURL without a trailing slash', () => {
+    expect(stripRootURL('/my-github-project/Documentation/x', '/my-github-project')).toBe(
+      '/Documentation/x'
+    );
+  });
+
+  test('maps the rootURL itself to the app root, with any slash pairing', () => {
+    expect(stripRootURL('/my-github-project', '/my-github-project/')).toBe('/');
+    expect(stripRootURL('/my-github-project', '/my-github-project')).toBe('/');
+    expect(stripRootURL('/my-github-project/', '/my-github-project')).toBe('/');
+  });
+
+  test('does not strip a lookalike sibling prefix, even without a trailing slash', () => {
+    expect(stripRootURL('/my-github-project-staging/x', '/my-github-project')).toBe(
+      '/my-github-project-staging/x'
+    );
+    expect(stripRootURL('/my-github-project-staging/x', '/my-github-project/')).toBe(
+      '/my-github-project-staging/x'
+    );
+  });
+
   test('passes null through at a custom rootURL', () => {
     expect(stripRootURL(null, '/my-github-project/')).toBe(null);
   });

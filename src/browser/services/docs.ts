@@ -221,8 +221,11 @@ class DocsService {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    const [, /* leading slash */ first] =
-      stripRootURL(this.router.currentURL, this.router.rootURL)?.split('/') || [];
+    // currentURL is app-relative (Ember's location layer already stripped
+    // the rootURL), but it can carry query params — drop them before
+    // segmenting.
+    const [path = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
+    const [, /* leading slash */ first] = path.split('/');
 
     if (!first) return this.availableGroups[0];
 
@@ -275,9 +278,15 @@ class DocsService {
    * or the name of the group that contains the page if the url does exist.
    */
   groupForURL = (url: string): false | string => {
+    // Manifest page paths include the app's rootURL; tolerate lookups in
+    // either space by comparing app-relative, like findByPath.
+    const target = stripRootURL(url, this.router.rootURL);
+
     for (const groupName of this.availableGroups) {
       const group = this.groupFor(groupName);
-      const page = group.list.find((page) => page.path === url);
+      const page = group.list.find(
+        (page) => stripRootURL(page.path, this.router.rootURL) === target
+      );
 
       if (page) {
         return groupName;
@@ -291,17 +300,16 @@ class DocsService {
    * Returns the page entry for the current group
    */
   findByPath = (path: string) => {
-    // Manifest page paths include the app's rootURL, but lookups may come in
-    // app-relative. Match against both forms.
+    // Manifest page paths include the app's rootURL; tolerate lookups in
+    // either space (and with or without the `.md` extension) by comparing
+    // app-relative.
     const rootURL = this.router.rootURL;
-    const prefixedPath = rootURL !== '/' ? rootURL.replace(/\/$/, '') + path : path;
+    const target = stripRootURL(path, rootURL);
 
-    return this.pages.find(
-      (page) =>
-        page.path === path ||
-        page.path === path + '.md' ||
-        page.path === prefixedPath ||
-        page.path === prefixedPath + '.md'
-    );
+    return this.pages.find((page) => {
+      const pagePath = stripRootURL(page.path, rootURL);
+
+      return pagePath === target || pagePath === target + '.md';
+    });
   };
 }

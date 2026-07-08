@@ -19,8 +19,10 @@ module("All Links", function (hooks) {
     // `visitAllLinks` pushes a passing assertion per successful navigation, so
     // this passes iff every in-app link resolves correctly under the custom
     // rootURL. Order-independent and self-maintaining as pages are added.
-    await visitAllLinks(undefined, KNOWN_REDIRECTS);
+    const visited = await visitAllLinks(undefined, KNOWN_REDIRECTS);
 
-    assert.ok(true, "crawled all in-app links without a navigation failure");
+    // Guard against a vacuous pass: if a regression rendered zero nav links,
+    // the crawler would assert nothing at all.
+    assert.true(visited > 0, `crawled ${visited} in-app links without a navigation failure`);
   });
 });

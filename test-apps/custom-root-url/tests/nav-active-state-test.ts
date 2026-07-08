@@ -42,4 +42,16 @@ module("Nav active state under a custom rootURL", function (hooks) {
       .dom(`${PAGE_NAV} a[href="/my-github-project/my-folder-name/bar.md"]`)
       .hasClass("active", "the current page's link is active");
   });
+
+  test("the current page is marked active when visited without the .md extension", async function (assert) {
+    await visit("/Documentation/sub-folder/lonely-page");
+    await waitFor(`${PAGE_NAV} a`);
+
+    assert
+      .dom(`${PAGE_NAV} a[href="/my-github-project/Documentation/sub-folder/lonely-page.md"]`)
+      .hasClass("active", "extensionless visits still highlight the page's link");
+    assert
+      .dom(`${PAGE_NAV} a[href="/my-github-project/Documentation/sub-folder/content-paths.md"]`)
+      .doesNotHaveClass("active", "a sibling page's link is not active");
+  });
 });

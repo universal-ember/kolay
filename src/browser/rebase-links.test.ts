@@ -138,6 +138,50 @@ describe('rebaseAuthoredLinks', () => {
     expect(tree.children?.[1]?.url).toBe(42);
   });
 
+  test('accepts a getter prefix, resolved at transform time', () => {
+    // the build-time plugin only learns the base after its compiler exists
+    let prefix = '/';
+    const transformer = rebaseAuthoredLinks(() => prefix)();
+    const tree: Node = {
+      type: 'root',
+      children: [{ type: 'link', url: '/Documentation/a.md' }],
+    };
+
+    transformer?.(tree);
+    expect(tree.children?.[0]?.url).toBe('/Documentation/a.md');
+
+    prefix = '/my-github-project/';
+    transformer?.(tree);
+    expect(tree.children?.[0]?.url).toBe('/my-github-project/Documentation/a.md');
+  });
+
+  test('rebases root-absolute href/src attributes in raw html nodes', () => {
+    const tree: Node = {
+      type: 'root',
+      children: [
+        {
+          type: 'html',
+          value:
+            '<img src="/Documentation/a.svg" width="40"> ' +
+            "<a href='/Documentation/b.md'>b</a> " +
+            '<a href="/my-github-project/already.md">idempotent</a> ' +
+            '<img src="//cdn.example.com/x.svg"> ' +
+            '<a href="https://example.com/a">external</a>',
+        },
+      ],
+    };
+
+    rebase('/my-github-project/', tree);
+
+    expect(tree.children?.[0]?.value).toBe(
+      '<img src="/my-github-project/Documentation/a.svg" width="40"> ' +
+        "<a href='/my-github-project/Documentation/b.md'>b</a> " +
+        '<a href="/my-github-project/already.md">idempotent</a> ' +
+        '<img src="//cdn.example.com/x.svg"> ' +
+        '<a href="https://example.com/a">external</a>'
+    );
+  });
+
   test('does not rewrite root-absolute urls inside code nodes', () => {
     const tree: Node = {
       type: 'root',

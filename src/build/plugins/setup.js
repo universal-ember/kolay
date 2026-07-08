@@ -21,8 +21,16 @@ function normalizePath(path) {
   return path;
 }
 
-const ASSET_GLOB = '**/*.{svg,png,jpg,jpeg,gif,webp,avif}';
-const ASSET_EXT = /\.(svg|png|jpe?g|gif|webp|avif)$/i;
+/**
+ * Single source of truth for which co-located files count as assets — the
+ * dev middleware and the build emission must agree, or an asset would work
+ * in dev and 404 in production (or vice versa). Case-insensitive in both:
+ * node's glob only ignores case on macOS/Windows, so an extension-cased
+ * `LOGO.SVG` would otherwise be served in dev everywhere but dropped from
+ * Linux builds.
+ */
+const ASSET_EXTENSIONS = ['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'avif'];
+const ASSET_EXT = new RegExp(`\\.(${ASSET_EXTENSIONS.join('|')})$`, 'i');
 
 /**
  * Directories whose non-markdown assets are served/emitted at their
@@ -72,6 +80,21 @@ export const setup = (options = {}) => {
         server.middlewares.use((req, res, next) => {
           const [urlPath = ''] = (req.url ?? '').split('?');
 
+          // Page URLs are app routes, but a full-page load of one (e.g.
+          // `<base>Docs/intro.md`) can hit a real file on disk when a
+          // group's name matches its src directory (case-insensitively),
+          // and vite's static middleware would serve raw markdown instead
+          // of booting the app. Hand browser navigations to the SPA entry.
+          if (
+            urlPath.endsWith('.md') &&
+            urlPath.startsWith(baseUrl) &&
+            req.headers.accept?.includes('text/html')
+          ) {
+            req.url = baseUrl;
+
+            return next();
+          }
+
           if (!ASSET_EXT.test(urlPath)) return next();
 
           for (const { name, dir } of roots) {
@@ -107,19 +130,30 @@ export const setup = (options = {}) => {
         if (!isBuild) return;
 
         for (const { name, dir } of assetRoots(options, cwd)) {
-          try {
-            for await (const entry of glob(ASSET_GLOB, { cwd: dir, exclude: ['node_modules'] })) {
-              const posixEntry = entry.replaceAll('\\', '/');
+          // e.g. no src/templates — nothing to emit. Anything else that
+          // throws below should fail the build loudly rather than silently
+          // ship without doc assets.
+          if (!existsSync(dir)) continue;
 
-              this.emitFile({
-                type: 'asset',
-                fileName: name ? `${name}/${posixEntry}` : posixEntry,
-                source: await readFile(join(dir, entry)),
-              });
-            }
-          } catch {
-            // root directory doesn't exist (e.g. no src/templates) — nothing to emit
+          const emitting = [];
+
+          for await (const entry of glob('**/*', { cwd: dir, exclude: ['node_modules'] })) {
+            if (!ASSET_EXT.test(entry)) continue;
+
+            const posixEntry = entry.replaceAll('\\', '/');
+
+            emitting.push(
+              readFile(join(dir, entry)).then((source) =>
+                this.emitFile({
+                  type: 'asset',
+                  fileName: name ? `${name}/${posixEntry}` : posixEntry,
+                  source,
+                })
+              )
+            );
           }
+
+          await Promise.all(emitting);
         }
       },
     },

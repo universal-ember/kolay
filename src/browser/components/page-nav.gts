@@ -227,12 +227,17 @@ class PageLink extends Component<{
 
   get isActive() {
     // Manifest paths include the rootURL, but currentURL is app-relative —
-    // compare both in app-relative space.
+    // compare both in app-relative space. Pages are visitable with and
+    // without the `.md` extension, so compare without it (this also stops a
+    // sibling like `/foo/bar-baz` matching `/foo/bar`, which the old
+    // startsWith comparison allowed).
     const subPath = stripRootURL(this.args.item.path, this.router.rootURL);
 
     if (subPath === '/') return false;
 
-    return this.router.currentURL?.startsWith(subPath) ?? false;
+    const [current = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
+
+    return current.replace(/\.md$/, '') === subPath.replace(/\.md$/, '');
   }
 
   <template>

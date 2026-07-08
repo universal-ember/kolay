@@ -9,7 +9,6 @@ import { use } from 'ember-resources';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import { keepLatest } from 'reactiveweb/keep-latest';
 
-import { stripRootURL } from '../utils.ts';
 import { compileText } from './compiler/reactive.ts';
 import { docsManager } from './docs.ts';
 import { extractErrorMessage } from './extract-error-message.ts';
@@ -148,10 +147,12 @@ class Selected {
   get #path(): string | undefined {
     if (!this.router.currentURL) return;
 
+    // currentURL is app-relative — Ember's location layer already stripped
+    // the rootURL — so use its pathname verbatim.
     const url = new URL(this.router.currentURL, window.location.origin);
-    const path = stripRootURL(url.pathname, this.router.rootURL);
+    const path = url.pathname;
 
-    if (!path || path === '/') {
+    if (path === '/') {
       return;
     }
 
