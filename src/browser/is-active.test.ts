@@ -1,0 +1,71 @@
+import { describe, expect, test } from 'vitest';
+
+import { isActive } from './is-active.js';
+
+import type { Collection, Page } from '../types.ts';
+
+function page(path: string): Page {
+  return { path, name: path, groupName: 'Documentation', cleanedName: path };
+}
+
+function collection(path: string, pages: (Page | Collection)[]): Collection {
+  return { path, name: path, pages };
+}
+
+describe('isActive', () => {
+  test('matches the current page at the default rootURL', () => {
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/x.md', '/')).toBe(true);
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/y.md', '/')).toBe(false);
+  });
+
+  test('is insensitive to the .md extension on either side', () => {
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/x', '/')).toBe(true);
+    expect(isActive(page('/Documentation/x'), '/Documentation/x.md', '/')).toBe(true);
+  });
+
+  test('does not treat a sibling with a shared prefix as active', () => {
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/x-and-more.md', '/')).toBe(false);
+  });
+
+  test('compares manifest paths (rootURL-prefixed) against the app-relative currentURL', () => {
+    expect(
+      isActive(
+        page('/my-github-project/Documentation/x.md'),
+        '/Documentation/x.md',
+        '/my-github-project/'
+      )
+    ).toBe(true);
+    expect(
+      isActive(
+        page('/my-github-project/Documentation/x.md'),
+        '/Documentation/y.md',
+        '/my-github-project/'
+      )
+    ).toBe(false);
+  });
+
+  test('ignores query params and hash on the current URL', () => {
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/x.md?foo=1', '/')).toBe(true);
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/x.md#section', '/')).toBe(true);
+  });
+
+  test('the root path is never active', () => {
+    expect(isActive(page('/'), '/', '/')).toBe(false);
+  });
+
+  test('nothing is active without a current URL', () => {
+    expect(isActive(page('/Documentation/x.md'), null, '/')).toBe(false);
+    expect(isActive(page('/Documentation/x.md'), undefined, '/')).toBe(false);
+  });
+
+  test('a collection is active when any page within it is, recursively', () => {
+    const tree = collection('/Documentation', [
+      page('/Documentation/a.md'),
+      collection('/Documentation/sub-folder', [page('/Documentation/sub-folder/b.md')]),
+    ]);
+
+    expect(isActive(tree, '/Documentation/sub-folder/b.md', '/')).toBe(true);
+    expect(isActive(tree, '/Documentation/a.md', '/')).toBe(true);
+    expect(isActive(tree, '/Documentation/elsewhere.md', '/')).toBe(false);
+  });
+});

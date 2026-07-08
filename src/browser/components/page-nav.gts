@@ -3,7 +3,7 @@ import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isCollection, isIndex, stripRootURL } from '../utils.ts';
+import { getIndexPage, isActive, isCollection, isIndex } from '../utils.ts';
 
 import type { Collection, Page } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -226,18 +226,7 @@ class PageLink extends Component<{
   }
 
   get isActive() {
-    // Manifest paths include the rootURL, but currentURL is app-relative —
-    // compare both in app-relative space. Pages are visitable with and
-    // without the `.md` extension, so compare without it (this also stops a
-    // sibling like `/foo/bar-baz` matching `/foo/bar`, which the old
-    // startsWith comparison allowed).
-    const subPath = stripRootURL(this.args.item.path, this.router.rootURL);
-
-    if (subPath === '/') return false;
-
-    const [current = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
-
-    return current.replace(/\.md$/, '') === subPath.replace(/\.md$/, '');
+    return isActive(this.args.item, this.router.currentURL, this.router.rootURL);
   }
 
   <template>

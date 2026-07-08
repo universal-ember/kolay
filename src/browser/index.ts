@@ -18,7 +18,7 @@ export { selected } from './services/selected.ts';
 
 // Utilities
 export { rebaseAuthoredLinks } from './rebase-links.ts';
-export { getIndexPage, isCollection, isIndex, stripRootURL } from './utils.ts';
+export { getIndexPage, isActive, isCollection, isIndex, stripRootURL } from './utils.ts';
 
 // Types
 export type { Collection, Manifest, Page } from '../types.ts';
