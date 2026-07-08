@@ -226,7 +226,7 @@ class PageLink extends Component<{
   }
 
   get isActive() {
-    return isActive(this.args.item, this.router.currentURL, this.router.rootURL);
+    return isActive(this.args.item, this.router.currentURL);
   }
 
   <template>

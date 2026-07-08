@@ -8,12 +8,12 @@ Whether a manifest item (`Page` or `Collection`) is the currently visited page. 
 import { isActive } from 'kolay';
 
 // in a component with the router service injected
-isActive(item, this.router.currentURL, this.router.rootURL);
+isActive(item, this.router.currentURL);
 ```
 
 Behavior notes:
 
-- rootURL-aware: manifest paths include the app's `rootURL`, while `router.currentURL` is app-relative — the comparison accounts for that, so it works under custom `rootURL` deploys (e.g. a PR preview at `/pr-1234/`).
+- rootURL-aware: the item's `appRelativePath` (computed into the manifest at build time) is compared against the app-relative `router.currentURL`, so it works under custom `rootURL` deploys (e.g. a PR preview at `/pr-1234/`) without any conversion.
 - Pages are visitable with and without the `.md` extension, so both forms match.
 - Query params and the hash on the current URL are ignored.
 - A `Collection` is active when any page within it (recursively) is — useful for highlighting or expanding the branch of a nav tree that contains the current page.

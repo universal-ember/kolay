@@ -98,7 +98,7 @@ See the [setup guide](/usage/setup.md) for installation, or
 [The DocsManager service](/Runtime/util/docs-manager.md).
 ```
 
-Root-absolute paths are always written as if the app were deployed at `/`. When the app is served under a custom `rootURL` (a preview deploy at `/pr-1234/`, a docs site at `/my-lib/`, …), kolay rebases these paths onto the `rootURL` when the page compiles (in the browser for `.md` pages, at build time for `.gjs.md` pages) — authored content never needs to know where the app is deployed. This covers markdown link/image syntax as well as `href`/`src` attributes in raw inline HTML. If you compile markdown with your own pipeline instead of `setupKolay`, the plugin that does this is exported as [`rebaseAuthoredLinks`](/Runtime/util/rebase-links.md).
+Root-absolute paths are always written as if the app were deployed at `/`. When the app is served under a custom `rootURL` (a preview deploy at `/pr-1234/`, a docs site at `/my-lib/`, …), kolay rebases these paths onto the `rootURL` when the page compiles (in the browser for `.md` pages, at build time for `.gjs.md` pages) — authored content never needs to know where the app is deployed. This covers markdown link/image syntax as well as `href`/`src` attributes in raw inline HTML.
 
 ### Co-located images
 

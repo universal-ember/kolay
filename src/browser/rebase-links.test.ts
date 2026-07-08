@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { rebaseAuthoredLinks } from './rebase-links.js';
+import { rebaseAuthoredLinks } from '../rebase-links.js';
 
 /** Minimal mdast-ish node — enough for the plugin to traverse and mutate. */
 interface Node {

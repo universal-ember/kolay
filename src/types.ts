@@ -8,6 +8,11 @@ export type LoadManifest = () => Promise<Manifest>;
 export type LoadTypedoc = Record<string, () => ReturnType<typeof fetch>>;
 
 export interface Manifest {
+  /**
+   * The rootURL / base URL this manifest was generated with.
+   * Item `path`s are prefixed with it; `appRelativePath`s are not.
+   */
+  base: string;
   groups: {
     name: string;
     list: Page[];
@@ -16,7 +21,15 @@ export interface Manifest {
 }
 
 export interface Collection {
+  /**
+   * The collection's own directory segment, e.g. 'sub-folder'.
+   */
   path: string;
+  /**
+   * URL-space location of the collection as if the app were deployed at '/',
+   * e.g. '/Documentation/sub-folder'.
+   */
+  appRelativePath: string;
   name: string;
   first?: string;
   pages: (Collection | Page)[];
@@ -24,7 +37,18 @@ export interface Collection {
 }
 
 export interface Page {
+  /**
+   * The page's URL, prefixed with the app's rootURL (the manifest's `base`),
+   * e.g. '/my-github-project/Documentation/sub-folder/x.md'.
+   * This is the space hrefs (and the compiled-docs module map) operate in.
+   */
   path: string;
+  /**
+   * The page's URL as if the app were deployed at '/',
+   * e.g. '/Documentation/sub-folder/x.md'.
+   * This is the space `router.currentURL` and `transitionTo` operate in.
+   */
+  appRelativePath: string;
   name: string;
   groupName: string;
   cleanedName: string;

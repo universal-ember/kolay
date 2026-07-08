@@ -2,7 +2,6 @@ import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
 import { docsManager } from './services/docs.ts';
-import { stripRootURL } from './utils.ts';
 
 import type { RouterDSL } from '@ember/-internals/routing';
 import type Transition from '@ember/routing/transition';
@@ -44,7 +43,7 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   assert(`Expected to find the router service, but did not`, router);
 
-  // Manifest paths include the rootURL, but `transitionTo` re-prepends it —
-  // strip it first so the prefix isn't doubled under a non-default rootURL.
-  router.transitionTo(stripRootURL(first.path, router.rootURL));
+  // `transitionTo` prepends the rootURL itself, so use the app-relative path
+  // (`first.path` includes the rootURL and would double the prefix).
+  router.transitionTo(first.appRelativePath);
 }

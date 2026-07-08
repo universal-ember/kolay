@@ -6,12 +6,11 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
-import { rebaseAuthoredLinks } from '../rebase-links.ts';
+import { rebaseAuthoredLinks } from '../../rebase-links.js';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
-import { stripRootURL } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
@@ -89,7 +88,7 @@ class DocsService {
 
   _docs: Manifest | undefined;
 
-  loadManifest: LoadManifest = () => Promise.resolve({ groups: [] });
+  loadManifest: LoadManifest = () => Promise.resolve({ base: '/', groups: [] });
 
   setup = async (options: {
     /**
@@ -278,15 +277,9 @@ class DocsService {
    * or the name of the group that contains the page if the url does exist.
    */
   groupForURL = (url: string): false | string => {
-    // Manifest page paths include the app's rootURL; tolerate lookups in
-    // either space by comparing app-relative, like findByPath.
-    const target = stripRootURL(url, this.router.rootURL);
-
     for (const groupName of this.availableGroups) {
       const group = this.groupFor(groupName);
-      const page = group.list.find(
-        (page) => stripRootURL(page.path, this.router.rootURL) === target
-      );
+      const page = group.list.find((page) => page.appRelativePath === url);
 
       if (page) {
         return groupName;
@@ -297,19 +290,13 @@ class DocsService {
   };
 
   /**
-   * Returns the page entry for the current group
+   * Returns the page entry for the current group.
+   * Takes an app-relative path (the space `router.currentURL` is in),
+   * with or without the `.md` extension.
    */
   findByPath = (path: string) => {
-    // Manifest page paths include the app's rootURL; tolerate lookups in
-    // either space (and with or without the `.md` extension) by comparing
-    // app-relative.
-    const rootURL = this.router.rootURL;
-    const target = stripRootURL(path, rootURL);
-
-    return this.pages.find((page) => {
-      const pagePath = stripRootURL(page.path, rootURL);
-
-      return pagePath === target || pagePath === target + '.md';
-    });
+    return this.pages.find(
+      (page) => page.appRelativePath === path || page.appRelativePath === path + '.md'
+    );
   };
 }

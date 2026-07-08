@@ -18,6 +18,15 @@ docs.findByPath('/usage/setup.md');  // look up a specific page
 docs.groupForURL('/Runtime/docs/api-docs.md'); // which group owns this URL?
 ```
 
+## Path spaces
+
+Every manifest item carries two paths, computed at build time:
+
+- `path` — prefixed with the app's `rootURL` (available as `manifest.base`). Use this for `href`s.
+- `appRelativePath` — as if the app were deployed at `/`. This is the space `router.currentURL` and `transitionTo` operate in; `findByPath` and `groupForURL` take paths in this space (with or without the `.md` extension for `findByPath`).
+
+At the default `rootURL` of `/`, the two are identical.
+
 ## API Reference
 
 <APIDocs @module="declarations/browser" @name="docsManager" @package="kolay" />

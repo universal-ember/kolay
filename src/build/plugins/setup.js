@@ -255,6 +255,9 @@ export const setup = (options = {}) => {
           }
 
           const manifest = {
+            // The rootURL this manifest was generated with; page `path`s are
+            // prefixed with it, `appRelativePath`s are not.
+            base: baseUrl,
             groups: [],
           };
 
@@ -300,7 +303,8 @@ export const setup = (options = {}) => {
               cwd: config.cwd,
               paths,
               configs,
-              prefix: join(baseUrl, config.name),
+              prefix: join('/', config.name),
+              base: baseUrl,
             });
 
             manifest.groups.push({
