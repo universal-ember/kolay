@@ -17,7 +17,8 @@ export { docsManager } from './services/docs.ts';
 export { selected } from './services/selected.ts';
 
 // Utilities
-export { getIndexPage, isActive, isCollection, isIndex } from './utils.ts';
+export { isActive } from './is-active.ts';
+export { getIndexPage, isCollection, isIndex } from './utils.ts';
 
 // Types
 export type { Collection, Manifest, Page } from '../types.ts';

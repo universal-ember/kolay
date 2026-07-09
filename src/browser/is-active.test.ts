@@ -49,6 +49,17 @@ describe('isActive', () => {
     expect(isActive(page('/Documentation/x.md'), '/Documentation/x.md#section')).toBe(true);
   });
 
+  test('an index page is active when visited at its own URL, like any page', () => {
+    // index pages are only servable at their own URL (a collection's bare
+    // URL is not a route), so this is the whole story for them
+    expect(
+      isActive(page('/Documentation/sub-folder/index.md'), '/Documentation/sub-folder/index')
+    ).toBe(true);
+    expect(isActive(page('/Documentation/sub-folder/index.md'), '/Documentation/sub-folder')).toBe(
+      false
+    );
+  });
+
   test('the root path is never active', () => {
     expect(isActive(page('/'), '/')).toBe(false);
   });

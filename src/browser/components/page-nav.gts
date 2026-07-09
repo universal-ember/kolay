@@ -3,7 +3,8 @@ import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isActive, isCollection, isIndex } from '../utils.ts';
+import { isActive } from '../is-active.ts';
+import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
 import type { Collection, Page } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';

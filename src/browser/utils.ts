@@ -4,10 +4,6 @@ import { getOwner } from '@ember/owner';
 import type { Collection, Page } from '../types.ts';
 import type Owner from '@ember/owner';
 
-// The implementation lives in an ember-free module so it can be unit-tested
-// under node/vitest; re-exported here for existing importers.
-export { isActive } from './is-active.ts';
-
 export function isCollection(x: Page | Collection): x is Collection {
   return 'pages' in x;
 }
