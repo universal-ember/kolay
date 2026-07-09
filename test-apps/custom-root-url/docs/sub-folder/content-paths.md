@@ -13,4 +13,3 @@ And absolute paths.
 Raw HTML with a root-absolute src also needs rebasing.
 
 <img alt="Raw HTML logo" src="/Documentation/sub-folder/ember-logo.svg" width="40">
-
