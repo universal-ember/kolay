@@ -31,18 +31,29 @@ export const LOAD_MANIFEST = Symbol('__KOLAY__LOAD_MANIFEST__');
 export const PREPARE_DOCS = Symbol('__KOLAY__PREPARE_DOCS__');
 
 export function compilerOptions({
+  rootURL = '/',
   topLevelScope,
   remarkPlugins,
   rehypePlugins,
   modules,
 }: {
+  /**
+   * The app's rootURL, so authored root-absolute URLs are rebased onto it.
+   * Accepts a getter for callers that build options before the rootURL is
+   * known. At the default '/', rebasing is a no-op.
+   */
+  rootURL?: string | (() => string);
   topLevelScope?: ScopeMap;
   modules?: ModuleMap;
   remarkPlugins?: unknown[];
   rehypePlugins?: unknown[];
 } = {}) {
   const md = {
-    remarkPlugins,
+    // Prepended so authored root-absolute URLs are rebased onto the rootURL
+    // before any consumer plugin serializes mdast nodes to raw HTML. Living
+    // here (not in setup()) means every compiler built from these options —
+    // including the test-support one — gets the same behavior.
+    remarkPlugins: [rebaseAuthoredLinks(rootURL), ...(remarkPlugins ?? [])],
     rehypePlugins,
   };
   const scope = {
@@ -145,10 +156,9 @@ class DocsService {
     this[PREPARE_DOCS](apiDocs, compiledDocs);
 
     const optionsForCompiler = compilerOptions({
+      rootURL: this.router.rootURL,
       topLevelScope: options.topLevelScope,
-      // Prepended so authored root-absolute URLs are rebased onto the rootURL
-      // before any consumer plugin serializes mdast nodes to raw HTML.
-      remarkPlugins: [rebaseAuthoredLinks(this.router.rootURL), ...(options.remarkPlugins ?? [])],
+      remarkPlugins: options.remarkPlugins ?? [],
       rehypePlugins: options.rehypePlugins ?? [],
       modules: options.modules,
     });

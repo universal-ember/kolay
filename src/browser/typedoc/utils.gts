@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
+import { buildWaiter } from '@ember/test-waiters';
 
 import { Provide } from 'ember-primitives/dom-context';
 import { use } from 'ember-resources';
@@ -52,6 +53,8 @@ export const Query: TOC<{
 
 const cache = new Map<string, () => Promise<ProjectReflection>>();
 
+const typedocWaiter = buildWaiter('kolay:typedoc-load');
+
 export class Load extends Component<{
   Args: {
     module: string;
@@ -87,17 +90,26 @@ export class Load extends Component<{
     }
 
     const loadNew = async (): Promise<ProjectReflection> => {
-      const req = await this.#apiDocs.load(pkg);
-      const json = await req.json();
+      // Holds `settled()` (visit/click in tests) open for the whole
+      // fetch + parse + deserialize, so tests never see a partially-rendered
+      // API docs section. No-op in production builds.
+      const token = typedocWaiter.beginAsync();
 
-      const logger = new ConsoleLogger();
-      const deserializer = new Deserializer(logger);
-      const project = deserializer.reviveProject('API Docs', json, {
-        projectRoot: '/',
-        registry: new FileRegistry(),
-      });
+      try {
+        const req = await this.#apiDocs.load(pkg);
+        const json = await req.json();
 
-      return project;
+        const logger = new ConsoleLogger();
+        const deserializer = new Deserializer(logger);
+        const project = deserializer.reviveProject('API Docs', json, {
+          projectRoot: '/',
+          registry: new FileRegistry(),
+        });
+
+        return project;
+      } finally {
+        typedocWaiter.endAsync(token);
+      }
     };
 
     cache.set(pkg, loadNew);

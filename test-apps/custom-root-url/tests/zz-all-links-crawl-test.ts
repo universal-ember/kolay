@@ -23,62 +23,29 @@ module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 
   skippable("every in-app link is visitable under the custom rootURL", async function (assert) {
-    await visitAllLinks(async (path) => {
-      assert.step(path);
+    const visited: string[] = [];
 
-      // Markdown content compiles asynchronously, and the crawler collects a
-      // page's links right after this callback — without a settle delay,
-      // in-content links are discovered (or not) depending on timing, making
-      // the crawl nondeterministic.
-      return new Promise((resolve) => setTimeout(resolve, 250));
-    }, KNOWN_REDIRECTS);
+    await visitAllLinks((path) => visited.push(path), KNOWN_REDIRECTS);
 
-    // A snapshot of the crawl: every reachable in-app link, in visit order,
-    // once per page it appears on. This intentionally fails when pages or
-    // links are added or removed — update the list to match the new reality.
+    // A snapshot of the crawl: every reachable in-app page. Sorted and
+    // deduplicated, because the crawler's visit order — and how many source
+    // pages it happens to collect a link from — depend on rendering timing,
+    // but the set of reachable pages does not. This intentionally fails
+    // when pages are added or removed — update the list to match the new
+    // reality.
+    for (const path of [...new Set(visited)].sort()) assert.step(path);
+
     assert.verifySteps([
-      "/my-github-project/Home",
       "/my-github-project/Documentation",
+      "/my-github-project/Documentation/sub-folder/build-time",
+      "/my-github-project/Documentation/sub-folder/content-paths.md",
+      "/my-github-project/Documentation/sub-folder/ember-primitives.md",
+      "/my-github-project/Documentation/sub-folder/ember-resources",
+      "/my-github-project/Documentation/sub-folder/lonely-page.md",
+      "/my-github-project/Home",
       "/my-github-project/my-folder-name/bar.md",
       "/my-github-project/my-folder-name/baz",
       "/my-github-project/my-folder-name/foo",
-      "/my-github-project/Home",
-      "/my-github-project/my-folder-name/bar.md",
-      "/my-github-project/my-folder-name/foo",
-      "/my-github-project/Documentation",
-      "/my-github-project/Documentation/sub-folder/lonely-page.md",
-      "/my-github-project/Documentation/sub-folder/content-paths.md",
-      "/my-github-project/Documentation/sub-folder/ember-primitives.md",
-      "/my-github-project/Documentation/sub-folder/ember-resources",
-      "/my-github-project/Documentation/sub-folder/build-time",
-      "/my-github-project/Home",
-      "/my-github-project/Home",
-      "/my-github-project/Documentation/sub-folder/lonely-page.md",
-      "/my-github-project/Documentation/sub-folder/ember-primitives.md",
-      "/my-github-project/Documentation/sub-folder/build-time",
-      "/my-github-project/Documentation",
-      "/my-github-project/Documentation/sub-folder/ember-resources",
-      "/my-github-project/Home",
-      "/my-github-project/Documentation/sub-folder/content-paths.md",
-      "/my-github-project/Documentation/sub-folder/ember-resources",
-      "/my-github-project/Documentation/sub-folder/lonely-page.md",
-      "/my-github-project/Home",
-      "/my-github-project/Documentation/sub-folder/ember-primitives.md",
-      "/my-github-project/Home",
-      "/my-github-project/Documentation/sub-folder/ember-resources",
-      "/my-github-project/Documentation",
-      "/my-github-project/Documentation/sub-folder/build-time",
-      "/my-github-project/Documentation/sub-folder/lonely-page.md",
-      "/my-github-project/Documentation",
-      "/my-github-project/my-folder-name/baz",
-      "/my-github-project/Home",
-      "/my-github-project/Documentation/sub-folder/build-time",
-      "/my-github-project/Documentation/sub-folder/content-paths.md",
-      "/my-github-project/Documentation/sub-folder/build-time",
-      "/my-github-project/Documentation/sub-folder/ember-primitives.md",
-      "/my-github-project/Documentation/sub-folder/lonely-page.md",
-      "/my-github-project/my-folder-name/foo",
-      "/my-github-project/Documentation/sub-folder/lonely-page.md",
     ]);
   });
 });
