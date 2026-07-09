@@ -2,8 +2,8 @@ import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
-import { docsManager } from '../services/docs.ts';
 import { isActive } from '../is-active.ts';
+import { docsManager } from '../services/docs.ts';
 import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
 import type { Collection, Page } from '../../types.ts';

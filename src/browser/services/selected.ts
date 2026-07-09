@@ -52,8 +52,9 @@ function loaderFor(selected: Selected, path: string | undefined) {
 
   async function load(): Promise<ComponentLike | undefined> {
     assert(`[Bug] Owner is missing`, owner);
+    assert(`Invalid path: ${path}. No loader found.`, fn);
 
-    const module = await fn!();
+    const module = await fn();
 
     if (typeof module.default === 'string') {
       const state = compileText(owner, module.default);

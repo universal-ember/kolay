@@ -1,4 +1,5 @@
 import { waitForPromise } from '@ember/test-waiters';
+
 import { compile, getCompiler } from 'ember-repl';
 import { resource, resourceFactory } from 'ember-resources';
 
