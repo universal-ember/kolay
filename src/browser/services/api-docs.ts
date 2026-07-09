@@ -1,16 +1,11 @@
 import { assert } from '@ember/debug';
-import { buildWaiter } from '@ember/test-waiters';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { createStore } from 'ember-primitives/store';
 
 import { getKey } from './lazy-load.ts';
 
 import type { LoadTypedoc } from '../../types.ts';
-
-// Lets `settled()` (and so `visit`/`click` in tests) wait for typedoc JSON
-// fetches, so tests never see partially-rendered API docs. A no-op in
-// production builds.
-const apiDocsWaiter = buildWaiter('kolay:api-docs-load');
 
 export function typedocLoader(context: unknown) {
   const owner = getKey(context);
@@ -41,12 +36,8 @@ class DocsLoader {
       loader
     );
 
-    const token = apiDocsWaiter.beginAsync();
-    const done = () => apiDocsWaiter.endAsync(token);
-    const result = loader();
-
-    result.then(done, done);
-
-    return result;
+    // Lets `settled()` (and so `visit`/`click` in tests) wait for the fetch.
+    // A no-op in production builds.
+    return waitForPromise(loader());
   };
 }

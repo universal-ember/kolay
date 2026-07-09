@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
-import { buildWaiter } from '@ember/test-waiters';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { Provide } from 'ember-primitives/dom-context';
 import { use } from 'ember-resources';
@@ -53,8 +53,6 @@ export const Query: TOC<{
 
 const cache = new Map<string, () => Promise<ProjectReflection>>();
 
-const typedocWaiter = buildWaiter('kolay:typedoc-load');
-
 export class Load extends Component<{
   Args: {
     module: string;
@@ -90,31 +88,27 @@ export class Load extends Component<{
     }
 
     const loadNew = async (): Promise<ProjectReflection> => {
-      // Holds `settled()` (visit/click in tests) open for the whole
-      // fetch + parse + deserialize, so tests never see a partially-rendered
-      // API docs section. No-op in production builds.
-      const token = typedocWaiter.beginAsync();
+      const req = await this.#apiDocs.load(pkg);
+      const json = await req.json();
 
-      try {
-        const req = await this.#apiDocs.load(pkg);
-        const json = await req.json();
+      const logger = new ConsoleLogger();
+      const deserializer = new Deserializer(logger);
+      const project = deserializer.reviveProject('API Docs', json, {
+        projectRoot: '/',
+        registry: new FileRegistry(),
+      });
 
-        const logger = new ConsoleLogger();
-        const deserializer = new Deserializer(logger);
-        const project = deserializer.reviveProject('API Docs', json, {
-          projectRoot: '/',
-          registry: new FileRegistry(),
-        });
-
-        return project;
-      } finally {
-        typedocWaiter.endAsync(token);
-      }
+      return project;
     };
 
-    cache.set(pkg, loadNew);
+    // Holds `settled()` (visit/click in tests) open for the whole
+    // fetch + parse + deserialize, so tests never see a partially-rendered
+    // API docs section. No-op in production builds.
+    const loadWaited = () => waitForPromise(loadNew());
 
-    return loadNew;
+    cache.set(pkg, loadWaited);
+
+    return loadWaited;
   }
 
   <template>

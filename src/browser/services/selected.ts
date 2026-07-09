@@ -3,7 +3,7 @@ import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
-import { buildWaiter } from '@ember/test-waiters';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { createStore } from 'ember-primitives/store';
 import { use } from 'ember-resources';
@@ -39,8 +39,6 @@ type Loader = () => Promise<File>;
  *  1. the request to get the module
  *  2. compile
  */
-const pageLoadWaiter = buildWaiter('kolay:page-load');
-
 function loaderFor(selected: Selected, path: string | undefined) {
   if (!path) return;
 
@@ -52,29 +50,27 @@ function loaderFor(selected: Selected, path: string | undefined) {
    */
   const fn = docs[path] ?? docs[path + '.md'];
 
+  async function load(): Promise<ComponentLike | undefined> {
+    assert(`[Bug] Owner is missing`, owner);
+
+    const module = await fn!();
+
+    if (typeof module.default === 'string') {
+      const state = compileText(owner, module.default);
+
+      return state.promise;
+    }
+
+    return module.default;
+  }
+
   async function wrapper(): Promise<ComponentLike | undefined> {
     if (!fn) return;
-
-    assert(`[Bug] Owner is missing`, owner);
 
     // Holds `settled()` (visit/click in tests) open for the module fetch and
     // compile, so tests never see a partially-rendered page. No-op in
     // production builds.
-    const token = pageLoadWaiter.beginAsync();
-
-    try {
-      const module = await fn();
-
-      if (typeof module.default === 'string') {
-        const state = compileText(owner, module.default);
-
-        return await state.promise;
-      }
-
-      return module.default;
-    } finally {
-      pageLoadWaiter.endAsync(token);
-    }
+    return waitForPromise(load());
   }
 
   const wrapped = getPromiseState(wrapper);
