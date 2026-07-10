@@ -1,5 +1,21 @@
 # Changelog
 
+## Release (2026-07-10)
+
+* kolay 5.3.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#313](https://github.com/universal-ember/kolay/pull/313) Handle overridden root URLs more thoroughly ([@rgallagherab](https://github.com/rgallagherab))
+
+#### :house: Internal
+* `kolay`
+  * [#316](https://github.com/universal-ember/kolay/pull/316) pnpm dlx create-release-plan-setup@latest --update ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 2
+- Ryan Gallagher ([@rgallagherab](https://github.com/rgallagherab))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-05-27)
 
 * kolay 5.2.1 (patch)
