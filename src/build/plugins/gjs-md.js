@@ -6,6 +6,7 @@ import { Preprocessor } from 'content-tag';
 import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 import { visit } from 'unist-util-visit';
 
+import { rebaseAuthoredLinks } from '../../rebase-links.js';
 import { extFilter } from './utils.js';
 
 const processor = new Preprocessor();
@@ -155,7 +156,19 @@ export function gjsmd(options = {}) {
    */
   const virtualModulesByMarkdownFile = new Map();
 
-  const compiler = createCompiler(options);
+  /**
+   * Rebase authored root-absolute URLs onto the app's base URL, mirroring
+   * what the docs service does for runtime-compiled `.md`. The base is only
+   * known once vite resolves its config — after this compiler is built — so
+   * the plugin reads it lazily (and stays a no-op under webpack, where no
+   * hook updates it).
+   */
+  let base = '/';
+
+  const compiler = createCompiler({
+    ...options,
+    remarkPlugins: [rebaseAuthoredLinks(() => base), ...(options.remarkPlugins ?? [])],
+  });
 
   return [
     /**
@@ -216,6 +229,14 @@ export function gjsmd(options = {}) {
        * We need to run before babel *and* embroider's gjs processing.
        * */
       enforce: 'pre',
+      /**
+       * Unlike setup.js, these plugin entries reach vite as raw plugins
+       * (nested array), so the hook lives directly on the object rather
+       * than under a `vite` key.
+       */
+      configResolved(resolvedConfig) {
+        base = resolvedConfig.base;
+      },
       load: {
         filter: extFilter('.gjs.md'),
         async handler(id) {

@@ -6,6 +6,7 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
+import { rebaseAuthoredLinks } from '../../rebase-links.js';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
@@ -30,18 +31,29 @@ export const LOAD_MANIFEST = Symbol('__KOLAY__LOAD_MANIFEST__');
 export const PREPARE_DOCS = Symbol('__KOLAY__PREPARE_DOCS__');
 
 export function compilerOptions({
+  rootURL = '/',
   topLevelScope,
   remarkPlugins,
   rehypePlugins,
   modules,
 }: {
+  /**
+   * The app's rootURL, so authored root-absolute URLs are rebased onto it.
+   * Accepts a getter for callers that build options before the rootURL is
+   * known. At the default '/', rebasing is a no-op.
+   */
+  rootURL?: string | (() => string);
   topLevelScope?: ScopeMap;
   modules?: ModuleMap;
   remarkPlugins?: unknown[];
   rehypePlugins?: unknown[];
 } = {}) {
   const md = {
-    remarkPlugins,
+    // Prepended so authored root-absolute URLs are rebased onto the rootURL
+    // before any consumer plugin serializes mdast nodes to raw HTML. Living
+    // here (not in setup()) means every compiler built from these options —
+    // including the test-support one — gets the same behavior.
+    remarkPlugins: [rebaseAuthoredLinks(rootURL), ...(remarkPlugins ?? [])],
     rehypePlugins,
   };
   const scope = {
@@ -87,7 +99,7 @@ class DocsService {
 
   _docs: Manifest | undefined;
 
-  loadManifest: LoadManifest = () => Promise.resolve({ groups: [] });
+  loadManifest: LoadManifest = () => Promise.resolve({ base: '/', groups: [] });
 
   setup = async (options: {
     /**
@@ -144,6 +156,7 @@ class DocsService {
     this[PREPARE_DOCS](apiDocs, compiledDocs);
 
     const optionsForCompiler = compilerOptions({
+      rootURL: this.router.rootURL,
       topLevelScope: options.topLevelScope,
       remarkPlugins: options.remarkPlugins ?? [],
       rehypePlugins: options.rehypePlugins ?? [],
@@ -217,7 +230,11 @@ class DocsService {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
-    const [, /* leading slash */ first] = this.router.currentURL?.split('/') || [];
+    // currentURL is app-relative (Ember's location layer already stripped
+    // the rootURL), but it can carry query params — drop them before
+    // segmenting.
+    const [path = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
+    const [, /* leading slash */ first] = path.split('/');
 
     if (!first) return this.availableGroups[0];
 
@@ -272,7 +289,7 @@ class DocsService {
   groupForURL = (url: string): false | string => {
     for (const groupName of this.availableGroups) {
       const group = this.groupFor(groupName);
-      const page = group.list.find((page) => page.path === url);
+      const page = group.list.find((page) => page.appRelativePath === url);
 
       if (page) {
         return groupName;
@@ -283,9 +300,13 @@ class DocsService {
   };
 
   /**
-   * Returns the page entry for the current group
+   * Returns the page entry for the current group.
+   * Takes an app-relative path (the space `router.currentURL` is in),
+   * with or without the `.md` extension.
    */
   findByPath = (path: string) => {
-    return this.pages.find((page) => page.path === path || page.path === path + '.md');
+    return this.pages.find(
+      (page) => page.appRelativePath === path || page.appRelativePath === path + '.md'
+    );
   };
 }

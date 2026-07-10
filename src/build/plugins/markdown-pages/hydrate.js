@@ -8,18 +8,16 @@ import { sortTree } from './sort.js';
  * @property {string[]} paths
  * @property {string[]} configs
  * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
- * @property {string | undefined} [prefix]
+ * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
+ * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
  *
  * @param {ReshapeOptions} options
  */
-export async function reshape({ paths, configs, cwd, prefix }) {
+export async function reshape({ paths, configs, cwd, prefix, base }) {
   let tree = await parse(paths, cwd);
 
   tree = sortTree(tree, configs);
-
-  if (prefix) {
-    tree = prefixPaths(tree, prefix);
-  }
+  tree = addPaths(tree, prefix, base);
 
   addInTheFirstPage(tree);
 
@@ -32,20 +30,32 @@ export async function reshape({ paths, configs, cwd, prefix }) {
 }
 
 /**
- * @template {import('./types.ts').Node} Root
+ * Every item gets two path spaces, computed once here at build time:
+ * - `appRelativePath`: as if the app were deployed at '/' — the space
+ *   `router.currentURL` and `transitionTo` operate in
+ * - `path`: prefixed with the base URL — the space hrefs and the
+ *   compiled-docs module map operate in
+ *
+ * @template {import('#types').Node} Root
  * @param {Root} tree
- * @param {string} prefix
+ * @param {string} prefix app-relative group prefix ('/Documentation' or '/')
+ * @param {string} base the app's base URL / rootURL
+ * @param {string | null} [parentAppRelative] the containing collection's appRelativePath (null at the root)
  */
-export function prefixPaths(tree, prefix) {
+export function addPaths(tree, prefix, base, parentAppRelative = null) {
   if (!('pages' in tree)) {
-    if ('path' in tree) {
-      tree.path = join(prefix, tree.path);
-    }
+    // a page: `tree.path` is rooted at the group, e.g. '/sub-folder/x.md'
+    tree.appRelativePath = join(prefix, tree.path);
+    tree.path = join(base, tree.appRelativePath);
 
     return tree;
   }
 
-  tree.pages.map((subTree) => prefixPaths(subTree, prefix));
+  // a collection: `tree.path` stays a bare segment (e.g. 'sub-folder');
+  // appRelativePath locates it in URL space
+  tree.appRelativePath = parentAppRelative === null ? prefix : join(parentAppRelative, tree.path);
+
+  tree.pages.map((subTree) => addPaths(subTree, prefix, base, tree.appRelativePath));
 
   return tree;
 }

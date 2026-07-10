@@ -2,7 +2,13 @@
 
 if (typeof module !== "undefined") {
   module.exports = {
-    test_page: "tests/index.html?hidepassed",
+    // The app is built with base/rootURL "/my-github-project/", so serve the
+    // test page under that prefix and route the prefix back to `dist` —
+    // otherwise the base-prefixed asset URLs 404 and the app never boots.
+    test_page: "my-github-project/tests/index.html?hidepassed",
+    routes: {
+      "/my-github-project": ".",
+    },
     cwd: "dist",
     disable_watching: true,
     launch_in_ci: ["Chrome"],

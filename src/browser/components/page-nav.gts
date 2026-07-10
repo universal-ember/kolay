@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
 import { getIndexPage, isCollection, isIndex } from '../utils.ts';
 
@@ -226,11 +227,7 @@ class PageLink extends Component<{
   }
 
   get isActive() {
-    const subPath = this.args.item.path;
-
-    if (subPath === '/') return false;
-
-    return this.router.currentURL?.startsWith(subPath) ?? false;
+    return isActive(this.args.item, this.router.currentURL);
   }
 
   <template>

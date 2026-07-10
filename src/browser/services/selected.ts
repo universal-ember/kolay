@@ -3,6 +3,7 @@ import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { createStore } from 'ember-primitives/store';
 import { use } from 'ember-resources';
@@ -49,10 +50,9 @@ function loaderFor(selected: Selected, path: string | undefined) {
    */
   const fn = docs[path] ?? docs[path + '.md'];
 
-  async function wrapper(): Promise<ComponentLike | undefined> {
-    if (!fn) return;
-
+  async function load(): Promise<ComponentLike | undefined> {
     assert(`[Bug] Owner is missing`, owner);
+    assert(`Invalid path: ${path}. No loader found.`, fn);
 
     const module = await fn();
 
@@ -63,6 +63,15 @@ function loaderFor(selected: Selected, path: string | undefined) {
     }
 
     return module.default;
+  }
+
+  async function wrapper(): Promise<ComponentLike | undefined> {
+    if (!fn) return;
+
+    // Holds `settled()` (visit/click in tests) open for the module fetch and
+    // compile, so tests never see a partially-rendered page. No-op in
+    // production builds.
+    return waitForPromise(load());
   }
 
   const wrapped = getPromiseState(wrapper);
@@ -147,6 +156,8 @@ class Selected {
   get #path(): string | undefined {
     if (!this.router.currentURL) return;
 
+    // currentURL is app-relative — Ember's location layer already stripped
+    // the rootURL — so use its pathname verbatim.
     const url = new URL(this.router.currentURL, window.location.origin);
     const path = url.pathname;
 
@@ -154,7 +165,7 @@ class Selected {
       return;
     }
 
-    return path?.replace(/\.md$/, '');
+    return path.replace(/\.md$/, '');
   }
 
   get #matchOrFirstPagePath() {

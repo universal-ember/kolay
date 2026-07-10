@@ -1,11 +1,13 @@
 /**
  * This plugin is *basically* what v1 addons did.
  */
-import { glob } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { glob, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { stripIndent } from 'common-tags';
+import send from 'send';
 
 import { virtualFile } from './helpers.js';
 import { reshape } from './markdown-pages/hydrate.js';
@@ -19,16 +21,68 @@ function normalizePath(path) {
   return path;
 }
 
+/**
+ * Single source of truth for which co-located files count as assets — the
+ * dev middleware and the build emission must agree, or an asset would work
+ * in dev and 404 in production (or vice versa). Case-insensitive in both:
+ * node's glob only ignores case on macOS/Windows, so an extension-cased
+ * `LOGO.SVG` would otherwise be served in dev everywhere but dropped from
+ * Linux builds.
+ */
+const ASSET_EXTENSIONS = ['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'avif'];
+const ASSET_EXT = new RegExp(`\\.(${ASSET_EXTENSIONS.join('|')})$`, 'i');
+// Each extension expands to character classes (svg → [sS][vV][gG]) so the
+// glob itself matches case-insensitively on every platform.
+const ASSET_GLOB = `**/*.{${ASSET_EXTENSIONS.map((ext) =>
+  ext.replaceAll(/[a-z]/g, (c) => `[${c}${c.toUpperCase()}]`)
+).join(',')}}`;
+
+/**
+ * Possible future direction — reference-driven emission: collect asset URLs
+ * while parsing markdown (the rebaseAuthoredLinks visitor already walks
+ * exactly the right mdast nodes) and emit only what is referenced, instead
+ * of eagerly globbing every asset-extension file. Deliberately not done for
+ * now:
+ * - plain `.md` is never parsed at build time (kolay defers that to the
+ *   browser), so it would only be practical for `.gjs.md`, whose build-time
+ *   mdast we already have — start there if we ever do this
+ * - reference scanning cannot see dynamic references (component args,
+ *   srcset, css url(), app code) — dev serving is request-driven and would
+ *   keep working, so those would 404 only in production
+ * - the eager glob is one readdir walk per root; reference-driven still
+ *   reads every *referenced* asset, so it only saves work for unreferenced
+ *   ones. Its real value would be smaller dists and build-time warnings for
+ *   broken references, not less FS traffic.
+ */
+
+/**
+ * Directories whose non-markdown assets are served/emitted at their
+ * manifest-space URLs (`<base><groupName>/<relative path>`). The unnamed
+ * entries are the co-located pages roots, whose page URLs drop that prefix.
+ */
+function assetRoots(options, cwd) {
+  return [
+    { name: '', dir: join(cwd, 'app', 'templates') },
+    { name: '', dir: join(cwd, 'src', 'templates') },
+    ...(options?.groups ?? []).map((group) => ({
+      name: group.name,
+      dir: normalizePath(group.src),
+    })),
+  ];
+}
+
 /** @type {() => import('unplugin').UnpluginOptions} */
 export const setup = (options = {}) => {
   const cwd = process.cwd();
   let baseUrl = '/';
+  let isBuild = false;
 
   return {
     name: 'kolay:setup',
     vite: {
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
+        isBuild = resolvedConfig.command === 'build';
 
         resolvedConfig.server ||= {};
         resolvedConfig.server.fs ||= {};
@@ -37,6 +91,91 @@ export const setup = (options = {}) => {
         options.groups.forEach((group) => {
           resolvedConfig.server.fs.allow.push(normalizePath(group.src));
         });
+      },
+      /**
+       * Serve co-located doc assets at their manifest-space URLs in dev.
+       * Registered directly (not via a returned function) so it runs before
+       * vite's internal static-file middleware.
+       */
+      configureServer(server) {
+        const roots = assetRoots(options, cwd);
+
+        server.middlewares.use((req, res, next) => {
+          const [urlPath = ''] = (req.url ?? '').split('?');
+
+          // Page URLs are app routes, but a full-page load of one (e.g.
+          // `<base>Docs/intro.md`) can hit a real file on disk when a
+          // group's name matches its src directory (case-insensitively),
+          // and vite's static middleware would serve raw markdown instead
+          // of booting the app. Hand browser navigations to the SPA entry.
+          if (
+            urlPath.endsWith('.md') &&
+            urlPath.startsWith(baseUrl) &&
+            req.headers.accept?.includes('text/html')
+          ) {
+            req.url = baseUrl;
+
+            return next();
+          }
+
+          if (!ASSET_EXT.test(urlPath)) return next();
+
+          for (const { name, dir } of roots) {
+            const prefix = baseUrl + (name ? name + '/' : '');
+
+            if (!urlPath.startsWith(prefix)) continue;
+
+            const rel = urlPath.slice(prefix.length);
+            const candidate = join(dir, decodeURIComponent(rel));
+
+            // Path-traversal guard, and fall through to the other roots when
+            // this one doesn't have the file — the unnamed templates roots
+            // match every URL under the base.
+            if (relative(dir, candidate).startsWith('..')) continue;
+            if (!existsSync(candidate)) continue;
+
+            send(req, rel, { root: dir })
+              .on('error', () => next())
+              .pipe(res);
+
+            return;
+          }
+
+          next();
+        });
+      },
+      /**
+       * Emit co-located doc assets into dist at their manifest-space paths
+       * (`<groupName>/<relative path>`, no base prefix — fileName is
+       * dist-relative) so production serves them at the same URLs dev does.
+       */
+      async buildStart() {
+        if (!isBuild) return;
+
+        for (const { name, dir } of assetRoots(options, cwd)) {
+          // e.g. no src/templates — nothing to emit. Anything else that
+          // throws below should fail the build loudly rather than silently
+          // ship without doc assets.
+          if (!existsSync(dir)) continue;
+
+          const emitting = [];
+
+          for await (const entry of glob(ASSET_GLOB, { cwd: dir, exclude: ['node_modules'] })) {
+            const posixEntry = entry.replaceAll('\\', '/');
+
+            emitting.push(
+              readFile(join(dir, entry)).then((source) =>
+                this.emitFile({
+                  type: 'asset',
+                  fileName: name ? `${name}/${posixEntry}` : posixEntry,
+                  source,
+                })
+              )
+            );
+          }
+
+          await Promise.all(emitting);
+        }
       },
     },
     ...virtualFile([
@@ -137,6 +276,9 @@ export const setup = (options = {}) => {
           }
 
           const manifest = {
+            // The rootURL this manifest was generated with; page `path`s are
+            // prefixed with it, `appRelativePath`s are not.
+            base: baseUrl,
             groups: [],
           };
 
@@ -182,7 +324,8 @@ export const setup = (options = {}) => {
               cwd: config.cwd,
               paths,
               configs,
-              prefix: join(baseUrl, config.name),
+              prefix: join('/', config.name),
+              base: baseUrl,
             });
 
             manifest.groups.push({

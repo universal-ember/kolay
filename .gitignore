@@ -5,6 +5,7 @@ declarations/
 .turbo/
 .log/
 .vscode/
+.DS_Store
 
 # npm/pnpm/yarn pack output
 *.tgz

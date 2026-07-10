@@ -74,7 +74,10 @@ export class GroupNav extends Component<{
   isActive = (subPath: string) => {
     if (subPath === '/') return false;
 
-    return this.router.currentURL?.startsWith(subPath);
+    // The group is derived from the URL by the docs service (rootURL-aware),
+    // rather than comparing the group name against currentURL directly
+    // (which always failed: 'Docs' never prefixes '/Docs/...').
+    return this.#docs.selectedGroup === subPath;
   };
 
   get activeClass() {

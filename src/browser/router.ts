@@ -43,5 +43,7 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   assert(`Expected to find the router service, but did not`, router);
 
-  router.transitionTo(first.path);
+  // `transitionTo` prepends the rootURL itself, so use the app-relative path
+  // (`first.path` includes the rootURL and would double the prefix).
+  router.transitionTo(first.appRelativePath);
 }

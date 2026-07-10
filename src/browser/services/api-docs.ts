@@ -1,4 +1,5 @@
 import { assert } from '@ember/debug';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { createStore } from 'ember-primitives/store';
 
@@ -35,6 +36,8 @@ class DocsLoader {
       loader
     );
 
-    return loader();
+    // Lets `settled()` (and so `visit`/`click` in tests) wait for the fetch.
+    // A no-op in production builds.
+    return waitForPromise(loader());
   };
 }

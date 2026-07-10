@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
+import { waitForPromise } from '@ember/test-waiters';
 
 import { Provide } from 'ember-primitives/dom-context';
 import { use } from 'ember-resources';
@@ -100,9 +101,14 @@ export class Load extends Component<{
       return project;
     };
 
-    cache.set(pkg, loadNew);
+    // Holds `settled()` (visit/click in tests) open for the whole
+    // fetch + parse + deserialize, so tests never see a partially-rendered
+    // API docs section. No-op in production builds.
+    const loadWaited = () => waitForPromise(loadNew());
 
-    return loadNew;
+    cache.set(pkg, loadWaited);
+
+    return loadWaited;
   }
 
   <template>
