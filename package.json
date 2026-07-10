@@ -66,12 +66,6 @@
       "default": "./src/browser/virtual/*.js"
     }
   },
-  "ember-addon": {
-    "version": 2,
-    "type": "addon",
-    "main": "addon-main.cjs",
-    "app-js": {}
-  },
   "files": [
     "addon-main.cjs",
     "src",
@@ -162,7 +156,7 @@
     "prettier-plugin-ember-template-tag": "^2.1.2",
     "publint": "^0.3.16",
     "qunit": "^2.24.1",
-    "release-plan": "^0.17.2",
+    "release-plan": "^0.18.0",
     "rollup": "^4.54.0",
     "rollup-plugin-import-css": "^4.1.2",
     "turbo": "2.9.14",
@@ -193,11 +187,12 @@
     },
     "overrides": {
       "@ember/test-waiters": "^4.0.0",
-      "@glint/template": "1.7.8",
       "@glimmer/component": "^2.0.0",
       "@glimmer/validator": ">= 0.92.0",
+      "@glint/template": "1.7.8",
       "reactiveweb": "1.9.3"
     },
+    "patchedDependencies": {},
     "packageExtensions": {
       "ember-async-data": {
         "peerDependencies": {
@@ -225,10 +220,15 @@
           "ember-source": "*"
         }
       }
-    },
-    "patchedDependencies": {}
+    }
   },
   "ember": {
     "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.cjs",
+    "app-js": {}
   }
 }
