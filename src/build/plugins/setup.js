@@ -31,6 +31,11 @@ function normalizePath(path) {
  */
 const ASSET_EXTENSIONS = ['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'avif'];
 const ASSET_EXT = new RegExp(`\\.(${ASSET_EXTENSIONS.join('|')})$`, 'i');
+// Each extension expands to character classes (svg → [sS][vV][gG]) so the
+// glob itself matches case-insensitively on every platform.
+const ASSET_GLOB = `**/*.{${ASSET_EXTENSIONS.map((ext) =>
+  ext.replaceAll(/[a-z]/g, (c) => `[${c}${c.toUpperCase()}]`)
+).join(',')}}`;
 
 /**
  * Directories whose non-markdown assets are served/emitted at their
@@ -137,9 +142,7 @@ export const setup = (options = {}) => {
 
           const emitting = [];
 
-          for await (const entry of glob('**/*', { cwd: dir, exclude: ['node_modules'] })) {
-            if (!ASSET_EXT.test(entry)) continue;
-
+          for await (const entry of glob(ASSET_GLOB, { cwd: dir, exclude: ['node_modules'] })) {
             const posixEntry = entry.replaceAll('\\', '/');
 
             emitting.push(
