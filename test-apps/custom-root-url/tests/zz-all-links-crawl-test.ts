@@ -25,7 +25,9 @@ module("All Links", function (hooks) {
   skippable("every in-app link is visitable under the custom rootURL", async function (assert) {
     const visited: string[] = [];
 
-    await visitAllLinks((path) => visited.push(path), KNOWN_REDIRECTS);
+    await visitAllLinks((path) => {
+      visited.push(path);
+    }, KNOWN_REDIRECTS);
 
     // A snapshot of the crawl: every reachable in-app page. Sorted and
     // deduplicated, because the crawler's visit order — and how many source
