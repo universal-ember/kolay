@@ -38,6 +38,24 @@ const ASSET_GLOB = `**/*.{${ASSET_EXTENSIONS.map((ext) =>
 ).join(',')}}`;
 
 /**
+ * Possible future direction — reference-driven emission: collect asset URLs
+ * while parsing markdown (the rebaseAuthoredLinks visitor already walks
+ * exactly the right mdast nodes) and emit only what is referenced, instead
+ * of eagerly globbing every asset-extension file. Deliberately not done for
+ * now:
+ * - plain `.md` is never parsed at build time (kolay defers that to the
+ *   browser), so it would only be practical for `.gjs.md`, whose build-time
+ *   mdast we already have — start there if we ever do this
+ * - reference scanning cannot see dynamic references (component args,
+ *   srcset, css url(), app code) — dev serving is request-driven and would
+ *   keep working, so those would 404 only in production
+ * - the eager glob is one readdir walk per root; reference-driven still
+ *   reads every *referenced* asset, so it only saves work for unreferenced
+ *   ones. Its real value would be smaller dists and build-time warnings for
+ *   broken references, not less FS traffic.
+ */
+
+/**
  * Directories whose non-markdown assets are served/emitted at their
  * manifest-space URLs (`<base><groupName>/<relative path>`). The unnamed
  * entries are the co-located pages roots, whose page URLs drop that prefix.
