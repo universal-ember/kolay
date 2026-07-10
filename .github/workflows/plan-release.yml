@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: release-plan/actions/should-prepare-release@v1
         with:
-          ref: 'main'
+          ref: "main"
         id: should-prepare
 
   create-prepare-release-pr:
@@ -40,7 +40,7 @@ jobs:
       - uses: release-plan/actions/prepare@v1
         name: Run release-plan prepare
         with:
-          ref: 'main'
+          ref: "main"
         env:
           GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
         id: explanation
