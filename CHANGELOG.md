@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2026-07-13)
+
+* kolay 5.3.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#318](https://github.com/universal-ember/kolay/pull/318) Fix typedoc signature heading levels: uniform sibling sections for signature parts ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### :house: Internal
+* `kolay`
+  * [#319](https://github.com/universal-ember/kolay/pull/319) Fix flaky Browser Tests: bump @embroider/vite for the tmp-dir rename race (ENOTEMPTY) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 1
+- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
 ## Release (2026-07-10)
 
 * kolay 5.3.0 (minor)
