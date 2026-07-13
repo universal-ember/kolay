@@ -68,6 +68,26 @@ export interface NullElement {
   Element: null;
 }
 
+export interface SignatureWithCommentHeadings {
+  /**
+   * #### Element notes
+   *
+   * Attributes and modifiers are applied to the root element.
+   */
+  Element: HTMLDivElement;
+  Args: {
+    foo: number;
+  };
+  Blocks: {
+    /**
+     * #### Block usage
+     *
+     * Documentation for the default block.
+     */
+    default: [];
+  };
+}
+
 export class ClassA extends Component<{
   Element: HTMLDivElement;
   Args: {

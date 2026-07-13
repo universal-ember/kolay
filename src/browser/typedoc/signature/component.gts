@@ -167,16 +167,18 @@ export const ComponentDeclaration: TOC<{
 
 const Blocks: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <Heading class='typedoc__heading'>Blocks</Heading>
-    {{#each @info.type.declaration.children as |child|}}
-      <span class='typedoc__component-signature__block'>
-        <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
-        {{! <span class='typedoc-category'>Properties </span> }}
-        <div class='typedoc__property'>
-          <Type @info={{child.type}} />
-          <Comment @info={{child}} />
-        </div>
-      </span>
-    {{/each}}
+    <section>
+      <Heading class='typedoc__heading'>Blocks</Heading>
+      {{#each @info.type.declaration.children as |child|}}
+        <span class='typedoc__component-signature__block'>
+          <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
+          {{! <span class='typedoc-category'>Properties </span> }}
+          <div class='typedoc__property'>
+            <Type @info={{child.type}} />
+            <Comment @info={{child}} />
+          </div>
+        </span>
+      {{/each}}
+    </section>
   {{/if}}
 </template>;

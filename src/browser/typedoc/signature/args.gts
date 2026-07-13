@@ -22,32 +22,41 @@ export const Args: TOC<{
   Args: { kind: 'component' | 'modifier' | 'helper'; info: any };
 }> = <template>
   {{#if @info}}
-    <Heading class='typedoc__heading'>Arguments</Heading>
-    {{#each (listifyArgs @info) as |child|}}
-      <span class='typedoc__{{@kind}}-signature__arg'>
-        <span class='typedoc__{{@kind}}-signature__arg-info'>
-          <pre class='typedoc__name'>{{if (isComponent @kind) '@'}}{{child.name}}</pre>
-          {{#if (isIntrinsic child.type)}}
+    {{!
+      A <section>, like the other signature parts (Element, Blocks, Return):
+      a heading placed directly in the surrounding section would be
+      level-context for the sibling <section>s after it, nesting their
+      headings one level deeper. As uniform sibling sections, all of the
+      signature parts resolve to the same heading level.
+    }}
+    <section>
+      <Heading class='typedoc__heading'>Arguments</Heading>
+      {{#each (listifyArgs @info) as |child|}}
+        <span class='typedoc__{{@kind}}-signature__arg'>
+          <span class='typedoc__{{@kind}}-signature__arg-info'>
+            <pre class='typedoc__name'>{{if (isComponent @kind) '@'}}{{child.name}}</pre>
+            {{#if (isIntrinsic child.type)}}
+              <Type @info={{child.type}} />
+            {{else if (isNamedTuple child)}}
+              <Type @info={{child.element}} />
+            {{/if}}
+          </span>
+
+          {{#if (getFlags child.flags)}}
+            {{! we can potentially display more flags here in the future }}
+            <Flags @flags={{child.flags}} />
+          {{/if}}
+
+          {{#if (not (isIntrinsic child.type))}}
             <Type @info={{child.type}} />
           {{else if (isNamedTuple child)}}
             <Type @info={{child.element}} />
+          {{else}}
+            <Comment @info={{child}} />
           {{/if}}
         </span>
-
-        {{#if (getFlags child.flags)}}
-          {{! we can potentially display more flags here in the future }}
-          <Flags @flags={{child.flags}} />
-        {{/if}}
-
-        {{#if (not (isIntrinsic child.type))}}
-          <Type @info={{child.type}} />
-        {{else if (isNamedTuple child)}}
-          <Type @info={{child.element}} />
-        {{else}}
-          <Comment @info={{child}} />
-        {{/if}}
-      </span>
-    {{/each}}
+      {{/each}}
+    </section>
   {{/if}}
 </template>;
 

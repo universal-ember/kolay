@@ -20,23 +20,30 @@ export const Element: TOC<{
   Args: { kind: 'component' | 'modifier'; info: any };
 }> = <template>
   {{#if @info}}
-    {{! This heading (and its siblings: Arguments, Blocks, Return)
-        belongs to the <section> rendered by <Load> }}
-    <Heading class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
-      <span class='typedoc__name'>{{@info.name}}</span>
-      <span class='typedoc__{{@kind}}-signature__element-type'>
-        {{#if (hasName @info)}}
-          <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
-            {{@info.type.name}}
-            ➚
-          </ExternalLink>
-        {{else if (isLiteral @info.type)}}
-          {{String @info.type.value}}
-        {{/if}}
+    {{!
+      Each signature part (Element, Arguments, Blocks, Return) is a <section>
+      containing its heading *and* its content: sibling sections resolve to
+      equal heading levels, and any headings inside the content (e.g. from a
+      declaration's markdown comment) stay contained, rather than becoming
+      level-context for the parts that follow.
+    }}
+    <section>
+      <Heading class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
+        <span class='typedoc__name'>{{@info.name}}</span>
+        <span class='typedoc__{{@kind}}-signature__element-type'>
+          {{#if (hasName @info)}}
+            <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
+              {{@info.type.name}}
+              ➚
+            </ExternalLink>
+          {{else if (isLiteral @info.type)}}
+            {{String @info.type.value}}
+          {{/if}}
+        </span>
+      </Heading>
+      <span class='typedoc__{{@kind}}-signature__element'>
+        <Comment @info={{@info}} />
       </span>
-    </Heading>
-    <span class='typedoc__{{@kind}}-signature__element'>
-      <Comment @info={{@info}} />
-    </span>
+    </section>
   {{/if}}
 </template>;
