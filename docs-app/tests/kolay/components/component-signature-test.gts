@@ -10,6 +10,48 @@ module('<ComponentSignature>', function (hooks) {
   setupRenderingTest(hooks);
   setupKolay(hooks);
 
+  test('heading levels are one below the preceding document heading', async function (assert) {
+    await render(
+      <template>
+        <h2>API Reference</h2>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="SignatureA"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // Element, Arguments, Blocks -- all siblings, all one level below the <h2>
+    assert.dom('h3.typedoc__heading').exists({ count: 3 });
+    assert.dom('h1.typedoc__heading').doesNotExist();
+    assert.dom('h2.typedoc__heading').doesNotExist();
+    assert.dom('h4.typedoc__heading').doesNotExist();
+  });
+
+  test('headings inside declaration comments do not shift the signature headings', async function (assert) {
+    await render(
+      <template>
+        <h2>API Reference</h2>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="SignatureWithCommentHeadings"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // The signature headings are unaffected by the headings
+    // that the declaration's comments render before them
+    assert.dom('h3.typedoc__heading').exists({ count: 3 });
+    assert.dom('h4.typedoc__heading').doesNotExist();
+    assert.dom('h5').doesNotExist();
+
+    // The comment-authored headings are rendered, contained
+    // in the same <section> as their signature part's heading
+    assert.dom('section .typedoc-rendered-comment h4').exists({ count: 2 });
+  });
+
   test('self', async function (assert) {
     await render(
       <template>
