@@ -1,14 +1,14 @@
 {
   "solution": {
     "kolay": {
-      "impact": "minor",
-      "oldVersion": "5.2.1",
-      "newVersion": "5.3.0",
+      "impact": "patch",
+      "oldVersion": "5.3.0",
+      "newVersion": "5.3.1",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         },
         {
           "impact": "patch",
@@ -18,5 +18,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2026-07-10)\n\n* kolay 5.3.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#313](https://github.com/universal-ember/kolay/pull/313) Handle overridden root URLs more thoroughly ([@rgallagherab](https://github.com/rgallagherab))\n\n#### :house: Internal\n* `kolay`\n  * [#316](https://github.com/universal-ember/kolay/pull/316) pnpm dlx create-release-plan-setup@latest --update ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- Ryan Gallagher ([@rgallagherab](https://github.com/rgallagherab))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2026-07-13)\n\n* kolay 5.3.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#318](https://github.com/universal-ember/kolay/pull/318) Fix typedoc signature heading levels: uniform sibling sections for signature parts ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n\n#### :house: Internal\n* `kolay`\n  * [#319](https://github.com/universal-ember/kolay/pull/319) Fix flaky Browser Tests: bump @embroider/vite for the tmp-dir rename race (ENOTEMPTY) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n\n#### Committers: 1\n- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n"
 }
