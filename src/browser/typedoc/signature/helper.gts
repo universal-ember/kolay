@@ -1,5 +1,4 @@
-import { Heading } from 'ember-primitives/components/heading';
-
+import { HeadingScope, SectionHeading } from '../heading.gts';
 import { Type } from '../renderer.gts';
 import { Load } from '../utils.gts';
 import { Args, getArgs } from './args.gts';
@@ -119,10 +118,10 @@ function getReturn(info: any) {
   }
 }
 
-const Return: TOC<{ Args: { info: any } }> = <template>
+const Return: TOC<{ Args: { info: any; level: number } }> = <template>
   {{#if @info}}
     <section class='typedoc__helper__return'>
-      <Heading class='typedoc__heading'>Return</Heading>
+      <SectionHeading @level={{@level}} class='typedoc__heading'>Return</SectionHeading>
 
       <Type @info={{@info}} />
     </section>
@@ -147,17 +146,18 @@ export const HelperSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      {{#if (Array.isArray info)}}
-        {{#each info as |signature|}}
-          <Args @kind='helper' @info={{getArgs signature}} />
-          <Return @info={{getReturn signature}} />
-        {{/each}}
-      {{else}}
-        {{! Whenever we have a "Full Signature" or "HelperLike" definition }}
-        <Args @kind='helper' @info={{getArgs info}} />
-        <Return @info={{getReturn info}} />
-      {{/if}}
-
+      <HeadingScope as |level|>
+        {{#if (Array.isArray info)}}
+          {{#each info as |signature|}}
+            <Args @kind='helper' @info={{getArgs signature}} @level={{level}} />
+            <Return @info={{getReturn signature}} @level={{level}} />
+          {{/each}}
+        {{else}}
+          {{! Whenever we have a "Full Signature" or "HelperLike" definition }}
+          <Args @kind='helper' @info={{getArgs info}} @level={{level}} />
+          <Return @info={{getReturn info}} @level={{level}} />
+        {{/if}}
+      </HeadingScope>
     {{/let}}
   </Load>
 </template>;

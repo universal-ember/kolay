@@ -1,4 +1,5 @@
 /** eslint-disable @typescript-eslint/no-unused-vars */
+import { HeadingScope } from '../heading.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
 import { Args } from './args.gts';
 import { Element } from './element.gts';
@@ -107,8 +108,10 @@ export const ModifierSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      <Element @kind='modifier' @info={{info.Element}} />
-      <Args @kind='modifier' @info={{info.Args}} />
+      <HeadingScope as |level|>
+        <Element @kind='modifier' @info={{info.Element}} @level={{level}} />
+        <Args @kind='modifier' @info={{info.Args}} @level={{level}} />
+      </HeadingScope>
     {{/let}}
   </Load>
 </template>;

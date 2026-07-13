@@ -10,6 +10,25 @@ module('<ComponentSignature>', function (hooks) {
   setupRenderingTest(hooks);
   setupKolay(hooks);
 
+  test('heading levels are one below the preceding document heading', async function (assert) {
+    await render(
+      <template>
+        <h2>API Reference</h2>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="SignatureA"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // Element, Arguments, Blocks -- all siblings, all one level below the <h2>
+    assert.dom('h3.typedoc__heading').exists({ count: 3 });
+    assert.dom('h1.typedoc__heading').doesNotExist();
+    assert.dom('h2.typedoc__heading').doesNotExist();
+    assert.dom('h4.typedoc__heading').doesNotExist();
+  });
+
   test('self', async function (assert) {
     await render(
       <template>

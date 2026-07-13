@@ -1,6 +1,6 @@
 import { ExternalLink } from 'ember-primitives/components/external-link';
-import { Heading } from 'ember-primitives/components/heading';
 
+import { SectionHeading } from '../heading.gts';
 import { isLiteral } from '../narrowing.ts';
 import { Comment } from '../renderer.gts';
 
@@ -17,11 +17,14 @@ function hasName(info: any) {
 }
 
 export const Element: TOC<{
-  Args: { kind: 'component' | 'modifier'; info: any };
+  Args: { kind: 'component' | 'modifier'; info: any; level: number };
 }> = <template>
   {{#if @info}}
     <section>
-      <Heading class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
+      <SectionHeading
+        @level={{@level}}
+        class='typedoc__heading typedoc__{{@kind}}-signature__element-header'
+      >
         <span class='typedoc__name'>{{@info.name}}</span>
         <span class='typedoc__{{@kind}}-signature__element-type'>
           {{#if (hasName @info)}}
@@ -33,7 +36,7 @@ export const Element: TOC<{
             {{String @info.type.value}}
           {{/if}}
         </span>
-      </Heading>
+      </SectionHeading>
     </section>
     <span class='typedoc__{{@kind}}-signature__element'>
       <Comment @info={{@info}} />
