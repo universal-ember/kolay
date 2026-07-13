@@ -1,4 +1,5 @@
-import { HeadingScope, SectionHeading } from '../heading.gts';
+import { Heading } from 'ember-primitives/components/heading';
+
 import { Type } from '../renderer.gts';
 import { Load } from '../utils.gts';
 import { Args, getArgs } from './args.gts';
@@ -118,13 +119,15 @@ function getReturn(info: any) {
   }
 }
 
-const Return: TOC<{ Args: { info: any; level: number } }> = <template>
+const Return: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <section class='typedoc__helper__return'>
-      <SectionHeading @level={{@level}} class='typedoc__heading'>Return</SectionHeading>
+    {{! a <div>, not a <section>: a nested heading-less section would cut
+        automatic heading-level detection off from the surrounding document }}
+    <div class='typedoc__helper__return'>
+      <Heading class='typedoc__heading'>Return</Heading>
 
       <Type @info={{@info}} />
-    </section>
+    </div>
   {{/if}}
 </template>;
 
@@ -146,18 +149,17 @@ export const HelperSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      <HeadingScope as |level|>
-        {{#if (Array.isArray info)}}
-          {{#each info as |signature|}}
-            <Args @kind='helper' @info={{getArgs signature}} @level={{level}} />
-            <Return @info={{getReturn signature}} @level={{level}} />
-          {{/each}}
-        {{else}}
-          {{! Whenever we have a "Full Signature" or "HelperLike" definition }}
-          <Args @kind='helper' @info={{getArgs info}} @level={{level}} />
-          <Return @info={{getReturn info}} @level={{level}} />
-        {{/if}}
-      </HeadingScope>
+      {{#if (Array.isArray info)}}
+        {{#each info as |signature|}}
+          <Args @kind='helper' @info={{getArgs signature}} />
+          <Return @info={{getReturn signature}} />
+        {{/each}}
+      {{else}}
+        {{! Whenever we have a "Full Signature" or "HelperLike" definition }}
+        <Args @kind='helper' @info={{getArgs info}} />
+        <Return @info={{getReturn info}} />
+      {{/if}}
+
     {{/let}}
   </Load>
 </template>;

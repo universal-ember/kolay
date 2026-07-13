@@ -1,4 +1,5 @@
-import { HeadingScope, SectionHeading } from '../heading.gts';
+import { Heading } from 'ember-primitives/components/heading';
+
 import { isReference } from '../narrowing.ts';
 import { Comment, Type } from '../renderer.gts';
 import { findChildDeclaration, Load } from '../utils.gts';
@@ -141,48 +142,41 @@ export const ComponentSignature: TOC<{
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
     {{#let (getSignature declaration project) as |info|}}
-      {{! One HeadingScope for the whole signature: Element / Arguments / Blocks
-          (across all union variants) are sibling headings at the same level }}
-      <HeadingScope as |level|>
-        {{#if (isUnionSignature info)}}
-          {{#each info.variants as |variant|}}
-            <div class='typedoc__union-variant'>
-              <ComponentDeclaration @signature={{variant}} @level={{level}} />
-            </div>
-          {{/each}}
-        {{else}}
-          <ComponentDeclaration @signature={{info}} @level={{level}} />
-        {{/if}}
-      </HeadingScope>
+      {{#if (isUnionSignature info)}}
+        {{#each info.variants as |variant|}}
+          <div class='typedoc__union-variant'>
+            <ComponentDeclaration @signature={{variant}} />
+          </div>
+        {{/each}}
+      {{else}}
+        <ComponentDeclaration @signature={{info}} />
+      {{/if}}
     {{/let}}
   </Load>
 </template>;
 
 export const ComponentDeclaration: TOC<{
   Args: {
-    level: number;
     signature: SingleSignature;
   };
 }> = <template>
-  <Element @kind='component' @info={{@signature.Element}} @level={{@level}} />
-  <Args @kind='component' @info={{@signature.Args}} @level={{@level}} />
-  <Blocks @info={{@signature.Blocks}} @level={{@level}} />
+  <Element @kind='component' @info={{@signature.Element}} />
+  <Args @kind='component' @info={{@signature.Args}} />
+  <Blocks @info={{@signature.Blocks}} />
 </template>;
 
-const Blocks: TOC<{ Args: { info: any; level: number } }> = <template>
+const Blocks: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    <section>
-      <SectionHeading @level={{@level}} class='typedoc__heading'>Blocks</SectionHeading>
-      {{#each @info.type.declaration.children as |child|}}
-        <span class='typedoc__component-signature__block'>
-          <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
-          {{! <span class='typedoc-category'>Properties </span> }}
-          <div class='typedoc__property'>
-            <Type @info={{child.type}} />
-            <Comment @info={{child}} />
-          </div>
-        </span>
-      {{/each}}
-    </section>
+    <Heading class='typedoc__heading'>Blocks</Heading>
+    {{#each @info.type.declaration.children as |child|}}
+      <span class='typedoc__component-signature__block'>
+        <pre class='typedoc__name'>&lt;:{{child.name}}&gt;</pre>
+        {{! <span class='typedoc-category'>Properties </span> }}
+        <div class='typedoc__property'>
+          <Type @info={{child.type}} />
+          <Comment @info={{child}} />
+        </div>
+      </span>
+    {{/each}}
   {{/if}}
 </template>;

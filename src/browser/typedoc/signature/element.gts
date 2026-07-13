@@ -1,6 +1,6 @@
 import { ExternalLink } from 'ember-primitives/components/external-link';
+import { Heading } from 'ember-primitives/components/heading';
 
-import { SectionHeading } from '../heading.gts';
 import { isLiteral } from '../narrowing.ts';
 import { Comment } from '../renderer.gts';
 
@@ -17,27 +17,29 @@ function hasName(info: any) {
 }
 
 export const Element: TOC<{
-  Args: { kind: 'component' | 'modifier'; info: any; level: number };
+  Args: { kind: 'component' | 'modifier'; info: any };
 }> = <template>
   {{#if @info}}
-    <section>
-      <SectionHeading
-        @level={{@level}}
-        class='typedoc__heading typedoc__{{@kind}}-signature__element-header'
-      >
-        <span class='typedoc__name'>{{@info.name}}</span>
-        <span class='typedoc__{{@kind}}-signature__element-type'>
-          {{#if (hasName @info)}}
-            <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
-              {{@info.type.name}}
-              ➚
-            </ExternalLink>
-          {{else if (isLiteral @info.type)}}
-            {{String @info.type.value}}
-          {{/if}}
-        </span>
-      </SectionHeading>
-    </section>
+    {{!
+      No <section> around this (or any sibling) heading:
+      a nested heading-less <section> is its own sectioning boundary, which
+      would cut automatic heading-level detection off from the surrounding
+      document and pin this heading to <h1>. The section these headings
+      belong to is the one rendered by <Load>.
+    }}
+    <Heading class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
+      <span class='typedoc__name'>{{@info.name}}</span>
+      <span class='typedoc__{{@kind}}-signature__element-type'>
+        {{#if (hasName @info)}}
+          <ExternalLink href={{mdnElement @info.type.name}} class='typedoc__type-link'>
+            {{@info.type.name}}
+            ➚
+          </ExternalLink>
+        {{else if (isLiteral @info.type)}}
+          {{String @info.type.value}}
+        {{/if}}
+      </span>
+    </Heading>
     <span class='typedoc__{{@kind}}-signature__element'>
       <Comment @info={{@info}} />
     </span>

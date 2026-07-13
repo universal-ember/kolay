@@ -1,4 +1,5 @@
-import { SectionHeading } from '../heading.gts';
+import { Heading } from 'ember-primitives/components/heading';
+
 import { Comment, isIntrinsic, isNamedTuple, Type } from '../renderer.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -18,10 +19,10 @@ const isComponent = (kind: 'component' | 'modifier' | 'helper') => kind === 'com
  * because only components have template-content.
  */
 export const Args: TOC<{
-  Args: { kind: 'component' | 'modifier' | 'helper'; info: any; level: number };
+  Args: { kind: 'component' | 'modifier' | 'helper'; info: any };
 }> = <template>
   {{#if @info}}
-    <SectionHeading @level={{@level}} class='typedoc__heading'>Arguments</SectionHeading>
+    <Heading class='typedoc__heading'>Arguments</Heading>
     {{#each (listifyArgs @info) as |child|}}
       <span class='typedoc__{{@kind}}-signature__arg'>
         <span class='typedoc__{{@kind}}-signature__arg-info'>
