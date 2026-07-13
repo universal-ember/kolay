@@ -20,13 +20,8 @@ export const Element: TOC<{
   Args: { kind: 'component' | 'modifier'; info: any };
 }> = <template>
   {{#if @info}}
-    {{!
-      No <section> around this (or any sibling) heading:
-      a nested heading-less <section> is its own sectioning boundary, which
-      would cut automatic heading-level detection off from the surrounding
-      document and pin this heading to <h1>. The section these headings
-      belong to is the one rendered by <Load>.
-    }}
+    {{! This heading (and its siblings: Arguments, Blocks, Return)
+        belongs to the <section> rendered by <Load> }}
     <Heading class='typedoc__heading typedoc__{{@kind}}-signature__element-header'>
       <span class='typedoc__name'>{{@info.name}}</span>
       <span class='typedoc__{{@kind}}-signature__element-type'>

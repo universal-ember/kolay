@@ -121,8 +121,8 @@ function getReturn(info: any) {
 
 const Return: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
-    {{! a <div>, not a <section>: a nested heading-less section would cut
-        automatic heading-level detection off from the surrounding document }}
+    {{! a <div>, so that the Return heading stays in <Load>'s <section>,
+        as a sibling of the other signature headings }}
     <div class='typedoc__helper__return'>
       <Heading class='typedoc__heading'>Return</Heading>
 
