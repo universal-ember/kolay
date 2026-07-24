@@ -92,4 +92,4 @@ rehypePlugins: [externalLinksInNewTabs],
 
 ## What's already in the pipeline
 
-Your plugins run alongside what kolay already does, so there's no need to add these yourself: [GFM and the other built-in features](/authoring/markdown-features.md), heading ids, [live code fence](/authoring/code-fences.md) extraction, root-absolute link/image rebasing onto the app's `rootURL`, and `{{...}}` escaping inside code.
+Your plugins run alongside what kolay already does, so there's no need to add these yourself: [GFM and the other built-in features](/authoring/markdown-features.md), heading ids, [live code fence](/authoring/code-fences.md) extraction, and root-absolute link/image rebasing onto the app's `rootURL`.

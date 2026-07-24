@@ -36,6 +36,10 @@ Both `~~double~~` and `~single~` tildes work: ~~double~~, ~single~.
 
 ### Autolinks
 
+```md
+Bare URLs become links: https://github.com/universal-ember/kolay
+```
+
 Bare URLs become links: https://github.com/universal-ember/kolay
 
 ### Footnotes
@@ -78,14 +82,6 @@ Inline HTML passes through, including attributes and styles — the [Install](/i
 <small><code>adjective</code></small>
 ```
 
-## Code and `{{...}}`
+---
 
-Inside `pre` and `code`, double curlies are escaped for you — handlebars snippets don't need any special treatment:
-
-```hbs
-{{#if this.condition}}
-  ...
-{{/if}}
-```
-
-Syntax highlighting is not built in — it's one rehype plugin away; see [Extending markdown](/authoring/extending-markdown.md) for the shiki setup this site uses.
+> **Want more?** This page is only what's built in. Syntax highlighting, callouts, custom transforms — anything from the remark/rehype ecosystems can be added: see [Extending markdown](/authoring/extending-markdown.md) (including the shiki setup this site uses).

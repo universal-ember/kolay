@@ -34,10 +34,26 @@ Shows both: the rendered output _above_ the code block.
 
 Shows both, with the rendered output _below_ the code block.
 
-## Formats
+## Render targets
+
+Live fences aren't limited to Ember. These are the fence languages repl-sdk can render:
+
+| Language  | Renders with                                       |
+| --------- | -------------------------------------------------- |
+| `gjs`     | Ember / Glimmer                                    |
+| `hbs`     | Ember / Glimmer (implicitly wrapped in a template) |
+| `js`      | plain JavaScript                                   |
+| `jsx`     | React                                              |
+| `svelte`  | Svelte                                             |
+| `vue`     | Vue                                                |
+| `mermaid` | Mermaid (diagrams — no `live` flag needed)         |
+| `md`      | Markdown (yes, markdown-in-markdown)               |
+| `gmd`     | Glimmer-flavored markdown                          |
+
+Where they work differs by compile mode:
 
 - In **`.gjs.md`** files (build-time compiled), live fences may be `gjs` or `hbs`. They compile to real components during the build, so they get full build-time error checking.
-- In **`.md`** files (runtime compiled), live fences compile in the browser — `gjs` and `hbs` are supported the same way (and whatever else ember-repl / repl-sdk supports can be enabled).
+- In **`.md`** files (runtime compiled) — and in codefences inside your JSDoc, rendered by the [TypeDoc components](/TypeDoc/plugin/typedoc.md) — the browser compiler is used, and all of the targets above are available. Non-Ember targets fetch their dependencies (react, svelte, vue, mermaid, …) on demand, so pages only pay for what they render.
 
 An `hbs` fence is implicitly wrapped in a template, so it's the quickest way to demo component invocations:
 

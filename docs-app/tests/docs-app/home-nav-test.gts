@@ -55,6 +55,14 @@ module('Home docs navigation', function (hooks) {
     }
   });
 
+  test('the links-and-images page renders its image samples', async function (assert) {
+    await visit('/authoring/links-and-images');
+
+    assert.dom('[data-page-error]').doesNotExist();
+    assert.dom('img[src="/authoring/kolay-logo.svg"]').exists({ count: 1 }, 'root-absolute image');
+    assert.dom('img[src="./kolay-logo.svg"]').exists({ count: 1 }, 'relative image');
+  });
+
   test('the typedoc entry is a nav-only link into the TypeDoc group', async function (assert) {
     await visit('/development/rendering-pages');
 
