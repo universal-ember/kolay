@@ -36,7 +36,7 @@ export default Route(
 
 ### Rendering the current page yourself
 
-`<Page />` is a thin wrapper around the [`selected`](/Runtime/util/selected.md) store. If its blocks don't give you enough control (custom loading UI, combining states, extra chrome around the prose), you can use the store directly:
+`<Page />` is a thin wrapper around the [`selected`](/Runtime/utilities/selected.md) store. If its blocks don't give you enough control (custom loading UI, combining states, extra chrome around the prose), you can use the store directly:
 
 ```gjs
 import Component from "@glimmer/component";
@@ -63,7 +63,7 @@ export default class MyPage extends Component {
 
 ### Rendering documents you fetch yourself
 
-The current-page behaviors (async loading, compiling with your site-wide config, keeping the previous document while a new one loads, test-`settled()` integration) are available for _any_ document via [`compiledDoc`](/Runtime/util/compiled-doc.md) — useful when your content comes from an API, a CMS, or a dynamic `import()`:
+The current-page behaviors (async loading, compiling with your site-wide config, keeping the previous document while a new one loads, test-`settled()` integration) are available for _any_ document via [`compiledDoc`](/Runtime/rendering/compiled-doc.md) — useful when your content comes from an API, a CMS, or a dynamic `import()`:
 
 ```gjs
 import Component from "@glimmer/component";

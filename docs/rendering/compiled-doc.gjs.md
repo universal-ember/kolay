@@ -2,7 +2,7 @@
 
 Reactive load + compile + error state for a single document that you load yourself.
 
-This is the same machinery that [`selected`](/Runtime/util/selected.md) (and therefore `<Page />`) uses for rendering the current page — extracted so that documents fetched any other way (`fetch`, `import()`, an API, inline strings, etc.) get the same behavior:
+This is the same machinery that [`selected`](/Runtime/utilities/selected.md) (and therefore `<Page />`) uses for rendering the current page — extracted so that documents fetched any other way (`fetch`, `import()`, an API, inline strings, etc.) get the same behavior:
 
 - markdown strings are compiled with your site-wide compiler configuration (remark / rehype plugins, top-level scope, extra modules)
 - while a re-load is happening, the previously rendered document is kept — no flash of emptiness

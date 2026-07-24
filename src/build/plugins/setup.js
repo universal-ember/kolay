@@ -317,6 +317,10 @@ export const setup = (options = {}) => {
                   config: await readJSONC(configPath),
                   cwd: config.cwd,
                 });
+                // Also part of `paths`: per-page configs (`<page>.json`,
+                // e.g. for `componentName`) are discovered from the path
+                // list during parsing — `configs` only drives ordering.
+                paths.push(removeUnwantedPrexix(entry));
                 continue;
               }
 

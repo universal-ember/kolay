@@ -48,7 +48,7 @@ export default class MyPage extends Component {
 
 Note that `prose` can be present at the same time as `isPending` or `hasError`: while a new page is loading (or after it errored), the previously rendered page is kept, so navigation doesn't flash an empty screen.
 
-To render a document that is _not_ the current page (something you fetched yourself), see [`compiledDoc`](/Runtime/util/compiled-doc.md).
+To render a document that is _not_ the current page (something you fetched yourself), see [`compiledDoc`](/Runtime/rendering/compiled-doc.md).
 
 ## API Reference
 
