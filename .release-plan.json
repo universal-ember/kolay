@@ -1,22 +1,18 @@
 {
   "solution": {
     "kolay": {
-      "impact": "patch",
-      "oldVersion": "5.3.0",
-      "newVersion": "5.3.1",
+      "impact": "minor",
+      "oldVersion": "5.3.1",
+      "newVersion": "5.4.0",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2026-07-13)\n\n* kolay 5.3.1 (patch)\n\n#### :bug: Bug Fix\n* `kolay`\n  * [#318](https://github.com/universal-ember/kolay/pull/318) Fix typedoc signature heading levels: uniform sibling sections for signature parts ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n\n#### :house: Internal\n* `kolay`\n  * [#319](https://github.com/universal-ember/kolay/pull/319) Fix flaky Browser Tests: bump @embroider/vite for the tmp-dir rename race (ENOTEMPTY) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n\n#### Committers: 1\n- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n"
+  "description": "## Release (2026-07-24)\n\n* kolay 5.4.0 (minor)\n\n#### :rocket: Enhancement\n* `kolay`\n  * [#324](https://github.com/universal-ember/kolay/pull/324) Extract compiledDoc from selected; document rendering pages yourself ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n\n#### Committers: 1\n- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))\n"
 }

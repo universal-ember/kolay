@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-07-24)
+
+* kolay 5.4.0 (minor)
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#324](https://github.com/universal-ember/kolay/pull/324) Extract compiledDoc from selected; document rendering pages yourself ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 1
+- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
 ## Release (2026-07-13)
 
 * kolay 5.3.1 (patch)
