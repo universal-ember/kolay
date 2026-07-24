@@ -29,7 +29,7 @@ const SECRET_INTERNAL_IMPORT = 'kolay/api-docs:virtual';
  * @type {(options: import('./types.ts').APIDocsOptions) => import('unplugin').UnpluginOptions}
  */
 export const apiDocs = (options) => {
-  const name = 'kolay-api-docs';
+  const name = 'kolay:typedoc';
 
   /**
    * @param {string} pkgName
@@ -54,6 +54,12 @@ export const apiDocs = (options) => {
     vite: {
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
+
+        if (!resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:setup')) {
+          throw new Error(
+            `The typedoc() plugin requires the docs() plugin (both from 'kolay/vite') to also be in the plugins array.`
+          );
+        }
       },
       configureServer(server) {
         return () => {

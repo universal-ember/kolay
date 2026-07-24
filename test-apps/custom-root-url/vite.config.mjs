@@ -1,12 +1,12 @@
 import { defineConfig } from "vite";
-import { kolay } from "kolay/vite";
+import { docs, typedoc } from "kolay/vite";
 import { extensions, ember } from "@embroider/vite";
 import { babel } from "@rollup/plugin-babel";
 
 export default defineConfig({
   base: "/my-github-project/",
   plugins: [
-    kolay({
+    docs({
       groups: [
         {
           // Use something other than "Docs" so md files don't load raw
@@ -14,10 +14,12 @@ export default defineConfig({
           src: import.meta.resolve("./docs", import.meta.url),
         },
       ],
-      packages: ["ember-primitives", "ember-resources"],
       scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         `,
+    }),
+    typedoc({
+      packages: ["ember-primitives", "ember-resources"],
     }),
     ember(),
     babel({

@@ -75,7 +75,7 @@ Both `.md` and `.gjs.md` files can live side-by-side in the same `src` directory
 - `.gjs.md` files are compiled to GJS components at build time
 
 ```js
-kolay({
+docs({
   groups: [
     {
       name: "Guides",

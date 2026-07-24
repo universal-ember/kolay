@@ -137,6 +137,7 @@ export function extractExports(exports, kind, conditions = []) {
  * @typedef {object} VirtualFileOptions
  * @property {string} importPath
  * @property {string} content
+ * @property {() => boolean} [when] - only provide the virtual file while this returns true
  *
  * @param {VirtualFileOptions | VirtualFileOptions[]} options
  * @return {Omit<import('unplugin').UnpluginOptions, 'name'>}
@@ -149,12 +150,18 @@ export function virtualFile(options) {
     assert(opt.content, `Must pass \`content\` to virtualFile:${i}`);
   });
 
-  const imports = opts.map((opt) => opt.importPath);
-  const allowed = new Set(imports);
+  function optFor(importPath) {
+    const opt = opts.find((opt) => opt.importPath === importPath);
+
+    if (!opt) return;
+    if (opt.when && !opt.when()) return;
+
+    return opt;
+  }
 
   return {
     resolveId(id) {
-      if (allowed.has(id)) {
+      if (optFor(id)) {
         return {
           id: `${INTERNAL_PREFIX}${id}`,
         };
@@ -165,18 +172,14 @@ export function virtualFile(options) {
     loadInclude(id) {
       if (!id.startsWith(INTERNAL_PREFIX)) return false;
 
-      return allowed.has(id.slice(1));
+      return Boolean(optFor(id.slice(1)));
     },
     load(id) {
       if (!id.startsWith(INTERNAL_PREFIX)) return;
 
-      const importPath = id.slice(1);
+      const opt = optFor(id.slice(1));
 
-      if (!allowed.has(importPath)) return;
-
-      const opt = opts.find((opt) => opt.importPath === importPath);
-
-      assert(opt, `Could not find content for ${opt?.importPath}`);
+      if (!opt) return;
 
       if (typeof opt.content === 'function') {
         return opt.content();
