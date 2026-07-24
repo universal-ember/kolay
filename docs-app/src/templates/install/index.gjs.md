@@ -1,8 +1,70 @@
-## Install
+<h1 style="
+  font-size: 2rem; 
+  display: inline-block; 
+  margin-bottom: 0; 
+  padding-bottom: 0">kolay</h1> 
+<small><code>adjective</code></small>
+
+<ul style="margin: 0; padding-left: 1rem; padding-bottom: 0;">
+    <li>easy</li>
+    <li>simple</li>
+    <li>uncomplicated</li>
+</ul>
+
+<small style="
+  float: right; 
+  margin-top: -2rem; 
+  font-size: 0.5rem;">after initial setup</small>
+
+<hr>
+
+Documentation system for the the `@universal-ember` family of projects.
+
+## Install[^type-module]
 
 ```bash
 pnpm add kolay
 ```
+
+[^type-module]: this library sets `type: module` in its `package.json`, which for ember projects means that it requires vite.
+
+### Use Markdown
+
+- from any folder, any project (good for monorepos)
+- scales infinitely with your project size, as compiling the pages is done on-demand, rather than on-deploy
+- any codefence can become a live demo with the `live` tag
+
+  ````markdown
+  Some prose here about the demo
+
+  ```gjs live
+  <template>interactive!</template>
+  ```
+  ````
+
+### Use JSDoc
+
+- JSDoc / TypeDoc is renderable via the `<APIDocs />` component
+
+  ```markdown
+  ## API Reference
+
+  <APIDocs @package="my-library" @module="..." @name="theExport" />
+  ```
+
+- render examples from your jsdoc for interactive demonstration of concepts using
+
+  ````
+  text here
+
+  ```gjs live
+  // the "live" tag on the codefence
+  ```
+  ````
+
+### Navigation
+
+- generate navigation based on convention based file layout
 
 ## Setup
 
@@ -78,7 +140,7 @@ Router.map(function () {
 
 In the spirit of dynamically compiled and discovered docs, this adds a `*wildcard` route that matches all paths and then tries to derive which file to load from there.
 
-Deploying under a custom `rootURL` (e.g. a PR preview at `/pr-1234/`) is fully supported: navigation, redirects, and root-absolute links and images in authored markdown are all rebased onto the `rootURL` automatically. See [Links and images](/usage/authoring.md) for how to write paths in your content.
+Deploying under a custom `rootURL` (e.g. a PR preview at `/pr-1234/`) is fully supported: navigation, redirects, and root-absolute links and images in authored markdown are all rebased onto the `rootURL` automatically. See [Links and images](/authoring/links-and-images.md) for how to write paths in your content.
 
 ### Runtime: Rendering and Highlighting
 

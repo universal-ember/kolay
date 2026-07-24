@@ -14,7 +14,7 @@ docs.availableGroups;  // ['root', 'Runtime', ...]
 docs.pages;            // flat list of pages for the current group
 docs.tree;             // hierarchical page tree for the current group
 docs.selectedGroup;    // the currently active group name
-docs.findByPath('/usage/setup.md');  // look up a specific page
+docs.findByPath('/install/index.md');  // look up a specific page
 docs.groupForURL('/TypeDoc/components/api-docs.md'); // which group owns this URL?
 ```
 

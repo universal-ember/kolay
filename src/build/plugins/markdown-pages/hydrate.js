@@ -14,7 +14,7 @@ import { sortTree } from './sort.js';
  * @param {ReshapeOptions} options
  */
 export async function reshape({ paths, configs, cwd, prefix, base }) {
-  let tree = await parse(paths, cwd);
+  let tree = await parse(paths, cwd, configs);
 
   tree = sortTree(tree, configs);
   tree = addPaths(tree, prefix, base);
@@ -44,6 +44,16 @@ export async function reshape({ paths, configs, cwd, prefix, base }) {
  */
 export function addPaths(tree, prefix, base, parentAppRelative = null) {
   if (!('pages' in tree)) {
+    if (typeof tree.href === 'string') {
+      // a nav-only link entry: it points wherever its `href` says (often a
+      // page in another group), so the group prefix does not apply — only
+      // the base.
+      tree.appRelativePath = tree.href;
+      tree.path = join(base, tree.href);
+
+      return tree;
+    }
+
     // a page: `tree.path` is rooted at the group, e.g. '/sub-folder/x.md'
     tree.appRelativePath = join(prefix, tree.path);
     tree.path = join(base, tree.appRelativePath);

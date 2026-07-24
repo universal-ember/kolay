@@ -4,7 +4,7 @@ Generates api docs (typedoc JSON) from your libraries' type declarations, and te
 
 Requires the [`docs(...)`][plugin-docs] plugin to also be present.
 
-[plugin-docs]: /plugins/docs.md
+[plugin-docs]: /development/configuring-docs.md
 [ui-signature]: /TypeDoc/components/component-signature.md
 [ui-apiDocs]: /TypeDoc/components/api-docs.md
 

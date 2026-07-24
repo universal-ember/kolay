@@ -9,11 +9,12 @@ import { betterSort } from './sort.js';
 /**
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs; when given, configs are taken from here instead of read from disk (the paths may not be resolvable against cwd, e.g. the stripped app/src/templates prefix)
  *
  * @returns {Promise<import('./types.ts').Collection>}
  */
-export async function parse(paths, cwd) {
-  const docs = await gather(paths, cwd);
+export async function parse(paths, cwd, providedConfigs) {
+  const docs = await gather(paths, cwd, providedConfigs);
   const unsorted = build(docs);
   const sorted = deepSort(deepSort(unsorted));
 
@@ -178,31 +179,36 @@ function preAddCheck(attemptedPath, searchFor, collection) {
 /**
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs, keyed by the same (possibly prefix-stripped) paths as `paths`
  *
  * @returns { Promise<import('./types.ts').GatheredDocs> }
  */
-async function gather(paths, cwd) {
+async function gather(paths, cwd, providedConfigs) {
   const { join } = await import('node:path');
 
   const markdown = paths.filter((path) => path.endsWith('.md'));
-  const configs = filterConfigs(paths);
+
+  /** @type {Array<{ path: string, config: object }>} */
+  const configs =
+    providedConfigs ??
+    (await Promise.all(
+      filterConfigs(paths).map(async (path) => ({
+        path,
+        config: await readJSONC(join(cwd, path)),
+      }))
+    ));
 
   /**
    * @param {string} path
    */
-  async function configFor(path) {
-    const foundPath = configs.find((configPath) => {
-      const configPathWithoutExtension = configPath.replace(/\.json$/, '');
+  function configFor(path) {
+    const found = configs.find((entry) => {
+      const configPathWithoutExtension = entry.path.replace(/\.jsonc?$/, '');
 
       return path.startsWith(configPathWithoutExtension);
     });
 
-    if (!foundPath) return {};
-
-    const fullPath = join(cwd, foundPath);
-    const config = await readJSONC(fullPath);
-
-    return config;
+    return found?.config ?? {};
   }
 
   /** @type { Array<{ mdPath: string, config: object }> } */
@@ -213,9 +219,26 @@ async function gather(paths, cwd) {
       continue;
     }
 
-    const config = await configFor(path);
+    docPairs.push({ mdPath: path, config: configFor(path) });
+  }
 
-    docPairs.push({ mdPath: path, config });
+  /**
+   * A json file with an `href` and no markdown file of its own is a
+   * nav-only link entry: it takes part in the nav (name, ordering,
+   * display config) like a page, but points at the `href` — e.g. a page
+   * in another group.
+   */
+  for (const entry of configs) {
+    if (!entry.path.includes('/')) continue;
+    if (/(^|\/)meta\.jsonc?$/.test(entry.path)) continue;
+    if (typeof entry.config.href !== 'string') continue;
+
+    const configPathWithoutExtension = entry.path.replace(/\.jsonc?$/, '');
+    const hasOwnPage = markdown.some((path) => path.startsWith(configPathWithoutExtension));
+
+    if (hasOwnPage) continue;
+
+    docPairs.push({ mdPath: entry.path, config: entry.config });
   }
 
   return docPairs;
