@@ -26,7 +26,7 @@ module('Errors', function (hooks) {
 
       assert.dom(`[data-page-error]`).containsText(`Page not found for path`);
 
-      await click(`a[href="/usage/setup"]`);
+      await click(`a[href="/development/rendering-pages"]`);
 
       assert.dom().doesNotContainText(`Page not found for path`);
     });

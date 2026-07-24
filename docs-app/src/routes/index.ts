@@ -1,12 +1,11 @@
 import Route from '@ember/routing/route';
-import { service } from '@ember/service';
 
-import type RouterService from '@ember/routing/router-service';
+import { handlePotentialIndexVisit } from 'kolay';
 
-export default class NotHere extends Route {
-  @service declare router: RouterService;
+import type Transition from '@ember/routing/transition';
 
-  beforeModel() {
-    this.router.replaceWith('/usage/setup.md');
+export default class RootIndexRoute extends Route {
+  beforeModel(transition: Transition) {
+    handlePotentialIndexVisit(this, transition);
   }
 }

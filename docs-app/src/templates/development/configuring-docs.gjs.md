@@ -6,7 +6,7 @@ Kolay requires some build-time static analysis to function.
 
 > **Note:** `docs` + `typedoc` used to be one combined plugin, `kolay(...)`. That export still works (it composes the two), but is deprecated.
 
-[plugin-docs]: /plugins/docs.md
+[plugin-docs]: /development/configuring-docs.md
 [plugin-typedoc]: /TypeDoc/plugin/typedoc.md
 [ui-signature]: /TypeDoc/components/component-signature.md
 [ui-apiDocs]: /TypeDoc/components/api-docs.md

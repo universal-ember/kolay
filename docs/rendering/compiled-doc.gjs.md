@@ -31,7 +31,7 @@ export default class MyDocPage extends Component {
 }
 ```
 
-The compiler is configured app-wide via [`setupKolay`](/usage/setup.md) (or `setupCompiler` from `ember-repl/test-support` in tests), so that must have run before a document loads — there is nothing to pass, link, or destroy per call site.
+The compiler is configured app-wide via [`setupKolay`](/install/index.md) (or `setupCompiler` from `ember-repl/test-support` in tests), so that must have run before a document loads — there is nothing to pass, link, or destroy per call site.
 
 ## The `load` function
 
@@ -75,7 +75,7 @@ const doc = compiledDoc(() =>
 </template>
 ```
 
-If you already have the markdown synchronously and don't need the keep-latest behavior, the smaller [`Compiled`](/usage/rendering-pages.md) helper may be all you need.
+If you already have the markdown synchronously and don't need the keep-latest behavior, the smaller [`Compiled`](/Runtime/rendering/compiled.md) helper may be all you need.
 
 ## API Reference
 

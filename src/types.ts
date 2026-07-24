@@ -52,6 +52,13 @@ export interface Page {
   name: string;
   groupName: string;
   cleanedName: string;
+  /**
+   * Present on nav-only link entries (a json file with an `href` and no
+   * markdown file of its own): the authored link target, as if the app
+   * were deployed at '/' — e.g. a page in another group.
+   * `path` / `appRelativePath` are derived from it.
+   */
+  href?: string;
 }
 
 /**

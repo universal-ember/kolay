@@ -33,6 +33,7 @@ module('Runtime docs navigation', function (hooks) {
     for (const label of [
       '<Page>',
       'compiledDoc(...)',
+      'Compiled(...)',
       'isActive(...)',
       '<GroupNav />',
       '<PageNav />',

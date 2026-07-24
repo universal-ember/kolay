@@ -1,0 +1,10 @@
+{
+  "order": [
+    "rendering-pages",
+    "ordering-pages",
+    "renaming-pages",
+    "testing",
+    "configuring-docs",
+    "configuring-typedoc"
+  ]
+}
