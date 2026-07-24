@@ -13,9 +13,7 @@ export default defineConfig({
         },
       ],
     }),
-    typedoc({
-      packages: ["ember-primitives", "ember-resources"],
-    }),
+    typedoc(["ember-primitives", "ember-resources"]),
     ember(),
     babel({
       babelHelpers: "runtime",

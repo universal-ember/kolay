@@ -32,13 +32,13 @@ module('Errors', function (hooks) {
     });
 
     test(`attempting to visit a route that doesn't exist in the current group, but does exist in another group`, async function (assert) {
-      await visit(`/Runtime/docs/api-docs.md`);
+      await visit(`/TypeDoc/components/api-docs.md`);
 
       assert.dom().doesNotContainText(`Page not found for path`);
     });
 
     test('the error does not flash between known pages rendering', async function (assert) {
-      visit(`/Runtime/docs/api-docs.md`);
+      visit(`/TypeDoc/components/api-docs.md`);
 
       await renderSettled();
       assert.dom('[data-page-error]').doesNotExist();
@@ -54,7 +54,7 @@ module('Errors', function (hooks) {
       await settled();
       assert.dom('[data-page-error]').doesNotExist();
 
-      visit(`/Runtime/docs/api-docs.md#some-hash`);
+      visit(`/TypeDoc/components/api-docs.md#some-hash`);
 
       await renderSettled();
       assert.dom('[data-page-error]').doesNotExist();
@@ -62,7 +62,7 @@ module('Errors', function (hooks) {
       await settled();
       assert.dom('[data-page-error]').doesNotExist();
 
-      visit(`/Runtime/docs/api-docs.md?query-param=value`);
+      visit(`/TypeDoc/components/api-docs.md?query-param=value`);
 
       await renderSettled();
       assert.dom('[data-page-error]').doesNotExist();

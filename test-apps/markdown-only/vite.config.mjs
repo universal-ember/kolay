@@ -16,9 +16,7 @@ export default defineConfig({
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         `,
     }),
-    typedoc({
-      packages: ["ember-primitives", "ember-resources"],
-    }),
+    typedoc(["ember-primitives", "ember-resources"]),
     ember(),
     babel({
       babelHelpers: "runtime",
