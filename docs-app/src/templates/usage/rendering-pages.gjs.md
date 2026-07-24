@@ -70,7 +70,7 @@ import Component from "@glimmer/component";
 import { compiledDoc } from "kolay";
 
 export default class MyDocPage extends Component {
-  doc = compiledDoc(this, () =>
+  doc = compiledDoc(() =>
     fetch(`/api/docs/${this.args.slug}.md`).then((response) => response.text()),
   );
 

@@ -31,28 +31,21 @@ class Selected {
     return docsManager(this);
   }
 
-  #doc: CompiledDoc | undefined;
-
   /**
    * The load / compile / error state for the current page's document.
-   *
-   * (Lazily created, because while this store is being constructed,
-   *  it does not have an owner yet)
    */
-  get doc(): CompiledDoc {
-    return (this.#doc ??= compiledDoc(this, () => {
-      const path = this.#matchOrFirstPagePath;
+  doc: CompiledDoc = compiledDoc(() => {
+    const path = this.#matchOrFirstPagePath;
 
-      if (!path) return;
+    if (!path) return;
 
-      /**
-       * NOTE: we support paths with and withouth the '.md' on the URL
-       */
-      const fn = this.compiledDocs[path] ?? this.compiledDocs[path + '.md'];
+    /**
+     * NOTE: we support paths with and withouth the '.md' on the URL
+     */
+    const fn = this.compiledDocs[path] ?? this.compiledDocs[path + '.md'];
 
-      return fn?.();
-    }));
-  }
+    return fn?.();
+  });
 
   get prose() {
     if (this.error) {

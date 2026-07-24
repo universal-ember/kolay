@@ -1,17 +1,15 @@
 import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
 import { assert } from '@ember/debug';
-import { getOwner } from '@ember/owner';
 import { waitForPromise } from '@ember/test-waiters';
 
-import { use } from 'ember-resources';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
-import { keepLatest } from 'reactiveweb/keep-latest';
-import { link } from 'reactiveweb/link';
 
 import { compileText } from './compiler/reactive.ts';
 import { extractErrorMessage } from './extract-error-message.ts';
+import { getKey } from './lazy-load.ts';
 
 import type { ComponentLike } from '@glint/template';
+import type { State } from 'reactiveweb/get-promise-state';
 
 /**
  * A module containing a document, e.g. the result of `import('/some-doc.md?raw')`
@@ -35,9 +33,8 @@ export type DocSource = string | ComponentLike | DocModule;
  * any other way (`fetch`, `import()`, inline strings, etc.) get the same
  * loading / error / anti-flicker behavior.
  *
- * The instance's lifetime is linked to the passed context, and the owner is
- * pulled from that context (the compiler is per-owner, configured via
- * `setupKolay` (or `setupCompiler` in tests)).
+ * The compiler is configured via `setupKolay` (or `setupCompiler` in
+ * tests), so one of those must have run before a document loads.
  *
  * The `load` function is reactive: any tracked data read synchronously
  * (before the first `await`) will cause the document to be re-loaded when
@@ -49,7 +46,7 @@ export type DocSource = string | ComponentLike | DocModule;
  * import { compiledDoc } from 'kolay';
  *
  * export default class MyPage extends Component {
- *   doc = compiledDoc(this, () =>
+ *   doc = compiledDoc(() =>
  *     fetch(`/my-docs/${this.args.name}.md`).then((response) => response.text())
  *   );
  *
@@ -65,11 +62,8 @@ export type DocSource = string | ComponentLike | DocModule;
  * }
  * ```
  */
-export function compiledDoc(
-  context: object,
-  load: () => DocSource | Promise<DocSource> | undefined
-): CompiledDoc {
-  return link(new CompiledDoc(load), context);
+export function compiledDoc(load: () => DocSource | Promise<DocSource> | undefined): CompiledDoc {
+  return new CompiledDoc(load);
 }
 
 function isDocModule(source: DocSource): source is DocModule {
@@ -99,13 +93,11 @@ export class CompiledDoc {
 
     if (source === undefined) return;
 
-    const owner = getOwner(this);
+    // The compiler is per-owner; documents at an URL can't change, so any
+    // live owner that setupKolay registered will do.
+    const owner = getKey(this);
 
-    assert(
-      `Owner is missing. compiledDoc must be linked to a context that has an owner ` +
-        `(e.g.: a component, or an object created with an owner).`,
-      owner
-    );
+    assert(`[Bug] Owner is missing`, owner);
 
     const resolve = async (): Promise<ComponentLike | undefined> => {
       const resolved = await source;
@@ -132,17 +124,28 @@ export class CompiledDoc {
     return getValue(this.#stateCache);
   }
 
+  #previousState: State<ComponentLike | undefined> | undefined;
+
   /*********************************************************************
    * This is a pattern to help reduce flashes of content during
    * the intermediate states of the above request fetchers.
    * When a new request starts, we'll hold on the old value for as long as
    * we can, and only swap out the old data when the new data is done loading.
    *
+   * (reading `isLoading` entangles this getter with the request's
+   *  progress, so consumers re-render when loading finishes)
    ********************************************************************/
-  @use latest = keepLatest({
-    value: () => this.#state,
-    when: () => Boolean(this.#state?.isLoading),
-  });
+  get latest(): State<ComponentLike | undefined> | undefined {
+    const current = this.#state;
+
+    if (current?.isLoading) {
+      return this.#previousState ?? current;
+    }
+
+    this.#previousState = current;
+
+    return current;
+  }
 
   /**
    * The rendered document, ready for invoking.

@@ -13,7 +13,7 @@ import Component from '@glimmer/component';
 import { compiledDoc } from 'kolay';
 
 export default class MyDocPage extends Component {
-  doc = compiledDoc(this, () =>
+  doc = compiledDoc(() =>
     fetch(`/api/docs/${this.args.slug}.md`).then((response) => response.text())
   );
 
@@ -31,9 +31,11 @@ export default class MyDocPage extends Component {
 }
 ```
 
+The compiler is configured app-wide via [`setupKolay`](/usage/setup.md) (or `setupCompiler` from `ember-repl/test-support` in tests), so that must have run before a document loads — there is nothing to pass, link, or destroy per call site.
+
 ## The `load` function
 
-The second argument is a function that returns the document, in whichever of these shapes is convenient:
+The argument is a function that returns the document, in whichever of these shapes is convenient:
 
 - a string of markdown (compiled in the browser)
 - an already-compiled component
@@ -43,42 +45,34 @@ The second argument is a function that returns the document, in whichever of the
 
 The function is reactive: any tracked data read _synchronously_ (before the first `await`) will cause the document to re-load when that data changes — e.g. reading `this.args.slug` in the example above re-fetches when the slug changes.
 
-## Lifetime and owner
-
-The first argument is the context the state is linked to: destroying the context tears the state down, and the context's owner is used for compiling (so the context must have an owner — a component, route, service, or an object that had `setOwner` called on it).
-
 ## Example
 
 ```gjs live preview no-shadow
-import Component from '@glimmer/component';
 import { compiledDoc } from 'kolay';
 
 // stand-in for a fetch() to somewhere
-const request = () =>
+const doc = compiledDoc(() =>
   Promise.resolve(`Hello from **somewhere else**
 
 \`\`\`hbs live
 <p>even live codefences work</p>
 \`\`\`
-`);
+`)
+);
 
-export default class Demo extends Component {
-  doc = compiledDoc(this, request);
+<template>
+  <fieldset>
+    <legend>Demo</legend>
 
-  <template>
-    <fieldset>
-      <legend>Demo</legend>
+    {{#if doc.isPending}}
+      loading…
+    {{/if}}
 
-      {{#if this.doc.isPending}}
-        loading…
-      {{/if}}
-
-      {{#if this.doc.prose}}
-        <this.doc.prose />
-      {{/if}}
-    </fieldset>
-  </template>
-}
+    {{#if doc.prose}}
+      <doc.prose />
+    {{/if}}
+  </fieldset>
+</template>
 ```
 
 If you already have the markdown synchronously and don't need the keep-latest behavior, the smaller [`Compiled`](/usage/rendering-pages.md) helper may be all you need.

@@ -1,5 +1,4 @@
 import { tracked } from '@glimmer/tracking';
-import { setOwner } from '@ember/owner';
 import { render, settled, visit } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest, setupRenderingTest } from 'ember-qunit';
@@ -32,11 +31,7 @@ module('compiledDoc', function (hooks) {
   setupKolay(hooks);
 
   test('renders a markdown string', async function (assert) {
-    const context = {};
-
-    setOwner(context, this.owner);
-
-    const doc = compiledDoc(context, () => `# Hello there`);
+    const doc = compiledDoc(() => `# Hello there`);
 
     await render(
       <template>
@@ -52,11 +47,7 @@ module('compiledDoc', function (hooks) {
   });
 
   test('renders a markdown string fetched asynchronously', async function (assert) {
-    const context = {};
-
-    setOwner(context, this.owner);
-
-    const doc = compiledDoc(context, () => Promise.resolve(`# From afar`));
+    const doc = compiledDoc(() => Promise.resolve(`# From afar`));
 
     await render(
       <template>
@@ -74,15 +65,11 @@ module('compiledDoc', function (hooks) {
   });
 
   test('renders a module with a default-exported component', async function (assert) {
-    const context = {};
-
-    setOwner(context, this.owner);
-
     const AlreadyCompiled = <template>
       <output>general kenobi</output>
     </template>;
 
-    const doc = compiledDoc(context, () => Promise.resolve({ default: AlreadyCompiled }));
+    const doc = compiledDoc(() => Promise.resolve({ default: AlreadyCompiled }));
 
     await render(
       <template>
@@ -107,11 +94,7 @@ module('compiledDoc', function (hooks) {
     };
 
     const state = new State();
-    const context = {};
-
-    setOwner(context, this.owner);
-
-    const doc = compiledDoc(context, () => Promise.resolve(sources[state.name] ?? ''));
+    const doc = compiledDoc(() => Promise.resolve(sources[state.name] ?? ''));
 
     await render(
       <template>
@@ -144,11 +127,7 @@ module('compiledDoc', function (hooks) {
     }
 
     const state = new State();
-    const context = {};
-
-    setOwner(context, this.owner);
-
-    const doc = compiledDoc(context, () => (state.ready ? `# Now ready` : undefined));
+    const doc = compiledDoc(() => (state.ready ? `# Now ready` : undefined));
 
     await render(
       <template>
