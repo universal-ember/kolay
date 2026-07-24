@@ -2,7 +2,7 @@ import { ember, extensions } from '@embroider/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import rehypeShiki from '@shikijs/rehype';
-import { kolay } from 'kolay/vite';
+import { docs, typedoc } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 import inspect from 'vite-plugin-inspect';
@@ -15,7 +15,7 @@ export default defineConfig(async ({ mode }) => {
       inspect(),
       info(),
       ember(),
-      kolay({
+      docs({
         groups: [
           {
             name: 'Runtime',
@@ -34,12 +34,14 @@ export default defineConfig(async ({ mode }) => {
             },
           ],
         ],
-        packages: ['kolay', 'ember-primitives', 'ember-resources'],
         scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         import { Shadowed } from 'ember-primitives/components/shadowed';
         import { InViewport } from 'ember-primitives/viewport';
         `,
+      }),
+      typedoc({
+        packages: ['kolay', 'ember-primitives', 'ember-resources'],
       }),
       babel({
         babelHelpers: 'runtime',

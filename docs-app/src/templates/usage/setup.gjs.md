@@ -15,15 +15,17 @@ There are two areas of configuration needed: buildtime, and runtime[^runtime-opt
 import `kolay/vite`
 
 ```js
-import { kolay } from "kolay/vite";
+import { docs, typedoc } from "kolay/vite";
 
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      kolay({
+      docs({
         // This is your main docs in "this" app.
         src: "public/docs",
-        // Generate API Docs for packages listed here
+      }),
+      // Optional: generate API Docs for packages listed here
+      typedoc({
         packages: ["kolay"],
       }),
       // ...
@@ -37,7 +39,7 @@ export default defineConfig(({ mode }) => {
 You can create docs for multiple libraries at once:
 
 ```js
-kolay({
+docs({
   src: 'public/docs',
   groups: [
     {
@@ -45,8 +47,10 @@ kolay({
       src: import.meta.resolve('../ui/docs', import.meta.url),
     },
   ],
-  // Generate API docs from JSDoc
-  // NOTE: these must all be declared in your projects package.json
+}),
+// Generate API docs from JSDoc
+// NOTE: these must all be declared in your projects package.json
+typedoc({
   packages: ['kolay', 'ember-primitives', 'ember-resources'],
 }),
 ```
