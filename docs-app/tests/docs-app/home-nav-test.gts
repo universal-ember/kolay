@@ -63,12 +63,12 @@ module('Home docs navigation', function (hooks) {
     assert.dom('img[src="./kolay-logo.svg"]').exists({ count: 1 }, 'relative image');
   });
 
-  test('the typedoc entry is a nav-only link into the TypeDoc group', async function (assert) {
+  test('the apiDocs entry is a nav-only link into the TypeDoc group', async function (assert) {
     await visit('/development/rendering-pages');
 
     assert
-      .dom(`aside nav a[href="/TypeDoc/plugin/typedoc.md"]`)
-      .containsText('Configuring typedoc(...)');
+      .dom(`aside nav a[href="/TypeDoc/plugin/api-docs.md"]`)
+      .containsText('Configuring apiDocs(...)');
 
     assert.dom('aside nav').containsText('Configuring docs()');
   });

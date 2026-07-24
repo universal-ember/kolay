@@ -4,9 +4,8 @@ import type { TOC } from "@ember/component/template-only";
 import type { Page } from "kolay";
 
 export function nameFor(x: Page) {
-  if ("componentName" in x) {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    return `${x.componentName}`;
+  if (x.title) {
+    return x.title;
   }
 
   if (x.path.includes("/components/")) {

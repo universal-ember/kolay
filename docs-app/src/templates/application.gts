@@ -153,10 +153,9 @@ export default Route(
 );
 
 export function nameFor(x: Page) {
-  // We defined componentName via json file
-
-  if ('componentName' in x) {
-    return `${x.componentName}`;
+  // The link text, defined via a json file next to the page
+  if (x.title) {
+    return x.title;
   }
 
   if (x.path.includes('/components/')) {

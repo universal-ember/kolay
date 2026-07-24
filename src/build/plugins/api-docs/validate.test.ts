@@ -78,7 +78,7 @@ describe('validatePackages', () => {
     }
 
     expect(message.replaceAll(cwd, '<cwd>')).toMatchInlineSnapshot(`
-      "typedoc() received invalid entries:
+      "apiDocs() received invalid entries:
         - "nope-xyz": could not be resolved from <cwd>. Is it declared in your package.json, and have you run your package manager's install? (pnpm install / npm install / yarn install)
         - "./missing-xyz": does not exist (resolved to <cwd>/missing-xyz)
         - "unplugin/dist": paths within packages are not supported — type entry points are discovered from the package's package.json#exports. Use "unplugin" instead.

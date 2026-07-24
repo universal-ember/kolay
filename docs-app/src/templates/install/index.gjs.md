@@ -77,7 +77,7 @@ There are two areas of configuration needed: buildtime, and runtime[^runtime-opt
 import `kolay/vite`
 
 ```js
-import { docs, typedoc } from "kolay/vite";
+import { docs, apiDocs } from "kolay/vite";
 
 export default defineConfig(({ mode }) => {
   return {
@@ -87,7 +87,7 @@ export default defineConfig(({ mode }) => {
         src: "public/docs",
       }),
       // Optional: generate API Docs for packages listed here
-      typedoc(["kolay"]),
+      apiDocs(["kolay"]),
       // ...
     ],
   };
@@ -110,7 +110,7 @@ docs({
 }),
 // Generate API docs from JSDoc
 // NOTE: these must all be declared in your projects package.json
-typedoc(['kolay', 'ember-primitives', 'ember-resources']),
+apiDocs(['kolay', 'ember-primitives', 'ember-resources']),
 ```
 
 This is useful for monorepos where they may be scaling to large teams and many packages could end up being added quickly. In a traditionally compiled app, this may cause build times to slow down over time. Since many docs' sites are deployed continuously, that is wasted time and money spent on building things that may not be looked at all that often (we all wish folks looked at docs more!).

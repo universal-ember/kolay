@@ -53,6 +53,12 @@ export interface Page {
   groupName: string;
   cleanedName: string;
   /**
+   * The link text to display for this page in navigation, when the
+   * derived `name` isn't right — set via a json file next to the page:
+   * `{ "title": "selected(...)" }`
+   */
+  title?: string;
+  /**
    * Present on nav-only link entries (a json file with an `href` and no
    * markdown file of its own): the authored link target, as if the app
    * were deployed at '/' — e.g. a page in another group.

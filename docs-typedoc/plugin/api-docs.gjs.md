@@ -1,4 +1,4 @@
-# `typedoc(...)`
+# `apiDocs(...)`
 
 Generates api docs (typedoc JSON) from your libraries' type declarations, and teaches the runtime how to fetch them. Rendering these api docs uses the [Signature Components][ui-signature] or [`APIDocs`][ui-apiDocs] components.
 
@@ -12,7 +12,7 @@ Usage with Vite:
 
 ```js
 // vite.config.js
-import { docs, typedoc } from "kolay/vite";
+import { docs, apiDocs } from "kolay/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -21,7 +21,7 @@ export default defineConfig({
       /* ... */
     }),
     // Package names must be installed; relative paths must exist.
-    typedoc(["my-library", "./packages/my-other-library"]),
+    apiDocs(["my-library", "./packages/my-other-library"]),
   ],
 });
 ```

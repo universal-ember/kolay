@@ -55,7 +55,7 @@ export function docsPlugins(options) {
  *
  * @param {string | string[]} input
  */
-export function typedocPlugins(input) {
+export function apiDocsPlugins(input) {
   const packages = validatePackages(input, process.cwd());
 
   return [apiDocs({ packages })].filter(Boolean);
@@ -76,7 +76,15 @@ export function combinedPlugins(options) {
 }
 
 export const docs = /* #__PURE__ */ createUnplugin(docsPlugins);
-export const typedoc = /* #__PURE__ */ createUnplugin(typedocPlugins);
+
+const apiDocsUnplugin = /* #__PURE__ */ createUnplugin(apiDocsPlugins);
+
+export { apiDocsUnplugin as apiDocs };
+
+/**
+ * @deprecated renamed — use `apiDocs`.
+ */
+export const typedoc = apiDocsUnplugin;
 
 /**
  * @deprecated use `docs` (and `typedoc`, if you have `packages`) instead.
