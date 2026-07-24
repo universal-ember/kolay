@@ -34,6 +34,56 @@ export default Route(
 );
 ```
 
+### Rendering the current page yourself
+
+`<Page />` is a thin wrapper around the [`selected`](/Runtime/util/selected.md) store. If its blocks don't give you enough control (custom loading UI, combining states, extra chrome around the prose), you can use the store directly:
+
+```gjs
+import Component from "@glimmer/component";
+import { selected } from "kolay";
+
+export default class MyPage extends Component {
+  get current() {
+    return selected(this);
+  }
+
+  <template>
+    {{#if this.current.hasError}}
+      <div role="alert">{{this.current.error}}</div>
+    {{else if this.current.isPending}}
+      <div role="status">loading…</div>
+    {{/if}}
+
+    {{#if this.current.prose}}
+      <this.current.prose />
+    {{/if}}
+  </template>
+}
+```
+
+### Rendering documents you fetch yourself
+
+The current-page behaviors (async loading, compiling with your site-wide config, keeping the previous document while a new one loads, test-`settled()` integration) are available for _any_ document via [`compiledDoc`](/Runtime/util/compiled-doc.md) — useful when your content comes from an API, a CMS, or a dynamic `import()`:
+
+```gjs
+import Component from "@glimmer/component";
+import { compiledDoc } from "kolay";
+
+export default class MyDocPage extends Component {
+  doc = compiledDoc(() =>
+    fetch(`/api/docs/${this.args.slug}.md`).then((response) => response.text()),
+  );
+
+  <template>
+    {{#if this.doc.prose}}
+      <this.doc.prose />
+    {{/if}}
+  </template>
+}
+```
+
+### Rendering a page within a page
+
 If you want to render a page within a page, you can do that with the `Compiled` helper. This will use your site-wide configuration so all the remark plugins, rehype plugins, extra modules, etc will all be used when you use `Compiled`.
 
 ```gjs live preview no-shadow
