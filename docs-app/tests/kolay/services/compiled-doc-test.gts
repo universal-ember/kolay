@@ -11,7 +11,7 @@ module('compiledDoc | docs pages', function (hooks) {
   setupApplicationTest(hooks);
 
   test('the compiledDoc page renders, including its live demo', async function (assert) {
-    await visit('/Runtime/util/compiled-doc.md');
+    await visit('/Runtime/rendering/compiled-doc.md');
 
     assert.dom('[data-page-error]').doesNotExist();
     assert.dom('h1').containsText('compiledDoc');
@@ -19,7 +19,7 @@ module('compiledDoc | docs pages', function (hooks) {
   });
 
   test('the selected page renders', async function (assert) {
-    await visit('/Runtime/util/selected.md');
+    await visit('/Runtime/utilities/selected.md');
 
     assert.dom('[data-page-error]').doesNotExist();
     assert.dom('h1').containsText('selected');

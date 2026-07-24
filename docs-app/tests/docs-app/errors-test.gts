@@ -46,7 +46,7 @@ module('Errors', function (hooks) {
       await settled();
       assert.dom('[data-page-error]').doesNotExist();
 
-      visit(`/Runtime/util/logs.md`);
+      visit(`/Runtime/demo-support/logs.md`);
 
       await renderSettled();
       assert.dom('[data-page-error]').doesNotExist();

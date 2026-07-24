@@ -95,7 +95,7 @@ Pages link to each other with regular markdown links, using root-absolute paths.
 
 ```md
 See the [setup guide](/usage/setup.md) for installation, or
-[The DocsManager service](/Runtime/util/docs-manager.md).
+[The DocsManager service](/Runtime/utilities/docs-manager.md).
 ```
 
 Root-absolute paths are always written as if the app were deployed at `/`. When the app is served under a custom `rootURL` (a preview deploy at `/pr-1234/`, a docs site at `/my-lib/`, …), kolay rebases these paths onto the `rootURL` when the page compiles (in the browser for `.md` pages, at build time for `.gjs.md` pages) — authored content never needs to know where the app is deployed. This covers markdown link/image syntax as well as `href`/`src` attributes in raw inline HTML.
