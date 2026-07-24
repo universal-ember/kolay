@@ -1,4 +1,4 @@
-import { visit } from '@ember/test-helpers';
+import { currentURL, visit } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 
@@ -25,6 +25,14 @@ module('Home docs navigation', function (hooks) {
       positions,
       'sections are in order'
     );
+  });
+
+  test('visiting the root redirects to the first page of the default group', async function (assert) {
+    await visit('/');
+
+    assert.strictEqual(currentURL(), '/install/index');
+    assert.dom('[data-page-error]').doesNotExist();
+    assert.dom().containsText('kolay');
   });
 
   test('Install is a link to its index page', async function (assert) {

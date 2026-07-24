@@ -24,7 +24,17 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   if (transition.to?.localName !== 'index') return;
 
-  const groupName = String(transition.to.parent?.params?.page);
+  /**
+   * With addRoutes()'s wildcard, visiting `/GroupName` lands on
+   * `page.index` with the group name as the wildcard segment.
+   *
+   * Visiting the app's root (`/`) lands on the top-level `index` route —
+   * there is no group in the URL, so the default (first) group is used.
+   */
+  const isRootIndex = transition.to.name === 'index';
+  const groupName = isRootIndex
+    ? docs.availableGroups[0]
+    : String(transition.to.parent?.params?.page);
 
   if (!groupName) return;
   if (!docs.availableGroups.includes(groupName)) return;

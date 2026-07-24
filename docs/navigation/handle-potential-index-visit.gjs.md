@@ -34,6 +34,8 @@ Router.map(function () {
 
 When a user visits `/Runtime` and the `Runtime` group has pages, they'll be redirected to the first page (e.g. `/Runtime/rendering/page.md`) instead of seeing a blank index.
 
+It also handles the app's root: on a visit to `/`, there is no group in the URL, so the user is redirected to the first page of the default (first) group. Give your top-level `index` route the same `beforeModel` (e.g. in `routes/index.ts`) to enable this.
+
 ## API Reference
 
 <APIDocs @module="declarations/browser" @name="handlePotentialIndexVisit" @package="kolay" />
