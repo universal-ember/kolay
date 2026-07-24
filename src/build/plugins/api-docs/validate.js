@@ -43,7 +43,9 @@ function packageExists(entry, cwd) {
  * typedoc() receives a string, or an array of strings, where each entry
  * is either
  * - a package name, which must be resolvable from the consuming project
- *   (i.e.: actually installed), or
+ *   (i.e.: actually installed) — paths within packages are not allowed,
+ *   because type entry points are discovered from the package's
+ *   package.json#exports — or
  * - a relative path, which must exist on disk.
  *
  * Every entry is checked, and all problems are reported in one error.
@@ -73,8 +75,8 @@ export function validatePackages(input, cwd) {
 
     if (isAbsolute(entry)) {
       problems.push(
-        `"${entry}": absolute paths are not supported — ` +
-          `use a package name or a path relative to ${cwd}`
+        `"${entry}": absolute paths are not supported, because they are not ` +
+          `portable between environments — use a package name or a path relative to ${cwd}`
       );
       continue;
     }
@@ -86,6 +88,19 @@ export function validatePackages(input, cwd) {
         problems.push(`"${entry}": does not exist (resolved to ${path})`);
       }
 
+      continue;
+    }
+
+    const segments = entry.split('/');
+    const packageSegments = entry.startsWith('@') ? 2 : 1;
+
+    if (segments.length > packageSegments) {
+      const packageRoot = segments.slice(0, packageSegments).join('/');
+
+      problems.push(
+        `"${entry}": paths within packages are not supported — type entry points ` +
+          `are discovered from the package's package.json#exports. Use "${packageRoot}" instead.`
+      );
       continue;
     }
 

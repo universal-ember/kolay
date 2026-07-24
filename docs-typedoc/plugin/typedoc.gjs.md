@@ -33,6 +33,12 @@ The plugin receives a string, or an array of strings, where each entry is either
 - a package name — it must be resolvable from your project (i.e.: actually installed), or
 - a relative path — it must exist on disk (resolved from your project's root)
 
+Type entry points are discovered from each package's `package.json#exports` (its `types` entries), so entries always name a whole package:
+
+- paths _within_ packages (`my-library/dist/whatever`) are rejected — use the package name and let `#exports` decide the entry points
+- absolute paths are rejected — they are not portable between environments
+- a relative path should point at a package directory (its `package.json#exports` is used, the same as for package names)
+
 Every entry is validated when the config is loaded, and all problems are reported at once — including a hint to run your package manager's install when a package can't be found.
 
 In dev, the JSON is generated on demand when requested; in production builds, it is emitted into the app's dist.

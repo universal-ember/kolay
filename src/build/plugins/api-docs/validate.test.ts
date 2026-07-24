@@ -8,7 +8,7 @@ const cwd = process.cwd();
 
 describe('validatePackages', () => {
   test('accepts installed packages', () => {
-    expect(() => validatePackages(['unplugin', 'kolay'], cwd)).not.toThrow();
+    expect(() => validatePackages(['unplugin', 'kolay', '@glimmer/component'], cwd)).not.toThrow();
   });
 
   test('accepts installed packages whose exports have no importable "." entry', () => {
@@ -46,9 +46,18 @@ describe('validatePackages', () => {
     );
   });
 
-  test('rejects absolute paths', () => {
+  test('rejects absolute paths, explaining they are not portable', () => {
     expect(() => validatePackages(['/etc/passwd'], cwd)).toThrowError(
-      /absolute paths are not supported/
+      /absolute paths are not supported, because they are not portable between environments/
+    );
+  });
+
+  test('rejects paths within packages (entry points come from package.json#exports)', () => {
+    expect(() => validatePackages(['unplugin/dist'], cwd)).toThrowError(
+      /"unplugin\/dist": paths within packages are not supported(.|\n)*Use "unplugin" instead/
+    );
+    expect(() => validatePackages(['@glimmer/component/dist/index'], cwd)).toThrowError(
+      /Use "@glimmer\/component" instead/
     );
   });
 
@@ -60,15 +69,21 @@ describe('validatePackages', () => {
     let message = '';
 
     try {
-      validatePackages(['unplugin', 'nope-xyz', './missing-xyz', 42], cwd);
+      validatePackages(
+        ['unplugin', 'nope-xyz', './missing-xyz', 'unplugin/dist', '/absolute', 42],
+        cwd
+      );
     } catch (error) {
       message = (error as Error).message;
     }
 
-    expect(message).toContain('"nope-xyz": could not be resolved');
-    expect(message).toContain('"./missing-xyz": does not exist');
-    expect(message).toContain('42 (number): every entry must be a string');
-    // the valid entry is not reported
-    expect(message).not.toContain('"unplugin"');
+    expect(message.replaceAll(cwd, '<cwd>')).toMatchInlineSnapshot(`
+      "typedoc() received invalid entries:
+        - "nope-xyz": could not be resolved from <cwd>. Is it declared in your package.json, and have you run your package manager's install? (pnpm install / npm install / yarn install)
+        - "./missing-xyz": does not exist (resolved to <cwd>/missing-xyz)
+        - "unplugin/dist": paths within packages are not supported — type entry points are discovered from the package's package.json#exports. Use "unplugin" instead.
+        - "/absolute": absolute paths are not supported, because they are not portable between environments — use a package name or a path relative to <cwd>
+        - 42 (number): every entry must be a string"
+    `);
   });
 });
