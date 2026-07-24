@@ -41,6 +41,20 @@ module('Home docs navigation', function (hooks) {
     assert.dom(`aside nav a[href="/install/index"]`).containsText('Install');
   });
 
+  test('the authoring pages render', async function (assert) {
+    for (const [url, heading] of [
+      ['/authoring/markdown-features', 'Markdown features'],
+      ['/authoring/code-fences', 'Code fences'],
+      ['/authoring/extending-markdown', 'Extending markdown'],
+      ['/Runtime/rendering/compiled', 'Compiled'],
+    ]) {
+      await visit(url as string);
+
+      assert.dom('[data-page-error]').doesNotExist(`${url} has no error`);
+      assert.dom('h1').containsText(heading as string, `${url} renders`);
+    }
+  });
+
   test('the typedoc entry is a nav-only link into the TypeDoc group', async function (assert) {
     await visit('/development/rendering-pages');
 

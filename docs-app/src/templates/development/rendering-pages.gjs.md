@@ -84,7 +84,7 @@ export default class MyDocPage extends Component {
 
 ### Rendering a page within a page
 
-If you want to render a page within a page, you can do that with the `Compiled` helper. This will use your site-wide configuration so all the remark plugins, rehype plugins, extra modules, etc will all be used when you use `Compiled`.
+If you want to render a page within a page, you can do that with the [`Compiled`](/Runtime/rendering/compiled.md) helper. This will use your site-wide configuration so all the remark plugins, rehype plugins, extra modules, etc will all be used when you use `Compiled`.
 
 ```gjs live preview no-shadow
 import { Compiled } from "kolay";

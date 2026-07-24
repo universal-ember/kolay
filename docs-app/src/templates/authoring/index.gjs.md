@@ -1,6 +1,6 @@
 # Authoring
 
-Docs are written in markdown. This section covers the two file formats, [live code fences](/authoring/code-fences.md) for interactive demos, and [links and images](/authoring/links-and-images.md).
+Docs are written in markdown. This section covers the two file formats, the [supported markdown features](/authoring/markdown-features.md), [live code fences](/authoring/code-fences.md) for interactive demos, [links and images](/authoring/links-and-images.md), and [extending markdown with plugins](/authoring/extending-markdown.md).
 
 Kolay supports two markdown file formats: `.md` and `.gjs.md`. Both can contain prose, code snippets, and live demos, but they differ in _when_ and _how_ they are compiled.
 

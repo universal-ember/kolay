@@ -75,7 +75,7 @@ const doc = compiledDoc(() =>
 </template>
 ```
 
-If you already have the markdown synchronously and don't need the keep-latest behavior, the smaller [`Compiled`](/development/rendering-pages.md) helper may be all you need.
+If you already have the markdown synchronously and don't need the keep-latest behavior, the smaller [`Compiled`](/Runtime/rendering/compiled.md) helper may be all you need.
 
 ## API Reference
 
