@@ -1,21 +1,15 @@
 import { cached } from '@glimmer/tracking';
 import { createCache, getValue } from '@glimmer/tracking/primitives/cache';
-import { assert } from '@ember/debug';
-import { getOwner } from '@ember/owner';
 import { service } from '@ember/service';
-import { waitForPromise } from '@ember/test-waiters';
 
 import { createStore } from 'ember-primitives/store';
-import { use } from 'ember-resources';
-import { getPromiseState } from 'reactiveweb/get-promise-state';
-import { keepLatest } from 'reactiveweb/keep-latest';
 
-import { compileText } from './compiler/reactive.ts';
+import { compiledDoc } from './compiled-doc.ts';
 import { docsManager } from './docs.ts';
-import { extractErrorMessage } from './extract-error-message.ts';
 import { getKey } from './lazy-load.ts';
 
 import type { Page } from '../../types.ts';
+import type { CompiledDoc } from './compiled-doc.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -28,57 +22,6 @@ export function selected(context: unknown) {
 type File = { default: string | ComponentLike };
 type Loader = () => Promise<File>;
 
-/**
- * With .gjs.md and .gts.md documents, we have only one promise to deal with.
- * With .md documents, we have two promises.
- *
- * .gjs.md / .gts.md:
- *  1. the request to get the module
- *
- * .md
- *  1. the request to get the module
- *  2. compile
- */
-function loaderFor(selected: Selected, path: string | undefined) {
-  if (!path) return;
-
-  const docs = selected.compiledDocs;
-  const owner = getOwner(selected);
-
-  /**
-   * NOTE: we support paths with and withouth the '.md' on the URL
-   */
-  const fn = docs[path] ?? docs[path + '.md'];
-
-  async function load(): Promise<ComponentLike | undefined> {
-    assert(`[Bug] Owner is missing`, owner);
-    assert(`Invalid path: ${path}. No loader found.`, fn);
-
-    const module = await fn();
-
-    if (typeof module.default === 'string') {
-      const state = compileText(owner, module.default);
-
-      return state.promise;
-    }
-
-    return module.default;
-  }
-
-  async function wrapper(): Promise<ComponentLike | undefined> {
-    if (!fn) return;
-
-    // Holds `settled()` (visit/click in tests) open for the module fetch and
-    // compile, so tests never see a partially-rendered page. No-op in
-    // production builds.
-    return waitForPromise(load());
-  }
-
-  const wrapped = getPromiseState(wrapper);
-
-  return wrapped;
-}
-
 class Selected {
   @service declare router: RouterService;
 
@@ -88,33 +31,39 @@ class Selected {
     return docsManager(this);
   }
 
-  @cached
-  get loader() {
-    return loaderFor(this, this.#matchOrFirstPagePath);
-  }
+  #doc: CompiledDoc | undefined;
 
-  /*********************************************************************
-   * This is a pattern to help reduce flashes of content during
-   * the intermediate states of the above request fetchers.
-   * When a new request starts, we'll hold on the old value for as long as
-   * we can, and only swap out the old data when the new data is done loading.
+  /**
+   * The load / compile / error state for the current page's document.
    *
-   ********************************************************************/
-  @use activeCompiled = keepLatest({
-    value: () => this.loader,
-    when: () => Boolean(this.loader?.isLoading),
-  });
+   * (Lazily created, because while this store is being constructed,
+   *  it does not have an owner yet)
+   */
+  get doc(): CompiledDoc {
+    return (this.#doc ??= compiledDoc(this, () => {
+      const path = this.#matchOrFirstPagePath;
+
+      if (!path) return;
+
+      /**
+       * NOTE: we support paths with and withouth the '.md' on the URL
+       */
+      const fn = this.compiledDocs[path] ?? this.compiledDocs[path + '.md'];
+
+      return fn?.();
+    }));
+  }
 
   get prose() {
     if (this.error) {
       return;
     }
 
-    return this.activeCompiled?.resolved;
+    return this.doc.prose;
   }
 
   get isReady() {
-    return Boolean(this.activeCompiled?.resolved);
+    return this.doc.isReady;
   }
 
   get isPending() {
@@ -126,7 +75,7 @@ class Selected {
       return Boolean(this.error);
     }
 
-    return Boolean(this.activeCompiled?.error);
+    return this.doc.hasError;
   }
 
   @cached
@@ -139,8 +88,7 @@ class Selected {
       return message;
     }
 
-    const rawError = this.activeCompiled?.error;
-    const error = extractErrorMessage(rawError);
+    const error = this.doc.error;
 
     if (!error) return '';
 
