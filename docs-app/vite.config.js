@@ -21,6 +21,10 @@ export default defineConfig(async ({ mode }) => {
             name: 'Runtime',
             src: import.meta.resolve('../docs', import.meta.url),
           },
+          {
+            name: 'TypeDoc',
+            src: import.meta.resolve('../docs-typedoc', import.meta.url),
+          },
         ],
         rehypePlugins: [
           [
@@ -40,9 +44,7 @@ export default defineConfig(async ({ mode }) => {
         import { InViewport } from 'ember-primitives/viewport';
         `,
       }),
-      typedoc({
-        packages: ['kolay', 'ember-primitives', 'ember-resources'],
-      }),
+      typedoc(['kolay', 'ember-primitives', 'ember-resources']),
       babel({
         babelHelpers: 'runtime',
         extensions,

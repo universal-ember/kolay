@@ -1,6 +1,7 @@
 import { createUnplugin } from 'unplugin';
 
 import { apiDocs } from './api-docs/index.js';
+import { validatePackages } from './api-docs/validate.js';
 import { gjsmd } from './gjs-md.js';
 import { setup } from './setup.js';
 import { fixViteForIssue362 } from './vite-issue-362.js';
@@ -42,15 +43,22 @@ export function docsPlugins(options) {
 }
 
 /**
- * The api-docs plugin: generates typedoc JSON for the configured
- * `packages` and provides 'kolay/api-docs:virtual' for loading it.
+ * The api-docs plugin: generates typedoc JSON for the given packages
+ * and provides 'kolay/api-docs:virtual' for loading it.
+ *
+ * Receives a string, or an array of strings — package names (which must
+ * be installed / resolvable from your project) and/or relative paths
+ * (which must exist). Every entry is validated up front, and all
+ * problems are reported in one error.
  *
  * Requires the `docs()` plugin to also be present.
  *
- * @param {TypedocOptions} options
+ * @param {string | string[]} input
  */
-export function typedocPlugins(options) {
-  return [apiDocs({ packages: options.packages ?? [], dest: options.dest })].filter(Boolean);
+export function typedocPlugins(input) {
+  const packages = validatePackages(input, process.cwd());
+
+  return [apiDocs({ packages })].filter(Boolean);
 }
 
 /**
@@ -60,7 +68,11 @@ export function typedocPlugins(options) {
  * @type {import('unplugin').UnpluginFactory<Options>}
  */
 export function combinedPlugins(options) {
-  return [...docsPlugins(options), ...typedocPlugins(options)];
+  return [
+    ...docsPlugins(options),
+    // pre-split behavior: no validation, and `dest` stays configurable
+    apiDocs({ packages: options.packages ?? [], dest: options.dest }),
+  ];
 }
 
 export const docs = /* #__PURE__ */ createUnplugin(docsPlugins);

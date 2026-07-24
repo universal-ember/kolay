@@ -43,7 +43,7 @@ export async function generateTypeDocJSON({ packageName }) {
     .filter((entry) => entry.endsWith('.ts'));
 
   const typedoc = await import('typedoc');
-  const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace('/', '__').replace('@', 'at__')}.json`;
+  const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace(/^\.\//, '').replaceAll('/', '__').replace('@', 'at__')}.json`;
   const extendsTsConfig = require.resolve('@ember/app-tsconfig/tsconfig.json');
 
   // const home = process.cwd();

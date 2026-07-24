@@ -32,7 +32,7 @@ Router.map(function () {
 });
 ```
 
-When a user visits `/Runtime` and the `Runtime` group has pages, they'll be redirected to the first page (e.g. `/Runtime/docs/component-signature.md`) instead of seeing a blank index.
+When a user visits `/Runtime` and the `Runtime` group has pages, they'll be redirected to the first page (e.g. `/Runtime/docs/owner.md`) instead of seeing a blank index.
 
 ## API Reference
 

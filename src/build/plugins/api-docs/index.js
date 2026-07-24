@@ -32,10 +32,12 @@ export const apiDocs = (options) => {
   const name = 'kolay:typedoc';
 
   /**
-   * @param {string} pkgName
+   * @param {string} pkgName - a package name or relative path
    */
   function getDest(pkgName) {
-    return `${options.dest ?? 'docs'}/${pkgName.replace('/', '__')}.json`;
+    const flat = pkgName.replace(/^\.\//, '').replaceAll('/', '__');
+
+    return `${options.dest ?? 'docs'}/${flat}.json`;
   }
 
   /**
