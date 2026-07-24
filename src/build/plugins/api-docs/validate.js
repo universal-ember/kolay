@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { isAbsolute, join, resolve } from 'node:path';
 
 function describe(value) {
@@ -11,47 +12,58 @@ function describe(value) {
   }
 }
 
-function declaredDependencies(cwd) {
-  const manifestPath = join(cwd, 'package.json');
+/**
+ * Whether the package can actually be found in the install environment.
+ * (package.json can't be trusted for this: the install may be broken,
+ *  or may simply not have been run)
+ *
+ * @param {string} entry
+ * @param {string} cwd
+ */
+function packageExists(entry, cwd) {
+  const require = createRequire(join(cwd, 'package.json'));
 
   try {
-    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    require.resolve(entry);
 
-    return new Set(
-      [
-        manifest.name,
-        ...Object.keys(manifest.dependencies ?? {}),
-        ...Object.keys(manifest.devDependencies ?? {}),
-        ...Object.keys(manifest.peerDependencies ?? {}),
-      ].filter(Boolean)
-    );
-  } catch {
-    return new Set();
+    return true;
+  } catch (error) {
+    // These mean the package IS installed — it just doesn't expose an
+    // importable '.' entry (types-only packages, strict `exports`, etc).
+    // Whether usable typedoc entry points exist is determined later,
+    // during generation.
+    if (error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') return true;
+    if (error?.code === 'ERR_UNSUPPORTED_DIR_IMPORT') return true;
+
+    return false;
   }
 }
 
 /**
- * typedoc() receives an array of strings, where each entry is either
- * - a package name, which must be declared in the consuming project's
- *   package.json (dependencies, devDependencies, or peerDependencies), or
+ * typedoc() receives a string, or an array of strings, where each entry
+ * is either
+ * - a package name, which must be resolvable from the consuming project
+ *   (i.e.: actually installed), or
  * - a relative path, which must exist on disk.
  *
  * Every entry is checked, and all problems are reported in one error.
  *
- * @param {unknown} packages
+ * @param {unknown} input
  * @param {string} cwd
+ * @return {string[]} the validated entries, normalized to an array
  */
-export function validatePackages(packages, cwd) {
+export function validatePackages(input, cwd) {
+  const packages = typeof input === 'string' ? [input] : input;
+
   if (!Array.isArray(packages)) {
     throw new Error(
-      `typedoc() expects an array of package names and/or relative paths, ` +
+      `typedoc() expects a package name or relative path, or an array of them, ` +
         `e.g.: typedoc(['my-library', './packages/my-library']). ` +
-        `Received: ${describe(packages)}`
+        `Received: ${describe(input)}`
     );
   }
 
   const problems = [];
-  const declared = declaredDependencies(cwd);
 
   for (const entry of packages) {
     if (typeof entry !== 'string') {
@@ -77,10 +89,11 @@ export function validatePackages(packages, cwd) {
       continue;
     }
 
-    if (!declared.has(entry)) {
+    if (!packageExists(entry, cwd)) {
       problems.push(
-        `"${entry}": not listed in ${join(cwd, 'package.json')} ` +
-          `(dependencies, devDependencies, or peerDependencies)`
+        `"${entry}": could not be resolved from ${cwd}. ` +
+          `Is it declared in your package.json, and have you run your ` +
+          `package manager's install? (pnpm install / npm install / yarn install)`
       );
     }
   }
@@ -91,4 +104,6 @@ export function validatePackages(packages, cwd) {
         problems.map((problem) => `  - ${problem}`).join('\n')
     );
   }
+
+  return packages;
 }

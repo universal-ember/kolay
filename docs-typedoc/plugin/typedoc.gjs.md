@@ -20,8 +20,7 @@ export default defineConfig({
     docs({
       /* ... */
     }),
-    // Package names must be declared in your project's package.json;
-    // relative paths must exist.
+    // Package names must be installed; relative paths must exist.
     typedoc(["my-library", "./packages/my-other-library"]),
   ],
 });
@@ -29,11 +28,11 @@ export default defineConfig({
 
 ## Input
 
-The plugin receives an array of strings, where each entry is either
+The plugin receives a string, or an array of strings, where each entry is either
 
-- a package name — it must be declared in your project's `package.json` (`dependencies`, `devDependencies`, or `peerDependencies`), or
+- a package name — it must be resolvable from your project (i.e.: actually installed), or
 - a relative path — it must exist on disk (resolved from your project's root)
 
-Every entry is validated when the config is loaded, and all problems are reported at once.
+Every entry is validated when the config is loaded, and all problems are reported at once — including a hint to run your package manager's install when a package can't be found.
 
 In dev, the JSON is generated on demand when requested; in production builds, it is emitted into the app's dist.

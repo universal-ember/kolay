@@ -46,16 +46,17 @@ export function docsPlugins(options) {
  * The api-docs plugin: generates typedoc JSON for the given packages
  * and provides 'kolay/api-docs:virtual' for loading it.
  *
- * Receives an array of strings — package names (which must be declared in
- * your package.json) and/or relative paths. Every entry is validated up
- * front, and all problems are reported in one error.
+ * Receives a string, or an array of strings — package names (which must
+ * be installed / resolvable from your project) and/or relative paths
+ * (which must exist). Every entry is validated up front, and all
+ * problems are reported in one error.
  *
  * Requires the `docs()` plugin to also be present.
  *
- * @param {string[]} packages
+ * @param {string | string[]} input
  */
-export function typedocPlugins(packages) {
-  validatePackages(packages, process.cwd());
+export function typedocPlugins(input) {
+  const packages = validatePackages(input, process.cwd());
 
   return [apiDocs({ packages })].filter(Boolean);
 }
