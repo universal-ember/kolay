@@ -161,6 +161,11 @@ const Declaration: TOC<{
         <div class='typedoc__declaration-type'>
           <Type @info={{@info.type}} />
         </div>
+      {{else if @info.getSignature.type}}
+        {{! accessors keep their type on the get signature }}
+        <div class='typedoc__declaration-type'>
+          <Type @info={{@info.getSignature.type}} />
+        </div>
       {{/if}}
 
       {{#if @info.children}}
@@ -183,6 +188,9 @@ const Declaration: TOC<{
       {{#if (not (isConst @info))}}
         {{#if @info.comment.summary}}
           <Comment @info={{@info}} />
+        {{else if @info.getSignature.comment.summary}}
+          {{! accessors keep their comment on the get signature }}
+          <Comment @info={{@info.getSignature}} />
         {{/if}}
       {{/if}}
     </div>
