@@ -365,6 +365,9 @@ importers:
       loader.js:
         specifier: ^4.7.0
         version: 4.7.0
+      memory-scroll:
+        specifier: ^2.0.1
+        version: 2.0.1(@babel/core@7.29.6)
       prettier:
         specifier: ^3.7.4
         version: 3.8.1
@@ -6448,6 +6451,9 @@ packages:
   mem@8.1.1:
     resolution: {integrity: sha512-qFCFUDs7U3b8mBDPyz5EToEKoAkgCzqquIgi9nkkR9bixxOVOre+09lbuH7+9Kn2NFpm56M3GUWVbU2hQgdACA==}
     engines: {node: '>=10'}
+
+  memory-scroll@2.0.1:
+    resolution: {integrity: sha512-SuAFm2qNUqAuJ4mIyq4JhPe7EAuFy1pR0GIv+TbXbSqi9hkUTGq4XtFthE/eDpyiW4y6+7d/39ntJxeBy/atvQ==}
 
   memory-streams@0.1.3:
     resolution: {integrity: sha512-qVQ/CjkMyMInPaaRMrwWNDvf6boRZXaT/DbQeMYcCWuXPEBf1v8qChOc9OlEVQp2uOvRXa1Qu30fLmKhY6NipA==}
@@ -16321,6 +16327,15 @@ snapshots:
     dependencies:
       map-age-cleaner: 0.1.3
       mimic-fn: 3.1.0
+
+  memory-scroll@2.0.1(@babel/core@7.29.6):
+    dependencies:
+      '@embroider/addon-shim': 1.10.2
+      decorator-transforms: 2.3.1(@babel/core@7.29.6)
+      ember-modifier: 4.3.0(@babel/core@7.29.6)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
 
   memory-streams@0.1.3:
     dependencies:
