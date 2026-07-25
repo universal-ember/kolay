@@ -11,7 +11,7 @@ module('Home docs navigation', function (hooks) {
     const nav = document.querySelector('aside nav');
     const text = nav?.textContent?.replaceAll(/\s+/g, ' ') ?? '';
 
-    const sections = ['Install', 'Authoring', 'Development', 'Migrations', 'Plugins'];
+    const sections = ['Install', 'Authoring', 'Development', 'Migrations'];
     const positions = sections.map((section) => text.indexOf(section));
 
     assert.deepEqual(

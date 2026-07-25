@@ -856,6 +856,115 @@ importers:
         specifier: 8.0.16
         version: 8.0.16(f8c6e564fa4865ff9a75f4f1b10c6ca4)
 
+  test-apps/virtual-routes-only:
+    dependencies:
+      '@embroider/macros':
+        specifier: 1.19.7
+        version: 1.19.7(e03ddcd0d6efa09708fb1d15d700aa6a)
+      '@embroider/router':
+        specifier: 3.0.6
+        version: 3.0.6(1b6290b8b16d04b86d5e621e11cf7434)
+      '@glimmer/component':
+        specifier: ^2.0.0
+        version: 2.0.0
+      decorator-transforms:
+        specifier: 2.3.1
+        version: 2.3.1(@babel/core@7.29.6)
+      ember-source:
+        specifier: 6.10.1
+        version: 6.10.1(@glimmer/component@2.0.0)(rsvp@4.8.5)
+      ember-strict-application-resolver:
+        specifier: 0.1.1
+        version: 0.1.1(@babel/core@7.29.6)
+    devDependencies:
+      '@babel/core':
+        specifier: 7.29.6
+        version: 7.29.6
+      '@babel/plugin-transform-runtime':
+        specifier: 7.29.0
+        version: 7.29.0(@babel/core@7.29.6)
+      '@babel/plugin-transform-typescript':
+        specifier: 7.28.6
+        version: 7.28.6(@babel/core@7.29.6)
+      '@babel/runtime':
+        specifier: 7.28.6
+        version: 7.28.6
+      '@ember/app-tsconfig':
+        specifier: 2.0.0
+        version: 2.0.0
+      '@ember/test-helpers':
+        specifier: 5.4.1
+        version: 5.4.1(e03ddcd0d6efa09708fb1d15d700aa6a)
+      '@ember/test-waiters':
+        specifier: ^4.0.0
+        version: 4.1.1(e03ddcd0d6efa09708fb1d15d700aa6a)
+      '@embroider/core':
+        specifier: 4.6.2
+        version: 4.6.2(@glint/template@1.7.8)
+      '@embroider/vite':
+        specifier: 1.7.8
+        version: 1.7.8(3e14d79dfe4aed5701fa1d0506adcbcf)
+      '@glint/ember-tsc':
+        specifier: 1.1.1
+        version: 1.1.1(typescript@5.9.3)
+      '@glint/template':
+        specifier: 1.7.8
+        version: 1.7.8
+      '@glint/tsserver-plugin':
+        specifier: 2.1.0
+        version: 2.1.0
+      '@nullvoxpopuli/eslint-configs':
+        specifier: 5.5.0
+        version: 5.5.0(f3de7b1af66d19603fbf252f77c6f421)
+      '@rollup/plugin-babel':
+        specifier: 6.1.0
+        version: 6.1.0(@babel/core@7.29.6)(rollup@4.59.0)
+      '@types/qunit':
+        specifier: 2.19.13
+        version: 2.19.13
+      '@universal-ember/test-support':
+        specifier: ^0.7.0
+        version: 0.7.0(db0d5fcc4eb194888327a4e88acb9c81)
+      babel-plugin-ember-template-compilation:
+        specifier: 4.0.0
+        version: 4.0.0
+      concurrently:
+        specifier: 9.2.1
+        version: 9.2.1
+      ember-qunit:
+        specifier: 9.0.4
+        version: 9.0.4(dc00aa402c6e5b71379fed4e60e0a234)
+      eslint:
+        specifier: 9.39.2
+        version: 9.39.2(jiti@2.6.1)
+      kolay:
+        specifier: workspace:*
+        version: link:../..
+      prettier:
+        specifier: 3.8.1
+        version: 3.8.1
+      prettier-plugin-ember-template-tag:
+        specifier: 2.1.3
+        version: 2.1.3(prettier@3.8.1)
+      qunit:
+        specifier: 2.25.0
+        version: 2.25.0
+      qunit-dom:
+        specifier: 3.5.0
+        version: 3.5.0
+      qunit-theme-ember:
+        specifier: 1.0.0
+        version: 1.0.0
+      testem:
+        specifier: 3.17.0
+        version: 3.17.0(8bcdda22d80c66a2796dcf0ed2360163)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 8.0.16
+        version: 8.0.16(f8c6e564fa4865ff9a75f4f1b10c6ca4)
+
 packages:
 
   '@andrewbranch/untar.js@1.0.3':

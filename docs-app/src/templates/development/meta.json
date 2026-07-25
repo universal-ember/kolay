@@ -5,6 +5,7 @@
     "renaming-pages",
     "testing",
     "configuring-docs",
-    "configuring-api-docs"
+    "configuring-api-docs",
+    "helpers"
   ]
 }

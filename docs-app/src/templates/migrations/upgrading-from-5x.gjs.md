@@ -70,18 +70,17 @@ The primary way to mount a group's routes is now its virtual module:
 
 ```diff
 - import { addRoutes } from "kolay";
-+ import { addRoutes } from "kolay"; // still used for the co-located pages
 + import { addRoutes as addGuidesRoutes } from "virtual:kolay/docs/guides";
 
   Router.map(function () {
-    addRoutes(this);
+-   addRoutes(this);
 +   this.route("guides", function () {
 +     addGuidesRoutes(this);
 +   });
   });
 ```
 
-A top-level `addRoutes(this)` still serves every group from the root URL space, so a 5.x router keeps working — but per-group mounts unlock per-group route templates (and with them, [per-group designs](/development/configuring-docs.md)).
+The top-level `addRoutes(this)` is now optional — it serves the co-located pages (and any group named by the URL) from the root URL space, so keep it if you have `app/templates` pages or want 5.x-style URLs. An app can also mount only its groups' routes and keep the root for itself. Per-group mounts unlock per-group route templates (and with them, [per-group designs](/development/configuring-docs.md)).
 
 ## `kolay/compiled-docs:virtual` is now the metamanifest
 
@@ -96,17 +95,6 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 ```
 
 `setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
-
-## Page json meta: `componentName` is now `title`
-
-The per-page json file's display-name key is renamed:
-
-```diff
-- { "componentName": "selected(...)" }
-+ { "title": "selected(...)" }
-```
-
-(Custom keys still pass through the manifest untouched, so a custom `nameFor` reading `componentName` keeps working — but `title` is the convention, and `Page` types it.)
 
 ## Removed types
 

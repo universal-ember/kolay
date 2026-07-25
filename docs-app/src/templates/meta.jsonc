@@ -1,4 +1,4 @@
 {
   // Install first, helpers last
-  "order": ["install", "authoring", "development", "migrations", "plugins"],
+  "order": ["install", "authoring", "development", "migrations"],
 }
