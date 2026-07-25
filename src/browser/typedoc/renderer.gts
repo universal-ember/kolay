@@ -399,7 +399,11 @@ export const Type: TOC<{ Args: { info: SomeType } }> = <template>
   <Consume @key='project' as |project|>
     {{#let (getComponentSignature @info.declaration project) as |maybe|}}
       {{#if maybe}}
-        <ComponentDeclaration @signature={{maybe}} />
+        {{! a component signature in a type position renders compactly —
+            the class scopes the code-like styling }}
+        <span class='typedoc__nested-signature'>
+          <ComponentDeclaration @signature={{maybe}} />
+        </span>
       {{else if (isReference @info)}}
         {{! @glint-expect-error }}
         <Reference @info={{@info}} />
