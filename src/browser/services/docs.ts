@@ -16,7 +16,7 @@ import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
-import type { LoadManifest, LoadTypedoc, Manifest, Page } from '../../types.ts';
+import type { LoadTypedoc, Manifest, Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -87,8 +87,12 @@ export function compilerOptions({
   };
 }
 
+/**
+ * The store `docsManager(context)` returns: the manifest, the current
+ * group, and helpers for resolving pages and building hrefs.
+ */
 class DocsService {
-  @service declare router: RouterService;
+  @service private declare router: RouterService;
 
   private get apiDocs() {
     return typedocLoader(this);
@@ -98,10 +102,12 @@ class DocsService {
     return selected(this);
   }
 
-  _docs: Manifest | undefined;
+  private _docs: Manifest | undefined;
 
-  loadManifest: LoadManifest = () => Promise.resolve({ base: '/', groups: [] });
-
+  /**
+   * Wires the loaded docs modules into the store.
+   * The generated `setupKolay` calls this — apps rarely call it directly.
+   */
   setup = async (options: {
     /**
      * The module of the api docs virtual module.
@@ -170,6 +176,11 @@ class DocsService {
     return this.manifest;
   };
 
+  /**
+   * Internal wiring shared by `setup` and the test-support helpers.
+   *
+   * @private
+   */
   [PREPARE_DOCS](
     apiDocs: { packageNames: string[]; loadApiDocs: LoadTypedoc } | undefined,
     compiledDocs:
@@ -193,7 +204,7 @@ class DocsService {
     }
   }
 
-  get docs() {
+  private get docs() {
     assert(
       `Docs' manifest was not loaded. Be sure to call setup() before accessing anything on the docs service.`,
       this._docs
@@ -202,6 +213,9 @@ class DocsService {
     return this._docs;
   }
 
+  /**
+   * The loaded manifest: the app's `base` (rootURL) and every group.
+   */
   get manifest() {
     return this.docs;
   }
@@ -222,13 +236,11 @@ class DocsService {
   }
 
   /**
-   * We use the URL for denoting which group we're looking at.
-   * The first segment of the URL will either be a group,
-   * or part of the path segment on the root namespace.
+   * The name of the group currently being viewed.
    *
-   * This does open us up for collisions, so maybe
-   * we'll need to alias "root" with something, or at
-   * the very least not use a non-path segement for it.
+   * The first URL segment names the group — unless the current route is
+   * inside a scoped mount (`addRoutes(context, groupName)`), in which
+   * case the mount decides.
    */
   get selectedGroup() {
     // A scoped mount (addRoutes(context, groupName)) decides the group,
@@ -351,6 +363,10 @@ class DocsService {
     return this.router.urlFor(indexRouteNameFor(mountRoute));
   };
 
+  /**
+   * Navigate to a group's first page (or its mount's own URL, for a
+   * scoped mount).
+   */
   selectGroup = (group: string) => {
     assert(
       `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
@@ -375,17 +391,27 @@ class DocsService {
     this.router.transitionTo(`/${group}`);
   };
 
+  /**
+   * Every group's name, in manifest order.
+   */
   get availableGroups() {
     const groups = this.manifest?.groups ?? [];
 
     return groups.map((group) => group.name);
   }
 
+  /**
+   * The manifest entry for `selectedGroup`.
+   */
   @cached
   get currentGroup() {
     return this.groupFor(this.selectedGroup);
   }
 
+  /**
+   * The manifest entry for a group, by name. Asserts if the group
+   * doesn't exist.
+   */
   groupFor = (groupName: string | undefined) => {
     const groups = this.manifest?.groups ?? [];
 
@@ -427,3 +453,5 @@ class DocsService {
     );
   };
 }
+
+export type { DocsService };
