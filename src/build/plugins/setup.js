@@ -4,7 +4,6 @@
 import { existsSync } from 'node:fs';
 import { glob, readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { stripIndent } from 'common-tags';
 import send from 'send';
@@ -12,13 +11,30 @@ import send from 'send';
 import { virtualFile } from './helpers.js';
 import { reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
+import { normalizePath } from './utils.js';
 
-function normalizePath(path) {
-  if (path.startsWith('file:/')) {
-    return fileURLToPath(path);
+/**
+ * All groups contributed by every `docs()` usage in the config,
+ * in plugin order.
+ */
+function allGroups(state) {
+  return state.usages.flatMap((usage) => usage.groups ?? []);
+}
+
+function assertUniqueGroupNames(groups) {
+  const seen = new Set();
+  const duplicates = new Set();
+
+  for (const group of groups) {
+    (seen.has(group.name) ? duplicates : seen).add(group.name);
   }
 
-  return path;
+  if (duplicates.size > 0) {
+    throw new Error(
+      `Group names must be unique across every usage of the docs() plugin. ` +
+        `Duplicate group name(s): ${[...duplicates].join(', ')}`
+    );
+  }
 }
 
 /**
@@ -60,19 +76,19 @@ const ASSET_GLOB = `**/*.{${ASSET_EXTENSIONS.map((ext) =>
  * manifest-space URLs (`<base><groupName>/<relative path>`). The unnamed
  * entries are the co-located pages roots, whose page URLs drop that prefix.
  */
-function assetRoots(options, cwd) {
+function assetRoots(state, cwd) {
   return [
     { name: '', dir: join(cwd, 'app', 'templates') },
     { name: '', dir: join(cwd, 'src', 'templates') },
-    ...(options?.groups ?? []).map((group) => ({
+    ...allGroups(state).map((group) => ({
       name: group.name,
       dir: normalizePath(group.src),
     })),
   ];
 }
 
-/** @type {() => import('unplugin').UnpluginOptions} */
-export const setup = (options = {}) => {
+/** @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions} */
+export const setup = (state) => {
   const cwd = process.cwd();
   let baseUrl = '/';
   let isBuild = false;
@@ -88,16 +104,39 @@ export const setup = (options = {}) => {
   return {
     name: 'kolay:setup',
     vite: {
+      api: { kolay: state },
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
         isBuild = resolvedConfig.command === 'build';
         hasApiDocs = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:apidocs');
 
+        /**
+         * Discover every docs() usage in this config — the plugin may be
+         * used multiple times (e.g. different sources with different
+         * markdown processing). All usages contribute to one manifest /
+         * one set of virtual modules, served by the first ("primary")
+         * usage.
+         */
+        const states = resolvedConfig.plugins
+          .filter((plugin) => plugin.name === 'kolay:setup')
+          .map((plugin) => plugin.api?.kolay)
+          .filter(Boolean);
+
+        if (states.length > 1) {
+          const usages = states.map((usageState) => usageState.options);
+
+          states.forEach((usageState, i) => {
+            usageState.usages = usages;
+            usageState.isPrimary = i === 0;
+          });
+        }
+
         resolvedConfig.server ||= {};
         resolvedConfig.server.fs ||= {};
         resolvedConfig.server.fs.allow ||= [];
 
-        options.groups.forEach((group) => {
+        // Each usage allows its own groups (every instance runs this hook)
+        (state.options.groups ?? []).forEach((group) => {
           resolvedConfig.server.fs.allow.push(normalizePath(group.src));
         });
       },
@@ -107,7 +146,10 @@ export const setup = (options = {}) => {
        * vite's internal static-file middleware.
        */
       configureServer(server) {
-        const roots = assetRoots(options, cwd);
+        // configResolved has run: the primary usage serves every usage's docs
+        if (!state.isPrimary) return;
+
+        const roots = assetRoots(state, cwd);
 
         server.middlewares.use((req, res, next) => {
           const [urlPath = ''] = (req.url ?? '').split('?');
@@ -160,8 +202,10 @@ export const setup = (options = {}) => {
        */
       async buildStart() {
         if (!isBuild) return;
+        // configResolved has run: the primary usage emits every usage's assets
+        if (!state.isPrimary) return;
 
-        for (const { name, dir } of assetRoots(options, cwd)) {
+        for (const { name, dir } of assetRoots(state, cwd)) {
           // e.g. no src/templates — nothing to emit. Anything else that
           // throws below should fail the build loudly rather than silently
           // ship without doc assets.
@@ -263,6 +307,10 @@ export const setup = (options = {}) => {
       {
         importPath: 'kolay/compiled-docs:virtual',
         content: async () => {
+          const groups = allGroups(state);
+
+          assertUniqueGroupNames(groups);
+
           const result = {};
           const globs = [
             {
@@ -279,7 +327,7 @@ export const setup = (options = {}) => {
           /**
            * TODO: support `onlyDirectories` of what globby provides
            */
-          for (const group of options?.groups ?? []) {
+          for (const group of groups) {
             const path = relative(cwd, group.src);
 
             globs.push({
