@@ -9,18 +9,6 @@ import { fixViteForIssue362 } from './vite-issue-362.js';
 
 /**
  * @typedef {import('./docs-args.js').DocsOptions} DocsOptions
- *
- * @typedef {object} TypedocOptions
- * @property {string[]} packages - packages to generate typedoc JSON for
- * @property {string} [dest] - where the JSON is served/emitted (default: 'docs')
- *
- * @typedef {object} LegacyOptions
- * @property {Array<{ name: string, src: string }>} [groups]
- * @property {unknown[]} [remarkPlugins]
- * @property {unknown[]} [rehypePlugins]
- * @property {string} [scope]
- * @property {string[]} [packages]
- * @property {string} [dest]
  */
 
 /**
@@ -87,26 +75,6 @@ export function apiDocsPlugins(input) {
 }
 
 /**
- * @deprecated use `docs()` (and `apiDocs()`, if you have `packages`) instead.
- *
- * @param {LegacyOptions} options
- * @type {import('unplugin').UnpluginFactory<LegacyOptions>}
- */
-export function combinedPlugins(options) {
-  // pre-split behavior: multiple groups per call, no validation, and
-  // `dest` stays configurable
-  const state = createState(options);
-
-  return [
-    setup(state),
-    fixViteForIssue362(),
-    gjsmd(state),
-    docsVirtualGuard(state),
-    apiDocs(createState({ packages: options.packages ?? [], dest: options.dest })),
-  ];
-}
-
-/**
  * unplugin factories only receive one argument, so the public two-argument
  * form (see 'kolay/vite') passes `[groupName, options]` as a tuple.
  */
@@ -117,13 +85,3 @@ export const docs = /* #__PURE__ */ createUnplugin((args) =>
 const apiDocsUnplugin = /* #__PURE__ */ createUnplugin(apiDocsPlugins);
 
 export { apiDocsUnplugin as apiDocs };
-
-/**
- * @deprecated renamed — use `apiDocs`.
- */
-export const typedoc = apiDocsUnplugin;
-
-/**
- * @deprecated use `docs` (and `apiDocs`, if you have `packages`) instead.
- */
-export const combined = /* #__PURE__ */ createUnplugin(combinedPlugins);

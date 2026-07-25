@@ -22,7 +22,7 @@ will have already been called from the application route, so this isn't needed.
 
 ## `selectGroup`
 
-If your docs have multiple groups (configured via the `kolay()` build plugin), you can switch the active group in tests using `selectGroup`. This is useful when you need to test content or behavior that lives under a specific docs group.
+If your docs have multiple groups (one `docs()` build-plugin usage per group), you can switch the active group in tests using `selectGroup`. This is useful when you need to test content or behavior that lives under a specific docs group.
 
 ```js
 import { setupKolay, selectGroup } from "kolay/test-support";

@@ -6,55 +6,41 @@ import { generateTypeDocJSON } from './typedoc.js';
 const SECRET_INTERNAL_IMPORT = 'kolay/api-docs:virtual';
 
 /**
- * All packages contributed by every `apiDocs()` usage in the config, mapped
- * to the `dest` of the usage that declared them (first usage wins on
- * duplicates).
+ * All packages contributed by every `apiDocs()` usage in the config
+ * (first usage wins on duplicates).
  *
- * @return {Map<string, string | undefined>}
+ * @return {string[]}
  */
 function allPackages(state) {
-  const seen = new Map();
+  const seen = new Set();
 
   for (const usage of state.usages) {
     for (const pkg of usage.packages ?? []) {
-      if (!seen.has(pkg)) {
-        seen.set(pkg, usage.dest);
-      }
+      seen.add(pkg);
     }
   }
 
-  return seen;
+  return [...seen];
 }
 
 /**
  * @param {string} pkgName - a package name or relative path
- * @param {string | undefined} dest
  */
-function getDest(pkgName, dest) {
+function getDest(pkgName) {
   const flat = pkgName.replace(/^\.\//, '').replaceAll('/', '__');
 
-  return `${dest ?? 'docs'}/${flat}.json`;
+  return `docs/${flat}.json`;
 }
 
 /**
- * Generates JSON from typedoc given a target path.
+ * Generates typedoc JSON for the given packages and provides
+ * 'kolay/api-docs:virtual' for loading it. See the public `apiDocs()`
+ * entry in ./combined.js:
  *
- * May be used multiple times to generate multiple docs
- * for multiple libraries
- *
- * example:
  * ```js
- * import { typedoc, helpers } from 'kolay';
+ * import { docs, apiDocs } from 'kolay/vite';
  *
- * typedoc.webpack({
- *   dest: '/api-docs/ember-primitives.json
- *   entryPoints: [
- *     helpers.pkgGlob(
- *       require.resolve('ember-primitives'),
- *        'declarations'
- *      )
- *   ]
- * })
+ * apiDocs(['ember-primitives', './packages/my-library']);
  * ```
  *
  * @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions}
@@ -115,12 +101,12 @@ export const apiDocs = (state) => {
               if (req.originalUrl && req.originalUrl.length > 1) {
                 const assetUrl = req.originalUrl.split('?')[0];
 
-                const pkg = [...allPackages(state)].find(([pkgName, dest]) => {
-                  return baseUrl + getDest(pkgName, dest) === assetUrl;
+                const pkg = allPackages(state).find((pkgName) => {
+                  return baseUrl + getDest(pkgName) === assetUrl;
                 });
 
                 if (pkg) {
-                  const data = await generateTypeDocJSON({ packageName: pkg[0] });
+                  const data = await generateTypeDocJSON({ packageName: pkg });
 
                   res.setHeader('content-type', 'application/json');
 
@@ -145,7 +131,7 @@ export const apiDocs = (state) => {
       if (!state.isPrimary) return;
 
       await Promise.all(
-        [...allPackages(state)].map(async ([pkgName, destOption]) => {
+        allPackages(state).map(async (pkgName) => {
           let seen = cache.get(pkgName);
 
           if (!seen) {
@@ -156,11 +142,9 @@ export const apiDocs = (state) => {
           const data = await seen;
 
           if (data) {
-            const dest = getDest(pkgName, destOption);
-
             this.emitFile({
               type: 'asset',
-              fileName: dest,
+              fileName: getDest(pkgName),
               source: JSON.stringify(data),
             });
           }
@@ -170,17 +154,17 @@ export const apiDocs = (state) => {
     ...virtualFile({
       importPath: SECRET_INTERNAL_IMPORT,
       get content() {
-        const packages = [...allPackages(state)];
+        const packages = allPackages(state);
 
         return stripIndent`
           export const packageNames = [
-            ${packages.map(([pkgName]) => `'${pkgName}',`).join('\n  ')}
+            ${packages.map((pkgName) => `'${pkgName}',`).join('\n  ')}
           ];
 
           export const loadApiDocs = {
             ${packages
-              .map(([pkgName, dest]) => {
-                return `'${pkgName}': () => fetch('${baseUrl}${getDest(pkgName, dest)}'),`;
+              .map((pkgName) => {
+                return `'${pkgName}': () => fetch('${baseUrl}${getDest(pkgName)}'),`;
               })
               .join('\n  ')}
           };
