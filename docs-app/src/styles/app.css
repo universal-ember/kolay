@@ -45,38 +45,68 @@ html {
  * pico tokens the site already uses.
  */
 
-/* Runtime (templates/runtime/page.gjs): the guidebook — airy, prose-first */
+/* Runtime (templates/runtime/page.gjs): guide mode — quiet, typographic */
 .runtime-doc {
   line-height: 1.75;
 }
 
 .runtime-doc h1 {
-  margin-bottom: 1.5rem;
-  font-size: 2.4rem;
-  line-height: 1.15;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* the accent lives under the title, not around it */
+.runtime-doc h1::after {
+  content: "";
+  display: block;
+  width: 3.5rem;
+  height: 0.25rem;
+  margin-top: 0.75rem;
+  border-radius: 0.25rem;
+  background: var(--pico-primary);
+}
+
+/* headings keep their type — no grey code chips inside titles */
+.runtime-doc h1 code,
+.runtime-doc h2 code,
+.runtime-doc h3 code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: 0.95em;
 }
 
 .runtime-doc h2 {
-  margin-top: 2.5rem;
-  padding-left: 0.75rem;
-  border-left: 0.25rem solid var(--pico-primary);
+  margin-top: 3rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
 }
 
 .runtime-doc h3 {
-  margin-top: 2rem;
-  color: var(--pico-primary);
+  margin-top: 2.25rem;
+  font-size: 1.2rem;
+}
+
+.runtime-doc a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 .runtime-doc blockquote {
   border-left: 0.25rem solid var(--pico-primary);
-  background: color-mix(in oklab, var(--pico-card-background-color), var(--pico-primary) 6%);
+  background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 6%);
   border-radius: 0 0.5rem 0.5rem 0;
 }
 
 .runtime-doc pre.shiki {
-  border-radius: 0.5rem;
+  margin-block: 1.5rem;
+  padding: 1rem 1.25rem;
   border: 1px solid var(--pico-muted-border-color);
-  padding: 1rem;
+  border-radius: 0.6rem;
 }
 
 /* TypeDoc (templates/typedoc/page.gjs): the terminal — dense, monospace */

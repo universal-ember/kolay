@@ -16,78 +16,144 @@ function hasReason(error) {
 }
 
 /**
- * The Runtime group: a guidebook.
+ * The Runtime group: guide mode.
  *
- * Prose-first: a paper-like sheet with a comfortable reading measure,
- * an eyebrow label, airy headings. Nothing here is shared with the
- * other groups' templates — each owns its whole design.
+ * No card, no box — the whole site shifts into a reading mode while
+ * this route is active: a soft primary wash over the page, the side
+ * nav restyled into a chapter list, and a centered measure for the
+ * prose. The plain <style> below is intentionally unscoped — it only
+ * exists in the document while this route is rendered, which is what
+ * lets one route restyle the entire site.
+ *
  * (Prose typography that must reach the rendered markdown is in
  *  app.css under `.runtime-doc`.)
  */
 <template>
   <article class="runtime-doc" data-design="runtime">
-    <div class="guide-sheet">
-      <p class="guide-eyebrow" aria-hidden="true">Guide</p>
+    <p class="guide-eyebrow" aria-hidden="true">Guide</p>
 
-      <Page>
-        <:pending>
-          <div class="guide-loading" role="status">
-            <span class="guide-loading__bar"></span>
-            Preparing this guide…
-          </div>
-        </:pending>
+    <Page>
+      <:pending>
+        <div class="guide-loading" role="status">
+          <span class="guide-loading__bar"></span>
+          Preparing this guide…
+        </div>
+      </:pending>
 
-        <:error as |error|>
-          <aside class="guide-error" data-page-error role="alert">
-            <strong>This page wandered off.</strong>
-            {{#if (hasReason error)}}
-              <p>{{error.reason}}</p>
-              <details>
-                <summary>Original error</summary>
-                <pre>{{error.original.stack}}</pre>
-              </details>
-            {{else}}
-              <p>{{error}}</p>
-            {{/if}}
-          </aside>
-          {{(removeLoader)}}
-        </:error>
+      <:error as |error|>
+        <aside class="guide-error" data-page-error role="alert">
+          <strong>This page wandered off.</strong>
+          {{#if (hasReason error)}}
+            <p>{{error.reason}}</p>
+            <details>
+              <summary>Original error</summary>
+              <pre>{{error.original.stack}}</pre>
+            </details>
+          {{else}}
+            <p>{{error}}</p>
+          {{/if}}
+        </aside>
+        {{(removeLoader)}}
+      </:error>
 
-        <:success as |Prose|>
-          <Prose />
-          {{(removeLoader)}}
-        </:success>
-      </Page>
-    </div>
+      <:success as |Prose|>
+        <Prose />
+        {{(removeLoader)}}
+      </:success>
+    </Page>
   </article>
+
+  {{! route-wide guide mode: active only while a Runtime page renders }}
+  {{!-- prettier-ignore --}}
+  <style>
+    /* a soft wash from the top of the page */
+    .mobile-menu-wrapper__content.container {
+      background:
+        linear-gradient(
+          to bottom,
+          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 5%),
+          var(--pico-background-color) 14rem
+        );
+    }
+
+    /* the side nav becomes a chapter list */
+    .big-layout aside nav {
+      font-size: 0.9rem;
+
+      & > ul > li {
+        margin-bottom: 1.25rem;
+        color: var(--pico-muted-color);
+        font-size: 0.72rem;
+        font-weight: bold;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+      }
+
+      ul ul {
+        margin-top: 0.35rem;
+        font-size: 0.9rem;
+        letter-spacing: normal;
+        text-transform: none;
+      }
+
+      a {
+        display: block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 0.4rem;
+        font-weight: normal;
+      }
+
+      a:hover {
+        background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 8%);
+        text-decoration: none;
+      }
+
+      a.active {
+        background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 14%);
+        font-weight: bold;
+      }
+    }
+  </style>
 
   <style scoped>
     .runtime-doc {
       flex: 1;
-      display: flex;
-      padding: 1.5rem 0 4rem;
+      width: 100%;
+      max-width: 72ch;
+      margin: 1.5rem auto 3rem;
+      padding: 2.5rem 3rem 4rem;
+      /* a quiet content well against the page wash — deliberately flat
+       * (overriding pico's default article card shadow) */
+      background: var(--pico-card-background-color);
+      border-radius: 0.75rem;
+      box-shadow: none;
     }
 
-    .guide-sheet {
-      flex: 1;
-      width: 100%;
-      max-width: 78ch;
-      margin-inline: auto;
-      padding: 2rem 2.5rem 4rem;
-      background: var(--pico-card-background-color);
-      border: 1px solid var(--pico-muted-border-color);
-      border-top: 0.35rem solid var(--pico-primary);
-      border-radius: 0.75rem;
-      box-shadow: var(--pico-card-box-shadow);
+    @media (max-width: 960px) {
+      .runtime-doc {
+        margin-block: 0.5rem 2rem;
+        padding: 1.5rem 1.25rem 3rem;
+      }
     }
 
     .guide-eyebrow {
-      margin: 0 0 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0 0 1.5rem;
       color: var(--pico-primary);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: bold;
       letter-spacing: 0.35em;
       text-transform: uppercase;
+    }
+
+    .guide-eyebrow::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--pico-primary), transparent);
+      opacity: 0.45;
     }
 
     .guide-loading {
@@ -133,13 +199,6 @@ function hasReason(error) {
       border-left: 0.35rem solid var(--pico-del-color, #d32f2f);
       border-radius: 0.5rem;
       background: var(--pico-card-background-color);
-    }
-
-    @media (max-width: 960px) {
-      .guide-sheet {
-        padding: 1.5rem 1.25rem 3rem;
-        border-radius: 0.5rem;
-      }
     }
   </style>
 </template>
