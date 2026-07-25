@@ -10,7 +10,8 @@ There are two compilers, one per [file format](/authoring/index.md):
 
   ```js
   // vite.config.js
-  docs({
+  docs("guides", {
+    src: import.meta.resolve("./guides"),
     remarkPlugins: [...],
     rehypePlugins: [...],
   }),
@@ -42,7 +43,8 @@ Code fences have no highlighting out of the box. This site uses [shiki](https://
 // vite.config.js
 import rehypeShiki from "@shikijs/rehype";
 
-docs({
+docs("guides", {
+  src: import.meta.resolve("./guides"),
   rehypePlugins: [
     [rehypeShiki, { themes: { light: "github-light", dark: "github-dark" } }],
   ],

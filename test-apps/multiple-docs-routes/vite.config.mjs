@@ -5,24 +5,11 @@ import { docs } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
-    // Multiple usages of the docs plugin: each usage slurps up its own
-    // source directory, and each group is mounted as its own route
+    // One usage of the docs plugin per group: the last path segment is
+    // the group name, and each group is mounted as its own route
     // (see app/router.ts)
-    docs({
-      groups: [
-        {
-          name: "guides",
-          src: import.meta.resolve("./guides", import.meta.url),
-        },
-      ],
-    }),
-    docs({
-      groups: [
-        {
-          name: "demos",
-          src: import.meta.resolve("./demos", import.meta.url),
-        },
-      ],
+    docs(import.meta.resolve("./guides", import.meta.url)),
+    docs(import.meta.resolve("./demos", import.meta.url), {
       // only THIS usage's .gjs.md files get <Callout> in scope
       scope: `import { Callout } from '#app/components/callout.gjs';`,
     }),

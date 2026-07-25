@@ -20,16 +20,21 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    docs({
-      /* Options, see below */
-    }),
+    // one usage per group of docs:
+    docs("guides", { src: import.meta.resolve("./guides") }),
+
+    // or pass a path or URL directly — its last segment becomes the
+    // group name ("demos" here):
+    docs(import.meta.resolve("./demos")),
+
+    // with no arguments, only the co-located pages
+    // (app/templates, src/templates) are served
+    docs(),
   ],
 });
 ```
 
-```hbs live no-shadow
-<APIDocs @package="kolay" @module="declarations/types" @name="Options" />
-```
+The second argument holds the group's markdown options (`src`, `remarkPlugins`, `rehypePlugins`, `scope`).
 
 ## `scope`
 
@@ -44,8 +49,8 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    docs({
-      src: "public/docs",
+    docs("Docs", {
+      src: import.meta.resolve("./docs"),
       scope: `
         import { APIDocs, ComponentSignature } from 'kolay';
         import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -74,22 +79,20 @@ With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `
 
 There are a few ways you can collect docs:
 
-- using `src`, these are your main docs, but they could also be your only docs. If you have a small project, this will provide the best experience for working with documentation as changes to this directory are (especially if using the recommended `public/docs` value), will automatically reload when changes are made.
-- The `groups` option are where more freedom is provided. This can point at a `docs` folder in another folder in your project, or it can point at a `components` folder and the plugin will pick up all markdown files it finds in there. This can be useful for co-locating docs with their implementations.
+- co-located pages: anything in `app/templates` / `src/templates` is picked up automatically (no group, served from the root URL space) — even with zero-argument `docs()`.
+- a group per `docs()` usage: the `src` can point at a `docs` folder anywhere in (or outside) your project — including another package's `components` folder, picking up all markdown found there. This is useful for co-locating docs with their implementations.
 
 ## Using the plugin multiple times
 
-`docs()` may be used more than once in the same config — useful when different sources need different markdown processing (`remarkPlugins`, `rehypePlugins`, `scope`), or when you want each set of docs mounted as its own route.
+`docs()` is used once per group — so multiple groups means multiple usages, each with its own markdown processing (`remarkPlugins`, `rehypePlugins`, `scope`) if needed:
 
 ```js
 // vite.config.js
 export default defineConfig({
   plugins: [
-    docs({
-      groups: [{ name: "guides", src: import.meta.resolve("./guides") }],
-    }),
-    docs({
-      groups: [{ name: "api", src: import.meta.resolve("./api-docs") }],
+    docs(import.meta.resolve("./guides")),
+    docs("api", {
+      src: import.meta.resolve("./api-docs"),
       scope: `import { APIDocs } from 'kolay';`,
     }),
     // ...

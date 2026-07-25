@@ -82,10 +82,8 @@ import { docs, apiDocs } from "kolay/vite";
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      docs({
-        // This is your main docs in "this" app.
-        src: "public/docs",
-      }),
+      // Your main docs in "this" app: a "Docs" group
+      docs(import.meta.resolve("./docs")),
       // Optional: generate API Docs for packages listed here
       apiDocs(["kolay"]),
       // ...
@@ -96,18 +94,11 @@ export default defineConfig(({ mode }) => {
 // ...
 ```
 
-You can create docs for multiple libraries at once:
+You can create docs for multiple libraries at once — one `docs()` usage per group:
 
 ```js
-docs({
-  src: 'public/docs',
-  groups: [
-    {
-      name: 'Runtime',
-      src: import.meta.resolve('../ui/docs', import.meta.url),
-    },
-  ],
-}),
+docs(import.meta.resolve('./docs')),
+docs('Runtime', { src: import.meta.resolve('../ui/docs', import.meta.url) }),
 // Generate API docs from JSDoc
 // NOTE: these must all be declared in your projects package.json
 apiDocs(['kolay', 'ember-primitives', 'ember-resources']),
