@@ -4,8 +4,6 @@ Kolay requires some build-time static analysis to function.
 
 `docs(...)` is the only required plugin. This generates the navigation and information about how Kolay's runtime code will fetch the markdown documents deployed with the app's static assets. To also generate api docs from your libraries' type declarations, add the [`apiDocs(...)`][plugin-typedoc] plugin.
 
-> **Note:** `docs` + `typedoc` used to be one combined plugin, `kolay(...)`. That export still works (it composes the two), but is deprecated.
-
 [plugin-docs]: /development/configuring-docs.md
 [plugin-typedoc]: /TypeDoc/plugin/api-docs.md
 [ui-signature]: /TypeDoc/components/component-signature.md

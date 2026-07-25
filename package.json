@@ -46,10 +46,6 @@
     "./private/samples": {
       "types": "./declarations/browser/samples/-private/index.d.ts"
     },
-    "./webpack": {
-      "types": "./declarations/build/webpack.d.ts",
-      "import": "./src/build/webpack.js"
-    },
     "./vite": {
       "types": "./declarations/build/vite.d.ts",
       "import": "./src/build/vite.js"

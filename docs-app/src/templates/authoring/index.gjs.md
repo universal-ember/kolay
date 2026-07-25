@@ -33,7 +33,7 @@ Some prose here.
 
 ## `.gjs.md` — Build-time compiled
 
-Files ending in `.gjs.md` are compiled during the build (via the `gjsmd` plugin inside `kolay()`). The markdown is converted to a GJS component at build time, much like a regular `.gjs` file. Live codefences become real component invocations in the output.
+Files ending in `.gjs.md` are compiled during the build (by the `docs()` plugin). The markdown is converted to a GJS component at build time, much like a regular `.gjs` file. Live codefences become real component invocations in the output.
 
 **Pros:**
 
