@@ -4,7 +4,7 @@ import { apiDocs } from './api-docs/index.js';
 import { validatePackages } from './api-docs/validate.js';
 import { parseDocsArgs } from './docs-args.js';
 import { gjsmd } from './gjs-md.js';
-import { setup } from './setup.js';
+import { docsVirtualGuard, setup } from './setup.js';
 import { fixViteForIssue362 } from './vite-issue-362.js';
 
 /**
@@ -62,7 +62,9 @@ function createState(options) {
 export function docsPlugins(groupName, options) {
   const state = createState(parseDocsArgs(groupName, options));
 
-  return [setup(state), fixViteForIssue362(), gjsmd(state)].filter(Boolean);
+  return [setup(state), fixViteForIssue362(), gjsmd(state), docsVirtualGuard(state)].filter(
+    Boolean
+  );
 }
 
 /**
@@ -99,6 +101,7 @@ export function combinedPlugins(options) {
     setup(state),
     fixViteForIssue362(),
     gjsmd(state),
+    docsVirtualGuard(state),
     apiDocs(createState({ packages: options.packages ?? [], dest: options.dest })),
   ];
 }

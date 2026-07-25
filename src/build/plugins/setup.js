@@ -181,8 +181,41 @@ function groupSource(group) {
   };
 }
 
+const DOCS_MODULE_PREFIX = 'virtual:kolay/docs/';
+
 function docsModuleId(groupName) {
-  return `virtual:kolay/docs/${groupName}`;
+  return `${DOCS_MODULE_PREFIX}${groupName}`;
+}
+
+/**
+ * When 'virtual:kolay/docs/<group>' is imported for a group no docs()
+ * usage declares, fail with an actionable error instead of the bundler's
+ * generic "failed to resolve import".
+ *
+ * (Runs after this usage's own modules have had their chance to resolve;
+ *  known groups from other usages are left alone so their instances can
+ *  resolve them.)
+ *
+ * @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions}
+ */
+export function docsVirtualGuard(state) {
+  return {
+    name: 'kolay:docs-virtual-guard',
+    resolveId(id) {
+      if (!id.startsWith(DOCS_MODULE_PREFIX)) return;
+
+      const [groupName = ''] = id.slice(DOCS_MODULE_PREFIX.length).split('?');
+      const known = ['Home', ...allGroups(state).map((group) => group.name)];
+
+      if (known.includes(groupName)) return;
+
+      throw new Error(
+        `'${id}' does not exist, because no docs() usage declares a group named '${groupName}'. ` +
+          `Add docs('${groupName}', { src: ... }) — or docs(<a path or URL ending in '${groupName}'>) — ` +
+          `to your plugins. Declared groups: ${known.join(', ')}`
+      );
+    },
+  };
 }
 
 /**
