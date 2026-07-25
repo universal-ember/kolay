@@ -80,4 +80,29 @@ module('Runtime docs navigation', function (hooks) {
       assert.dom('aside nav').containsText(label);
     }
   });
+
+  test('the selected page shows the Selected store it returns', async function (assert) {
+    await visit('/Runtime/utilities/selected.md');
+
+    assert.dom('[data-page-error]').doesNotExist();
+
+    const section = [...document.querySelectorAll('h3')].find((h3) =>
+      h3.textContent?.includes('Selected')
+    );
+
+    assert.ok(section, 'the Selected section exists');
+
+    for (const member of ['doc', 'prose', 'isReady', 'isPending', 'hasError', 'error']) {
+      assert.dom('.runtime-doc').containsText(member);
+    }
+
+    assert
+      .dom('.runtime-doc')
+      .containsText(
+        'A human-readable error message',
+        'accessor doc comments render (they live on the get signature)'
+      );
+
+    assert.dom('.runtime-doc').doesNotContainText('router', 'private members stay hidden');
+  });
 });

@@ -22,9 +22,16 @@ export function selected(context: unknown) {
 type File = { default: string | ComponentLike };
 type Loader = () => Promise<File>;
 
+/**
+ * The store `selected(context)` returns.
+ */
 class Selected {
-  @service declare router: RouterService;
+  @service declare private router: RouterService;
 
+  /**
+   * The page-module map — path to document loader.
+   * `setupKolay` fills this in; reading it directly is rarely needed.
+   */
   compiledDocs: Record<string, Loader> = {};
 
   get #docs() {
@@ -47,6 +54,12 @@ class Selected {
     return fn?.();
   });
 
+  /**
+   * The rendered document (a component), if ready.
+   *
+   * While a new page loads (or after it errored), this keeps the
+   * previously rendered page, so navigation doesn't flash an empty screen.
+   */
   get prose() {
     if (this.error) {
       return;
@@ -55,14 +68,23 @@ class Selected {
     return this.doc.prose;
   }
 
+  /**
+   * Has the current page finished loading and compiling?
+   */
   get isReady() {
     return this.doc.isReady;
   }
 
+  /**
+   * Is the current page still loading / compiling?
+   */
   get isPending() {
     return !this.isReady;
   }
 
+  /**
+   * Did resolving the page, loading, or compiling fail?
+   */
   get hasError() {
     if (this.error) {
       return Boolean(this.error);
@@ -71,6 +93,9 @@ class Selected {
     return this.doc.hasError;
   }
 
+  /**
+   * A human-readable error message; `''` when there is none.
+   */
   @cached
   get error() {
     if (!this.#page) {
@@ -90,6 +115,9 @@ class Selected {
     return error;
   }
 
+  /**
+   * `Boolean(this.prose)`
+   */
   get hasProse() {
     return Boolean(this.prose);
   }
@@ -147,3 +175,5 @@ class Selected {
     console.groupEnd();
   }
 }
+
+export type { Selected };
