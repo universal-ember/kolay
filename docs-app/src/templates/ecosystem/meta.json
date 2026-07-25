@@ -1,3 +1,3 @@
 {
-  "order": ["memory-scroll", "ember-primitives", "ember-repl"]
+  "order": ["memory-scroll", "ember-primitives", "ember-repl", "ember-mobile-menu"]
 }
