@@ -58,6 +58,7 @@ module('Home docs navigation', function (hooks) {
       ['/ecosystem/memory-scroll', 'memory-scroll'],
       ['/ecosystem/ember-primitives', 'ember-primitives'],
       ['/ecosystem/ember-repl', 'ember-repl'],
+      ['/ecosystem/ember-mobile-menu', 'ember-mobile-menu'],
     ]) {
       await visit(url as string);
 
