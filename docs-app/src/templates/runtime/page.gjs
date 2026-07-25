@@ -125,8 +125,10 @@ function hasReason(error) {
     .runtime-doc {
       flex: 1;
       width: 100%;
-      max-width: 72ch;
-      margin: 1.5rem auto 3rem;
+      /* the content region fills the space next to the nav, same as
+       * every other group — the reading measure is handled inside
+       * (see .runtime-doc rules in app.css) */
+      margin: 1.5rem 0 3rem;
       padding: 2.5rem 3rem 4rem;
       /* the paper: an elevated sheet on the washed page */
       background: var(--pico-card-background-color);

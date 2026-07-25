@@ -50,6 +50,12 @@ html {
   line-height: 1.75;
 }
 
+/* the sheet spans the full content column; the text keeps a reading
+ * measure inside it (code blocks and tables may span) */
+.runtime-doc :where(h1, h2, h3, h4, p, ul, ol, blockquote, .guide-eyebrow) {
+  max-width: 75ch;
+}
+
 .runtime-doc h1 {
   margin-bottom: 2rem;
   font-size: 2.5rem;
