@@ -46,6 +46,22 @@ module('Runtime docs navigation', function (hooks) {
     assert.dom('.home-doc[data-design="home"]').exists();
   });
 
+  test('the Compiled page shows the CompileState it gives back', async function (assert) {
+    await visit('/Runtime/rendering/compiled.md');
+
+    assert.dom('[data-page-error]').doesNotExist();
+
+    const section = [...document.querySelectorAll('h3')].find((h3) =>
+      h3.textContent?.includes('CompileState')
+    );
+
+    assert.ok(section, 'the CompileState section exists');
+
+    for (const field of ['component', 'error', 'isReady', 'promise', 'reason']) {
+      assert.dom('.runtime-doc').containsText(field);
+    }
+  });
+
   test('page links use the invocation style of their APIs', async function (assert) {
     await visit('/Runtime/rendering/page.md');
 
