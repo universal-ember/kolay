@@ -1,6 +1,8 @@
 import 'ember-mobile-menu/themes/android';
 
+import Component from '@glimmer/component';
 import { on } from '@ember/modifier';
+import { service } from '@ember/service';
 
 import { pascalCase, sentenceCase } from 'change-case';
 // @ts-expect-error no types for the mobile-menu
@@ -8,12 +10,50 @@ import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
 import Route from 'ember-route-template';
 import { GroupNav, PageNav } from 'kolay/components';
+import rememberDocumentScroll from 'memory-scroll/modifiers/remember-document-scroll';
 import { ExternalLink } from 'nvp.ui';
 
 import { abbreviatedSha } from '~build/git';
 
 import type { TOC } from '@ember/component/template-only';
+import type RouterService from '@ember/routing/router-service';
 import type { Page } from 'kolay';
+import type MemoryScrollService from 'memory-scroll/services/memory-scroll';
+
+/**
+ * Navigating to a page scrolls to the top; going back (or forward)
+ * restores that history entry's scroll position.
+ *
+ * Each history entry has its own uuid (stamped by Ember's location),
+ * so a link click produces a fresh key — memory-scroll finds no saved
+ * position and scrolls to 0 — while back/forward reuses the entry's
+ * key and restores. Positions are recorded live by the modifier's
+ * scroll listener.
+ */
+class ScrollBehavior extends Component {
+  @service declare router: RouterService;
+  @service('memory-scroll') declare memory: MemoryScrollService;
+
+  constructor(owner: unknown, args: Record<string, unknown>) {
+    super(owner, args);
+
+    // keep the browser-restored position on reload: seed the initial
+    // entry's memory before the modifier's first restore runs
+    this.memory.memory.set(this.key, document.documentElement.scrollTop);
+  }
+
+  get key(): string {
+    this.router.currentURL; // recompute on every navigation
+
+    const state = window.history.state as { uuid?: string } | null;
+
+    return String(state?.uuid ?? this.router.currentURL);
+  }
+
+  <template>
+    <div aria-hidden="true" {{rememberDocumentScroll key=this.key}}></div>
+  </template>
+}
 
 const Menu: TOC<{ Element: SVGElement }> = <template>
   <svg x="0px" y="0px" viewBox="0 0 50 50" style="fill:currentColor" ...attributes><path
@@ -60,6 +100,7 @@ export default Route(
       </mmw.MobileMenu>
 
       <mmw.Content class="container">
+        <ScrollBehavior />
         <header>
           <div>
             <mmw.Toggle><Menu /></mmw.Toggle>

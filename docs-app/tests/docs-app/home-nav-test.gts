@@ -11,7 +11,7 @@ module('Home docs navigation', function (hooks) {
     const nav = document.querySelector('aside nav');
     const text = nav?.textContent?.replaceAll(/\s+/g, ' ') ?? '';
 
-    const sections = ['Install', 'Authoring', 'Development', 'Migrations'];
+    const sections = ['Install', 'Authoring', 'Development', 'Migrations', 'Ecosystem'];
     const positions = sections.map((section) => text.indexOf(section));
 
     assert.deepEqual(
@@ -25,6 +25,13 @@ module('Home docs navigation', function (hooks) {
       positions,
       'sections are in order'
     );
+  });
+
+  test('the scroll-behavior element is wired up', async function (assert) {
+    await visit('/install/index');
+
+    assert.ok(this.owner.lookup('service:memory-scroll'), 'memory-scroll service resolves');
+    assert.dom('.mobile-menu-wrapper__content > [aria-hidden]').exists('the keyed element renders');
   });
 
   test('visiting the root redirects to the first page of the default group', async function (assert) {
@@ -48,6 +55,9 @@ module('Home docs navigation', function (hooks) {
       ['/authoring/extending-markdown', 'Extending markdown'],
       ['/Runtime/rendering/compiled', 'Compiled'],
       ['/migrations/upgrading-from-5x', 'Upgrading from 5.x'],
+      ['/ecosystem/memory-scroll', 'memory-scroll'],
+      ['/ecosystem/ember-primitives', 'ember-primitives'],
+      ['/ecosystem/ember-repl', 'ember-repl'],
     ]) {
       await visit(url as string);
 
