@@ -31,13 +31,15 @@ module('Runtime docs navigation', function (hooks) {
     await visit('/Runtime/rendering/page.md');
 
     assert.dom('.runtime-doc[data-design="runtime"]').exists();
+    assert.dom('.runtime-doc .guide-eyebrow').containsText('Guide');
 
     await visit('/TypeDoc/components/api-docs.md');
 
     assert.dom('.typedoc-doc[data-design="typedoc"]').exists();
     assert
-      .dom('.typedoc-banner')
-      .containsText('Reference', 'the typedoc layout has its own structure');
+      .dom('.typedoc-doc .term__title')
+      .containsText('api reference', 'the typedoc layout has its own structure');
+    assert.dom('.typedoc-doc .guide-sheet').doesNotExist('designs are not shared');
 
     await visit('/install/index');
 

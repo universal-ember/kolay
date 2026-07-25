@@ -38,35 +38,98 @@ html {
 }
 
 /*
- * Prose typography per group. The layouts live in each group's own route
- * template (templates/runtime/page.gjs, templates/typedoc/page.gjs); the
- * rules here reach into the rendered markdown, which scoped styles can't,
- * keyed by each template's unique root class. Derived from the pico
- * tokens the site already uses.
+ * Prose typography per group. Each group's whole design is owned by its
+ * route template (templates/runtime/page.gjs, templates/typedoc/page.gjs);
+ * the rules here reach into the rendered markdown, which scoped styles
+ * can't, keyed by each template's unique root class. Derived from the
+ * pico tokens the site already uses.
  */
 
-/* Runtime (templates/runtime/page.gjs): guide-like reading */
+/* Runtime (templates/runtime/page.gjs): the guidebook — airy, prose-first */
+.runtime-doc {
+  line-height: 1.75;
+}
+
 .runtime-doc h1 {
-  border-left: 0.3rem solid var(--pico-primary);
-  padding-left: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 2.4rem;
+  line-height: 1.15;
 }
 
 .runtime-doc h2 {
-  border-left: 0.2rem solid var(--pico-primary-hover);
+  margin-top: 2.5rem;
   padding-left: 0.75rem;
+  border-left: 0.25rem solid var(--pico-primary);
 }
 
-/* TypeDoc (templates/typedoc/page.gjs): reference — monospace, underlined */
-.typedoc-doc h1,
-.typedoc-doc h2 {
+.runtime-doc h3 {
+  margin-top: 2rem;
+  color: var(--pico-primary);
+}
+
+.runtime-doc blockquote {
+  border-left: 0.25rem solid var(--pico-primary);
+  background: color-mix(in oklab, var(--pico-card-background-color), var(--pico-primary) 6%);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.runtime-doc pre.shiki {
+  border-radius: 0.5rem;
+  border: 1px solid var(--pico-muted-border-color);
+  padding: 1rem;
+}
+
+/* TypeDoc (templates/typedoc/page.gjs): the terminal — dense, monospace */
+.typedoc-doc .term__body {
   font-family: var(--pico-font-family-monospace, ui-monospace, "SFMono-Regular", Menlo, monospace);
+  font-size: 0.92rem;
+  line-height: 1.55;
 }
 
-.typedoc-doc h1 {
-  border-bottom: 2px solid var(--pico-primary);
-  padding-bottom: 0.25rem;
+.typedoc-doc .term__body h1,
+.typedoc-doc .term__body h2,
+.typedoc-doc .term__body h3 {
+  font-family: inherit;
+  line-height: 1.2;
 }
 
-.typedoc-doc pre.shiki {
+.typedoc-doc .term__body h1 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.typedoc-doc .term__body h2 {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+}
+
+.typedoc-doc .term__body h3 {
+  font-size: 1.05rem;
+}
+
+/* the markdown-source aesthetic: headings show their fence */
+.typedoc-doc .term__body h1::before {
+  content: "# ";
+  color: var(--pico-muted-color);
+}
+
+.typedoc-doc .term__body h2::before {
+  content: "## ";
+  color: var(--pico-muted-color);
+}
+
+.typedoc-doc .term__body h3::before {
+  content: "### ";
+  color: var(--pico-muted-color);
+}
+
+.typedoc-doc .term__body pre.shiki {
+  border: 1px solid var(--pico-muted-border-color);
   border-left: 3px solid var(--pico-primary);
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
+}
+
+.typedoc-doc .term__body :not(pre) > code {
+  background: color-mix(in oklab, var(--pico-code-background-color), var(--pico-color) 8%);
 }
