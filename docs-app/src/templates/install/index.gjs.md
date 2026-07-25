@@ -114,8 +114,11 @@ If using `@ember/routing/router` or `@embroider/router`
 
 You'll want to also install `ember-primitives`, so that you can use the [`@properLinks`] decorator on the router, giveng you the ability to _just use anchor tags (`<a>`)_ (a requirement for in-browser linking in markdown).
 
+The primary way to add routes is through each group's own virtual module — `docs('docs')` (or `docs(import.meta.resolve('./docs'))`) enables `virtual:kolay/docs/docs`, whose `addRoutes` brings that group's docs into whatever route it's called from:
+
 ```js
-import { addRoutes } from "kolay";
+import { addRoutes } from "kolay"; // for the co-located pages
+import { addRoutes as addDocsRoutes } from "virtual:kolay/docs/docs";
 import { properLinks } from "ember-primitives/proper-links";
 
 @properLinks
@@ -125,11 +128,18 @@ export default class Router extends EmberRouter {
 }
 
 Router.map(function () {
+  // the co-located pages (app/templates, src/templates)
   addRoutes(this);
+
+  // each group in its own mount — the mount's path is up to you, and
+  // each mount can have its own route template (its own design!)
+  this.route("docs", function () {
+    addDocsRoutes(this);
+  });
 });
 ```
 
-In the spirit of dynamically compiled and discovered docs, this adds a `*wildcard` route that matches all paths and then tries to derive which file to load from there.
+Each mount adds a `*wildcard` route that matches all paths beneath it and derives which file to load from there. (`addRoutes(this)` at the top level also serves _every_ group from the root URL space, if you don't need per-group mounts.)
 
 Deploying under a custom `rootURL` (e.g. a PR preview at `/pr-1234/`) is fully supported: navigation, redirects, and root-absolute links and images in authored markdown are all rebased onto the `rootURL` automatically. See [Links and images](/authoring/links-and-images.md) for how to write paths in your content.
 

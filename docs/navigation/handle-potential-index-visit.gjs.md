@@ -57,14 +57,16 @@ export default class GuidesRoute extends Route {
 paired with:
 
 ```js
+import { addRoutes as addGuidesRoutes } from 'virtual:kolay/docs/guides';
+
 Router.map(function () {
   this.route('guides', function () {
-    addRoutes(this);
+    addGuidesRoutes(this);
   });
 });
 ```
 
-An unscoped mount's path must match the group's name; a scoped mount (`addRoutes(this, 'group-name')`) may live anywhere.
+The virtual module's `addRoutes` is scoped to its group, so the mount may live anywhere. (An unscoped `addRoutes(this)` from `kolay` works too — its mount's path must then match the group's name.)
 
 ## API Reference
 

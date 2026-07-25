@@ -30,15 +30,18 @@ module('Runtime docs navigation', function (hooks) {
   test('each group mount has its own design', async function (assert) {
     await visit('/Runtime/rendering/page.md');
 
-    assert.dom('article.doc-page[data-design="runtime"]').exists();
+    assert.dom('.runtime-doc[data-design="runtime"]').exists();
 
     await visit('/TypeDoc/components/api-docs.md');
 
-    assert.dom('article.doc-page[data-design="typedoc"]').exists();
+    assert.dom('.typedoc-doc[data-design="typedoc"]').exists();
+    assert
+      .dom('.typedoc-banner')
+      .containsText('Reference', 'the typedoc layout has its own structure');
 
     await visit('/install/index');
 
-    assert.dom('article.doc-page[data-design="home"]').exists();
+    assert.dom('.home-doc[data-design="home"]').exists();
   });
 
   test('page links use the invocation style of their APIs', async function (assert) {

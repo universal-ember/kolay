@@ -10,9 +10,23 @@ import type Transition from '@ember/routing/transition';
 /**
  * Adds the wildcard docs route.
  *
- * May be called at the top level of the router map (all groups are served
- * from the root URL space), or inside nested routes to mount groups as
- * their own routes — once per mount:
+ * The primary way to mount a group is through its virtual module —
+ * `docs('foo')` enables `virtual:kolay/docs/foo`, whose `addRoutes` is
+ * this function, pre-scoped to the group:
+ *
+ * ```js
+ * import { addRoutes as addFooRoutes } from 'virtual:kolay/docs/foo';
+ *
+ * Router.map(function () {
+ *   this.route('help', function () {
+ *     addFooRoutes(this);
+ *   });
+ * });
+ * ```
+ *
+ * Directly, it may be called at the top level of the router map (all
+ * groups are served from the root URL space), or inside nested routes to
+ * mount groups as their own routes — once per mount:
  *
  * ```js
  * Router.map(function () {

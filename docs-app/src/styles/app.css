@@ -38,48 +38,35 @@ html {
 }
 
 /*
- * Per-group designs. Each group's mount renders the shared DocPage with
- * its own data-design (see templates/runtime/page.gjs etc.), and these
- * rules — derived from the pico tokens the site already uses — give each
- * section its own look.
+ * Prose typography per group. The layouts live in each group's own route
+ * template (templates/runtime/page.gjs, templates/typedoc/page.gjs); the
+ * rules here reach into the rendered markdown, which scoped styles can't,
+ * keyed by each template's unique root class. Derived from the pico
+ * tokens the site already uses.
  */
 
-/* Runtime: guide-like reading — headings carry a primary rule on the left */
-.doc-page[data-design="runtime"] h1 {
+/* Runtime (templates/runtime/page.gjs): guide-like reading */
+.runtime-doc h1 {
   border-left: 0.3rem solid var(--pico-primary);
   padding-left: 0.75rem;
 }
 
-.doc-page[data-design="runtime"] h2 {
+.runtime-doc h2 {
   border-left: 0.2rem solid var(--pico-primary-hover);
   padding-left: 0.75rem;
 }
 
-/* TypeDoc: reference-like — monospace headings, underlined, with an
- * "API" marker on the page title */
-.doc-page[data-design="typedoc"] h1,
-.doc-page[data-design="typedoc"] h2 {
+/* TypeDoc (templates/typedoc/page.gjs): reference — monospace, underlined */
+.typedoc-doc h1,
+.typedoc-doc h2 {
   font-family: var(--pico-font-family-monospace, ui-monospace, "SFMono-Regular", Menlo, monospace);
 }
 
-.doc-page[data-design="typedoc"] h1 {
+.typedoc-doc h1 {
   border-bottom: 2px solid var(--pico-primary);
   padding-bottom: 0.25rem;
 }
 
-.doc-page[data-design="typedoc"] h1::before {
-  content: "API";
-  display: inline-block;
-  margin-right: 0.75rem;
-  padding: 0.05rem 0.5rem;
-  border: 1px solid var(--pico-primary);
-  border-radius: 0.25rem;
-  color: var(--pico-primary);
-  font-size: 0.45em;
-  vertical-align: middle;
-  letter-spacing: 0.1em;
-}
-
-.doc-page[data-design="typedoc"] pre.shiki {
+.typedoc-doc pre.shiki {
   border-left: 3px solid var(--pico-primary);
 }

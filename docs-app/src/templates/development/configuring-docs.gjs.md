@@ -104,23 +104,22 @@ All usages contribute to _one_ manifest: every group shows up in `docsManager`, 
 
 Group names must be unique across all usages.
 
-Each group can then be mounted as its own route. Pass the group's name to `addRoutes` to scope the mount — it brings all of that group's docs into the route it was called from, no matter what the route's path is:
+Each group is then mounted as its own route — primarily through its virtual module's `addRoutes`, which is pre-scoped to the group and brings all of its docs into the route it was called from, no matter what the route's path is:
 
 ```js
 // app/router.js
-import { addRoutes } from "kolay";
+import { addRoutes as addGuidesRoutes } from "virtual:kolay/docs/guides";
 
 Router.map(function () {
   this.route("help", function () {
-    addRoutes(this, "guides"); // /help/... serves the guides group
-  });
-  this.route("api", function () {
-    addRoutes(this); // unscoped: the path must match the group's name
+    addGuidesRoutes(this); // /help/... serves the guides group
   });
 });
 ```
 
-Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` links, active states, and index redirects all use the mount's URL rather than `/GroupName`.
+(The equivalent lower-level form is `addRoutes(this, "guides")` from `kolay`; an unscoped `addRoutes(this)` inside a route serves whichever group the URL names, so its path must match the group's name.)
+
+Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` links, active states, and index redirects all use the mount's URL rather than `/GroupName`. And since every mount is its own route, every mount can have its own route template — its own layout and design per group (this site's Runtime and TypeDoc sections do exactly that).
 
 ## Each group's virtual module
 

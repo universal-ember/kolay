@@ -16,43 +16,42 @@ function hasReason(error) {
 }
 
 /**
- * The shared page shell: loading / error / prose handling.
+ * The shared page BEHAVIOR: loading / error / prose handling.
  *
- * Each group's mount renders this with its own `@design`, which the
- * per-design styles in app.css key off of — that's how the Runtime and
- * TypeDoc sections get different looks.
+ * Layout and styling deliberately live in each group's own route
+ * template (templates/page.gjs, templates/runtime/page.gjs,
+ * templates/typedoc/page.gjs) — that is how each group gets its own
+ * design.
  */
 export const DocPage = <template>
-  <article class="doc-page" data-design={{@design}}>
-    <Page>
-      <:pending>
-        <div class="loading-page" role="status">
-          Loading, compiling, etc
-        </div>
-      </:pending>
+  <Page>
+    <:pending>
+      <div class="loading-page" role="status">
+        Loading, compiling, etc
+      </div>
+    </:pending>
 
-      <:error as |error|>
-        <div class="error" data-page-error role="alert">
-          {{#if (hasReason error)}}
-            {{error.reason}}
-            <details>
-              <summary>Original error</summary>
-              <pre>{{error.original.stack}}</pre>
-            </details>
-          {{else}}
-            {{error}}
-          {{/if}}
-        </div>
-        {{(removeLoader)}}
-      </:error>
+    <:error as |error|>
+      <div class="error" data-page-error role="alert">
+        {{#if (hasReason error)}}
+          {{error.reason}}
+          <details>
+            <summary>Original error</summary>
+            <pre>{{error.original.stack}}</pre>
+          </details>
+        {{else}}
+          {{error}}
+        {{/if}}
+      </div>
+      {{(removeLoader)}}
+    </:error>
 
-      <:success as |Prose|>
-        <Prose />
-        {{(removeLoader)}}
-      </:success>
+    <:success as |Prose|>
+      <Prose />
+      {{(removeLoader)}}
+    </:success>
 
-    </Page>
-  </article>
+  </Page>
 
   <style scoped>
     @keyframes shimmer {
