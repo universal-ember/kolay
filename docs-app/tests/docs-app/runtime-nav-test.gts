@@ -27,6 +27,20 @@ module('Runtime docs navigation', function (hooks) {
     );
   });
 
+  test('each group mount has its own design', async function (assert) {
+    await visit('/Runtime/rendering/page.md');
+
+    assert.dom('article.doc-page[data-design="runtime"]').exists();
+
+    await visit('/TypeDoc/components/api-docs.md');
+
+    assert.dom('article.doc-page[data-design="typedoc"]').exists();
+
+    await visit('/install/index');
+
+    assert.dom('article.doc-page[data-design="home"]').exists();
+  });
+
   test('page links use the invocation style of their APIs', async function (assert) {
     await visit('/Runtime/rendering/page.md');
 

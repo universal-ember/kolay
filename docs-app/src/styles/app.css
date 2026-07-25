@@ -36,3 +36,50 @@ html {
     --color-text: var(--pico-color);
   }
 }
+
+/*
+ * Per-group designs. Each group's mount renders the shared DocPage with
+ * its own data-design (see templates/runtime/page.gjs etc.), and these
+ * rules — derived from the pico tokens the site already uses — give each
+ * section its own look.
+ */
+
+/* Runtime: guide-like reading — headings carry a primary rule on the left */
+.doc-page[data-design="runtime"] h1 {
+  border-left: 0.3rem solid var(--pico-primary);
+  padding-left: 0.75rem;
+}
+
+.doc-page[data-design="runtime"] h2 {
+  border-left: 0.2rem solid var(--pico-primary-hover);
+  padding-left: 0.75rem;
+}
+
+/* TypeDoc: reference-like — monospace headings, underlined, with an
+ * "API" marker on the page title */
+.doc-page[data-design="typedoc"] h1,
+.doc-page[data-design="typedoc"] h2 {
+  font-family: var(--pico-font-family-monospace, ui-monospace, "SFMono-Regular", Menlo, monospace);
+}
+
+.doc-page[data-design="typedoc"] h1 {
+  border-bottom: 2px solid var(--pico-primary);
+  padding-bottom: 0.25rem;
+}
+
+.doc-page[data-design="typedoc"] h1::before {
+  content: "API";
+  display: inline-block;
+  margin-right: 0.75rem;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--pico-primary);
+  border-radius: 0.25rem;
+  color: var(--pico-primary);
+  font-size: 0.45em;
+  vertical-align: middle;
+  letter-spacing: 0.1em;
+}
+
+.doc-page[data-design="typedoc"] pre.shiki {
+  border-left: 3px solid var(--pico-primary);
+}

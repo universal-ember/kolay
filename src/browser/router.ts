@@ -85,15 +85,20 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
    * there is no group in the URL, so a scoped top-level mount's group, or
    * the default (first) group, is used.
    */
+  const wildcardParam = parent?.params?.page;
+
   const candidates =
     transition.to.name === 'index'
       ? [groupNameForRoute('page'), docs.availableGroups[0]]
       : [
           // the mount's own index: the wildcard is a sibling route
           parent && groupNameForRoute(`${parent.name}.page`),
-          // an (empty) wildcard visit: the wildcard is the parent itself
-          parent && groupNameForRoute(parent.name),
-          parent?.params?.page,
+          // an empty wildcard visit: the wildcard is the parent itself.
+          // Only when no page was actually requested — every page visit
+          // also lands on the wildcard's index (with the page as the
+          // param), and those must not be redirected.
+          parent && !wildcardParam && groupNameForRoute(parent.name),
+          wildcardParam,
           parent?.localName,
         ];
 
