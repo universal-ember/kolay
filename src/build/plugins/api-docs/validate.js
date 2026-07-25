@@ -40,7 +40,7 @@ function packageExists(entry, cwd) {
 }
 
 /**
- * typedoc() receives a string, or an array of strings, where each entry
+ * apiDocs() receives a string, or an array of strings, where each entry
  * is either
  * - a package name, which must be resolvable from the consuming project
  *   (i.e.: actually installed) — paths within packages are not allowed,
@@ -59,8 +59,8 @@ export function validatePackages(input, cwd) {
 
   if (!Array.isArray(packages)) {
     throw new Error(
-      `typedoc() expects a package name or relative path, or an array of them, ` +
-        `e.g.: typedoc(['my-library', './packages/my-library']). ` +
+      `apiDocs() expects a package name or relative path, or an array of them, ` +
+        `e.g.: apiDocs(['my-library', './packages/my-library']). ` +
         `Received: ${describe(input)}`
     );
   }
@@ -115,7 +115,7 @@ export function validatePackages(input, cwd) {
 
   if (problems.length > 0) {
     throw new Error(
-      `typedoc() received invalid entries:\n` +
+      `apiDocs() received invalid entries:\n` +
         problems.map((problem) => `  - ${problem}`).join('\n')
     );
   }

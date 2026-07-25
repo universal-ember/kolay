@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import { docs, typedoc } from "kolay/vite";
+import { docs, apiDocs } from "kolay/vite";
 import { extensions, ember } from "@embroider/vite";
 import { babel } from "@rollup/plugin-babel";
 
@@ -18,7 +18,7 @@ export default defineConfig({
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         `,
     }),
-    typedoc(["ember-primitives", "ember-resources"]),
+    apiDocs(["ember-primitives", "ember-resources"]),
     ember(),
     babel({
       babelHelpers: "runtime",

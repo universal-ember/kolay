@@ -1,4 +1,4 @@
-import { docs as _docs, kolay as _kolay, typedoc as _typedoc } from './plugins/index.js';
+import { apiDocs as _apiDocs, docs as _docs, kolay as _kolay } from './plugins/index.js';
 
 /**
  * The markdown-docs plugin.
@@ -8,7 +8,12 @@ export const docs = _docs.vite;
 /**
  * The api-docs plugin (requires `docs` to also be used).
  */
-export const typedoc = _typedoc.vite;
+export const apiDocs = _apiDocs.vite;
+
+/**
+ * @deprecated renamed — use `apiDocs`.
+ */
+export const typedoc = _apiDocs.vite;
 
 /**
  * @deprecated use `docs` (and `typedoc`, if you have `packages`) instead.

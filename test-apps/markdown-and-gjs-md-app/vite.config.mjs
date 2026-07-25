@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { extensions, ember } from "@embroider/vite";
 import { babel } from "@rollup/plugin-babel";
-import { docs, typedoc } from "kolay/vite";
+import { docs, apiDocs } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
@@ -13,7 +13,7 @@ export default defineConfig({
         },
       ],
     }),
-    typedoc(["ember-primitives", "ember-resources"]),
+    apiDocs(["ember-primitives", "ember-resources"]),
     ember(),
     babel({
       babelHelpers: "runtime",

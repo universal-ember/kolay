@@ -77,13 +77,13 @@ export const setup = (options = {}) => {
   let baseUrl = '/';
   let isBuild = false;
   /**
-   * Whether a typedoc() plugin is present in the config — when it isn't,
+   * Whether an apiDocs() plugin is present in the config — when it isn't,
    * this plugin serves an empty 'kolay/api-docs:virtual' so that
    * 'kolay/setup' can always import it. Set accurately during vite's
    * configResolved; the default keeps the fallback dormant so it can
-   * never shadow a real typedoc().
+   * never shadow a real apiDocs().
    */
-  let hasTypedoc = true;
+  let hasApiDocs = true;
 
   return {
     name: 'kolay:setup',
@@ -91,7 +91,7 @@ export const setup = (options = {}) => {
       configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
         isBuild = resolvedConfig.command === 'build';
-        hasTypedoc = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:typedoc');
+        hasApiDocs = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:apidocs');
 
         resolvedConfig.server ||= {};
         resolvedConfig.server.fs ||= {};
@@ -190,8 +190,8 @@ export const setup = (options = {}) => {
     ...virtualFile([
       {
         importPath: 'kolay/api-docs:virtual',
-        // dormant whenever a typedoc() plugin provides the real thing
-        when: () => !hasTypedoc,
+        // dormant whenever an apiDocs() plugin provides the real thing
+        when: () => !hasApiDocs,
         content: stripIndent`
           export const packageNames = [];
           export const loadApiDocs = {};

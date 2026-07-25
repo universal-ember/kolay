@@ -11,12 +11,12 @@ type Tree = { pages: Array<Node & { pages?: Node[] }> };
 describe('nav-only link entries', () => {
   test('a json config with an href (and no page of its own) becomes an entry', async () => {
     const tree = (await parse(
-      ['development/rendering-pages.md', 'development/configuring-typedoc.json'],
+      ['development/rendering-pages.md', 'development/configuring-api-docs.json'],
       cwd,
       [
         {
-          path: 'development/configuring-typedoc.json',
-          config: { href: '/TypeDoc/plugin/typedoc.md', componentName: 'Configuring typedoc(...)' },
+          path: 'development/configuring-api-docs.json',
+          config: { href: '/TypeDoc/plugin/api-docs.md', title: 'Configuring apiDocs(...)' },
         },
       ]
     )) as unknown as Tree;
@@ -28,29 +28,29 @@ describe('nav-only link entries', () => {
     const names = (development?.pages ?? []).map((node) => node.name);
 
     expect(names).toContain('rendering-pages');
-    expect(names).toContain('configuring-typedoc');
+    expect(names).toContain('configuring-api-docs');
 
-    const link = (development?.pages ?? []).find((node) => node.name === 'configuring-typedoc');
+    const link = (development?.pages ?? []).find((node) => node.name === 'configuring-api-docs');
 
-    expect(link?.href).toBe('/TypeDoc/plugin/typedoc.md');
-    expect(link?.componentName).toBe('Configuring typedoc(...)');
+    expect(link?.href).toBe('/TypeDoc/plugin/api-docs.md');
+    expect(link?.title).toBe('Configuring apiDocs(...)');
   });
 
   test('the group prefix does not apply to the href; the base does', async () => {
-    const tree = (await parse(['development/configuring-typedoc.json'], cwd, [
+    const tree = (await parse(['development/configuring-api-docs.json'], cwd, [
       {
-        path: 'development/configuring-typedoc.json',
-        config: { href: '/TypeDoc/plugin/typedoc.md' },
+        path: 'development/configuring-api-docs.json',
+        config: { href: '/TypeDoc/plugin/api-docs.md' },
       },
     ])) as unknown as Tree;
 
     addPaths(tree as unknown as Parameters<typeof addPaths>[0], '/Home-ish-prefix', '/my-app/');
 
     const development = tree.pages.find((node) => node.name === 'development');
-    const link = (development?.pages ?? []).find((node) => node.name === 'configuring-typedoc');
+    const link = (development?.pages ?? []).find((node) => node.name === 'configuring-api-docs');
 
-    expect(link?.appRelativePath).toBe('/TypeDoc/plugin/typedoc.md');
-    expect(link?.path).toBe('/my-app/TypeDoc/plugin/typedoc.md');
+    expect(link?.appRelativePath).toBe('/TypeDoc/plugin/api-docs.md');
+    expect(link?.path).toBe('/my-app/TypeDoc/plugin/api-docs.md');
   });
 
   test('configs that belong to a page, and meta files, do not become entries', async () => {

@@ -9,19 +9,19 @@ docs/
     selected.json
 ```
 
-Any keys in that file are merged into the page's manifest entry. The convention for display names is `componentName`:
+Any keys in that file are merged into the page's manifest entry. The link text is `title`:
 
 ```jsonc
 // selected.json
-{ "componentName": "selected(...)" }
+{ "title": "selected(...)" }
 ```
 
 Your nav decides how to use it — this site's `nameFor` helper, passed to [`<PageNav />`](/Runtime/navigation/page-nav.md), looks like:
 
 ```js
 export function nameFor(page) {
-  if ("componentName" in page) {
-    return `${page.componentName}`;
+  if (page.title) {
+    return page.title;
   }
 
   return sentenceCase(page.name);
@@ -37,13 +37,13 @@ That is how the [Runtime](/Runtime/rendering/page.md) and [TypeDoc](/TypeDoc/com
 A json file with an `href` — and no markdown file of its own — becomes a nav entry that is just a link. It participates in naming and ordering like any page, but points wherever the `href` says, e.g. a page in another group:
 
 ```jsonc
-// development/configuring-typedoc.json
+// development/configuring-api-docs.json
 {
-  "href": "/TypeDoc/plugin/typedoc.md",
-  "componentName": "Configuring typedoc(...)",
+  "href": "/TypeDoc/plugin/api-docs.md",
+  "title": "Configuring apiDocs(...)",
 }
 ```
 
-That file produces the "Configuring typedoc(...)" entry in this very section — it links over to the TypeDoc group.
+That file produces the "Configuring apiDocs(...)" entry in this very section — it links over to the TypeDoc group.
 
 The `href` is written app-relative (as if the app were deployed at `/`); the app's `rootURL` is applied automatically, the same as for authored links.

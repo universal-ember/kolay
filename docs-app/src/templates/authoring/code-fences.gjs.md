@@ -53,7 +53,7 @@ Live fences aren't limited to Ember. These are the fence languages repl-sdk can 
 Where they work differs by compile mode:
 
 - In **`.gjs.md`** files (build-time compiled), live fences may be `gjs` or `hbs`. They compile to real components during the build, so they get full build-time error checking.
-- In **`.md`** files (runtime compiled) — and in codefences inside your JSDoc, rendered by the [TypeDoc components](/TypeDoc/plugin/typedoc.md) — the browser compiler is used, and all of the targets above are available. Non-Ember targets fetch their dependencies (react, svelte, vue, mermaid, …) on demand, so pages only pay for what they render.
+- In **`.md`** files (runtime compiled) — and in codefences inside your JSDoc, rendered by the [TypeDoc components](/TypeDoc/plugin/api-docs.md) — the browser compiler is used, and all of the targets above are available. Non-Ember targets fetch their dependencies (react, svelte, vue, mermaid, …) on demand, so pages only pay for what they render.
 
 An `hbs` fence is implicitly wrapped in a template, so it's the quickest way to demo component invocations:
 
@@ -70,7 +70,7 @@ Live fences can `import` from anything your app can import from. To use componen
 - for `.gjs.md` files: the [`scope` option of `docs()`](/development/configuring-docs.md) — a string of import statements prepended to every file at build time
 - for `.md` files: the `topLevelScope` and `modules` options of `setupKolay()` — values and importable modules provided to the runtime compiler
 
-By default, the runtime scope already provides `<Shadowed>` (from `ember-primitives`) for style isolation, and the [TypeDoc components](/TypeDoc/plugin/typedoc.md): `<APIDocs>`, `<ComponentSignature>`, `<ModifierSignature>`, `<HelperSignature>`, and `<CommentQuery>`.
+By default, the runtime scope already provides `<Shadowed>` (from `ember-primitives`) for style isolation, and the [TypeDoc components](/TypeDoc/plugin/api-docs.md): `<APIDocs>`, `<ComponentSignature>`, `<ModifierSignature>`, `<HelperSignature>`, and `<CommentQuery>`.
 
 ## Escaping
 
