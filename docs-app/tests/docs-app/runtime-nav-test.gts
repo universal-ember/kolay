@@ -27,6 +27,25 @@ module('Runtime docs navigation', function (hooks) {
     );
   });
 
+  test('each group mount has its own design', async function (assert) {
+    await visit('/Runtime/rendering/page.md');
+
+    assert.dom('.runtime-doc[data-design="runtime"]').exists();
+    assert.dom('.runtime-doc .guide-eyebrow').containsText('Guide');
+
+    await visit('/TypeDoc/components/api-docs.md');
+
+    assert.dom('.typedoc-doc[data-design="typedoc"]').exists();
+    assert
+      .dom('.typedoc-doc .term__title')
+      .containsText('api reference', 'the typedoc layout has its own structure');
+    assert.dom('.typedoc-doc .guide-sheet').doesNotExist('designs are not shared');
+
+    await visit('/install/index');
+
+    assert.dom('.home-doc[data-design="home"]').exists();
+  });
+
   test('page links use the invocation style of their APIs', async function (assert) {
     await visit('/Runtime/rendering/page.md');
 

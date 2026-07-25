@@ -5,13 +5,8 @@ import { docs, apiDocs } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
-    docs({
-      groups: [
-        {
-          name: "Docs",
-          src: import.meta.resolve("./docs", import.meta.url),
-        },
-      ],
+    docs("Docs", {
+      src: import.meta.resolve("./docs", import.meta.url),
       scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         `,

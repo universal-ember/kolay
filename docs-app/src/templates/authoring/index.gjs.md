@@ -77,16 +77,9 @@ Both `.md` and `.gjs.md` files can live side-by-side in the same `src` directory
 - `.gjs.md` files are compiled to GJS components at build time
 
 ```js
-docs({
-  groups: [
-    {
-      name: "Guides",
-      src: "./docs/guides",
-      // This directory can contain a mix of .md and .gjs.md files.
-      // Kolay will handle each appropriately.
-    },
-  ],
-});
+// This directory can contain a mix of .md and .gjs.md files.
+// Kolay will handle each appropriately.
+docs("Guides", { src: import.meta.resolve("./docs/guides") });
 ```
 
 This means you can choose the format per-page based on what makes sense: use `.gjs.md` for pages where you want build-time compilation, and `.md` for pages where you'd rather keep the build fast and defer to the browser.

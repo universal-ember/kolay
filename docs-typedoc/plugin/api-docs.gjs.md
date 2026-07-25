@@ -17,9 +17,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    docs({
-      /* ... */
-    }),
+    docs("guides", { src: import.meta.resolve("./guides") }),
     // Package names must be installed; relative paths must exist.
     apiDocs(["my-library", "./packages/my-other-library"]),
   ],

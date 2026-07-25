@@ -16,42 +16,38 @@ function hasReason(error) {
 }
 
 /**
- * If page with '.md' is detected, try to load it, if it doesn't exist,
- * redirect to real route without the .md.
- *
- * (this could probably be checked synchronously via the manifest)
- *
- * We may also need to remove the /index as well?
+ * The Home (co-located) pages: plain, full-width landing layout.
  */
 <template>
-  <Page>
-    <:pending>
-      <div class="loading-page" role="status">
-        Loading, compiling, etc
-      </div>
-    </:pending>
+  <div class="home-doc" data-design="home">
+    <Page>
+      <:pending>
+        <div class="loading-page" role="status">
+          Loading, compiling, etc
+        </div>
+      </:pending>
 
-    <:error as |error|>
-      <div class="error" data-page-error role="alert">
-        {{#if (hasReason error)}}
-          {{error.reason}}
-          <details>
-            <summary>Original error</summary>
-            <pre>{{error.original.stack}}</pre>
-          </details>
-        {{else}}
-          {{error}}
-        {{/if}}
-      </div>
-      {{(removeLoader)}}
-    </:error>
+      <:error as |error|>
+        <div class="error" data-page-error role="alert">
+          {{#if (hasReason error)}}
+            {{error.reason}}
+            <details>
+              <summary>Original error</summary>
+              <pre>{{error.original.stack}}</pre>
+            </details>
+          {{else}}
+            {{error}}
+          {{/if}}
+        </div>
+        {{(removeLoader)}}
+      </:error>
 
-    <:success as |Prose|>
-      <Prose />
-      {{(removeLoader)}}
-    </:success>
-
-  </Page>
+      <:success as |Prose|>
+        <Prose />
+        {{(removeLoader)}}
+      </:success>
+    </Page>
+  </div>
 
   <style scoped>
     @keyframes shimmer {
@@ -63,11 +59,17 @@ function hasReason(error) {
       }
     }
 
+    .home-doc {
+      flex: 1;
+      padding: 1rem 0 4rem;
+    }
+
     .error {
       margin-bottom: 2rem;
       border: 1px solid red;
       padding: 1rem;
     }
+
     .loading-page {
       position: fixed;
       top: 0rem;

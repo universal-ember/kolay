@@ -7,6 +7,26 @@ import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 import inspect from 'vite-plugin-inspect';
 
+const sharedMarkdownOptions = {
+  rehypePlugins: [
+    [
+      rehypeShiki,
+      {
+        themes: {
+          light: 'github-light',
+          dark: 'github-dark',
+        },
+        defaultColor: 'light-dark()',
+      },
+    ],
+  ],
+  scope: `
+  import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
+  import { Shadowed } from 'ember-primitives/components/shadowed';
+  import { InViewport } from 'ember-primitives/viewport';
+  `,
+};
+
 export default defineConfig(async ({ mode }) => {
   const isDev = mode === 'development';
 
@@ -15,34 +35,13 @@ export default defineConfig(async ({ mode }) => {
       inspect(),
       info(),
       ember(),
-      docs({
-        groups: [
-          {
-            name: 'Runtime',
-            src: import.meta.resolve('../docs', import.meta.url),
-          },
-          {
-            name: 'TypeDoc',
-            src: import.meta.resolve('../docs-typedoc', import.meta.url),
-          },
-        ],
-        rehypePlugins: [
-          [
-            rehypeShiki,
-            {
-              themes: {
-                light: 'github-light',
-                dark: 'github-dark',
-              },
-              defaultColor: 'light-dark()',
-            },
-          ],
-        ],
-        scope: `
-        import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
-        import { Shadowed } from 'ember-primitives/components/shadowed';
-        import { InViewport } from 'ember-primitives/viewport';
-        `,
+      docs('Runtime', {
+        src: import.meta.resolve('../docs', import.meta.url),
+        ...sharedMarkdownOptions,
+      }),
+      docs('TypeDoc', {
+        src: import.meta.resolve('../docs-typedoc', import.meta.url),
+        ...sharedMarkdownOptions,
       }),
       apiDocs(['kolay', 'ember-primitives', 'ember-resources']),
       babel({

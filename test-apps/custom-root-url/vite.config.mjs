@@ -6,14 +6,10 @@ import { babel } from "@rollup/plugin-babel";
 export default defineConfig({
   base: "/my-github-project/",
   plugins: [
-    docs({
-      groups: [
-        {
-          // Use something other than "Docs" so md files don't load raw
-          name: "Documentation",
-          src: import.meta.resolve("./docs", import.meta.url),
-        },
-      ],
+    // Use something other than "Docs" (the directory name) so md files
+    // don't load raw
+    docs("Documentation", {
+      src: import.meta.resolve("./docs", import.meta.url),
       scope: `
         import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
         `,

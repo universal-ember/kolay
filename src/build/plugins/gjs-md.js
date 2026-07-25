@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
+import { sep } from 'node:path';
 
 import * as babel from '@babel/core';
 import { Preprocessor } from 'content-tag';
@@ -7,7 +8,7 @@ import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 import { visit } from 'unist-util-visit';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
-import { extFilter } from './utils.js';
+import { extFilter, normalizePath } from './utils.js';
 
 const processor = new Preprocessor();
 
@@ -140,14 +141,14 @@ function toVirtualId(block) {
  * Build/Vite plugin for authoring markdown with live code fences
  * to be compiled to GJS during build.
  *
- * @typedef {Object} Options
- * @property {unknown[]} [remarkPlugins] - Array of remark plugins to use.
- * @property {unknown[]} [rehypePlugins] - Array of rehype plugins to use.
- * @property {string} [scope] - functions, components, or values to expose in markdown
+ * Each usage's options may configure:
+ * - remarkPlugins - Array of remark plugins to use.
+ * - rehypePlugins - Array of rehype plugins to use.
+ * - scope - functions, components, or values to expose in markdown
  *
- * @param {Options} options - Plugin options.
+ * @param {{ options: object, usages: object[], isPrimary: boolean }} state - this usage's coordination state.
  */
-export function gjsmd(options = {}) {
+export function gjsmd(state) {
   /**
    * Map of:
    *   .gjs.md -> Map of
@@ -165,10 +166,47 @@ export function gjsmd(options = {}) {
    */
   let base = '/';
 
-  const compiler = createCompiler({
-    ...options,
-    remarkPlugins: [rebaseAuthoredLinks(() => base), ...(options.remarkPlugins ?? [])],
-  });
+  /**
+   * Which usage's markdown options apply to a given file: the usage owning
+   * the group whose src directory contains the file. Files outside every
+   * group (e.g. the co-located app/src templates) use the first usage.
+   *
+   * (The first usage's instance of this plugin handles every `.gjs.md`
+   *  file — it is the first to respond to the load hook — so it has to
+   *  route between the usages' configs itself.)
+   */
+  function usageFor(id) {
+    const path = id.replace(/^\/@fs/, '');
+
+    for (const usage of state.usages) {
+      for (const group of usage.groups ?? []) {
+        const dir = normalizePath(group.src);
+
+        if (path === dir || path.startsWith(dir.endsWith(sep) ? dir : dir + sep)) {
+          return usage;
+        }
+      }
+    }
+
+    return state.usages[0];
+  }
+
+  /** One compiler per usage — each usage may configure different plugins */
+  const compilers = new Map();
+
+  function compilerFor(usage) {
+    let compiler = compilers.get(usage);
+
+    if (!compiler) {
+      compiler = createCompiler({
+        ...usage,
+        remarkPlugins: [rebaseAuthoredLinks(() => base), ...(usage.remarkPlugins ?? [])],
+      });
+      compilers.set(usage, compiler);
+    }
+
+    return compiler;
+  }
 
   return [
     /**
@@ -202,7 +240,9 @@ export function gjsmd(options = {}) {
           let hbsCode;
 
           if (block.format === 'hbs') {
-            hbsCode = (options.scope ?? '') + `\n\n<template>\n${block.code}\n</template>`;
+            const scope = (fromId ? usageFor(fromId).scope : state.options.scope) ?? '';
+
+            hbsCode = scope + `\n\n<template>\n${block.code}\n</template>`;
           }
 
           const { code, map } = processor.process(hbsCode ?? block.code, {
@@ -241,12 +281,13 @@ export function gjsmd(options = {}) {
         filter: extFilter('.gjs.md'),
         async handler(id) {
           const input = await readFile(id);
+          const usage = usageFor(id);
 
           const { code, map } = await mdToGJS(input, {
             id,
-            compiler,
+            compiler: compilerFor(usage),
             virtualModulesByMarkdownFile,
-            scope: options.scope,
+            scope: usage.scope,
           });
 
           return babel.transformAsync(code, {

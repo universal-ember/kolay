@@ -125,9 +125,20 @@ export default Route(
         .big-layout aside { display: none; }
       }
 
+      /* The whole viewport is the page: short docs still fill it, so the
+       * groups' full-height designs hold their shape */
+      .mobile-menu-wrapper__content.container {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+
       .big-layout {
-        grid-template-columns: max-content 1fr;
+        /* fixed nav column: flipping between groups (whose page lists
+         * differ in width) must not shift the content */
+        grid-template-columns: 16rem 1fr;
         gap: 2rem;
+        flex: 1;
 
         main {
           max-width: 100%;

@@ -5,13 +5,8 @@ import { docs, apiDocs } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
-    docs({
-      groups: [
-        {
-          name: "Docs",
-          src: import.meta.resolve("./docs", import.meta.url),
-        },
-      ],
+    docs("Docs", {
+      src: import.meta.resolve("./docs", import.meta.url),
     }),
     apiDocs(["ember-primitives", "ember-resources"]),
     ember(),

@@ -1,3 +1,19 @@
+import { fileURLToPath } from 'node:url';
+
+/**
+ * Group `src`s may be specified as `import.meta.resolve()`d file URLs
+ * or as plain paths.
+ *
+ * @param {string} path
+ */
+export function normalizePath(path) {
+  if (path.startsWith('file:/')) {
+    return fileURLToPath(path);
+  }
+
+  return path;
+}
+
 /**
  * Taken from https://github.com/sveltejs/vite-plugin-svelte/blob/170bacc73d95d268e3673a5ec339da187adb82e0/packages/vite-plugin-svelte/src/utils/id.js#L174
  */

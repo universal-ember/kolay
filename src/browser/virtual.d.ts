@@ -28,24 +28,14 @@ declare module 'kolay/api-docs:virtual' {
 }
 
 /**
- * Virtual Module responsible for providing
- * pre-compiled markdown documents compiled to components for faster loading and rendering
+ * The metamanifest: which docs groups exist, and how to load each group's
+ * docs module. `setupKolay` loads them all in parallel behind the scenes
+ * (via `loadCompiledDocs` from 'kolay').
  */
 declare module 'kolay/compiled-docs:virtual' {
-  import type { ComponentLike } from '@glint/template';
-  import type { Manifest } from '#types';
+  import type { DocsGroupModule } from 'kolay';
 
-  /**
-   * The Manifest is / knows:
-   * - where all the markdown files in your project
-   * can be fetched at runtime
-   * - the structure of all those files
-   * - the nesting / grouping / library association of those files
-   */
-  export const manifest: Manifest;
+  export const base: string;
 
-  /**
-   * Similar to import.meta.glob
-   */
-  export const pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+  export const groups: Array<{ name: string; load: () => Promise<DocsGroupModule> }>;
 }
