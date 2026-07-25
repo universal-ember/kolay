@@ -92,7 +92,7 @@ export function compilerOptions({
  * group, and helpers for resolving pages and building hrefs.
  */
 class DocsService {
-  @service private declare router: RouterService;
+  @service declare private router: RouterService;
 
   private get apiDocs() {
     return typedocLoader(this);
