@@ -226,12 +226,33 @@ class PageLink extends Component<{
     return this.args.activeClass ?? 'active';
   }
 
+  get #docs() {
+    return docsManager(this);
+  }
+
+  /**
+   * The page's manifest path — unless its group is mounted via a scoped
+   * `addRoutes(context, groupName)`, in which case the mount decides.
+   */
+  get href() {
+    return this.#docs.hrefFor(this.args.item);
+  }
+
   get isActive() {
-    return isActive(this.args.item, this.router.currentURL);
+    const appRelative = this.#docs.appRelativeHrefFor(this.args.item);
+
+    if (appRelative === this.args.item.appRelativePath) {
+      return isActive(this.args.item, this.router.currentURL);
+    }
+
+    // scoped mount: compare in the mount's URL space
+    const [current = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
+
+    return current.replace(/\.md$/, '') === appRelative.replace(/\.md$/, '');
   }
 
   <template>
-    <a href={{@item.path}} class={{if this.isActive this.activeClass}} ...attributes>{{yield
+    <a href={{this.href}} class={{if this.isActive this.activeClass}} ...attributes>{{yield
         @item
         this.isActive
       }}</a>

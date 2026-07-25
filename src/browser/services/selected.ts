@@ -95,6 +95,14 @@ class Selected {
   }
 
   get #path(): string | undefined {
+    // Inside a scoped mount (addRoutes(context, groupName)), the URL space
+    // is the mount's — the docs service translates it back to manifest space.
+    const scoped = this.#docs.scopedPagePath;
+
+    if (scoped) {
+      return scoped.replace(/\.md$/, '');
+    }
+
     if (!this.router.currentURL) return;
 
     // currentURL is app-relative — Ember's location layer already stripped

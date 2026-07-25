@@ -38,7 +38,7 @@ It also handles the app's root: on a visit to `/`, there is no group in the URL,
 
 ## Nested mounts
 
-`addRoutes()` may also be called inside nested routes, mounting each group as its own route (see [using the docs plugin multiple times](/development/configuring-docs.md)). In that case, call `handlePotentialIndexVisit` in the mount route's `beforeModel` — visiting the mount's URL (e.g. `/guides`) lands on the mount's own index:
+`addRoutes()` may also be called inside nested routes, mounting each group as its own route (see [using the docs plugin multiple times](/development/configuring-docs.md)) — optionally scoped to a group via `addRoutes(this, 'group-name')`, in which case the mount's path is free to differ from the group's name. Either way, call `handlePotentialIndexVisit` in the mount route's `beforeModel` — visiting the mount's URL (e.g. `/guides`) lands on the mount's own index:
 
 ```ts
 // routes/guides.ts
@@ -64,7 +64,7 @@ Router.map(function () {
 });
 ```
 
-The mount's path must match the group's name.
+An unscoped mount's path must match the group's name; a scoped mount (`addRoutes(this, 'group-name')`) may live anywhere.
 
 ## API Reference
 

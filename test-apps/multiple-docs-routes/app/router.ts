@@ -15,12 +15,14 @@ Router.map(function () {
   // the co-located pages (app/templates/**/*.md) are served from the root
   addRoutes(this);
 
-  // each group from vite.config.mjs is mounted as its own route,
-  // whose path matches the group's name
-  this.route("guides", function () {
-    addRoutes(this);
+  // a scoped mount: brings all of the docs from the "guides" group into
+  // this route — the mount's path does not need to match the group's name
+  this.route("help", function () {
+    addRoutes(this, "guides");
   });
 
+  // an unscoped mount serves whichever group the URL names, so its path
+  // must match the group's name
   this.route("demos", function () {
     addRoutes(this);
   });

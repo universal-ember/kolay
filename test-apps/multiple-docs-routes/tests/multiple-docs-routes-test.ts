@@ -22,16 +22,32 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("h1").containsText("Welcome home");
   });
 
-  test("a .md page renders from the guides mount", async function (assert) {
-    await visit("/guides/getting-started/intro.md");
+  test("a .md page renders from the scoped /help mount (group: guides)", async function (assert) {
+    await visit("/help/getting-started/intro.md");
 
     assert.dom("[data-page-error]").doesNotExist();
     assert.dom("h1").containsText("Guides intro");
 
-    await visit("/guides/getting-started/usage.md");
+    await visit("/help/getting-started/usage.md");
 
     assert.dom("[data-page-error]").doesNotExist();
     assert.dom("h1").containsText("Guides usage");
+  });
+
+  test("inside a scoped mount, nav links use the mount's URL space", async function (assert) {
+    await visit("/help/getting-started/intro.md");
+
+    assert
+      .dom('aside nav a[href="/help/getting-started/usage.md"]')
+      .exists("page links are mount-space");
+    assert
+      .dom('aside nav a[href="/help/getting-started/intro.md"]')
+      .hasClass("active", "the current page is active");
+
+    assert
+      .dom('header nav a[href="/help"]')
+      .exists("the group nav points at the mount")
+      .hasClass("active", "the mounted group is the selected group");
   });
 
   test("a .gjs.md page (with a live codefence) renders from the demos mount", async function (assert) {
@@ -46,12 +62,9 @@ module("Multiple docs routes", function (hooks) {
   });
 
   test("visiting a mount's index redirects to the first page in its group", async function (assert) {
-    await visit("/guides");
+    await visit("/help");
 
-    const docs = docsManager(this.owner);
-    const first = docs.groupFor("guides").list[0];
-
-    assert.strictEqual(currentURL(), first?.appRelativePath);
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md", "mount-space redirect");
     assert.dom("h1").containsText("Guides intro");
 
     await visit("/demos");

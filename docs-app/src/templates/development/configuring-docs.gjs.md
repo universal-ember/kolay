@@ -104,22 +104,24 @@ All usages contribute to _one_ manifest: every group shows up in `docsManager`, 
 
 Group names must be unique across all usages.
 
-Each group can then be mounted as its own route, where the route's path matches the group's name:
+Each group can then be mounted as its own route. Pass the group's name to `addRoutes` to scope the mount — it brings all of that group's docs into the route it was called from, no matter what the route's path is:
 
 ```js
 // app/router.js
 import { addRoutes } from "kolay";
 
 Router.map(function () {
-  this.route("guides", function () {
-    addRoutes(this);
+  this.route("help", function () {
+    addRoutes(this, "guides"); // /help/... serves the guides group
   });
   this.route("api", function () {
-    addRoutes(this);
+    addRoutes(this); // unscoped: the path must match the group's name
   });
 });
 ```
 
-Pair each mount with [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) in the mount's route (e.g. `routes/guides.js`) so that visiting `/guides` redirects to the first page in the group.
+Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` links, active states, and index redirects all use the mount's URL rather than `/GroupName`.
+
+Pair each mount with [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) in the mount's route (e.g. `routes/help.js`) so that visiting `/help` redirects to the first page in the group.
 
 > **Note:** multiple usages are only supported with Vite (the usages discover each other while vite resolves its config). The same applies to [`apiDocs()`](/TypeDoc/plugin/api-docs.md), whose usages merge their packages.

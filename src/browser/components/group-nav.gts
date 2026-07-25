@@ -65,9 +65,17 @@ export class GroupNav extends Component<{
 
   get groups() {
     return this.#docs.availableGroups.map((groupName) => {
-      if (groupName === 'root') return { text: this.homeName, value: '/' };
+      if (groupName === 'root') {
+        return { text: this.homeName, value: '/', href: this.rootURL };
+      }
 
-      return { text: groupName, value: groupName };
+      return {
+        text: groupName,
+        value: groupName,
+        // scoped mounts (addRoutes(context, groupName)) live at their own
+        // URL, not at /GroupName
+        href: this.#docs.groupHrefFor(groupName),
+      };
     });
   }
 
@@ -89,10 +97,7 @@ export class GroupNav extends Component<{
       <ul>
         {{#each this.groups as |group|}}
           <li>
-            <a
-              href='{{this.rootURL}}{{group.value}}'
-              class={{if (this.isActive group.value) this.activeClass}}
-            >
+            <a href={{group.href}} class={{if (this.isActive group.value) this.activeClass}}>
 
               {{#if (has-block)}}
                 {{yield group.text}}

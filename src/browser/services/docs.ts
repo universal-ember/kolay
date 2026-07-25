@@ -7,6 +7,7 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
@@ -15,7 +16,7 @@ import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
-import type { LoadManifest, LoadTypedoc, Manifest } from '../../types.ts';
+import type { LoadManifest, LoadTypedoc, Manifest, Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -230,6 +231,12 @@ class DocsService {
    * the very least not use a non-path segement for it.
    */
   get selectedGroup() {
+    // A scoped mount (addRoutes(context, groupName)) decides the group,
+    // regardless of the URL
+    const scoped = this.#activeScopedMount;
+
+    if (scoped) return scoped.groupName;
+
     // currentURL is app-relative (Ember's location layer already stripped
     // the rootURL), but it can carry query params — drop them before
     // segmenting.
@@ -243,6 +250,107 @@ class DocsService {
     return first;
   }
 
+  /**
+   * The scoped mount (`addRoutes(context, groupName)`) the current route
+   * is inside of, if any.
+   */
+  get #activeScopedMount(): { groupName: string; pageParam: string | undefined } | undefined {
+    let info = this.router.currentRoute;
+
+    while (info) {
+      const groupName = groupNameForRoute(info.name);
+
+      if (groupName) {
+        return { groupName, pageParam: info.params?.page as string | undefined };
+      }
+
+      info = info.parent;
+    }
+
+    return undefined;
+  }
+
+  /**
+   * When inside a scoped mount, the manifest-space path of the visited
+   * page (the mount's URL space differs from the manifest's).
+   */
+  get scopedPagePath(): string | undefined {
+    const scoped = this.#activeScopedMount;
+
+    if (!scoped?.pageParam) return;
+
+    return `/${scoped.groupName}/${scoped.pageParam}`;
+  }
+
+  #groupNameOf = (page: Page): string | undefined => {
+    const groups = this.manifest?.groups ?? [];
+
+    // by value, not identity: the manifest's tree and list are separate
+    // object graphs after being serialized into the virtual module
+    return groups.find((group) =>
+      group.list.some((candidate) => candidate.appRelativePath === page.appRelativePath)
+    )?.name;
+  };
+
+  #groupRelative(page: Page, groupName: string): string {
+    const prefix = `/${groupName}/`;
+
+    return page.appRelativePath.startsWith(prefix)
+      ? page.appRelativePath.slice(prefix.length)
+      : page.appRelativePath.replace(/^\//, '');
+  }
+
+  /**
+   * The URL to link to for a page: its manifest path — unless the page's
+   * group is mounted via a scoped `addRoutes(context, groupName)`, in which
+   * case the mount decides. Includes the rootURL, like `page.path`.
+   */
+  hrefFor = (page: Page): string => {
+    if (typeof page.href === 'string') return page.path;
+
+    const groupName = this.#groupNameOf(page);
+    const mountRoute = groupName ? routeNameForGroup(groupName) : undefined;
+
+    if (!groupName || !mountRoute) return page.path;
+
+    return this.router.urlFor(mountRoute, this.#groupRelative(page, groupName));
+  };
+
+  /**
+   * Like `hrefFor`, without the rootURL — the space `router.currentURL`
+   * and `transitionTo` operate in.
+   */
+  appRelativeHrefFor = (page: Page): string => {
+    if (typeof page.href === 'string') return page.appRelativePath;
+
+    const groupName = this.#groupNameOf(page);
+    const mountRoute = groupName ? routeNameForGroup(groupName) : undefined;
+
+    if (!groupName || !mountRoute) return page.appRelativePath;
+
+    const url = this.router.urlFor(mountRoute, this.#groupRelative(page, groupName));
+    const base = this.router.rootURL ?? '/';
+
+    if (base === '/') return url;
+
+    return '/' + url.slice(base.length).replace(/^\/+/, '');
+  };
+
+  /**
+   * The URL a group's nav link should point at: `/GroupName` — unless the
+   * group is mounted via a scoped `addRoutes(context, groupName)`, in which
+   * case the mount's own URL. Includes the rootURL.
+   */
+  groupHrefFor = (groupName: string): string => {
+    const mountRoute = routeNameForGroup(groupName);
+
+    if (!mountRoute) {
+      return this.router.rootURL + groupName;
+    }
+
+    return this.router.urlFor(indexRouteNameFor(mountRoute));
+  };
+
   selectGroup = (group: string) => {
     assert(
       `Expected group name, ${group}, to be one of ${this.availableGroups.join(', ')}`,
@@ -251,6 +359,15 @@ class DocsService {
 
     if (group === 'root') {
       this.router.transitionTo('/');
+
+      return;
+    }
+
+    const mountRoute = routeNameForGroup(group);
+
+    if (mountRoute) {
+      // scoped mounts live at their own URL, not at /GroupName
+      this.router.transitionTo(indexRouteNameFor(mountRoute));
 
       return;
     }

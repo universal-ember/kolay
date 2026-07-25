@@ -4,7 +4,7 @@ import { handlePotentialIndexVisit } from "kolay";
 
 import type Transition from "@ember/routing/transition";
 
-export default class GuidesRoute extends Route {
+export default class HelpRoute extends Route {
   beforeModel(transition: Transition) {
     handlePotentialIndexVisit(this, transition);
   }
