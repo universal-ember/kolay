@@ -43,7 +43,7 @@ export default defineConfig(async ({ mode }) => {
         src: import.meta.resolve('../docs-typedoc', import.meta.url),
         ...sharedMarkdownOptions,
       }),
-      apiDocs(['kolay', 'ember-primitives', 'ember-resources']),
+      apiDocs(['kolay', 'ember-primitives', 'ember-resources', 'ember-repl']),
       babel({
         babelHelpers: 'runtime',
         extensions,
