@@ -47,3 +47,13 @@ A json file with an `href` — and no markdown file of its own — becomes a nav
 That file produces the "Configuring apiDocs(...)" entry in this very section — it links over to the TypeDoc group.
 
 The `href` is written app-relative (as if the app were deployed at `/`); the app's `rootURL` is applied automatically, the same as for authored links.
+
+Since these entries take the reader somewhere else — a different group, or a different site entirely — `<PageNav />` renders them with a `data-link-entry` attribute, so you can mark them visually:
+
+```css
+nav a[data-link-entry]::after {
+  content: " ↗";
+}
+```
+
+(This site uses the same SVG icon as its other external links, via a CSS `mask`, rather than the `↗` character — which renders as an emoji on some platforms.)

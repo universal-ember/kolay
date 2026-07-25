@@ -82,6 +82,21 @@ module('Home docs navigation', function (hooks) {
       .dom(`aside nav a[href="/TypeDoc/plugin/api-docs.md"]`)
       .containsText('Configuring apiDocs(...)');
 
+    assert
+      .dom(`aside nav a[href="/TypeDoc/plugin/api-docs.md"]`)
+      .hasAttribute('data-link-entry', 'true', 'link entries are marked for styling');
+
+    // the side nav renders twice (desktop + mobile menu) — the point is
+    // that no ordinary page picked up the marker
+    const marked = [...document.querySelectorAll('aside nav a[data-link-entry]')];
+
+    assert.true(marked.length > 0, 'the link entry is marked');
+    assert.deepEqual(
+      [...new Set(marked.map((a) => a.getAttribute('href')))],
+      ['/TypeDoc/plugin/api-docs.md'],
+      'ordinary pages are not marked'
+    );
+
     assert.dom('aside nav').containsText('Configuring docs()');
   });
 });
