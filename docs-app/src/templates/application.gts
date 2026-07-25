@@ -16,6 +16,7 @@ import { ExternalLink } from 'nvp.ui';
 import { abbreviatedSha } from '~build/git';
 
 import type { TOC } from '@ember/component/template-only';
+import type Owner from '@ember/owner';
 import type RouterService from '@ember/routing/router-service';
 import type { Page } from 'kolay';
 import type MemoryScrollService from 'memory-scroll/services/memory-scroll';
@@ -34,7 +35,7 @@ class ScrollBehavior extends Component {
   @service declare router: RouterService;
   @service('memory-scroll') declare memory: MemoryScrollService;
 
-  constructor(owner: unknown, args: Record<string, unknown>) {
+  constructor(owner: Owner, args: Record<string, unknown>) {
     super(owner, args);
 
     // keep the browser-restored position on reload: seed the initial
@@ -43,11 +44,11 @@ class ScrollBehavior extends Component {
   }
 
   get key(): string {
-    this.router.currentURL; // recompute on every navigation
-
+    // reading currentURL makes this recompute on every navigation
+    const url = this.router.currentURL;
     const state = window.history.state as { uuid?: string } | null;
 
-    return String(state?.uuid ?? this.router.currentURL);
+    return String(state?.uuid ?? url);
   }
 
   <template>
