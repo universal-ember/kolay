@@ -3,6 +3,7 @@ import { module, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
 
 import { docsManager } from "kolay";
+import { manifest as demosManifest, name as demosName } from "virtual:kolay/docs/demos";
 
 module("Multiple docs routes", function (hooks) {
   setupApplicationTest(hooks);
@@ -13,6 +14,15 @@ module("Multiple docs routes", function (hooks) {
     const docs = docsManager(this.owner);
 
     assert.deepEqual(docs.availableGroups, ["Home", "guides", "demos"]);
+  });
+
+  test("each docs() usage enables a virtual module with its own manifest", function (assert) {
+    assert.strictEqual(demosName, "demos");
+    assert.strictEqual(demosManifest.name, "demos");
+    assert.deepEqual(
+      demosManifest.list.map((page) => page.appRelativePath),
+      ["/demos/components/buttons"],
+    );
   });
 
   test("a co-located page renders from the root mount", async function (assert) {

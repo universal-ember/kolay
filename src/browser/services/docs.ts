@@ -115,7 +115,7 @@ class DocsService {
      */
     compiledDocs?: {
       manifest: Manifest;
-      pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+      pages: Record<string, () => Promise<{ default: string | ComponentLike }>>;
     };
 
     /**
@@ -175,7 +175,7 @@ class DocsService {
     compiledDocs:
       | {
           manifest: Manifest;
-          pages: Record<string, () => Promise<{ default: ComponentLike }>>;
+          pages: Record<string, () => Promise<{ default: string | ComponentLike }>>;
         }
       | undefined
   ) {

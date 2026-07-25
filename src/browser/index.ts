@@ -10,6 +10,7 @@ export {
 } from './typedoc/index.ts';
 
 // Required to use Kolay
+export { loadCompiledDocs } from './load-compiled-docs.ts';
 export { addRoutes, handlePotentialIndexVisit } from './router.ts';
 export { typedocLoader } from './services/api-docs.ts';
 export { CompiledDoc, compiledDoc } from './services/compiled-doc.ts';
@@ -23,5 +24,6 @@ export { getIndexPage, isCollection, isIndex } from './utils.ts';
 
 // Types
 export type { Collection, Manifest, Page } from '../types.ts';
+export type { DocsGroupModule, MetaManifest } from './load-compiled-docs.ts';
 export type { DocModule, DocSource } from './services/compiled-doc.ts';
 export type { SetupOptions } from './services/docs.ts';

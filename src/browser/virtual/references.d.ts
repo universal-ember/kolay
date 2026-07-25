@@ -42,3 +42,23 @@ declare module 'kolay/setup' {
     }
   ): Promise<Manifest>;
 }
+
+/**
+ * Each `docs()` usage enables a virtual module for its group —
+ * `docs('foo')` enables `virtual:kolay/docs/foo`:
+ *
+ * ```js
+ * import { addRoutes as addFooRoutes, manifest } from 'virtual:kolay/docs/foo';
+ * ```
+ *
+ * `addRoutes(context)` is pre-scoped to the group: it brings the group's
+ * docs into whatever route it's called from.
+ */
+declare module 'virtual:kolay/docs/*' {
+  import type { DocsGroupModule } from 'kolay';
+
+  export const name: DocsGroupModule['name'];
+  export const manifest: DocsGroupModule['manifest'];
+  export const pages: DocsGroupModule['pages'];
+  export const addRoutes: DocsGroupModule['addRoutes'];
+}

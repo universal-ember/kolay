@@ -87,6 +87,128 @@ function assetRoots(state, cwd) {
   ];
 }
 
+function removeTemplatesPrefix(path) {
+  return path.replace(/^(app|src)\/templates\//, '');
+}
+
+/**
+ * Enumerate one docs source: the page-loader entries (URL → dynamic
+ * import) and the source's manifest ({ name, list, tree }).
+ *
+ * @param {object} source
+ * @param {string} source.displayName - the group's display name ('Home' for the co-located root)
+ * @param {string} source.urlPrefix - the URL prefix pages live under ('' for the co-located root)
+ * @param {string} source.sourceCwd - where the files live on disk
+ * @param {AsyncIterable<string>} source.entries - the source's files, relative to sourceCwd
+ * @param {(entry: string) => string} source.strip - entry → page path (strips the app/src templates prefix for the co-located root)
+ * @param {string} baseUrl
+ */
+async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, strip }, baseUrl) {
+  const loaders = {};
+  const paths = [];
+  const configs = [];
+
+  for await (const entry of entries) {
+    if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
+      configs.push({
+        path: strip(entry),
+        config: await readJSONC(join(sourceCwd, entry)),
+        cwd: sourceCwd,
+      });
+      // Also part of `paths`: per-page configs (`<page>.json`, e.g. for
+      // `title`) are discovered from the path list during parsing —
+      // `configs` only drives ordering.
+      paths.push(strip(entry));
+      continue;
+    }
+
+    const name =
+      baseUrl + (urlPrefix ? urlPrefix + '/' : '') + strip(entry).replace(/\.(gjs|gts)\.md$/, '');
+    const full = '/@fs' + join(normalizePath(sourceCwd), entry);
+
+    let query = '';
+
+    if (entry.endsWith('.md')) {
+      if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
+        query = '?raw';
+      }
+    }
+
+    loaders[name] = `() => import("${full}${query}")`;
+    paths.push(strip(entry));
+  }
+
+  const found = await reshape({
+    cwd: sourceCwd,
+    paths,
+    configs,
+    prefix: join('/', urlPrefix),
+    base: baseUrl,
+  });
+
+  return {
+    manifestGroup: { name: displayName, ...found },
+    loaders,
+  };
+}
+
+/**
+ * The co-located pages (app/templates, src/templates) — the 'Home' group.
+ */
+function homeSource(cwd) {
+  return {
+    displayName: 'Home',
+    urlPrefix: '',
+    sourceCwd: cwd,
+    entries: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md,json,jsonc}', {
+      cwd,
+      exclude: ['node_modules'],
+    }),
+    strip: removeTemplatesPrefix,
+  };
+}
+
+function groupSource(group) {
+  return {
+    displayName: group.name,
+    urlPrefix: group.name,
+    sourceCwd: normalizePath(group.src),
+    entries: glob('**/*.{md,gjs.md,gts.md,json,jsonc}', {
+      cwd: normalizePath(group.src),
+      exclude: ['node_modules'],
+    }),
+    strip: (entry) => entry,
+  };
+}
+
+function docsModuleId(groupName) {
+  return `virtual:kolay/docs/${groupName}`;
+}
+
+/**
+ * The source of a `virtual:kolay/docs/<groupName>` module:
+ * the group's manifest, its page loaders, and an `addRoutes` scoped to it.
+ */
+function groupModuleContent({ manifestGroup, loaders }, { scopedTo } = {}) {
+  return stripIndent`
+    import { addRoutes as _addRoutes } from 'kolay';
+
+    export const name = ${JSON.stringify(manifestGroup.name)};
+
+    export const manifest = ${JSON.stringify(manifestGroup)};
+
+    export const pages = {
+      ${Object.entries(loaders)
+        .map(([name, importer]) => `"${name}": ${importer}`)
+        .join(',\n')}
+    };
+
+    export function addRoutes(context) {
+      return _addRoutes(context${scopedTo ? `, ${JSON.stringify(scopedTo)}` : ''});
+    }
+  `;
+}
+
 /** @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions} */
 export const setup = (state) => {
   const cwd = process.cwd();
@@ -246,7 +368,7 @@ export const setup = (state) => {
         content: stripIndent`
           import { getOwner, setOwner } from '@ember/owner';
           import { assert } from '@ember/debug';
-          import { docsManager } from 'kolay';
+          import { docsManager, loadCompiledDocs } from 'kolay';
           import { registerDestructor } from '@ember/destroyable';
 
 
@@ -288,10 +410,13 @@ export const setup = (state) => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, compiledDocs] = await Promise.all([
+            let [apiDocs, meta] = await Promise.all([
               import('kolay/api-docs:virtual'),
               import('kolay/compiled-docs:virtual'),
             ]);
+
+            // every group's docs module, loaded in parallel
+            let compiledDocs = await loadCompiledDocs(meta);
 
             await docs.setup({
               apiDocs,
@@ -306,117 +431,61 @@ export const setup = (state) => {
       },
       {
         importPath: 'kolay/compiled-docs:virtual',
+        /**
+         * The metamanifest: which groups exist, and how to load each
+         * group's docs module. Served by the primary usage, enumerating
+         * every usage's groups.
+         */
         content: async () => {
           const groups = allGroups(state);
 
           assertUniqueGroupNames(groups);
 
-          const result = {};
-          const globs = [
-            {
-              name: '',
-              path: './',
-              cwd,
-              glob: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md,json,jsonc}', {
-                cwd,
-                exclude: ['node_modules'],
-              }),
-            },
+          const entries = [
+            { name: 'Home', id: docsModuleId('Home') },
+            ...groups.map((group) => ({ name: group.name, id: docsModuleId(group.name) })),
           ];
 
-          /**
-           * TODO: support `onlyDirectories` of what globby provides
-           */
-          for (const group of groups) {
-            const path = relative(cwd, group.src);
+          return stripIndent`
+            export const base = ${JSON.stringify(baseUrl)};
 
-            globs.push({
-              name: group.name,
-              path,
-              cwd: normalizePath(group.src),
-              glob: glob('**/*.{md,gjs.md,gts.md,json,jsonc}', {
-                cwd: normalizePath(group.src),
-                exclude: ['node_modules'],
-              }),
-            });
-          }
-
-          const manifest = {
-            // The rootURL this manifest was generated with; page `path`s are
-            // prefixed with it, `appRelativePath`s are not.
-            base: baseUrl,
-            groups: [],
-          };
-
-          function removeUnwantedPrexix(path) {
-            return path.replace(/^(app|src)\/templates\//, '');
-          }
-
-          for (const config of globs) {
-            const paths = [];
-            const configs = [];
-
-            for await (const entry of config.glob) {
-              if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
-                const configPath = join(config.cwd, entry);
-
-                configs.push({
-                  path: removeUnwantedPrexix(entry),
-                  config: await readJSONC(configPath),
-                  cwd: config.cwd,
-                });
-                // Also part of `paths`: per-page configs (`<page>.json`,
-                // e.g. for `componentName`) are discovered from the path
-                // list during parsing — `configs` only drives ordering.
-                paths.push(removeUnwantedPrexix(entry));
-                continue;
-              }
-
-              const name =
-                baseUrl +
-                (config.name ? config.name + '/' : '') +
-                removeUnwantedPrexix(entry).replace(/\.(gjs|gts)\.md$/, '');
-              const full = '/@fs' + join(normalizePath(config.cwd), entry);
-
-              let query = '';
-
-              if (entry.endsWith('.md')) {
-                if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
-                  query = '?raw';
-                }
-              }
-
-              result[name] = `() => import("${full}${query}")`;
-              paths.push(removeUnwantedPrexix(entry));
-            }
-
-            const found = await reshape({
-              cwd: config.cwd,
-              paths,
-              configs,
-              prefix: join('/', config.name),
-              base: baseUrl,
-            });
-
-            manifest.groups.push({
-              name: config.name || 'Home',
-              ...found,
-            });
-          }
-
-          const virtualFile = stripIndent`
-            export const manifest = ${JSON.stringify(manifest)};
-
-            export const pages = {
-              ${Object.entries(result)
-                .map(([name, importer]) => `"${name}": ${importer}`)
+            export const groups = [
+              ${entries
+                .map(
+                  (entry) =>
+                    `{ name: ${JSON.stringify(entry.name)}, load: () => import(${JSON.stringify(entry.id)}) }`
+                )
                 .join(',\n')}
-            };
+            ];
           `;
-
-          return virtualFile;
         },
       },
+      {
+        /**
+         * The co-located pages (app/templates, src/templates) — served by
+         * the primary usage. Its addRoutes is unscoped: Home pages live in
+         * the root URL space.
+         */
+        importPath: docsModuleId('Home'),
+        content: async () => {
+          const enumerated = await enumerateSource(homeSource(cwd), baseUrl);
+
+          return groupModuleContent(enumerated);
+        },
+      },
+      /**
+       * Each usage serves the module for its own group:
+       * `docs('foo')` enables `virtual:kolay/docs/foo`, whose addRoutes is
+       * scoped to the group.
+       */
+      ...(state.options.groups ?? []).map((group) => ({
+        importPath: docsModuleId(group.name),
+        content: async () => {
+          const enumerated = await enumerateSource(groupSource(group), baseUrl);
+
+          return groupModuleContent(enumerated, { scopedTo: group.name });
+        },
+      })),
     ]),
   };
 };

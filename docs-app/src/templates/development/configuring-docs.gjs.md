@@ -122,6 +122,36 @@ Router.map(function () {
 
 Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` links, active states, and index redirects all use the mount's URL rather than `/GroupName`.
 
+## Each group's virtual module
+
+Every `docs()` usage enables a virtual module for its group — `docs('foo')` enables `virtual:kolay/docs/foo`:
+
+```js
+import { addRoutes as addFooRoutes, manifest } from "virtual:kolay/docs/foo";
+```
+
+- `addRoutes(context)` — pre-scoped route registration: it brings the group's docs into whatever route it's called from, so the router example above can also be written as:
+
+  ```js
+  // app/router.js
+  import { addRoutes as addGuidesRoutes } from "virtual:kolay/docs/guides";
+
+  Router.map(function () {
+    this.route("help", function () {
+      addGuidesRoutes(this);
+    });
+  });
+  ```
+
+- `manifest` — the group's own manifest (`{ name, list, tree }`)
+- `pages` — the group's page loaders, like `import.meta.glob`
+
+The co-located pages have one too: `virtual:kolay/docs/Home`.
+
+Group info across _all_ groups comes from the metamanifest, `kolay/compiled-docs:virtual` — it lists every group and how to load its module. `setupKolay()` loads all of them in parallel behind the scenes (via `loadCompiledDocs` from `kolay`), so by default the whole site's navigation is available up front.
+
+Types for these modules ship in `kolay/virtual` (add it to your tsconfig's `types`).
+
 Pair each mount with [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) in the mount's route (e.g. `routes/help.js`) so that visiting `/help` redirects to the first page in the group.
 
 > **Note:** multiple usages are only supported with Vite (the usages discover each other while vite resolves its config). The same applies to [`apiDocs()`](/TypeDoc/plugin/api-docs.md), whose usages merge their packages.
