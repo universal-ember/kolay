@@ -66,14 +66,20 @@ function hasReason(error) {
   {{! route-wide guide mode: active only while a Runtime page renders }}
   {{!-- prettier-ignore --}}
   <style>
-    /* a soft wash from the top of the page */
-    .mobile-menu-wrapper__content.container {
+    /* guide mode washes the whole page — a continuous tint, stronger at
+     * the top, never returning to plain background (no hard band) */
+    body:has(.runtime-doc) {
       background:
         linear-gradient(
           to bottom,
-          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 5%),
-          var(--pico-background-color) 14rem
-        );
+          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 7%),
+          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 3%) 22rem
+        )
+        fixed;
+    }
+
+    .mobile-menu-wrapper__content.container {
+      background: none;
     }
 
     /* the side nav becomes a chapter list */
@@ -122,11 +128,11 @@ function hasReason(error) {
       max-width: 72ch;
       margin: 1.5rem auto 3rem;
       padding: 2.5rem 3rem 4rem;
-      /* a quiet content well against the page wash — deliberately flat
-       * (overriding pico's default article card shadow) */
+      /* the paper: an elevated sheet on the washed page */
       background: var(--pico-card-background-color);
+      border: 1px solid color-mix(in oklab, var(--pico-muted-border-color), transparent 40%);
       border-radius: 0.75rem;
-      box-shadow: none;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
     }
 
     @media (max-width: 960px) {
