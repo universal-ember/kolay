@@ -1,6 +1,8 @@
 # ember-primitives
 
-[ember-primitives](https://ember-primitives.pages.dev) supplies several of the pieces kolay builds on — and one it requires:
+[Documentation](https://ember-primitives.pages.dev) · [GitHub](https://github.com/universal-ember/ember-primitives)
+
+ember-primitives supplies several of the pieces kolay builds on — and one it requires:
 
 ## `@properLinks` (required)
 

@@ -1,6 +1,8 @@
 # memory-scroll
 
-[memory-scroll](https://github.com/ef4/memory-scroll) provides modifiers for keeping scroll positions sensible as users navigate. This site uses it for its page-scroll behavior: navigating to a page scrolls to the top, while going back (or forward) restores that history entry's position.
+[GitHub](https://github.com/ef4/memory-scroll) (the README is the documentation) · [npm](https://www.npmjs.com/package/memory-scroll)
+
+memory-scroll provides modifiers for keeping scroll positions sensible as users navigate. This site uses it for its page-scroll behavior: navigating to a page scrolls to the top, while going back (or forward) restores that history entry's position.
 
 The whole behavior is one modifier — `rememberDocumentScroll` — keyed by the current history entry:
 

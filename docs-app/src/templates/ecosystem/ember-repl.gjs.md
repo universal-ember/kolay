@@ -1,6 +1,8 @@
 # ember-repl
 
-[ember-repl](https://limber.glimdown.com/docs/ember-repl) (with [repl-sdk](https://limber.glimdown.com/docs/repl-sdk) underneath) is the compiler behind everything kolay renders:
+[Documentation](https://limber.glimdown.com/docs/ember-repl) · [GitHub](https://github.com/NullVoxPopuli/limber) — repl-sdk: [Documentation](https://limber.glimdown.com/docs/repl-sdk)
+
+ember-repl (with repl-sdk underneath) is the compiler behind everything kolay renders:
 
 - **`.md` pages** compile in the browser: `setupKolay()` configures an ember-repl compiler per application (your `remarkPlugins` / `rehypePlugins` / `topLevelScope` / `modules` feed straight into it), and [`selected`](/Runtime/utilities/selected.md) / [`compiledDoc`](/Runtime/rendering/compiled-doc.md) / [`Compiled`](/Runtime/rendering/compiled.md) all compile through it.
 - **`.gjs.md` pages** compile at build time: the `docs()` plugin runs repl-sdk's markdown pipeline (the same one) in vite, so live codefences become real components in your bundle.
