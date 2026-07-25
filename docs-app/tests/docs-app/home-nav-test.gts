@@ -11,7 +11,7 @@ module('Home docs navigation', function (hooks) {
     const nav = document.querySelector('aside nav');
     const text = nav?.textContent?.replaceAll(/\s+/g, ' ') ?? '';
 
-    const sections = ['Install', 'Authoring', 'Development', 'Plugins'];
+    const sections = ['Install', 'Authoring', 'Development', 'Migrations', 'Plugins'];
     const positions = sections.map((section) => text.indexOf(section));
 
     assert.deepEqual(
@@ -47,6 +47,7 @@ module('Home docs navigation', function (hooks) {
       ['/authoring/code-fences', 'Code fences'],
       ['/authoring/extending-markdown', 'Extending markdown'],
       ['/Runtime/rendering/compiled', 'Compiled'],
+      ['/migrations/upgrading-from-5x', 'Upgrading from 5.x'],
     ]) {
       await visit(url as string);
 
