@@ -105,4 +105,36 @@ module('Runtime docs navigation', function (hooks) {
 
     assert.dom('.runtime-doc').doesNotContainText('router', 'private members stay hidden');
   });
+
+  test('the docsManager page shows the DocsService store it returns', async function (assert) {
+    await visit('/Runtime/utilities/docs-manager.md');
+
+    assert.dom('[data-page-error]').doesNotExist();
+
+    const section = [...document.querySelectorAll('h3')].find((h3) =>
+      h3.textContent?.includes('DocsService')
+    );
+
+    assert.ok(section, 'the DocsService section exists');
+
+    for (const member of [
+      'manifest',
+      'pages',
+      'tree',
+      'selectedGroup',
+      'availableGroups',
+      'currentGroup',
+      'groupFor',
+      'groupForURL',
+      'findByPath',
+      'hrefFor',
+      'appRelativeHrefFor',
+      'groupHrefFor',
+      'selectGroup',
+    ]) {
+      assert.dom('.runtime-doc').containsText(member);
+    }
+
+    assert.dom('.runtime-doc').doesNotContainText('PREPARE_DOCS', 'internal wiring stays hidden');
+  });
 });

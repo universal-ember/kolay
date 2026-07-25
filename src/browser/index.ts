@@ -27,4 +27,5 @@ export type { Collection, Manifest, Page } from '../types.ts';
 export type { DocsGroupModule, MetaManifest } from './load-compiled-docs.ts';
 export type { DocModule, DocSource } from './services/compiled-doc.ts';
 export type { SetupOptions } from './services/docs.ts';
+export type { DocsService } from './services/docs.ts';
 export type { Selected } from './services/selected.ts';
