@@ -87,7 +87,11 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
       <:collection as |x|>
         {{#if x.index}}
           <x.index.Link>
-            {{sentenceCase x.collection.name}}
+            {{#if x.index.page.title}}
+              {{x.index.page.title}}
+            {{else}}
+              {{sentenceCase x.collection.name}}
+            {{/if}}
           </x.index.Link>
         {{else}}
           {{sentenceCase x.collection.name}}
