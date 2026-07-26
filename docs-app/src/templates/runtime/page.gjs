@@ -144,6 +144,15 @@ function hasReason(error) {
       }
     }
 
+    /* phones: the sheet inset eats reading width — keep just enough
+     * to still read as a sheet */
+    @media (max-width: 640px) {
+      .runtime-doc {
+        margin-block: 0.25rem 1.5rem;
+        padding: 1rem 0.7rem 2.5rem;
+      }
+    }
+
     .guide-eyebrow {
       display: flex;
       align-items: center;

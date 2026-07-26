@@ -126,6 +126,13 @@ exit code 1</pre>
       padding: 1.25rem 1.5rem 3rem;
     }
 
+    /* phones: keep the terminal chrome, shrink the inset */
+    @media (max-width: 640px) {
+      .term__body {
+        padding: 1rem 0.7rem 2.5rem;
+      }
+    }
+
     .term__loading,
     .term__error {
       margin: 0;

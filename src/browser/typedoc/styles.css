@@ -206,6 +206,26 @@ section {
     padding-left: 0.25rem;
     padding-right: 0;
   }
+
+  ul.typedoc__declaration-children {
+    padding-left: 0.5rem;
+  }
+
+  .typedoc__nested-signature {
+    margin-left: 0.1rem;
+    padding-left: 0.5rem;
+  }
+
+  :is(
+      .typedoc__declaration-type,
+      .typedoc__reference__typeArgument,
+      .typedoc__nested-signature,
+      .typedoc__property
+    )
+    .typedoc__declaration
+    .typedoc-rendered-comment {
+    margin-left: 0.5rem;
+  }
 }
 
 /* ---------------------------------------------------------------- *

@@ -167,6 +167,14 @@ export default Route(
         .big-layout aside { display: none; }
       }
 
+      /* phones: a slimmer page gutter — the group designs carry their
+       * own inner padding */
+      @media (max-width: 640px) {
+        .mobile-menu-wrapper__content.container {
+          padding-inline: 0.6rem;
+        }
+      }
+
       /* The whole viewport is the page: short docs still fill it, so the
        * groups' full-height designs hold their shape */
       .mobile-menu-wrapper__content.container {
