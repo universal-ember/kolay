@@ -83,12 +83,12 @@ module('Home docs navigation', function (hooks) {
       .containsText('Configuring apiDocs(...)');
 
     assert
-      .dom(`aside nav a[href="/TypeDoc/plugin/api-docs.md"]`)
-      .hasAttribute('data-link-entry', 'true', 'link entries are marked for styling');
+      .dom(`aside nav a[href="/TypeDoc/plugin/api-docs.md"] svg.link-entry-icon`)
+      .exists('link entries carry the icon');
 
     // the side nav renders twice (desktop + mobile menu) — the point is
-    // that no ordinary page picked up the marker
-    const marked = [...document.querySelectorAll('aside nav a[data-link-entry]')];
+    // that no ordinary page picked up the icon
+    const marked = [...document.querySelectorAll('aside nav a:has(svg.link-entry-icon)')];
 
     assert.true(marked.length > 0, 'the link entry is marked');
     assert.deepEqual(
