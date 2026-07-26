@@ -48,7 +48,15 @@ That file produces the "Configuring apiDocs(...)" entry in this very section —
 
 The `href` is written app-relative (as if the app were deployed at `/`); the app's `rootURL` is applied automatically, the same as for authored links.
 
-Since these entries take the reader somewhere else — a different group, or a different site entirely — `<PageNav />` renders them with a `data-link-entry` attribute, so you can mark them visually:
+Since these entries take the reader somewhere else — a different group, or a different site entirely — you may want to mark them visually. Everything from the page's json is on the manifest entry your nav blocks receive, so the presence of `href` is the signal. This site's `<PageNav />` `:page` block:
+
+```gjs
+<x.Link data-link-entry={{if x.page.href "true"}}>
+  {{nameFor x.page}}
+</x.Link>
+```
+
+paired with:
 
 ```css
 nav a[data-link-entry]::after {
@@ -56,4 +64,4 @@ nav a[data-link-entry]::after {
 }
 ```
 
-(This site uses the same SVG icon as its other external links, via a CSS `mask`, rather than the `↗` character — which renders as an emoji on some platforms.)
+(This site actually uses the same SVG icon as its other external links, via a CSS `mask`, rather than the `↗` character — which renders as an emoji on some platforms.)

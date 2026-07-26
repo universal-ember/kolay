@@ -66,7 +66,8 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
   <aside>
     <PageNav ...attributes>
       <:page as |x|>
-        <x.Link>
+        {{! a page whose meta is just an href leaves this group — mark it }}
+        <x.Link data-link-entry={{if x.page.href "true"}}>
           {{nameFor x.page}}
         </x.Link>
       </:page>

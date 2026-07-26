@@ -252,11 +252,9 @@ class PageLink extends Component<{
   }
 
   <template>
-    <a
-      href={{this.href}}
-      class={{if this.isActive this.activeClass}}
-      data-link-entry={{if @item.href 'true'}}
-      ...attributes
-    >{{yield @item this.isActive}}</a>
+    <a href={{this.href}} class={{if this.isActive this.activeClass}} ...attributes>{{yield
+        @item
+        this.isActive
+      }}</a>
   </template>
 }
