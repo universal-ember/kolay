@@ -112,7 +112,9 @@ module('Runtime docs navigation', function (hooks) {
     assert.dom('[data-page-error]').doesNotExist();
 
     const labels = [
-      ...document.querySelectorAll('.runtime-doc :is(h1, h2, h3, .typedoc__declaration-name)'),
+      ...document.querySelectorAll(
+        '.runtime-doc h1, .runtime-doc h2, .runtime-doc h3, .runtime-doc .typedoc__declaration-name'
+      ),
     ]
       .map((el) => el.textContent?.trim())
       .filter((text) => text === 'DocsService');
