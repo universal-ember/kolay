@@ -45,8 +45,6 @@ const doc = `Hello from **a string**!`;
 
 <APIDocs @module="declarations/browser" @name="Compiled" @package="kolay" />
 
-### `CompileState`
-
-The state `Compiled` gives back is [ember-repl](/ecosystem/ember-repl)'s `CompileState`:
+The state `Compiled` gives back is defined by [ember-repl](/ecosystem/ember-repl):
 
 <APIDocs @module="declarations" @name="CompileState" @package="ember-repl" />

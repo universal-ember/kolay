@@ -54,8 +54,6 @@ To render a document that is _not_ the current page (something you fetched yours
 
 <APIDocs @module="declarations/browser" @name="selected" @package="kolay" />
 
-### `Selected`
-
 The store `selected` returns:
 
 <APIDocs @module="declarations/browser" @name="Selected" @package="kolay" />

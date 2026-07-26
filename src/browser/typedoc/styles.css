@@ -98,6 +98,13 @@
   }
 }
 
+/* a declaration that is a member list (a class, an interface): the
+ * side-by-side grid would spend a whole column on the name — the name
+ * is a heading line, members span the full width below it */
+.typedoc__declaration:has(> ul.typedoc__declaration-children) {
+  display: block;
+}
+
 section {
   > .typedoc__declaration {
     > .typedoc__declaration-name {
