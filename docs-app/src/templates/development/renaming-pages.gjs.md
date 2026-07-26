@@ -47,3 +47,44 @@ A json file with an `href` — and no markdown file of its own — becomes a nav
 That file produces the "Configuring apiDocs(...)" entry in this very section — it links over to the TypeDoc group.
 
 The `href` is written app-relative (as if the app were deployed at `/`); the app's `rootURL` is applied automatically, the same as for authored links.
+
+Since these entries take the reader somewhere else — a different group, or a different site entirely — you may want to mark them visually. Everything from the page's json is on the manifest entry your nav blocks receive, so the presence of `href` is the signal: render an icon in the link when it's set. This site's `<PageNav />` `:page` block:
+
+```gjs
+<x.Link>
+  {{nameFor x.page}}
+  {{#if x.page.href}}
+    <LinkEntryIcon />
+  {{/if}}
+</x.Link>
+```
+
+`<LinkEntryIcon />` here is a small inline `<svg>` — the same arrow this site's other external links show. Any icon component works.
+
+<details>
+<summary>Prefer to keep templates untouched? The marker can be CSS alone</summary>
+
+Set an attribute from the same signal:
+
+```gjs
+<x.Link data-link-entry={{if x.page.href "true"}}>
+  {{nameFor x.page}}
+</x.Link>
+```
+
+and draw the icon from a stylesheet (a literal `↗` character renders as an emoji on some platforms, so prefer an SVG `mask`):
+
+```css
+nav a[data-link-entry]::after {
+  content: "";
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-left: 0.4em;
+  background-color: var(--pico-muted-color);
+  /* the arrow SVG, elided here */
+  mask: url("data:image/svg+xml,…") no-repeat center / contain;
+}
+```
+
+</details>

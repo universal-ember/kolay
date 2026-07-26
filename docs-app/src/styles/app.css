@@ -4,6 +4,13 @@ a.active {
   font-weight: bold;
 }
 
+nav a .link-entry-icon {
+  width: 0.7em;
+  height: 0.7em;
+  margin-left: 0.4em;
+  color: var(--pico-muted-color);
+}
+
 pre.shiki {
   white-space: pre-wrap;
   /* overflow: hidden; */
