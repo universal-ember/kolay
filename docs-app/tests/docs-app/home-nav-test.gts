@@ -11,7 +11,14 @@ module('Home docs navigation', function (hooks) {
     const nav = document.querySelector('aside nav');
     const text = nav?.textContent?.replaceAll(/\s+/g, ' ') ?? '';
 
-    const sections = ['Install', 'Authoring', 'Development', 'Migrations', 'Ecosystem'];
+    const sections = [
+      'Install',
+      'Prebuilt docs UI',
+      'Authoring',
+      'Development',
+      'Migrations',
+      'Ecosystem',
+    ];
     const positions = sections.map((section) => text.indexOf(section));
 
     assert.deepEqual(
@@ -60,6 +67,7 @@ module('Home docs navigation', function (hooks) {
       ['/ecosystem/ember-repl', 'ember-repl'],
       ['/ecosystem/ember-mobile-menu', 'ember-mobile-menu'],
       ['/TypeDoc/customizing/rendering', 'Customizing rendering'],
+      ['/prebuilt-ui/index', 'Prebuilt docs UI'],
     ]) {
       await visit(url as string);
 
