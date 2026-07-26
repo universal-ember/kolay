@@ -1,4 +1,15 @@
 /*
+ * Colors — override via these variables (set them on :root or any
+ * ancestor). Defaults are light-dark() aware. Chip borders and
+ * backgrounds derive from currentColor, so they tint automatically.
+ *
+ *   --kolay-typedoc-name         member & declaration names
+ *   --kolay-typedoc-type         type references (classes, interfaces, components)
+ *   --kolay-typedoc-builtin      intrinsics & literals (string, number, "value")
+ *   --kolay-typedoc-param        function parameter names
+ *   --kolay-typedoc-punctuation  structure (: ( ) => | < > ,)
+ *   --kolay-typedoc-comment      doc comments rendered inside type shapes
+ *
  * Reading model:
  *
  * - Member ROWS (a class/interface's members, a signature's args): name on
@@ -16,6 +27,16 @@
 /* ---------------------------------------------------------------- *
  * Leaf tokens (chips)
  * ---------------------------------------------------------------- */
+
+.typedoc__reference__name {
+  color: var(--kolay-typedoc-type, light-dark(#6639ba, #d2a8ff));
+}
+
+.typedoc__unknown__yield,
+.typedoc__intrinsic,
+.typedoc__literal {
+  color: var(--kolay-typedoc-builtin, light-dark(#116329, #7ee787));
+}
 
 .typedoc__type-link,
 .typedoc__unknown__yield,
@@ -48,6 +69,12 @@
   display: inline-block;
   line-height: 1.5rem;
   font-weight: bold;
+  color: var(--kolay-typedoc-name, light-dark(#0550ae, #79c0ff));
+}
+
+/* the root declaration's name is a heading, not a code token */
+section > .typedoc__declaration > .typedoc__declaration-name {
+  color: inherit;
 }
 
 .typedoc__declaration {
@@ -90,6 +117,7 @@
   > .typedoc__declaration-name::after {
     content: ":";
     font-weight: normal;
+    color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
   }
 
   > .typedoc__declaration-type {
@@ -266,6 +294,7 @@ section {
     &::after {
       content: ": ";
       font-weight: normal;
+      color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
     }
   }
 
@@ -308,7 +337,10 @@ section {
   .typedoc__declaration
   .typedoc-rendered-comment {
   font-size: 0.85em;
-  color: var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent));
+  color: var(
+    --kolay-typedoc-comment,
+    var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+  );
   margin: 0.1rem 0 0.4rem 0.9rem;
 
   :is(p, pre) {
@@ -326,6 +358,11 @@ section {
 .typedoc__reference__typeArgument {
   display: inline;
   width: auto;
+}
+
+/* the < > , between type arguments; tokens inside re-color themselves */
+.typedoc__reference__typeArguments {
+  color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
 }
 
 .typedoc__reference__typeArgument + .typedoc__reference__typeArgument::before {
@@ -366,6 +403,12 @@ section {
   content: ", ";
 }
 
+.typedoc__function__open,
+.typedoc__function__close,
+.typedoc__function__parameter__container + .typedoc__function__parameter__container::before {
+  color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+}
+
 .typedoc__function__close {
   margin: 0 0.25rem;
 }
@@ -376,10 +419,12 @@ section {
   font-family: var(--pico-font-family-monospace, monospace);
   font-size: 0.9em;
   font-weight: 600;
+  color: var(--kolay-typedoc-param, light-dark(#953800, #ffa657));
 
   &::after {
     content: ": ";
     font-weight: normal;
+    color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
   }
 }
 
@@ -390,7 +435,10 @@ section {
 
   .typedoc-rendered-comment {
     font-size: 0.85em;
-    color: var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent));
+    color: var(
+      --kolay-typedoc-comment,
+      var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+    );
     margin: 0.1rem 0 0.4rem 0.9rem;
 
     :is(p, pre) {
@@ -428,6 +476,7 @@ section {
 
 .typedoc__union__type::before {
   content: "| ";
+  color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
 }
 
 .typedoc__union .typedoc__union__type:first-child::before {
@@ -490,10 +539,12 @@ section {
     font-family: var(--pico-font-family-monospace, monospace);
     font-weight: 600;
     font-size: inherit;
+    color: var(--kolay-typedoc-name, light-dark(#0550ae, #79c0ff));
 
     &::after {
       content: ": ";
       font-weight: normal;
+      color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
     }
   }
 }
@@ -623,7 +674,10 @@ section {
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent));
+    color: var(
+      --kolay-typedoc-comment,
+      var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+    );
     margin: 0.5rem 0 0.15rem;
   }
 
@@ -674,7 +728,10 @@ section {
     padding-top: 0;
     margin: 0.1rem 0 0.4rem 0.9rem;
     font-size: 0.85em;
-    color: var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent));
+    color: var(
+      --kolay-typedoc-comment,
+      var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+    );
   }
 }
 
