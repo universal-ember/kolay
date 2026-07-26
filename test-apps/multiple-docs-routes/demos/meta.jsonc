@@ -1,0 +1,4 @@
+{
+  // proves jsonc parses: user content mixed into the meta export
+  "package": "demo-kit",
+}

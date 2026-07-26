@@ -48,11 +48,14 @@ declare module 'kolay/setup' {
  * `docs('foo')` enables `virtual:kolay/docs/foo`:
  *
  * ```js
- * import { addRoutes as addFooRoutes, manifest } from 'virtual:kolay/docs/foo';
+ * import { addRoutes as addFooRoutes, manifest, meta } from 'virtual:kolay/docs/foo';
  * ```
  *
  * `addRoutes(context)` is pre-scoped to the group: it brings the group's
  * docs into whatever route it's called from.
+ *
+ * `meta` describes the source: its repository URL, its repo-relative
+ * docs path, and anything from a `meta.jsonc` at the source's root.
  */
 declare module 'virtual:kolay/docs/*' {
   import type { DocsGroupModule } from 'kolay';
@@ -61,4 +64,5 @@ declare module 'virtual:kolay/docs/*' {
   export const manifest: DocsGroupModule['manifest'];
   export const pages: DocsGroupModule['pages'];
   export const addRoutes: DocsGroupModule['addRoutes'];
+  export const meta: DocsGroupModule['meta'];
 }

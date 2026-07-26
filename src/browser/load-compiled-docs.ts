@@ -2,6 +2,24 @@ import type { Collection, Manifest, Page } from '../types.ts';
 import type { ComponentLike } from '@glint/template';
 
 /**
+ * A docs source's meta, from `virtual:kolay/docs/<groupName>`:
+ * derived from the repository root's package.json, mixed with the
+ * content of a `meta.jsonc` at the root of the source (user keys win).
+ */
+export interface DocsSourceMeta {
+  /**
+   * The repository URL (GitHub, etc), from the root package.json's
+   * `repository` field.
+   */
+  url?: string;
+  /**
+   * The repo-relative path to this source's docs.
+   */
+  docsPath?: string;
+  [key: string]: unknown;
+}
+
+/**
  * What each `virtual:kolay/docs/<groupName>` module provides.
  */
 export interface DocsGroupModule {
@@ -10,6 +28,11 @@ export interface DocsGroupModule {
    * The group's own manifest.
    */
   manifest: { name: string; list: Page[]; tree: Collection };
+  /**
+   * The source's meta: repository URL, repo-relative docs path, and
+   * anything from the source root's `meta.jsonc`.
+   */
+  meta: DocsSourceMeta;
   /**
    * Similar to import.meta.glob — the group's page loaders, keyed by URL.
    */
