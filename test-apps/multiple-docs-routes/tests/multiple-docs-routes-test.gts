@@ -1,6 +1,10 @@
-import { currentURL, visit } from "@ember/test-helpers";
+import { currentURL, render, visit } from "@ember/test-helpers";
 import { module, test } from "qunit";
-import { setupApplicationTest } from "ember-qunit";
+import { setupApplicationTest, setupRenderingTest } from "ember-qunit";
+
+// build-time resolution of a demos() alias: this import is compiled
+// like any other module in the app graph
+import Hello from "virtual:demos/kit/hello";
 
 import { docsManager } from "kolay";
 import {
@@ -37,6 +41,13 @@ module("Multiple docs routes", function (hooks) {
 
     assert.strictEqual(guidesMeta.docsPath, "test-apps/multiple-docs-routes/guides");
     assert.notOk("package" in guidesMeta, "no meta.jsonc, no mixed-in content");
+  });
+
+  test("a runtime-compiled fence imports a demos() alias, with no modules config", async function (assert) {
+    await visit("/help/getting-started/using-demos.md");
+
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.dom("[data-demo=hello]").containsText("Hello from a shared demo!");
   });
 
   test("a co-located page renders from the root mount", async function (assert) {
@@ -95,5 +106,15 @@ module("Multiple docs routes", function (hooks) {
 
     assert.strictEqual(currentURL(), "/demos/components/buttons");
     assert.dom("h1").containsText("Buttons demo");
+  });
+});
+
+module("demos() | build-time", function (hooks) {
+  setupRenderingTest(hooks);
+
+  test("app code imports a demos() alias directly", async function (assert) {
+    await render(<template><Hello /></template>);
+
+    assert.dom("[data-demo=hello]").containsText("Hello from a shared demo!");
   });
 });

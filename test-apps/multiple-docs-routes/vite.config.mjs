@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { extensions, ember } from "@embroider/vite";
 import { babel } from "@rollup/plugin-babel";
-import { docs } from "kolay/vite";
+import { demos, docs } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
@@ -13,6 +13,8 @@ export default defineConfig({
       // only THIS usage's .gjs.md files get <Callout> in scope
       scope: `import { Callout } from '#app/components/callout.gjs';`,
     }),
+    // fences (runtime and build-time) import these as 'virtual:demos/kit/*'
+    demos(import.meta.resolve("./shared-demos", import.meta.url), { as: "demos/kit" }),
     ember(),
     babel({
       babelHelpers: "runtime",

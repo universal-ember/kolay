@@ -1,3 +1,9 @@
 {
-  "order": ["markdown-features", "code-fences", "links-and-images", "extending-markdown"]
+  "order": [
+    "markdown-features",
+    "code-fences",
+    "sharing-demos",
+    "links-and-images",
+    "extending-markdown"
+  ]
 }

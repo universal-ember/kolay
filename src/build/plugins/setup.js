@@ -275,6 +275,12 @@ export const setup = (state) => {
    */
   let hasApiDocs = true;
 
+  /**
+   * Same idea for demos(): when absent, an empty 'kolay/demos:virtual'
+   * keeps the generated setupKolay's import working.
+   */
+  let hasDemos = true;
+
   return {
     name: 'kolay:setup',
     vite: {
@@ -283,6 +289,7 @@ export const setup = (state) => {
         baseUrl = resolvedConfig.base;
         isBuild = resolvedConfig.command === 'build';
         hasApiDocs = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:apidocs');
+        hasDemos = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:demos');
 
         /**
          * Discover every docs() usage in this config — the plugin may be
@@ -416,6 +423,14 @@ export const setup = (state) => {
         `,
       },
       {
+        importPath: 'kolay/demos:virtual',
+        // dormant whenever a demos() plugin provides the real thing
+        when: () => !hasDemos,
+        content: stripIndent`
+          export const modules = {};
+        `,
+      },
+      {
         importPath: 'kolay/setup',
         content: stripIndent`
           import { getOwner, setOwner } from '@ember/owner';
@@ -462,9 +477,10 @@ export const setup = (state) => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, meta] = await Promise.all([
+            let [apiDocs, meta, demos] = await Promise.all([
               import('kolay/api-docs:virtual'),
               import('kolay/compiled-docs:virtual'),
+              import('kolay/demos:virtual'),
             ]);
 
             // every group's docs module, loaded in parallel
@@ -474,6 +490,8 @@ export const setup = (state) => {
               apiDocs,
               compiledDocs,
               ...options,
+              // demos() aliases resolve automatically; explicit modules win
+              modules: { ...demos.modules, ...(options?.modules ?? {}) },
             });
 
 
