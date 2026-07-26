@@ -17,7 +17,7 @@ Plain `.md` files are shipped as raw text with your app's static assets. When a 
 **Cons:**
 
 - Slightly slower page transitions (compilation happens on each visit, though results are cached in an LRU)
-- Live demos in `.md` codefences use the runtime compiler, so anything you want available in those demos must be provided through the `modules` and `topLevelScope` options passed to `setupKolay()`
+- Demo imports are not resolved by the build. The runtime compiler resolves imports only from what `setupKolay()` provides: every library your `.md` demos import — at any depth, including anything those libraries lead the demos to import — must be declared in `modules` (values can also be handed to the scope directly via `topLevelScope`). An import the map doesn't declare fails to resolve, even though the library sits installed in `node_modules`.
 
 ### Example
 
@@ -39,11 +39,12 @@ Files ending in `.gjs.md` are compiled during the build (by the `docs()` plugin)
 
 - Instant page transitions — the compiled component is code-split and loaded like any other module
 - Live demos are real GJS components, so you get full build-time error checking
+- Demo imports resolve through the build, like any source file — anything installed works, at any depth, with no registration
 - You can use the `scope` build option to make components/helpers available inside live codefences without any runtime setup
 
 **Cons:**
 
-- Each `.gjs.md` file adds to your build, so many of them can increase build times
+- Every `.gjs.md` file adds compile work to the build — build time grows with your page count, where `.md` stays flat no matter how many pages exist
 - Requires a build step; raw markdown content is not available at runtime
 
 ### Example
