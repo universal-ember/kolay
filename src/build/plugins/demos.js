@@ -147,6 +147,10 @@ export const demos = (state) => {
 
   return {
     name,
+    // '#'-style specifiers otherwise hit the bundler's native
+    // subpath-imports resolution (package.json#imports) first, which
+    // errors hard on unknown specifiers
+    enforce: 'pre',
 
     resolveId(id) {
       // the shared runtime map, served by the primary usage
