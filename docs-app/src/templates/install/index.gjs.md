@@ -32,7 +32,7 @@ pnpm add kolay
 
 - from any folder, any project (good for monorepos)
 - scales infinitely with your project size, as compiling the pages is done on-demand, rather than on-deploy
-- any codefence can become a live demo with the `live` tag
+- any codefence can become a live demo with the `live` tag (supports Ember, Mermaid, React, Svelte, Vue, [and more](https://limber.glimdown.com/docs/repl-sdk/))
 
   ````markdown
   Some prose here about the demo
