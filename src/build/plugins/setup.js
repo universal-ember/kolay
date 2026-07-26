@@ -11,6 +11,7 @@ import send from 'send';
 import { virtualFile } from './helpers.js';
 import { reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
+import { sourceMeta } from './source-meta.js';
 import { normalizePath } from './utils.js';
 
 /**
@@ -168,6 +169,21 @@ function homeSource(cwd) {
   };
 }
 
+/**
+ * Where the Home source's own files live — its meta.jsonc (and the
+ * repo-relative docsPath) belong to the templates directory, not the
+ * app root.
+ */
+function homeMetaCwd(cwd) {
+  for (const candidate of ['src/templates', 'app/templates']) {
+    const dir = join(cwd, candidate);
+
+    if (existsSync(dir)) return dir;
+  }
+
+  return cwd;
+}
+
 function groupSource(group) {
   return {
     displayName: group.name,
@@ -220,15 +236,18 @@ export function docsVirtualGuard(state) {
 
 /**
  * The source of a `virtual:kolay/docs/<groupName>` module:
- * the group's manifest, its page loaders, and an `addRoutes` scoped to it.
+ * the group's manifest, its page loaders, its meta, and an `addRoutes`
+ * scoped to it.
  */
-function groupModuleContent({ manifestGroup, loaders }, { scopedTo } = {}) {
+function groupModuleContent({ manifestGroup, loaders, meta }, { scopedTo } = {}) {
   return stripIndent`
     import { addRoutes as _addRoutes } from 'kolay';
 
     export const name = ${JSON.stringify(manifestGroup.name)};
 
     export const manifest = ${JSON.stringify(manifestGroup)};
+
+    export const meta = ${JSON.stringify(meta ?? {})};
 
     export const pages = {
       ${Object.entries(loaders)
@@ -501,9 +520,11 @@ export const setup = (state) => {
          */
         importPath: docsModuleId('Home'),
         content: async () => {
-          const enumerated = await enumerateSource(homeSource(cwd), baseUrl);
+          const source = homeSource(cwd);
+          const enumerated = await enumerateSource(source, baseUrl);
+          const meta = await sourceMeta(homeMetaCwd(cwd));
 
-          return groupModuleContent(enumerated);
+          return groupModuleContent({ ...enumerated, meta });
         },
       },
       /**
@@ -515,8 +536,9 @@ export const setup = (state) => {
         importPath: docsModuleId(group.name),
         content: async () => {
           const enumerated = await enumerateSource(groupSource(group), baseUrl);
+          const meta = await sourceMeta(normalizePath(group.src));
 
-          return groupModuleContent(enumerated, { scopedTo: group.name });
+          return groupModuleContent({ ...enumerated, meta }, { scopedTo: group.name });
         },
       })),
     ]),

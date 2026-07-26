@@ -3,7 +3,12 @@ import { module, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
 
 import { docsManager } from "kolay";
-import { manifest as demosManifest, name as demosName } from "virtual:kolay/docs/demos";
+import {
+  manifest as demosManifest,
+  meta as demosMeta,
+  name as demosName,
+} from "virtual:kolay/docs/demos";
+import { meta as guidesMeta } from "virtual:kolay/docs/guides";
 
 module("Multiple docs routes", function (hooks) {
   setupApplicationTest(hooks);
@@ -23,6 +28,15 @@ module("Multiple docs routes", function (hooks) {
       demosManifest.list.map((page) => page.appRelativePath),
       ["/demos/components/buttons"],
     );
+  });
+
+  test("each docs() usage exposes its source's meta", function (assert) {
+    assert.strictEqual(demosMeta.url, "https://github.com/universal-ember/kolay");
+    assert.strictEqual(demosMeta.docsPath, "test-apps/multiple-docs-routes/demos");
+    assert.strictEqual(demosMeta.package, "demo-kit", "meta.jsonc content is mixed in");
+
+    assert.strictEqual(guidesMeta.docsPath, "test-apps/multiple-docs-routes/guides");
+    assert.notOk("package" in guidesMeta, "no meta.jsonc, no mixed-in content");
   });
 
   test("a co-located page renders from the root mount", async function (assert) {

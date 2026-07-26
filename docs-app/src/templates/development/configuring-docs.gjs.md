@@ -142,8 +142,20 @@ import { addRoutes as addFooRoutes, manifest } from "virtual:kolay/docs/foo";
 
 - `manifest` — the group's own manifest (`{ name, list, tree }`)
 - `pages` — the group's page loaders, like `import.meta.glob`
+- `meta` — where the source lives:
 
-The co-located pages have one too: `virtual:kolay/docs/Home`.
+  ```js
+  import { meta } from "virtual:kolay/docs/foo";
+
+  meta.url; // the repository URL, e.g. 'https://github.com/universal-ember/kolay'
+  meta.docsPath; // the repo-relative path to this source's docs, e.g. 'docs'
+  ```
+
+  `url` comes from the `repository` field of the package.json at the repository root; `docsPath` is where the `docs()` source sits inside that repository — together they can build "edit this page" links.
+
+  A `meta.jsonc` (or `meta.json`) at the root of the source mixes its content in — put anything you want alongside the derived fields (its keys win over them). This is the same file that can hold the source's top-level [`order`](/development/ordering-pages.md), so that key comes along when present.
+
+The co-located pages have one too: `virtual:kolay/docs/Home` (its source is the templates directory, so that is what `docsPath` and `meta.jsonc` refer to).
 
 Group info across _all_ groups comes from the metamanifest, `kolay/compiled-docs:virtual` — it lists every group and how to load its module. `setupKolay()` loads all of them in parallel behind the scenes (via `loadCompiledDocs` from `kolay`), so by default the whole site's navigation is available up front.
 
