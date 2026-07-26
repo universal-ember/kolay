@@ -24,8 +24,8 @@ export const apiDocs = _apiDocs.vite;
  * The demos plugin: aliases a directory of demo components so code
  * fences can import them —
  *
- * `demos(import.meta.resolve('./demos'), { as: 'demos/foo' })` enables
- * `import ... from 'virtual:demos/foo/<demo>'` in live codefences.
+ * `demos(import.meta.resolve('./demos'), { as: '#demos/foo' })` enables
+ * `import ... from '#demos/foo/<demo>'` in live codefences.
  * The runtime compiler learns the aliases automatically, so `.md`
  * fences need no `modules` configuration.
  *

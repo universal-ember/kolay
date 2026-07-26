@@ -4,7 +4,7 @@ import { setupApplicationTest, setupRenderingTest } from "ember-qunit";
 
 // build-time resolution of a demos() alias: this import is compiled
 // like any other module in the app graph
-import Hello from "virtual:demos/kit/hello";
+import Hello from "#demos/kit/hello";
 
 import { docsManager } from "kolay";
 import {

@@ -44,8 +44,8 @@ export default defineConfig(async ({ mode }) => {
         ...sharedMarkdownOptions,
       }),
       apiDocs(['kolay', 'ember-primitives', 'ember-resources', 'ember-repl']),
-      // live codefences import these as 'virtual:demos/site/*'
-      demos(import.meta.resolve('./demos', import.meta.url), { as: 'demos/site' }),
+      // live codefences import these as '#demos/site/*'
+      demos(import.meta.resolve('./demos', import.meta.url), { as: '#demos/site' }),
       babel({
         babelHelpers: 'runtime',
         extensions,

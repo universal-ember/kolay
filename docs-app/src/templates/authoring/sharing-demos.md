@@ -7,15 +7,15 @@ Live codefences are great for small examples, but real demos outgrow them: you w
 import { demos, docs } from "kolay/vite";
 
 export default {
-  plugins: [docs(), demos(import.meta.resolve("./demos"), { as: "demos/site" })],
+  plugins: [docs(), demos(import.meta.resolve("./demos"), { as: "#demos/site" })],
 };
 ```
 
-Every file in the directory becomes importable under the alias, with the `virtual:` prefix always added — `demos/counter.gjs` is `virtual:demos/site/counter`:
+Every file in the directory becomes importable under the `as` specifier, used verbatim — `demos/counter.gjs` is `#demos/site/counter`:
 
 ````md
 ```gjs live
-import Counter from "virtual:demos/site/counter";
+import Counter from "#demos/site/counter";
 
 <template><Counter /></template>
 ```
@@ -24,7 +24,7 @@ import Counter from "virtual:demos/site/counter";
 That exact fence, live:
 
 ```gjs live preview
-import Counter from "virtual:demos/site/counter";
+import Counter from "#demos/site/counter";
 
 <template><Counter /></template>
 ```
@@ -34,5 +34,6 @@ This page is a `.md` file, so the fence above compiles in the browser — the im
 ## Conventions
 
 - File extensions are dropped: `counter.gjs`, `counter.gts`, `counter.js`, and `counter.ts` are all imported as `…/counter`
-- An `index` file provides its directory: `demos/index.gjs` is `virtual:demos/site`, and `demos/forms/index.gjs` is `virtual:demos/site/forms`
+- `as` may be any valid import URI; the `#` prefix (Node's [subpath-import](https://nodejs.org/api/packages.html#subpath-imports) convention) makes it unmistakably not-an-npm-package
+- An `index` file provides its directory: `demos/index.gjs` is `#demos/site`, and `demos/forms/index.gjs` is `#demos/site/forms`
 - Use the plugin once per directory, each usage with its own `as`

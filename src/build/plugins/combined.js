@@ -77,8 +77,8 @@ export function apiDocsPlugins(input) {
 
 /**
  * The demos plugin: aliases a directory of demo components so code
- * fences can import them — `demos(path, { as: 'demos/foo' })` enables
- * `import ... from 'virtual:demos/foo/<demo>'`. The runtime compiler
+ * fences can import them — `demos(path, { as: '#demos/foo' })` enables
+ * `import ... from '#demos/foo/<demo>'`. The runtime compiler
  * learns the aliases automatically through `setupKolay`.
  *
  * @param {string} src - where the demos live (a path, or an `import.meta.resolve()`d URL)

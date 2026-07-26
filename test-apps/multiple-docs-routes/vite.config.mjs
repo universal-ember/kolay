@@ -13,8 +13,8 @@ export default defineConfig({
       // only THIS usage's .gjs.md files get <Callout> in scope
       scope: `import { Callout } from '#app/components/callout.gjs';`,
     }),
-    // fences (runtime and build-time) import these as 'virtual:demos/kit/*'
-    demos(import.meta.resolve("./shared-demos", import.meta.url), { as: "demos/kit" }),
+    // fences (runtime and build-time) import these as '#demos/kit/*'
+    demos(import.meta.resolve("./shared-demos", import.meta.url), { as: "#demos/kit" }),
     ember(),
     babel({
       babelHelpers: "runtime",

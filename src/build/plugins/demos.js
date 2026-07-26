@@ -6,8 +6,6 @@ import { stripIndent } from 'common-tags';
 
 import { normalizePath } from './utils.js';
 
-const VIRTUAL_PREFIX = 'virtual:';
-
 /**
  * Extensions a demo may have — the alias always omits them.
  */
@@ -18,7 +16,11 @@ const EXTENSION_PATTERN = new RegExp(`\\.(${DEMO_EXTENSIONS.join('|')})$`);
 /**
  * demos() takes (pathToDemos, { as }):
  *
- * - `demos(import.meta.resolve('./demos'), { as: 'demos/foo' })`
+ * - `demos(import.meta.resolve('./demos'), { as: '#demos/foo' })`
+ *
+ * The `as` is the import specifier, used verbatim — any valid import
+ * URI works; the `#` prefix (Node's subpath-import convention) makes
+ * it unmistakably not-an-npm-package.
  *
  * @param {string} src - where the demos live (a path, or an `import.meta.resolve()`d URL)
  * @param {{ as: string }} options
@@ -28,7 +30,7 @@ export function parseDemosArgs(src, options) {
   if (typeof src !== 'string' || src.length === 0) {
     throw new Error(
       `demos() requires a path to the demos as its first argument, e.g. ` +
-        `demos(import.meta.resolve('./demos'), { as: 'demos/foo' })`
+        `demos(import.meta.resolve('./demos'), { as: '#demos/foo' })`
     );
   }
 
@@ -36,21 +38,21 @@ export function parseDemosArgs(src, options) {
 
   if (typeof alias !== 'string' || alias.length === 0) {
     throw new Error(
-      `demos() requires an \`as\` option — the alias the demos are imported under, e.g. ` +
-        `demos(import.meta.resolve('./demos'), { as: 'demos/foo' }) enables ` +
-        `\`import ... from '${VIRTUAL_PREFIX}demos/foo/<demo>'\``
+      `demos() requires an \`as\` option — the specifier the demos are imported under, e.g. ` +
+        `demos(import.meta.resolve('./demos'), { as: '#demos/foo' }) enables ` +
+        `\`import ... from '#demos/foo/<demo>'\``
     );
   }
 
-  if (alias.startsWith(VIRTUAL_PREFIX)) {
+  const isValidImportUri =
+    !/\s/.test(alias) && !alias.startsWith('.') && !alias.startsWith('/') && !alias.endsWith('/');
+
+  if (!isValidImportUri) {
     throw new Error(
-      `demos()'s \`as\` should not include the '${VIRTUAL_PREFIX}' prefix — it is always added. ` +
-        `Use { as: '${alias.slice(VIRTUAL_PREFIX.length)}' }`
+      `demos()'s \`as\` is used verbatim as an import specifier, so it must be a valid ` +
+        `import URI: no whitespace, not relative, not starting or ending with '/'. ` +
+        `Received: '${alias}'. Try something like '#demos/foo'.`
     );
-  }
-
-  if (alias.startsWith('/') || alias.endsWith('/')) {
-    throw new Error(`demos()'s \`as\` should not start or end with '/'. Received: '${alias}'`);
   }
 
   const normalized = normalizePath(src);
@@ -66,9 +68,9 @@ export function parseDemosArgs(src, options) {
  * Every specifier a demos() source provides, mapped to the file it
  * resolves to:
  *
- * - each file, without its extension: `virtual:<as>/<file>`
+ * - each file, without its extension: `<as>/<file>`
  * - an index file also provides its directory:
- *   `virtual:<as>` (root), `virtual:<as>/<dir>` (nested)
+ *   `<as>` (root), `<as>/<dir>` (nested)
  *
  * @param {string} alias
  * @param {string} src - absolute path to the demos
@@ -82,12 +84,12 @@ export function demoSpecifiers(alias, src, entries) {
     const file = join(src, entry);
     const base = entry.replace(EXTENSION_PATTERN, '');
 
-    specifiers[`${VIRTUAL_PREFIX}${alias}/${base}`] = file;
+    specifiers[`${alias}/${base}`] = file;
 
     if (base === 'index') {
-      specifiers[`${VIRTUAL_PREFIX}${alias}`] = file;
+      specifiers[alias] = file;
     } else if (base.endsWith('/index')) {
-      specifiers[`${VIRTUAL_PREFIX}${alias}/${base.slice(0, -'/index'.length)}`] = file;
+      specifiers[`${alias}/${base.slice(0, -'/index'.length)}`] = file;
     }
   }
 
@@ -124,12 +126,12 @@ const RESOLVED_RUNTIME_MAP_ID = '\0kolay/demos:virtual';
  *
  * ```js
  * // vite.config.js
- * demos(import.meta.resolve('./demos'), { as: 'demos/foo' });
+ * demos(import.meta.resolve('./demos'), { as: '#demos/foo' });
  * ```
  *
  * ```js
  * // any live codefence, .md or .gjs.md
- * import Example from 'virtual:demos/foo/example';
+ * import Example from '#demos/foo/example';
  * ```
  *
  * The runtime compiler learns these automatically ('kolay/demos:virtual'
@@ -152,7 +154,7 @@ export const demos = (state) => {
         return { id: RESOLVED_RUNTIME_MAP_ID };
       }
 
-      const prefix = `${VIRTUAL_PREFIX}${state.options.alias}`;
+      const prefix = state.options.alias;
 
       if (id !== prefix && !id.startsWith(`${prefix}/`)) return;
 

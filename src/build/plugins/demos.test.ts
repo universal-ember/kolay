@@ -8,28 +8,34 @@ import { demoSpecifiers, parseDemosArgs } from './demos.js';
 const here = dirname(fileURLToPath(import.meta.url));
 
 describe('parseDemosArgs', () => {
-  it('accepts a path and an alias', () => {
-    expect(parseDemosArgs(here, { as: 'demos/foo' })).toEqual({
+  it('accepts a path and a specifier', () => {
+    expect(parseDemosArgs(here, { as: '#demos/foo' })).toEqual({
       src: here,
-      alias: 'demos/foo',
+      alias: '#demos/foo',
     });
   });
 
   it('accepts a file URL (import.meta.resolve style)', () => {
-    expect(parseDemosArgs(`file://${here}`, { as: 'demos/foo' })).toEqual({
+    expect(parseDemosArgs(`file://${here}`, { as: '#demos/foo' })).toEqual({
       src: here,
-      alias: 'demos/foo',
+      alias: '#demos/foo',
     });
+  });
+
+  it('uses any valid import URI verbatim', () => {
+    expect(parseDemosArgs(here, { as: 'demo-kit' }).alias).toBe('demo-kit');
+    expect(parseDemosArgs(here, { as: '@scope/demos' }).alias).toBe('@scope/demos');
   });
 
   it.each([
     [undefined, undefined, /requires a path/],
     [here, undefined, /requires an `as` option/],
     [here, { as: '' }, /requires an `as` option/],
-    [here, { as: 'virtual:demos/foo' }, /should not include the 'virtual:' prefix/],
-    [here, { as: '/demos' }, /should not start or end with '\/'/],
-    [here, { as: 'demos/' }, /should not start or end with '\/'/],
-    [join(here, 'does-not-exist'), { as: 'demos/foo' }, /path does not exist/],
+    [here, { as: './demos' }, /valid import URI/],
+    [here, { as: '/demos' }, /valid import URI/],
+    [here, { as: 'demos/' }, /valid import URI/],
+    [here, { as: 'demos foo' }, /valid import URI/],
+    [join(here, 'does-not-exist'), { as: '#demos/foo' }, /path does not exist/],
   ])('rejects %s / %o', (src, options, message) => {
     // @ts-expect-error deliberately wrong shapes
     expect(() => parseDemosArgs(src, options)).toThrow(message);
@@ -38,7 +44,7 @@ describe('parseDemosArgs', () => {
 
 describe('demoSpecifiers', () => {
   it('maps each file, and lets index files provide their directory', () => {
-    const map = demoSpecifiers('demos/foo', '/abs', [
+    const map = demoSpecifiers('#demos/foo', '/abs', [
       'button.gjs',
       'index.gjs',
       'forms/input.gts',
@@ -46,12 +52,12 @@ describe('demoSpecifiers', () => {
     ]);
 
     expect(map).toEqual({
-      'virtual:demos/foo/button': '/abs/button.gjs',
-      'virtual:demos/foo/index': '/abs/index.gjs',
-      'virtual:demos/foo': '/abs/index.gjs',
-      'virtual:demos/foo/forms/input': '/abs/forms/input.gts',
-      'virtual:demos/foo/forms/index': '/abs/forms/index.gjs',
-      'virtual:demos/foo/forms': '/abs/forms/index.gjs',
+      '#demos/foo/button': '/abs/button.gjs',
+      '#demos/foo/index': '/abs/index.gjs',
+      '#demos/foo': '/abs/index.gjs',
+      '#demos/foo/forms/input': '/abs/forms/input.gts',
+      '#demos/foo/forms/index': '/abs/forms/index.gjs',
+      '#demos/foo/forms': '/abs/forms/index.gjs',
     });
   });
 });
