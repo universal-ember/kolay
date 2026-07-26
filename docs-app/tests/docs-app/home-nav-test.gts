@@ -59,6 +59,7 @@ module('Home docs navigation', function (hooks) {
       ['/ecosystem/ember-primitives', 'ember-primitives'],
       ['/ecosystem/ember-repl', 'ember-repl'],
       ['/ecosystem/ember-mobile-menu', 'ember-mobile-menu'],
+      ['/TypeDoc/customizing/rendering', 'Customizing rendering'],
     ]) {
       await visit(url as string);
 
