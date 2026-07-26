@@ -2,7 +2,7 @@ import { ember, extensions } from '@embroider/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import rehypeShiki from '@shikijs/rehype';
-import { apiDocs, docs } from 'kolay/vite';
+import { apiDocs, demos, docs } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 import inspect from 'vite-plugin-inspect';
@@ -44,6 +44,8 @@ export default defineConfig(async ({ mode }) => {
         ...sharedMarkdownOptions,
       }),
       apiDocs(['kolay', 'ember-primitives', 'ember-resources', 'ember-repl']),
+      // live codefences import these as '#demos/site/*'
+      demos(import.meta.resolve('./demos', import.meta.url), { as: '#demos/site' }),
       babel({
         babelHelpers: 'runtime',
         extensions,

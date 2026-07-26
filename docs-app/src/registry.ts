@@ -23,7 +23,7 @@ function formatAsResolverEntries(imports: Record<string, unknown>) {
  */
 const resolverRegistry = {
   ...formatAsResolverEntries(
-    import.meta.glob('./templates/**/*.{gjs,gts,js,ts,md}', { eager: true })
+    import.meta.glob('./templates/**/*.{gjs,gts,js,ts,gjs.md,gts.md}', { eager: true })
   ),
   ...formatAsResolverEntries(import.meta.glob('./services/**/*.{js,ts}', { eager: true })),
   ...formatAsResolverEntries(import.meta.glob('./routes/**/*.{js,ts}', { eager: true })),

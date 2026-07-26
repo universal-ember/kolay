@@ -2,6 +2,7 @@ import { createUnplugin } from 'unplugin';
 
 import { apiDocs } from './api-docs/index.js';
 import { validatePackages } from './api-docs/validate.js';
+import { demos as demosPlugin, parseDemosArgs } from './demos.js';
 import { parseDocsArgs } from './docs-args.js';
 import { gjsmd } from './gjs-md.js';
 import { docsVirtualGuard, setup } from './setup.js';
@@ -75,6 +76,19 @@ export function apiDocsPlugins(input) {
 }
 
 /**
+ * The demos plugin: aliases a directory of demo components so code
+ * fences can import them — `demos(path, { as: '#demos/foo' })` enables
+ * `import ... from '#demos/foo/<demo>'`. The runtime compiler
+ * learns the aliases automatically through `setupKolay`.
+ *
+ * @param {string} src - where the demos live (a path, or an `import.meta.resolve()`d URL)
+ * @param {{ as: string }} options
+ */
+export function demosPlugins(src, options) {
+  return [demosPlugin(createState(parseDemosArgs(src, options)))].filter(Boolean);
+}
+
+/**
  * unplugin factories only receive one argument, so the public two-argument
  * form (see 'kolay/vite') passes `[groupName, options]` as a tuple.
  */
@@ -85,3 +99,11 @@ export const docs = /* #__PURE__ */ createUnplugin((args) =>
 const apiDocsUnplugin = /* #__PURE__ */ createUnplugin(apiDocsPlugins);
 
 export { apiDocsUnplugin as apiDocs };
+
+/**
+ * unplugin factories only receive one argument, so the public
+ * two-argument form (see 'kolay/vite') passes `[src, options]` as a tuple.
+ */
+export const demos = /* #__PURE__ */ createUnplugin((args) =>
+  Array.isArray(args) ? demosPlugins(...args) : demosPlugins(args)
+);

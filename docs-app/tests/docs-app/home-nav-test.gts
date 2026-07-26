@@ -60,6 +60,7 @@ module('Home docs navigation', function (hooks) {
       ['/authoring/markdown-features', 'Markdown features'],
       ['/authoring/code-fences', 'Code fences'],
       ['/authoring/extending-markdown', 'Extending markdown'],
+      ['/authoring/sharing-demos', 'Sharing demos'],
       ['/Runtime/rendering/compiled', 'Compiled'],
       ['/migrations/upgrading-from-5x', 'Upgrading from 5.x'],
       ['/ecosystem/memory-scroll', 'memory-scroll'],
@@ -74,6 +75,13 @@ module('Home docs navigation', function (hooks) {
       assert.dom('[data-page-error]').doesNotExist(`${url} has no error`);
       assert.dom('h1').containsText(heading as string, `${url} renders`);
     }
+  });
+
+  test('a runtime fence imports a demos() alias, with no modules config', async function (assert) {
+    await visit('/authoring/sharing-demos');
+
+    assert.dom('[data-page-error]').doesNotExist();
+    assert.dom('[data-demo=counter]').containsText('Clicked 0 times');
   });
 
   test('the links-and-images page renders its image samples', async function (assert) {
