@@ -171,14 +171,14 @@ export default Route(
 
       /* One structural breakpoint: the side nav is either in the page
        * (wide) or in the drawer (narrow). Everything else is fluid. */
-      @media (width >= 768px) {
+      @media (width >= 1000px) {
         .big-layout { display: grid; }
         header button.mobile-menu__toggle {
           display: none;
         }
       }
 
-      @media (width < 768px) {
+      @media (width < 1000px) {
         .big-layout { display: flex; }
         .big-layout aside { display: none; }
       }
