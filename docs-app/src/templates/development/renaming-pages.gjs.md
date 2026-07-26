@@ -56,12 +56,17 @@ Since these entries take the reader somewhere else — a different group, or a d
 </x.Link>
 ```
 
-paired with:
+The marker is then just CSS. This site draws the same arrow icon its other external links use — as a `mask`, because a literal `↗` character renders as an emoji on some platforms:
 
 ```css
 nav a[data-link-entry]::after {
-  content: " ↗";
+  content: "";
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-left: 0.4em;
+  background-color: var(--pico-muted-color);
+  /* the arrow SVG, elided here — any icon works */
+  mask: url("data:image/svg+xml,…") no-repeat center / contain;
 }
 ```
-
-(This site actually uses the same SVG icon as its other external links, via a CSS `mask`, rather than the `↗` character — which renders as an emoji on some platforms.)
