@@ -31,8 +31,6 @@ At the default `rootURL` of `/`, the two are identical.
 
 <APIDocs @module="declarations/browser" @name="docsManager" @package="kolay" />
 
-### `DocsService`
-
 The store `docsManager` returns:
 
 <APIDocs @module="declarations/browser" @name="DocsService" @package="kolay" />

@@ -51,11 +51,11 @@ module('Runtime docs navigation', function (hooks) {
 
     assert.dom('[data-page-error]').doesNotExist();
 
-    const section = [...document.querySelectorAll('h3')].find((h3) =>
-      h3.textContent?.includes('CompileState')
+    const label = [...document.querySelectorAll('.typedoc__declaration-name')].find(
+      (name) => name.textContent?.trim() === 'CompileState'
     );
 
-    assert.ok(section, 'the CompileState section exists');
+    assert.ok(label, 'CompileState renders, labeled once by the declaration');
 
     for (const field of ['component', 'error', 'isReady', 'promise', 'reason']) {
       assert.dom('.runtime-doc').containsText(field);
@@ -86,11 +86,11 @@ module('Runtime docs navigation', function (hooks) {
 
     assert.dom('[data-page-error]').doesNotExist();
 
-    const section = [...document.querySelectorAll('h3')].find((h3) =>
-      h3.textContent?.includes('Selected')
+    const label = [...document.querySelectorAll('.typedoc__declaration-name')].find(
+      (name) => name.textContent?.trim() === 'Selected'
     );
 
-    assert.ok(section, 'the Selected section exists');
+    assert.ok(label, 'Selected renders, labeled once by the declaration');
 
     for (const member of ['doc', 'prose', 'isReady', 'isPending', 'hasError', 'error']) {
       assert.dom('.runtime-doc').containsText(member);
@@ -111,11 +111,15 @@ module('Runtime docs navigation', function (hooks) {
 
     assert.dom('[data-page-error]').doesNotExist();
 
-    const section = [...document.querySelectorAll('h3')].find((h3) =>
-      h3.textContent?.includes('DocsService')
-    );
+    const labels = [
+      ...document.querySelectorAll(
+        '.runtime-doc h1, .runtime-doc h2, .runtime-doc h3, .runtime-doc .typedoc__declaration-name'
+      ),
+    ]
+      .map((el) => el.textContent?.trim())
+      .filter((text) => text === 'DocsService');
 
-    assert.ok(section, 'the DocsService section exists');
+    assert.deepEqual(labels, ['DocsService'], 'DocsService is labeled exactly once');
 
     for (const member of [
       'manifest',

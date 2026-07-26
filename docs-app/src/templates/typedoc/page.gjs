@@ -123,7 +123,7 @@ exit code 1</pre>
 
     .term__body {
       flex: 1;
-      padding: 1.25rem 1.5rem 3rem;
+      padding: clamp(1rem, 2vw, 1.25rem) clamp(0.7rem, 2vw, 1.5rem) 3rem;
     }
 
     .term__loading,
