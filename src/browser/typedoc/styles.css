@@ -162,6 +162,52 @@ section {
   border-bottom: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
 }
 
+/* narrow screens: the side-by-side row (and the far-right max-content
+ * type column, which cannot wrap) would squeeze or clip signatures —
+ * stack each row: name, then type (wrapping), then comment */
+@media (max-width: 40rem) {
+  .typedoc__declaration {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "name"
+      "type"
+      "comment";
+    gap: 0.25rem;
+
+    > * {
+      min-width: 0;
+    }
+
+    > .typedoc__declaration-type {
+      justify-self: start;
+    }
+
+    &:has(> .typedoc__declaration-signatures) {
+      grid-auto-flow: row;
+    }
+  }
+
+  section {
+    > .typedoc__declaration {
+      > .typedoc__declaration-name {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  /* indentation is precious at 390px */
+  .typedoc__property,
+  .typedoc__modifier-signature__arg,
+  .typedoc__helper-signature__arg,
+  .typedoc__component-signature__arg,
+  .typedoc__modifier-signature__element,
+  .typedoc__component-signature__element,
+  .typedoc__component-signature__block {
+    padding-left: 0.25rem;
+    padding-right: 0;
+  }
+}
+
 /* ---------------------------------------------------------------- *
  * Type positions: code-like flow
  * ---------------------------------------------------------------- */
