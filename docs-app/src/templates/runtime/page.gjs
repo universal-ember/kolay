@@ -128,29 +128,13 @@ function hasReason(error) {
       /* the content region fills the space next to the nav, same as
        * every other group — the reading measure is handled inside
        * (see .runtime-doc rules in app.css) */
-      margin: 1.5rem 0 3rem;
-      padding: 2.5rem 3rem 4rem;
+      margin: clamp(0.25rem, 1.5vw, 1.5rem) 0 clamp(1.5rem, 3vw, 3rem);
+      padding: clamp(1rem, 2.5vw, 2.5rem) clamp(0.7rem, 3.5vw, 3rem) clamp(2.5rem, 4vw, 4rem);
       /* the paper: an elevated sheet on the washed page */
       background: var(--pico-card-background-color);
       border: 1px solid color-mix(in oklab, var(--pico-muted-border-color), transparent 40%);
       border-radius: 0.75rem;
       box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
-    }
-
-    @media (max-width: 960px) {
-      .runtime-doc {
-        margin-block: 0.5rem 2rem;
-        padding: 1.5rem 1.25rem 3rem;
-      }
-    }
-
-    /* phones: the sheet inset eats reading width — keep just enough
-     * to still read as a sheet */
-    @media (max-width: 640px) {
-      .runtime-doc {
-        margin-block: 0.25rem 1.5rem;
-        padding: 1rem 0.7rem 2.5rem;
-      }
     }
 
     .guide-eyebrow {

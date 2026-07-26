@@ -155,39 +155,40 @@ export default Route(
         margin: 0;
       }
 
-      @media (min-width: 768px) {
+      /* One structural breakpoint: the side nav is either in the page
+       * (wide) or in the drawer (narrow). Everything else is fluid. */
+      @media (width >= 768px) {
         .big-layout { display: grid; }
         header button.mobile-menu__toggle {
           display: none;
         }
       }
 
-      @media (max-width: 768px) {
+      @media (width < 768px) {
         .big-layout { display: flex; }
         .big-layout aside { display: none; }
       }
 
-      /* phones: a slimmer page gutter — the group designs carry their
-       * own inner padding */
-      @media (max-width: 640px) {
-        .mobile-menu-wrapper__content.container {
-          padding-inline: 0.6rem;
-        }
-      }
-
       /* The whole viewport is the page: short docs still fill it, so the
-       * groups' full-height designs hold their shape */
+       * groups' full-height designs hold their shape. Width is fluid —
+       * pico's stepped .container max-widths would leave dead margins at
+       * in-between sizes — with one cap for very large screens and a
+       * gutter that scales with the viewport. */
       .mobile-menu-wrapper__content.container {
         min-height: 100dvh;
         display: flex;
         flex-direction: column;
+        width: 100%;
+        max-width: 90rem;
+        margin-inline: auto;
+        padding-inline: clamp(0.6rem, 2.5vw, 2rem);
       }
 
       .big-layout {
         /* fixed nav column: flipping between groups (whose page lists
          * differ in width) must not shift the content */
         grid-template-columns: 16rem 1fr;
-        gap: 2rem;
+        gap: clamp(1rem, 2.5vw, 2rem);
         flex: 1;
 
         main {
