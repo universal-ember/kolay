@@ -28,6 +28,31 @@ pnpm add kolay
 
 [^type-module]: this library sets `type: module` in its `package.json`, which for ember projects means that it requires vite.
 
+<details>
+<summary>Trying unreleased changes (the <code>dist</code> branch)</summary>
+
+Every push to `main` publishes the built package contents to the [`dist` branch](https://github.com/universal-ember/kolay/tree/dist), so unreleased changes can be tried without waiting for a release:
+
+```bash
+pnpm add kolay@github:universal-ember/kolay#dist
+```
+
+In a workspace where other packages also depend on `kolay` (or to keep your declared semver range untouched), use an override instead, in the root `package.json`:
+
+```jsonc
+{
+  "pnpm": {
+    "overrides": {
+      "kolay": "github:universal-ember/kolay#dist",
+    },
+  },
+}
+```
+
+The install resolves the branch to its current commit and pins that in your lockfile — to pick up newer changes later, run `pnpm update kolay` (or re-run the install after removing the lockfile entry).
+
+</details>
+
 ### Use Markdown
 
 - from any folder, any project (good for monorepos)
