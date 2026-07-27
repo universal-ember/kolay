@@ -10,6 +10,21 @@
  */
 const scopedRouteGroups = new Map<string, string>();
 
+/**
+ * The full name of the wildcard route `addRoutes` creates, given the
+ * surrounding route's full name (the DSL's `parent`).
+ *
+ * At the top of the router map, ember's DSL reports `parent` as
+ * 'application', which its own getFullName treats as "no prefix" —
+ * mirror that, or a top-level scoped mount would register as
+ * 'application.page' while the real route is 'page'.
+ */
+export function scopedRouteNameFor(parent: string | null | undefined): string {
+  const prefix = parent === 'application' ? null : parent;
+
+  return prefix ? `${prefix}.page` : 'page';
+}
+
 export function registerScopedRoute(routeName: string, groupName: string): void {
   scopedRouteGroups.set(routeName, groupName);
 }

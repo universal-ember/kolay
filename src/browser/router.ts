@@ -1,7 +1,7 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
-import { groupNameForRoute, registerScopedRoute } from './scoped-routes.ts';
+import { groupNameForRoute, registerScopedRoute, scopedRouteNameFor } from './scoped-routes.ts';
 import { docsManager } from './services/docs.ts';
 
 import type { RouterDSL } from '@ember/-internals/routing';
@@ -65,11 +65,7 @@ export function addRoutes(
   context.route('page', { path: '/*page' }, function () {});
 
   if (groupName) {
-    // `parent` is the surrounding route's full name (set by ember's DSL),
-    // so this is the wildcard route's full name.
-    const routeName = context.parent ? `${context.parent}.page` : 'page';
-
-    registerScopedRoute(routeName, groupName);
+    registerScopedRoute(scopedRouteNameFor(context.parent), groupName);
   }
 }
 
