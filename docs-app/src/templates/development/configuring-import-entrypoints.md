@@ -29,9 +29,10 @@ The argument is a package name (resolved from your project, exactly like the bun
 
 Every key of the package's `exports` becomes an import specifier — `.` is the package name, `./components` becomes `<name>/components`. A package without `exports` provides just its name.
 
+**Wildcard keys** (`./*`) are expanded: their target patterns (`./dist/*.js`) are matched against the package's files, and every candidate is verified through [resolve.exports](https://github.com/lukeed/resolve.exports) — the same library repl-sdk resolves with at runtime — so conditions, key specificity, and blocked entries behave exactly like the real resolution.
+
 Skipped automatically:
 
-- **wildcard keys** (`./*`) — they can't be enumerated from the keys alone
 - **types-only entries** (nothing to import at runtime) and **blocked entries** (`null`)
 - `./package.json` and the addon-main tooling entries
 

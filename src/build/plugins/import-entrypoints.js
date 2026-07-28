@@ -1,35 +1,95 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, globSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
 import { stripIndent } from 'common-tags';
+import { exports as resolveExports } from 'resolve.exports';
 
 import { normalizePath } from './utils.js';
 
 /**
- * Whether an exports value leads to something importable at runtime —
- * a target other than type declarations. Values may be strings,
- * condition objects, fallback arrays, or null (blocked).
+ * Whether a resolved exports target is importable at runtime (rather
+ * than type declarations or sourcemaps).
+ *
+ * @param {string} target
+ */
+function isRuntimeTarget(target) {
+  return (
+    !target.endsWith('.d.ts') &&
+    !target.endsWith('.d.mts') &&
+    !target.endsWith('.d.cts') &&
+    !target.endsWith('.map')
+  );
+}
+
+/**
+ * Every runtime target pattern reachable in an exports value —
+ * strings under any condition except `types`, through nested
+ * conditions and fallback arrays.
  *
  * @param {unknown} value
- * @returns {boolean}
+ * @returns {string[]}
  */
-function isImportable(value) {
-  if (typeof value === 'string') {
-    return !value.endsWith('.d.ts') && !value.endsWith('.d.mts') && !value.endsWith('.d.cts');
-  }
+function collectTargetPatterns(value) {
+  if (typeof value === 'string') return [value];
 
-  if (Array.isArray(value)) {
-    return value.some(isImportable);
-  }
+  if (Array.isArray(value)) return value.flatMap(collectTargetPatterns);
 
   if (value && typeof value === 'object') {
-    return Object.entries(value).some(
-      ([condition, target]) => condition !== 'types' && isImportable(target)
+    return Object.entries(value).flatMap(([condition, target]) =>
+      condition === 'types' ? [] : collectTargetPatterns(target)
     );
   }
 
-  return false;
+  return [];
+}
+
+/**
+ * The subpaths a wildcard key (`./*`) provides: its target patterns
+ * (`./dist/*.js`) are matched against the package's files, and each
+ * capture is substituted back into the key. (Whether a candidate
+ * actually resolves — and to what — is decided by `resolve.exports`,
+ * not here.)
+ *
+ * @param {string} key
+ * @param {unknown} value
+ * @param {string[]} files - './'-prefixed paths, relative to the package
+ * @returns {string[]}
+ */
+function expandWildcardKey(key, value, files) {
+  const captures = new Set();
+
+  for (const pattern of collectTargetPatterns(value)) {
+    const starIndex = pattern.indexOf('*');
+
+    if (starIndex === -1) continue;
+
+    // only the first '*' captures; later ones repeat the capture
+    const prefix = pattern.slice(0, starIndex);
+    const suffix = pattern.slice(starIndex + 1).replaceAll('*', '');
+
+    for (const file of files) {
+      if (!file.startsWith(prefix)) continue;
+      if (!file.endsWith(suffix)) continue;
+      if (file.length <= prefix.length + suffix.length) continue;
+
+      captures.add(file.slice(prefix.length, file.length - suffix.length));
+    }
+  }
+
+  return [...captures].map((capture) => key.replaceAll('*', capture));
+}
+
+/**
+ * The package's files, as './'-prefixed posix paths.
+ *
+ * @param {string} dir
+ * @returns {string[]}
+ */
+function packageFiles(dir) {
+  return globSync('**/*', { cwd: dir, exclude: ['node_modules'] }).map(
+    (file) => './' + file.split('\\').join('/')
+  );
 }
 
 /**
@@ -51,15 +111,18 @@ function isExcluded(key, exclude) {
  * The import specifiers a package's `exports` provides:
  *
  * - `.` → the package name; `./components` → `<name>/components`
- * - wildcard keys (`./*`) are skipped — they cannot be enumerated from
- *   the keys alone
- * - types-only entries, blocked (null) entries, `./package.json`, and
- *   the addon-main tooling entries are skipped
+ * - wildcard keys (`./*`) expand against the package's files: each
+ *   target pattern's captures are substituted back into the key
+ * - every candidate is then verified through `resolve.exports` — the
+ *   same resolution the runtime uses (repl-sdk resolves with it too) —
+ *   so conditions, key specificity, and blocking behave exactly like
+ *   the real thing; types-only and blocked entries drop out here
+ * - `./package.json` and the addon-main tooling entries are skipped
  * - a package without `exports` provides just its name
  *
  * @param {string} name - the package's name
  * @param {unknown} exports - the package.json#exports value
- * @param {{ exclude?: string[] }} [options]
+ * @param {{ exclude?: string[], dir?: string }} [options] - `dir` (the package's directory) is required to expand wildcard keys
  * @returns {string[]}
  */
 export function entrypointsFromExports(name, exports, options = {}) {
@@ -81,18 +144,33 @@ export function entrypointsFromExports(name, exports, options = {}) {
     subpaths = /** @type {Record<string, unknown>} */ (exports);
   }
 
-  const specifiers = [];
+  const files = options.dir ? packageFiles(options.dir) : [];
 
-  for (const [key, value] of Object.entries(subpaths)) {
-    if (key.includes('*')) continue;
-    if (CONVENTIONAL_SKIPS.includes(key)) continue;
-    if (isExcluded(key, exclude)) continue;
-    if (!isImportable(value)) continue;
+  const candidates = Object.entries(subpaths).flatMap(([key, value]) =>
+    key.includes('*') ? expandWildcardKey(key, value, files) : [key]
+  );
 
-    specifiers.push(key === '.' ? name : `${name}/${key.slice(2)}`);
+  const specifiers = new Set();
+
+  for (const subpath of candidates) {
+    if (CONVENTIONAL_SKIPS.includes(subpath)) continue;
+    if (isExcluded(subpath, exclude)) continue;
+
+    let targets;
+
+    try {
+      targets = resolveExports({ name, exports }, subpath, { browser: true });
+    } catch {
+      // blocked (null), types-only, or shadowed into nonexistence
+      continue;
+    }
+
+    if (!targets?.some(isRuntimeTarget)) continue;
+
+    specifiers.add(subpath === '.' ? name : `${name}/${subpath.slice(2)}`);
   }
 
-  return specifiers.toSorted();
+  return [...specifiers].toSorted();
 }
 
 /**
@@ -102,7 +180,7 @@ export function entrypointsFromExports(name, exports, options = {}) {
  *
  * @param {string} input
  * @param {string} cwd
- * @returns {{ name: string, exports: unknown }}
+ * @returns {{ name: string, exports: unknown, dir: string }}
  */
 export function resolvePackageJson(input, cwd) {
   const isPathish =
@@ -143,7 +221,7 @@ export function resolvePackageJson(input, cwd) {
     throw new Error(`The package.json at '${dirname(packagePath)}' has no name`);
   }
 
-  return { name: packageJson.name, exports: packageJson.exports };
+  return { name: packageJson.name, exports: packageJson.exports, dir: dirname(packagePath) };
 }
 
 /**
@@ -180,9 +258,9 @@ export function parseImportEntrypointsArgs(input, options) {
     }
   }
 
-  const { name, exports } = resolvePackageJson(input, process.cwd());
+  const { name, exports, dir } = resolvePackageJson(input, process.cwd());
 
-  return { input, entrypoints: entrypointsFromExports(name, exports, { exclude }) };
+  return { input, entrypoints: entrypointsFromExports(name, exports, { exclude, dir }) };
 }
 
 const RUNTIME_MAP_ID = 'kolay/import-entrypoints:virtual';

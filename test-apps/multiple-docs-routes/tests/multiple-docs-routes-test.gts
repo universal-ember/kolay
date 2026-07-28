@@ -56,6 +56,9 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("[data-page-error]").doesNotExist();
     assert.dom("[data-demo=entrypoints]").containsText("package import resolved");
     assert
+      .dom("[data-demo=entrypoints-wildcard]")
+      .containsText("wildcard entrypoint resolved", "a './*' subpath is enumerated");
+    assert
       .dom("[data-demo=entrypoints-2]")
       .containsText("second usage resolved", "the usages' maps merge");
   });

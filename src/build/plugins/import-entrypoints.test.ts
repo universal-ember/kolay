@@ -23,18 +23,31 @@ describe('entrypointsFromExports', () => {
     ).toEqual(['my-lib', 'my-lib/components', 'my-lib/utils']);
   });
 
-  it('skips wildcards, tooling entries, types-only and blocked entries', () => {
+  it('skips tooling entries, types-only and blocked entries', () => {
     expect(
       entrypointsFromExports('my-lib', {
         '.': { default: './dist/index.js' },
-        './*': { default: './dist/*.js' },
-        './*.css': './dist/*.css',
         './package.json': './package.json',
         './addon-main.js': './addon-main.cjs',
         './types': { types: './declarations/types.d.ts' },
         './internal': null,
       })
     ).toEqual(['my-lib']);
+  });
+
+  it('expands wildcard keys against the package files, resolving each candidate', () => {
+    const dir = join(here, 'fixtures', 'wildcard-pkg');
+    const { name, exports } = resolvePackageJson(dir, here);
+
+    expect(entrypointsFromExports(name, exports, { dir })).toMatchInlineSnapshot(`
+      [
+        "wildcard-pkg",
+        "wildcard-pkg/button",
+        "wildcard-pkg/index",
+        "wildcard-pkg/nested/input",
+        "wildcard-pkg/theme.css",
+      ]
+    `);
   });
 
   it('understands string, bare-conditions, fallback-array, and missing exports', () => {
@@ -90,12 +103,15 @@ describe('parseImportEntrypointsArgs', () => {
       exclude: ['./vite', './build*', './virtual', './test-support', './private/*'],
     });
 
-    expect(entrypoints).toMatchInlineSnapshot(`
-      [
-        "kolay",
-        "kolay/components",
-      ]
-    `);
+    // exact keys
+    expect(entrypoints).toContain('kolay');
+    expect(entrypoints).toContain('kolay/components');
+    // expanded from the './*' wildcard (its only runtime file)
+    expect(entrypoints).toContain('kolay/empty');
+    // excluded
+    expect(entrypoints).not.toContain('kolay/vite');
+    expect(entrypoints).not.toContain('kolay/build');
+    expect(entrypoints).not.toContain('kolay/build/legacy');
   });
 
   it.each([
