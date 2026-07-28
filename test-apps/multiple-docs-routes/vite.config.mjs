@@ -15,8 +15,10 @@ export default defineConfig({
     }),
     // fences (runtime and build-time) import these as '#demos/kit/*'
     demos(import.meta.resolve("./shared-demos", import.meta.url), { as: "#demos/kit" }),
-    // runtime fences can import this package's entrypoints with no modules config
+    // runtime fences can import these packages' entrypoints with no modules
+    // config — one usage per package; the maps merge
     importEntrypoints("@universal-ember/test-support"),
+    importEntrypoints("ember-strict-application-resolver"),
     ember(),
     babel({
       babelHelpers: "runtime",

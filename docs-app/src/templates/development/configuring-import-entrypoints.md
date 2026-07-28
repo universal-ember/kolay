@@ -23,7 +23,7 @@ import { ExternalLink } from "ember-primitives";
 </template>
 ```
 
-The argument is a package name (resolved from your project, exactly like the bundler will) or a path to a directory containing a `package.json` — useful for unpublished packages in a monorepo. Use the plugin once per package.
+The argument is a package name (resolved from your project, exactly like the bundler will) or a path to a directory containing a `package.json` — useful for unpublished packages in a monorepo. Use the plugin once per package — the usages' entrypoints merge into one map.
 
 ## What counts as an entrypoint
 
