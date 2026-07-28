@@ -1,0 +1,4 @@
+# fixture files must be committed — the repo root ignores dist/ and
+# declarations/, but this fake package's are test inputs
+!dist/
+!declarations/
