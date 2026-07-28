@@ -281,6 +281,11 @@ export const setup = (state) => {
    */
   let hasDemos = true;
 
+  /**
+   * And for importEntrypoints().
+   */
+  let hasImportEntrypoints = true;
+
   return {
     name: 'kolay:setup',
     vite: {
@@ -290,6 +295,9 @@ export const setup = (state) => {
         isBuild = resolvedConfig.command === 'build';
         hasApiDocs = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:apidocs');
         hasDemos = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:demos');
+        hasImportEntrypoints = resolvedConfig.plugins.some(
+          (plugin) => plugin.name === 'kolay:import-entrypoints'
+        );
 
         /**
          * Discover every docs() usage in this config — the plugin may be
@@ -431,6 +439,14 @@ export const setup = (state) => {
         `,
       },
       {
+        importPath: 'kolay/import-entrypoints:virtual',
+        // dormant whenever an importEntrypoints() plugin provides the real thing
+        when: () => !hasImportEntrypoints,
+        content: stripIndent`
+          export const modules = {};
+        `,
+      },
+      {
         importPath: 'kolay/setup',
         content: stripIndent`
           import { getOwner, setOwner } from '@ember/owner';
@@ -477,10 +493,11 @@ export const setup = (state) => {
             //             :(
             //             So the whole strategy / benefit of setupKolay is
             //             .... much less useful than originally planned
-            let [apiDocs, meta, demos] = await Promise.all([
+            let [apiDocs, meta, demos, entrypoints] = await Promise.all([
               import('kolay/api-docs:virtual'),
               import('kolay/compiled-docs:virtual'),
               import('kolay/demos:virtual'),
+              import('kolay/import-entrypoints:virtual'),
             ]);
 
             // every group's docs module, loaded in parallel
@@ -490,8 +507,9 @@ export const setup = (state) => {
               apiDocs,
               compiledDocs,
               ...options,
-              // demos() aliases resolve automatically; explicit modules win
-              modules: { ...demos.modules, ...(options?.modules ?? {}) },
+              // demos() aliases and importEntrypoints() packages resolve
+              // automatically; explicit modules win
+              modules: { ...demos.modules, ...entrypoints.modules, ...(options?.modules ?? {}) },
             });
 
 

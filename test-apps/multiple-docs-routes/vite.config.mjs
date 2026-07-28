@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { extensions, ember } from "@embroider/vite";
 import { babel } from "@rollup/plugin-babel";
-import { demos, docs } from "kolay/vite";
+import { demos, docs, importEntrypoints } from "kolay/vite";
 
 export default defineConfig({
   plugins: [
@@ -15,6 +15,8 @@ export default defineConfig({
     }),
     // fences (runtime and build-time) import these as '#demos/kit/*'
     demos(import.meta.resolve("./shared-demos", import.meta.url), { as: "#demos/kit" }),
+    // runtime fences can import this package's entrypoints with no modules config
+    importEntrypoints("@universal-ember/test-support"),
     ember(),
     babel({
       babelHelpers: "runtime",

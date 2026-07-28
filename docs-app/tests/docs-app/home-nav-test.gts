@@ -61,6 +61,7 @@ module('Home docs navigation', function (hooks) {
       ['/authoring/code-fences', 'Code fences'],
       ['/authoring/extending-markdown', 'Extending markdown'],
       ['/authoring/sharing-demos', 'Sharing demos'],
+      ['/development/configuring-import-entrypoints', 'Configuring'],
       ['/Runtime/rendering/compiled', 'Compiled'],
       ['/migrations/upgrading-from-5x', 'Upgrading from 5.x'],
       ['/ecosystem/memory-scroll', 'memory-scroll'],
@@ -82,6 +83,16 @@ module('Home docs navigation', function (hooks) {
 
     assert.dom('[data-page-error]').doesNotExist();
     assert.dom('[data-demo=counter]').containsText('Clicked 0 times');
+  });
+
+  test('the importEntrypoints live example resolves ember-primitives', async function (assert) {
+    await visit('/development/configuring-import-entrypoints');
+
+    assert.dom('[data-page-error]').doesNotExist();
+    // scoped to main: the header's GitHub link shares the href
+    assert
+      .dom('main a[href="https://github.com/universal-ember/kolay"]')
+      .containsText('resolved through importEntrypoints');
   });
 
   test('the links-and-images page renders its image samples', async function (assert) {

@@ -70,6 +70,7 @@ Live fences can `import` from anything your app can import from. To use componen
 - for `.gjs.md` files: the [`scope` option of `docs()`](/development/configuring-docs.md) — a string of import statements prepended to every file at build time
 - for `.md` files: the `topLevelScope` and `modules` options of `setupKolay()` — values and importable modules provided to the runtime compiler. The `modules` map is the complete import universe for runtime demos: every library they import, at any depth, resolves from it — never from the build's module graph. The Setup section of [Install](/install/index.md) shows it configured
 - for whole demo components in either file type: the [`demos()` plugin](/authoring/sharing-demos.md) — a directory of components aliased for fences to import, wired into the runtime compiler automatically
+- for whole npm packages in `.md` files: the [`importEntrypoints()` plugin](/development/configuring-import-entrypoints.md) — every entrypoint from the package's `exports`, wired into the runtime compiler automatically
 
 By default, the runtime scope already provides `<Shadowed>` (from `ember-primitives`) for style isolation, and the [TypeDoc components](/TypeDoc/plugin/api-docs.md): `<APIDocs>`, `<ComponentSignature>`, `<ModifierSignature>`, `<HelperSignature>`, and `<CommentQuery>`.
 

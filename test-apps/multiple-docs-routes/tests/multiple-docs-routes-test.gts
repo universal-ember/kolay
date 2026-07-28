@@ -50,6 +50,13 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("[data-demo=hello]").containsText("Hello from a shared demo!");
   });
 
+  test("a runtime fence imports a package taught by importEntrypoints()", async function (assert) {
+    await visit("/help/getting-started/using-libraries.md");
+
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.dom("[data-demo=entrypoints]").containsText("package import resolved");
+  });
+
   test("a co-located page renders from the root mount", async function (assert) {
     await visit("/welcome/home.md");
 
