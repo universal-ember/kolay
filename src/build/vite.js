@@ -1,4 +1,9 @@
-import { apiDocs as _apiDocs, demos as _demos, docs as _docs } from './plugins/index.js';
+import {
+  apiDocs as _apiDocs,
+  demos as _demos,
+  docs as _docs,
+  importEntrypoints as _importEntrypoints,
+} from './plugins/index.js';
 
 /**
  * The markdown-docs plugin. One usage per group:
@@ -34,4 +39,18 @@ export const apiDocs = _apiDocs.vite;
  */
 export function demos(src, options) {
   return _demos.vite([src, options]);
+}
+
+/**
+ * The import-entrypoints plugin: enumerates a package's
+ * package.json#exports and teaches the runtime compiler every
+ * entrypoint — `importEntrypoints('ember-primitives')` lets `.md`
+ * live codefences `import ... from 'ember-primitives/<anything>'`
+ * with no `modules` configuration.
+ *
+ * @param {string} input - a package name, or a path to a directory containing a package.json
+ * @param {{ exclude?: string[] }} [options] - subpath keys to leave out (exact, or ending in '*') — e.g. node-only entrypoints
+ */
+export function importEntrypoints(input, options) {
+  return _importEntrypoints.vite([input, options]);
 }

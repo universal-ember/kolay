@@ -5,6 +5,10 @@ import { validatePackages } from './api-docs/validate.js';
 import { demos as demosPlugin, parseDemosArgs } from './demos.js';
 import { parseDocsArgs } from './docs-args.js';
 import { gjsmd } from './gjs-md.js';
+import {
+  importEntrypoints as importEntrypointsPlugin,
+  parseImportEntrypointsArgs,
+} from './import-entrypoints.js';
 import { docsVirtualGuard, setup } from './setup.js';
 import { fixViteForIssue362 } from './vite-issue-362.js';
 
@@ -89,6 +93,21 @@ export function demosPlugins(src, options) {
 }
 
 /**
+ * The import-entrypoints plugin: enumerates a package's
+ * package.json#exports and teaches the runtime compiler every
+ * entrypoint, so `.md` fences can import the package with no
+ * `modules` configuration.
+ *
+ * @param {string} input - a package name, or a path to a directory containing a package.json
+ * @param {{ exclude?: string[] }} [options]
+ */
+export function importEntrypointsPlugins(input, options) {
+  return [importEntrypointsPlugin(createState(parseImportEntrypointsArgs(input, options)))].filter(
+    Boolean
+  );
+}
+
+/**
  * unplugin factories only receive one argument, so the public two-argument
  * form (see 'kolay/vite') passes `[groupName, options]` as a tuple.
  */
@@ -106,4 +125,12 @@ export { apiDocsUnplugin as apiDocs };
  */
 export const demos = /* #__PURE__ */ createUnplugin((args) =>
   Array.isArray(args) ? demosPlugins(...args) : demosPlugins(args)
+);
+
+/**
+ * unplugin factories only receive one argument, so the public
+ * two-argument form (see 'kolay/vite') passes `[input, options]` as a tuple.
+ */
+export const importEntrypoints = /* #__PURE__ */ createUnplugin((args) =>
+  Array.isArray(args) ? importEntrypointsPlugins(...args) : importEntrypointsPlugins(args)
 );

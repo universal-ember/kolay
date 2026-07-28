@@ -37,3 +37,5 @@ This page is a `.md` file, so the fence above compiles in the browser — the im
 - `as` may be any valid import URI; the `#` prefix (Node's [subpath-import](https://nodejs.org/api/packages.html#subpath-imports) convention) makes it unmistakably not-an-npm-package
 - An `index` file provides its directory: `demos/index.gjs` is `#demos/site`, and `demos/forms/index.gjs` is `#demos/site/forms`
 - Use the plugin once per directory, each usage with its own `as`
+
+For letting fences import an entire npm package (rather than your own demo files), see [`importEntrypoints()`](/development/configuring-import-entrypoints.md).

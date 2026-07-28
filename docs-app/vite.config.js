@@ -2,7 +2,7 @@ import { ember, extensions } from '@embroider/vite';
 
 import { babel } from '@rollup/plugin-babel';
 import rehypeShiki from '@shikijs/rehype';
-import { apiDocs, demos, docs } from 'kolay/vite';
+import { apiDocs, demos, docs, importEntrypoints } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
 import inspect from 'vite-plugin-inspect';
@@ -46,6 +46,8 @@ export default defineConfig(async ({ mode }) => {
       apiDocs(['kolay', 'ember-primitives', 'ember-resources', 'ember-repl']),
       // live codefences import these as '#demos/site/*'
       demos(import.meta.resolve('./demos', import.meta.url), { as: '#demos/site' }),
+      // .md fences can import ember-primitives with no modules config
+      importEntrypoints('ember-primitives'),
       babel({
         babelHelpers: 'runtime',
         extensions,

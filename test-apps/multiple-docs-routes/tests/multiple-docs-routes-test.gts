@@ -50,6 +50,19 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("[data-demo=hello]").containsText("Hello from a shared demo!");
   });
 
+  test("runtime fences import packages taught by multiple importEntrypoints() usages", async function (assert) {
+    await visit("/help/getting-started/using-libraries.md");
+
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.dom("[data-demo=entrypoints]").containsText("package import resolved");
+    assert
+      .dom("[data-demo=entrypoints-wildcard]")
+      .containsText("wildcard entrypoint resolved", "a './*' subpath is enumerated");
+    assert
+      .dom("[data-demo=entrypoints-2]")
+      .containsText("second usage resolved", "the usages' maps merge");
+  });
+
   test("a co-located page renders from the root mount", async function (assert) {
     await visit("/welcome/home.md");
 

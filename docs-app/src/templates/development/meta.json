@@ -5,6 +5,7 @@
     "renaming-pages",
     "testing",
     "configuring-docs",
+    "configuring-import-entrypoints",
     "configuring-api-docs",
     "helpers"
   ]
