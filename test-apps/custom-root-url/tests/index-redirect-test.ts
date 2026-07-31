@@ -22,4 +22,20 @@ module("Group index redirects under a custom rootURL", function (hooks) {
       "the Documentation group index redirects to its first page (rootURL stripped)",
     );
   });
+
+  test("visiting a group root with a trailing slash also redirects to its first page", async function (assert) {
+    await visit("/Home/");
+    assert.strictEqual(
+      currentURL(),
+      "/my-folder-name/bar.md",
+      "trailing slash doesn't break the redirect",
+    );
+
+    await visit("/Documentation/");
+    assert.strictEqual(
+      currentURL(),
+      "/Documentation/sub-folder/lonely-page.md",
+      "trailing slash doesn't break the redirect",
+    );
+  });
 });
