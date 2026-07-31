@@ -43,6 +43,25 @@ module("Nav active state under a custom rootURL", function (hooks) {
       .hasClass("active", "the current page's link is active");
   });
 
+  test("a page is rendered and marked active when visited with different casing", async function (assert) {
+    await visit("/documentation/sub-folder/LONELY-PAGE.md");
+    await waitFor(`${PAGE_NAV} a`);
+    await waitFor("h1");
+
+    assert.dom("h1").hasText("Please Visit Me!", "the page's content is rendered");
+
+    assert
+      .dom(`${GROUP_NAV} a[href="/my-github-project/Documentation"]`)
+      .hasClass("active", "the selected group's link is active, in its canonical casing");
+    assert
+      .dom(`${GROUP_NAV} a[href="/my-github-project/Home"]`)
+      .doesNotHaveClass("active", "the other group's link is not active");
+
+    assert
+      .dom(`${PAGE_NAV} a[href="/my-github-project/Documentation/sub-folder/lonely-page.md"]`)
+      .hasClass("active", "the current page's link is active, in its canonical casing");
+  });
+
   test("the current page is marked active when visited without the .md extension", async function (assert) {
     await visit("/Documentation/sub-folder/lonely-page");
     await waitFor(`${PAGE_NAV} a`);

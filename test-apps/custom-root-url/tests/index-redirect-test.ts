@@ -38,4 +38,20 @@ module("Group index redirects under a custom rootURL", function (hooks) {
       "trailing slash doesn't break the redirect",
     );
   });
+
+  test("visiting a group root with different casing still redirects to its first page", async function (assert) {
+    await visit("/home");
+    assert.strictEqual(
+      currentURL(),
+      "/my-folder-name/bar.md",
+      "the group name is matched case-insensitively",
+    );
+
+    await visit("/DOCUMENTATION");
+    assert.strictEqual(
+      currentURL(),
+      "/Documentation/sub-folder/lonely-page.md",
+      "the group name is matched case-insensitively",
+    );
+  });
 });

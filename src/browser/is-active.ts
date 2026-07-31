@@ -1,3 +1,5 @@
+import { equalsIgnoreCase } from './path-matching.ts';
+
 import type { Collection, Page } from '../types.ts';
 
 /**
@@ -32,5 +34,5 @@ export function isActive(item: Page | Collection, currentURL: string | null | un
 
   const [current = ''] = currentURL?.split(/[?#]/) ?? [];
 
-  return current.replace(/\.md$/, '') === subPath.replace(/\.md$/, '');
+  return equalsIgnoreCase(current.replace(/\.md$/i, ''), subPath.replace(/\.md$/i, ''));
 }

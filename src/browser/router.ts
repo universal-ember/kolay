@@ -114,10 +114,11 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
           parent?.localName,
         ];
 
-  const groupName = candidates.find(
-    (candidate): candidate is string =>
-      typeof candidate === 'string' && docs.availableGroups.includes(candidate)
-  );
+  const groupName = candidates
+    .map((candidate) =>
+      typeof candidate === 'string' ? docs.canonicalGroupName(candidate) : undefined
+    )
+    .find((match): match is string => match !== undefined);
 
   if (!groupName) return;
 

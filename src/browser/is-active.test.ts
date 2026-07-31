@@ -30,6 +30,13 @@ describe('isActive', () => {
     expect(isActive(page('/Documentation/x'), '/Documentation/x.md')).toBe(true);
   });
 
+  test('is insensitive to casing, in the path and in the .md extension', () => {
+    expect(isActive(page('/Documentation/x.md'), '/documentation/x.md')).toBe(true);
+    expect(isActive(page('/Documentation/x.md'), '/DOCUMENTATION/X')).toBe(true);
+    expect(isActive(page('/Documentation/x.md'), '/Documentation/x.MD')).toBe(true);
+    expect(isActive(page('/Documentation/x.md'), '/documentation/y.md')).toBe(false);
+  });
+
   test('does not treat a sibling with a shared prefix as active', () => {
     expect(isActive(page('/Documentation/x.md'), '/Documentation/x-and-more.md')).toBe(false);
   });

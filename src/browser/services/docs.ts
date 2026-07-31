@@ -7,6 +7,7 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { equalsIgnoreCase } from '../path-matching.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
@@ -257,10 +258,17 @@ class DocsService {
 
     if (!first) return this.availableGroups[0];
 
-    if (!this.availableGroups.includes(first)) return this.availableGroups[0];
-
-    return first;
+    return this.canonicalGroupName(first) ?? this.availableGroups[0];
   }
+
+  /**
+   * The manifest's own casing for a group name, matched case-insensitively —
+   * URLs are conventionally case-insensitive, but hrefs / `urlFor` need the
+   * manifest's casing.
+   */
+  canonicalGroupName = (name: string): string | undefined => {
+    return this.availableGroups.find((candidate) => equalsIgnoreCase(candidate, name));
+  };
 
   /**
    * The scoped mount (`addRoutes(context, groupName)`) the current route
@@ -432,7 +440,7 @@ class DocsService {
   groupForURL = (url: string): false | string => {
     for (const groupName of this.availableGroups) {
       const group = this.groupFor(groupName);
-      const page = group.list.find((page) => page.appRelativePath === url);
+      const page = group.list.find((page) => equalsIgnoreCase(page.appRelativePath, url));
 
       if (page) {
         return groupName;
@@ -449,7 +457,9 @@ class DocsService {
    */
   findByPath = (path: string) => {
     return this.pages.find(
-      (page) => page.appRelativePath === path || page.appRelativePath === path + '.md'
+      (page) =>
+        equalsIgnoreCase(page.appRelativePath, path) ||
+        equalsIgnoreCase(page.appRelativePath, path + '.md')
     );
   };
 }
