@@ -128,7 +128,7 @@ class Selected {
     const scoped = this.#docs.scopedPagePath;
 
     if (scoped) {
-      return scoped.replace(/\.md$/, '');
+      return scoped.replace(/\.md$/i, '');
     }
 
     if (!this.router.currentURL) return;
@@ -142,7 +142,7 @@ class Selected {
       return;
     }
 
-    return path.replace(/\.md$/, '');
+    return path.replace(/\.md$/i, '');
   }
 
   get #matchOrFirstPagePath() {
