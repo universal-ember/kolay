@@ -1,3 +1,5 @@
+import { isCollection, samePagePath } from './utils.ts';
+
 import type { Collection, Page } from '../types.ts';
 
 /**
@@ -20,9 +22,7 @@ import type { Collection, Page } from '../types.ts';
  * ```
  */
 export function isActive(item: Page | Collection, currentURL: string | null | undefined): boolean {
-  // a Collection (see also: isCollection from './utils.ts', which cannot be
-  // imported here without breaking this module's ember-free-ness)
-  if ('pages' in item) {
+  if (isCollection(item)) {
     return item.pages.some((child) => isActive(child, currentURL));
   }
 
@@ -32,5 +32,5 @@ export function isActive(item: Page | Collection, currentURL: string | null | un
 
   const [current = ''] = currentURL?.split(/[?#]/) ?? [];
 
-  return current.replace(/\.md$/, '') === subPath.replace(/\.md$/, '');
+  return samePagePath(current, subPath);
 }

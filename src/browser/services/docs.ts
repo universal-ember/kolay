@@ -12,6 +12,7 @@ import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
+import { equalsIgnoreCase, samePagePath } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
@@ -257,10 +258,17 @@ class DocsService {
 
     if (!first) return this.availableGroups[0];
 
-    if (!this.availableGroups.includes(first)) return this.availableGroups[0];
-
-    return first;
+    return this.canonicalGroupName(first) ?? this.availableGroups[0];
   }
+
+  /**
+   * The manifest's own casing for a group name, matched case-insensitively —
+   * URLs are conventionally case-insensitive, but hrefs / `urlFor` need the
+   * manifest's casing.
+   */
+  canonicalGroupName = (name: string): string | undefined => {
+    return this.availableGroups.find((candidate) => equalsIgnoreCase(candidate, name));
+  };
 
   /**
    * The scoped mount (`addRoutes(context, groupName)`) the current route
@@ -432,7 +440,7 @@ class DocsService {
   groupForURL = (url: string): false | string => {
     for (const groupName of this.availableGroups) {
       const group = this.groupFor(groupName);
-      const page = group.list.find((page) => page.appRelativePath === url);
+      const page = group.list.find((page) => equalsIgnoreCase(page.appRelativePath, url));
 
       if (page) {
         return groupName;
@@ -448,9 +456,7 @@ class DocsService {
    * with or without the `.md` extension.
    */
   findByPath = (path: string) => {
-    return this.pages.find(
-      (page) => page.appRelativePath === path || page.appRelativePath === path + '.md'
-    );
+    return this.pages.find((page) => samePagePath(page.appRelativePath, path));
   };
 }
 

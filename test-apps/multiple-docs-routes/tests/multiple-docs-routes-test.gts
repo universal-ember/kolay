@@ -82,6 +82,13 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("h1").containsText("Guides usage");
   });
 
+  test("a page renders from a scoped mount regardless of the URL's casing", async function (assert) {
+    await visit("/help/getting-started/INTRO.md");
+
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.dom("h1").containsText("Guides intro");
+  });
+
   test("inside a scoped mount, nav links use the mount's URL space", async function (assert) {
     await visit("/help/getting-started/intro.md");
 

@@ -22,6 +22,23 @@ export function getIndexPage(x: Collection): Page | undefined {
   return page;
 }
 
+/**
+ * URLs are conventionally case-insensitive; path/route matching in this
+ * library follows that convention rather than treating paths as opaque,
+ * case-sensitive strings.
+ */
+export function equalsIgnoreCase(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/**
+ * Whether two paths name the same page: paths with and without the
+ * `.md` extension are the same page (both are visitable).
+ */
+export function samePagePath(a: string, b: string): boolean {
+  return equalsIgnoreCase(a.replace(/\.md$/i, ''), b.replace(/\.md$/i, ''));
+}
+
 /////////////////////////////////
 // copied from ember-primitives
 // should these be exposed?
