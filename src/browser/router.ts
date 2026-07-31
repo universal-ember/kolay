@@ -95,7 +95,9 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
    * there is no group in the URL, so a scoped top-level mount's group, or
    * the default (first) group, is used.
    */
-  const wildcardParam = parent?.params?.page;
+  const rawWildcardParam = parent?.params?.page;
+  const wildcardParam =
+    typeof rawWildcardParam === 'string' ? rawWildcardParam.replace(/\/+$/, '') : rawWildcardParam;
 
   const candidates =
     transition.to.name === 'index'

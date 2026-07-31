@@ -120,6 +120,20 @@ module("Multiple docs routes", function (hooks) {
     assert.strictEqual(currentURL(), "/demos/components/buttons");
     assert.dom("h1").containsText("Buttons demo");
   });
+
+  test("visiting a mount's index with a trailing slash also redirects", async function (assert) {
+    await visit("/help/");
+
+    assert.strictEqual(
+      currentURL(),
+      "/help/getting-started/intro.md",
+      "mount-space redirect, trailing slash",
+    );
+
+    await visit("/demos/");
+
+    assert.strictEqual(currentURL(), "/demos/components/buttons");
+  });
 });
 
 module("demos() | build-time", function (hooks) {

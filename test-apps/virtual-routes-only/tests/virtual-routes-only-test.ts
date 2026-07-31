@@ -26,4 +26,11 @@ module("Virtual routes only", function (hooks) {
     assert.strictEqual(currentURL(), "/help/getting-started/intro.md");
     assert.dom("h1").containsText("Guides intro");
   });
+
+  test("visiting the mount's index with a trailing slash also redirects", async function (assert) {
+    await visit("/help/");
+
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md");
+    assert.dom("h1").containsText("Guides intro");
+  });
 });
