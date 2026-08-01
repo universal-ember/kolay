@@ -74,6 +74,11 @@ export function compilerOptions({
       gmd: {
         scope,
         ...md,
+        // Style-isolate every live demo in its own shadow root (restores the
+        // auto-wrapping ember-repl 6.x used to do by default before its 8.x
+        // rewrite dropped the concept). Individual code fences can still
+        // opt out with a `no-shadow` meta flag.
+        ShadowComponent: true,
       },
       hbs: {
         scope,
