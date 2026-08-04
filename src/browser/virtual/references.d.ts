@@ -66,3 +66,43 @@ declare module 'virtual:kolay/docs/*' {
   export const addRoutes: DocsGroupModule['addRoutes'];
   export const meta: DocsGroupModule['meta'];
 }
+
+/**
+ * Shadow-DOM style isolation for live glimdown demos — see `wrapDemo()`'s
+ * own doc comment in `src/browser/virtual/wrap-demo.js` for the full
+ * rationale and usage.
+ */
+declare module 'kolay/wrap-demo' {
+  export function wrapDemo(options?: {
+    /**
+     * Custom element tag name for the shadow host.
+     *
+     * @default 'kolay-demo-shadow'
+     */
+    tagName?: string;
+
+    /**
+     * Shadow root mode.
+     *
+     * @default 'open'
+     */
+    mode?: ShadowRootMode;
+
+    /**
+     * Copy the document's `<link rel="stylesheet">` and `<style>` tags
+     * into each shadow root, so isolated demos still pick up the app's
+     * own CSS.
+     *
+     * @default true
+     */
+    includeStyles?: boolean;
+
+    /**
+     * Code-fence meta flag that opts a demo out of wrapping, e.g.
+     * ` ```gjs live no-shadow `.
+     *
+     * @default 'no-shadow'
+     */
+    skipFlag?: string;
+  }): () => (tree: unknown, file: unknown) => void;
+}
