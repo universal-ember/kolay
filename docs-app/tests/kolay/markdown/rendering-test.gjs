@@ -83,7 +83,7 @@ module('Markdown | Rendering', function (hooks) {
       const doc =
         `# Hello there\n` +
         `\n` +
-        '```hbs live no-shadow\n' +
+        '```hbs live\n' +
         '<output>\n' +
         `\tgeneral kenobi\n\n` +
         '</output>\n' +
@@ -191,11 +191,11 @@ module('Markdown | Rendering', function (hooks) {
 
     test('an excluded fence is not wrapped, the others are', async function (assert) {
       const doc =
-        '```hbs live no-shadow\n' +
+        '```hbs live\n' +
         '<output>wrapped</output>\n' +
         '```\n' +
         `\n` +
-        '```hbs live no-shadow no-frame\n' +
+        '```hbs live no-frame\n' +
         '<output>bare</output>\n' +
         '```\n';
 
