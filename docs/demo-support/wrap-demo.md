@@ -1,8 +1,6 @@
 # Wrapping demos
 
-The opt-in `wrapDemos` plugin wraps every rendered demo (live code fence) in a component of your choosing, resolved from scope like any other component — so all your demos can share chrome (style isolation, a border, a "demo" label). The component is named by the required `componentName` option and receives the demo as its default block.
-
-For example, wrapping every demo in [`<Shadowed>`](https://ember-primitives.pages.dev/5-floaty-bits/portal) from ember-primitives puts each demo in its own shadow DOM, so page styles and demo styles can't leak into each other.
+The opt-in `wrapDemos` plugin wraps every rendered demo (live code fence) in a component of your choosing, resolved from scope like any other component — so all your demos can share chrome (style isolation, a border, a "demo" label). The component is named by the required `componentName` option and receives the demo as its default block. The examples below use `<Shadowed>` from ember-primitives, which renders its content in a shadow DOM.
 
 For runtime-compiled `.md` pages, pass the plugin to `setupKolay` — `<Shadowed>` is already in the default `topLevelScope`:
 
