@@ -3,56 +3,42 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { loadRedirects, validateRedirects } from './redirects.js';
+import { loadKolayConfig, validateRedirects } from './kolay-config.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const fixtures = join(here, 'fixtures', 'redirects');
+const fixtures = join(here, 'fixtures', 'kolay-config');
 
-describe('loadRedirects', () => {
-  it('loads from kolay.config.js', async () => {
-    expect(await loadRedirects(join(fixtures, 'js-config'))).toEqual([
-      { from: 'Old/*', to: 'New/*' },
-      { from: 'legacy/page', to: 'modern/page' },
-    ]);
+describe('loadKolayConfig', () => {
+  // lilconfig owns the file forms / extensions — one fixture proves the
+  // wiring, one proves our added config/ search directory
+  it('loads a discovered config file', async () => {
+    expect(await loadKolayConfig(join(fixtures, 'js-config'))).toEqual({
+      redirects: [
+        { from: 'Old/*', to: 'New/*' },
+        { from: 'legacy/page', to: 'modern/page' },
+      ],
+    });
   });
 
-  it('loads from .kolayrc.json', async () => {
-    expect(await loadRedirects(join(fixtures, 'rc-json'))).toEqual([
-      { from: 'Runtime/*', to: 'Playground/*' },
-    ]);
+  it('also searches a config/ directory', async () => {
+    expect(await loadKolayConfig(join(fixtures, 'config-dir'))).toEqual({
+      redirects: [{ from: 'in-config-dir/*', to: 'found/*' }],
+    });
   });
 
-  it('loads from a package.json "kolay" key, normalizing leading slashes', async () => {
-    expect(await loadRedirects(join(fixtures, 'pkg-json'))).toEqual([
-      { from: 'docs/*', to: 'guides/*' },
-    ]);
-  });
-
-  it('loads from a bare .kolayrc (JSON)', async () => {
-    expect(await loadRedirects(join(fixtures, 'rc-bare'))).toEqual([
-      { from: 'bare-rc', to: 'found' },
-    ]);
-  });
-
-  it('loads from a config/ directory', async () => {
-    expect(await loadRedirects(join(fixtures, 'config-dir'))).toEqual([
-      { from: 'in-config-dir/*', to: 'found/*' },
-    ]);
-  });
-
-  it('loads from a .config/ directory', async () => {
-    expect(await loadRedirects(join(fixtures, 'dot-config-dir'))).toEqual([
-      { from: 'in-dot-config-dir', to: 'found' },
-    ]);
-  });
-
-  it('is [] when no config file exists', async () => {
-    expect(await loadRedirects(join(fixtures, 'none'))).toEqual([]);
+  it('defaults every known key when no config file exists', async () => {
+    expect(await loadKolayConfig(join(fixtures, 'none'))).toEqual({ redirects: [] });
   });
 });
 
 describe('validateRedirects', () => {
   const validate = (value: unknown) => () => validateRedirects(value, 'test');
+
+  it('normalizes leading slashes away', () => {
+    expect(validateRedirects([{ from: '/docs/*', to: '/guides/*' }], 'test')).toEqual([
+      { from: 'docs/*', to: 'guides/*' },
+    ]);
+  });
 
   it('allows undefined and an empty list', () => {
     expect(validateRedirects(undefined, 'test')).toEqual([]);

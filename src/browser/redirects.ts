@@ -1,7 +1,6 @@
 import { equalsIgnoreCase } from './utils.ts';
 
-import type RouteInfo from '@ember/routing/route-info';
-import type RouterService from '@ember/routing/router-service';
+import type Transition from '@ember/routing/transition';
 
 const SUBTREE = '/*';
 
@@ -49,56 +48,31 @@ export function resolveRedirect(
 }
 
 /**
- * Where a transition's destination should redirect to, if anywhere:
- * the app-relative URL the RouteInfo resolves to, resolved against the
- * project's redirects. `setupKolay` wires this into the router service's
- * `routeWillChange` for you.
+ * Where a transition should redirect to, if anywhere: its intended URL,
+ * resolved against the project's redirects. `setupKolay` wires this
+ * into the router service's `routeWillChange` for you.
  *
  * Returns an app-relative URL (leading slash — ready for
- * `router.transitionTo`), or `undefined` when no entry matches.
+ * `router.transitionTo`), or `undefined` when no entry matches (or the
+ * transition wasn't URL-initiated — a `transitionTo(name, ...models)`
+ * can't target a redirected URL, since redirected URLs have no route of
+ * their own to name).
  */
 export function redirectTargetFor(
-  router: RouterService,
-  destination: RouteInfo,
+  transition: Transition,
   redirects: { from: string; to: string }[]
 ): string | undefined {
   if (redirects.length === 0) return undefined;
 
-  // root → leaf, collecting every dynamic segment in order — urlFor
-  // needs them positionally
-  const chain: RouteInfo[] = [];
+  // The intended URL is app-relative (Ember's location layer strips the
+  // rootURL before the router sees a URL). `intent` isn't in the public
+  // Transition type, but it is where the target URL lives.
+  const { intent } = transition as { intent?: { url?: unknown } };
 
-  for (let info: RouteInfo | null = destination; info; info = info.parent) {
-    chain.unshift(info);
-  }
+  if (typeof intent?.url !== 'string') return undefined;
 
-  const params: string[] = [];
-
-  for (const info of chain) {
-    for (const name of info.paramNames) {
-      const value = info.params?.[name];
-
-      // URL-derived params are strings; a model object (from a
-      // transitionTo with models) has no URL representation here — the
-      // resulting URL just won't match any redirect
-      params.push(typeof value === 'string' ? value : '');
-    }
-  }
-
-  let url;
-
-  try {
-    url = router.urlFor(destination.name, ...params);
-  } catch {
-    // intermediate destinations (loading / error substates) have no URL
-    return undefined;
-  }
-
-  // urlFor includes the rootURL; redirects are written app-relative
-  const base = router.rootURL ?? '/';
-  const visited = base === '/' ? url : '/' + url.slice(base.length).replace(/^\/+/, '');
-
-  const target = resolveRedirect(visited.replace(/^\//, ''), redirects);
+  const [path = ''] = intent.url.split(/[?#]/);
+  const target = resolveRedirect(path.replace(/^\//, ''), redirects);
 
   return target === undefined ? undefined : '/' + target;
 }

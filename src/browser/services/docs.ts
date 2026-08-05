@@ -236,9 +236,7 @@ class DocsService {
     const router = this.router;
 
     const onRouteWillChange = (transition: Transition) => {
-      if (!transition.to) return;
-
-      const target = redirectTargetFor(router, transition.to, redirects);
+      const target = redirectTargetFor(transition, redirects);
 
       if (target !== undefined) {
         router.transitionTo(target);
@@ -249,6 +247,8 @@ class DocsService {
     registerDestructor(this, () => router.off('routeWillChange', onRouteWillChange));
 
     const checkArrival = () => {
+      // routeDidChange has fired: the router has arrived somewhere, so
+      // currentURL is set (the null in its type covers pre-arrival)
       const current = router.currentURL;
 
       if (!current) return;
@@ -261,8 +261,13 @@ class DocsService {
       }
     };
 
+    // During normal boot, setup runs inside the application route's
+    // model hook — mid-initial-transition, so currentURL is still null
+    // and that transition's routeWillChange fired before the listener
+    // above existed. Correct the arrival URL when the transition lands.
+    // (A set currentURL means setup ran after boot — tests — where the
+    // app already arrived: check now, since routeDidChange won't refire.)
     if (router.currentURL) {
-      // setup after boot (tests, late setup): the app already arrived
       checkArrival();
     } else {
       // self-removing; the router can't outlive this store (same owner),

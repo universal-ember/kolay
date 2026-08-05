@@ -2,22 +2,20 @@ import { lilconfig } from 'lilconfig';
 
 /**
  * @typedef {{ from: string, to: string }} Redirect
+ * @typedef {{ redirects: Redirect[] }} KolayConfig
  */
 
 const SUBTREE = '/*';
 
+/**
+ * lilconfig's default search places (which it doesn't export), widened:
+ * the rc and config-file forms are also looked for in a `config/`
+ * directory (the defaults only cover `.config/`, and only for rc
+ * forms). File names only — lilconfig's loaders own the extensions.
+ */
 const RC_FORMS = ['kolayrc', 'kolayrc.json', 'kolayrc.js', 'kolayrc.cjs', 'kolayrc.mjs'];
 const CONFIG_FORMS = ['kolay.config.js', 'kolay.config.cjs', 'kolay.config.mjs'];
 
-/**
- * lilconfig's default search, widened: every file form is also looked
- * for in a `.config/` and a `config/` directory (lilconfig's own
- * defaults only cover `.config/`, and only for the rc forms).
- *
- * Per directory level: package.json's `"kolay"` key, `.kolayrc`
- * (JSON) and `.kolayrc.{json,js,cjs,mjs}`, `kolay.config.{js,cjs,mjs}`,
- * then the same rc + config forms under `.config/` and `config/`.
- */
 export const searchPlaces = [
   'package.json',
   ...RC_FORMS.map((form) => `.${form}`),
@@ -182,18 +180,21 @@ export function validateRedirects(value, source) {
 }
 
 /**
- * Discovers the project's kolay config file (see `searchPlaces`) upward
- * from `cwd`, and returns its validated `redirects`.
- *
- * `[]` when there is no config file, or it has no `redirects`.
+ * Discovers and loads the project's kolay config file (see
+ * `searchPlaces`), searching upward from `cwd`. The whole config is
+ * returned — `redirects` is just the first thing it carries — with the
+ * known keys validated and defaulted.
  *
  * @param {string} cwd
- * @returns {Promise<Redirect[]>}
+ * @returns {Promise<KolayConfig>}
  */
-export async function loadRedirects(cwd) {
+export async function loadKolayConfig(cwd) {
   const result = await lilconfig('kolay', { searchPlaces }).search(cwd);
 
-  if (!result || result.isEmpty) return [];
+  const config = (result && !result.isEmpty && result.config) || {};
 
-  return validateRedirects(result.config?.redirects, result.filepath);
+  return {
+    ...config,
+    redirects: validateRedirects(config.redirects, result?.filepath ?? 'the kolay config'),
+  };
 }
