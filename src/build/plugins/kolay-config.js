@@ -43,6 +43,18 @@ function prefixOf(path) {
 }
 
 /**
+ * A comparison key for an exact page path: lowercased, with the
+ * optional `.md` extension stripped (pages are visitable either way).
+ *
+ * @param {string} path
+ */
+function pageKey(path) {
+  const lowered = path.toLowerCase();
+
+  return lowered.endsWith('.md') ? lowered.slice(0, -3) : lowered;
+}
+
+/**
  * Whether `path` is inside the subtree rooted at `prefix`
  * (the prefix itself, or anything under it), case-insensitively.
  *
@@ -74,7 +86,7 @@ function fromSpacesIntersect(a, b) {
   if (aSubtree) return withinSubtree(bPrefix, aPrefix);
   if (bSubtree) return withinSubtree(aPrefix, bPrefix);
 
-  return aPrefix.toLowerCase() === bPrefix.toLowerCase();
+  return pageKey(aPrefix) === pageKey(bPrefix);
 }
 
 /**
@@ -158,7 +170,7 @@ export function validateRedirects(value, source) {
   for (const [i, entry] of redirects.entries()) {
     const duplicate = redirects
       .slice(i + 1)
-      .find((other) => other.from.toLowerCase() === entry.from.toLowerCase());
+      .find((other) => pageKey(other.from) === pageKey(entry.from));
 
     if (duplicate) {
       fail(`two entries share the \`from\` '${entry.from}' — only the first could ever apply`);

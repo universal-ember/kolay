@@ -34,6 +34,10 @@ module('resolveRedirect', function () {
     assert.strictEqual(resolveRedirect('legacy/page/deeper', redirects), undefined);
   });
 
+  test('an exact entry matches with or without the .md extension', function (assert) {
+    assert.strictEqual(resolveRedirect('legacy/page.md', redirects), 'modern/page');
+  });
+
   test('the first matching entry wins', function (assert) {
     assert.strictEqual(resolveRedirect('Runtime/sub/thing.md', redirects), 'Elsewhere/thing.md');
   });

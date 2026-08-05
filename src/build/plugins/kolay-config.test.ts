@@ -86,6 +86,22 @@ describe('validateRedirects', () => {
     ).toThrow(/share the `from`/);
   });
 
+  it('treats exact paths with and without .md as the same', () => {
+    expect(
+      validate([
+        { from: 'old/page', to: 'new/page' },
+        { from: 'old/page.md', to: 'other/page' },
+      ])
+    ).toThrow(/share the `from`/);
+
+    expect(
+      validate([
+        { from: 'a/page', to: 'b/page.md' },
+        { from: 'b/page', to: 'c/page' },
+      ])
+    ).toThrow(/don't chain/);
+  });
+
   it('rejects a target that another entry would redirect again', () => {
     expect(
       validate([

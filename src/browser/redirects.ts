@@ -1,4 +1,4 @@
-import { equalsIgnoreCase } from './utils.ts';
+import { equalsIgnoreCase, samePagePath } from './utils.ts';
 
 import type Transition from '@ember/routing/transition';
 
@@ -15,7 +15,8 @@ const SUBTREE = '/*';
  * Entries are plain path prefixes, matched whole-segment and
  * case-insensitively. A trailing `/*` matches the prefix itself and
  * everything under it (the remainder is preserved onto `to`); without
- * it, only that exact path matches.
+ * it, only that exact path matches — with the `.md` extension ignored,
+ * since pages are visitable with and without it.
  *
  * The first matching entry wins, and redirects don't chain: the result
  * is not itself resolved again (config validation guarantees no entry's
@@ -39,7 +40,9 @@ export function resolveRedirect(
       if (equalsIgnoreCase(head, prefix) && path[prefix.length] === '/') {
         return target + path.slice(prefix.length);
       }
-    } else if (equalsIgnoreCase(path, from)) {
+    } else if (samePagePath(path, from)) {
+      // pages are visitable with and without `.md`, so exact entries
+      // match either form of the visited path
       return to;
     }
   }
