@@ -6,6 +6,7 @@ import { setupRenderingTest } from 'ember-qunit';
 
 import { use } from 'ember-resources';
 import { Compiled } from 'kolay';
+import { rehypeWrapDemos } from 'kolay/wrap-demo';
 
 import { setupKolay } from 'kolay/test-support';
 
@@ -68,8 +69,9 @@ module('Markdown | Rendering', function (hooks) {
     assert.dom('output').containsText('general kenobi');
   });
 
-  module('with a WrapDemo override in topLevelScope', function (hooks) {
+  module('with rehypeWrapDemos + a WrapDemo in topLevelScope', function (hooks) {
     setupKolay(hooks, {
+      rehypePlugins: [rehypeWrapDemos],
       topLevelScope: {
         WrapDemo: <template>
           <section data-demo-wrapper>{{yield}}</section>
@@ -172,6 +174,43 @@ module('Markdown | Rendering', function (hooks) {
 
       assert.dom('h1').containsText('Hello there');
       assert.dom('[data-demo-wrapper]').doesNotExist();
+    });
+  });
+
+  module('with rehypeWrapDemos and no WrapDemo binding', function (hooks) {
+    setupKolay(hooks, {
+      rehypePlugins: [rehypeWrapDemos],
+    });
+
+    test('the default WrapDemo renders the demo unchanged', async function (assert) {
+      const doc =
+        `# Hello there\n` +
+        `\n` +
+        '```hbs live no-shadow\n' +
+        '<output>\n' +
+        `\tgeneral kenobi\n\n` +
+        '</output>\n' +
+        '```\n';
+
+      class Demo {
+        @use doc = Compiled(() => doc);
+      }
+
+      const state = new Demo();
+
+      setOwner(state, this.owner);
+
+      await render(
+        <template>
+          {{#if state.doc.component}}
+            <state.doc.component />
+          {{/if}}
+        </template>
+      );
+
+      await waitUntil(() => state.doc.isReady);
+
+      assert.dom('output').containsText('general kenobi');
     });
   });
 

@@ -7,7 +7,6 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
-import { rehypeWrapDemos } from '../../wrap-demos.js';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
@@ -77,10 +76,6 @@ export function compilerOptions({
       gmd: {
         scope,
         ...md,
-        // Wraps every demo placeholder in <WrapDemo> (resolved from the
-        // scope above) — after the consumer's plugins, like the build-time
-        // `.gjs.md` pipeline does.
-        rehypePlugins: [...(rehypePlugins ?? []), rehypeWrapDemos],
       },
       hbs: {
         scope,
@@ -143,10 +138,10 @@ class DocsService {
      * - for rendering your typedoc:
      *   - <APIDocs>
      *   - <ComponentSignature>
-     * - for wrapping demos (live code fences):
-     *   - <WrapDemo> — every demo placeholder is wrapped in it; the default
-     *     renders the demo unchanged. Provide your own WrapDemo here to wrap
-     *     every demo in your own component instead.
+     * - for wrapping demos (paired with the opt-in `rehypeWrapDemos` plugin
+     *   from 'kolay/wrap-demo', passed via `rehypePlugins`):
+     *   - <WrapDemo> — the default renders the demo unchanged; bind your
+     *     own WrapDemo here to wrap every demo in your own component.
      */
     topLevelScope?: ScopeMap;
 

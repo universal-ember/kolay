@@ -15,10 +15,10 @@ declare module 'kolay/setup' {
        * - for rendering your typedoc:
        *   - <APIDocs>
        *   - <ComponentSignature>
-       * - for wrapping demos (live code fences):
-       *   - <WrapDemo> — every demo placeholder is wrapped in it; the default
-       *     renders the demo unchanged. Provide your own WrapDemo here to wrap
-       *     every demo in your own component instead.
+       * - for wrapping demos (paired with the opt-in `rehypeWrapDemos` plugin
+       *   from 'kolay/wrap-demo', passed via `rehypePlugins`):
+       *   - <WrapDemo> — the default renders the demo unchanged; bind your
+       *     own WrapDemo here to wrap every demo in your own component.
        */
       topLevelScope?: ScopeMap;
 

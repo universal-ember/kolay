@@ -1,18 +1,20 @@
 import { visit } from 'unist-util-visit';
 
 /**
- * Rehype plugin that wraps every live demo's placeholder element in a
- * `<WrapDemo>` invocation, resolved from scope like any other component:
- * the default (from 'kolay/wrap-demo') renders the demo unchanged, and an
- * app wraps every demo in its own chrome by binding its own `WrapDemo` —
- * via `topLevelScope` for the in-browser `.md` compiler, via the docs()
- * `scope` option for the build-time `.gjs.md` compiler.
+ * Opt-in rehype plugin that wraps every live demo's placeholder element in a
+ * `<WrapDemo>` invocation, resolved from scope like any other component —
+ * bind your own `WrapDemo` to wrap every demo in it (via `topLevelScope` for
+ * the in-browser `.md` compiler, via the docs() `scope` option for the
+ * build-time `.gjs.md` compiler). Without a binding, the passthrough default
+ * from 'kolay/wrap-demo' renders the demo unchanged.
  *
- * The passthrough default is what lets this run unconditionally in both
- * pipelines.
+ * Add it to the `rehypePlugins` of the pipeline whose demos should be
+ * wrapped:
+ * - `.md`: `setupKolay(this, { rehypePlugins: [rehypeWrapDemos], ... })`
+ * - `.gjs.md`: `docs('...', { rehypePlugins: [rehypeWrapDemos], ... })`
  *
- * This module is plain JS so the node-side build plugins can import it
- * directly.
+ * This module is plain JS so both sides can use it: the browser re-exports
+ * it from 'kolay/wrap-demo', the build from 'kolay/vite'.
  */
 export function rehypeWrapDemos() {
   /**
@@ -37,7 +39,10 @@ export function rehypeWrapDemos() {
     // The placeholders are raw HTML nodes (`<div id="<demo id>" ...>`) by the
     // time rehype runs — same matching as the build's component injection.
     // `any` keeps @types/unist out of the public declarations
-    visit(/** @type {any} */ (tree), 'raw', (node) => {
+    visit(/** @type {any} */ (tree), ['raw', 'glimmer_raw'], (node) => {
+      // listed twice in the pipeline — wrap once
+      if (node.value?.startsWith('<WrapDemo>')) return;
+
       const id = node.value?.match(/id="([^"]+)"/)?.[1];
 
       if (!id || !ids.has(id)) return;

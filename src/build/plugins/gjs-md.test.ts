@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
+import { rehypeWrapDemos } from '../../wrap-demos.js';
 import { createCompiler, mdToGJS } from './gjs-md.js';
 
 const compiler = createCompiler({});
@@ -40,12 +41,11 @@ inline code \`<Portal @to="popover">\`
     `);
     expect(result.code).toMatchInlineSnapshot(`
       "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
-      import { WrapDemo } from 'kolay/wrap-demo';
       import repl_1 from 'kolay/virtual:live:repl_1.gjs.hbs';
       export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="heading">Heading</h1>
       <p>inline code <code>&#x3C;Portal @to="popover"></code></p>
       <h2 id="code-fence">code fence</h2>
-      <WrapDemo><div id="repl_1" class="repl-sdk__demo"><repl_1 /></div></WrapDemo>\`, {
+      <div id="repl_1" class="repl-sdk__demo"><repl_1></repl_1></div>\`, {
           eval () {
               return eval(arguments[0]);
           }
@@ -54,32 +54,63 @@ inline code \`<Portal @to="popover">\`
     `);
   });
 
-  test('a scope that binds WrapDemo replaces the default import', async () => {
-    const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
-    const result = await mdToGJS(
-      `\`\`\`hbs live
+  describe('with the opt-in rehypeWrapDemos plugin', () => {
+    const wrapCompiler = createCompiler({ rehypePlugins: [rehypeWrapDemos] });
+
+    test('the default WrapDemo is imported', async () => {
+      const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
+      const result = await mdToGJS(
+        `\`\`\`hbs live
 <SetupInstructions @src="components/portal-targets.gts" />
 \`\`\`
 `,
-      {
-        compiler,
-        id: 'test.gjs.md',
-        virtualModulesByMarkdownFile,
-        scope: `import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';`,
-      }
-    );
+        {
+          compiler: wrapCompiler,
+          id: 'test.gjs.md',
+          virtualModulesByMarkdownFile,
+        }
+      );
 
-    expect(result.code).toMatchInlineSnapshot(`
-      "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
-      import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';
-      import repl_2 from 'kolay/virtual:live:repl_2.gjs.hbs';
-      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<WrapDemo><div id="repl_2" class="repl-sdk__demo"><repl_2 /></div></WrapDemo>\`, {
-          eval () {
-              return eval(arguments[0]);
-          }
-      });
-      "
-    `);
+      expect(result.code).toMatchInlineSnapshot(`
+        "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
+        import { WrapDemo } from 'kolay/wrap-demo';
+        import repl_2 from 'kolay/virtual:live:repl_2.gjs.hbs';
+        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<WrapDemo><div id="repl_2" class="repl-sdk__demo"><repl_2 /></div></WrapDemo>\`, {
+            eval () {
+                return eval(arguments[0]);
+            }
+        });
+        "
+      `);
+    });
+
+    test('a scope that binds WrapDemo replaces the default import', async () => {
+      const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
+      const result = await mdToGJS(
+        `\`\`\`hbs live
+<SetupInstructions @src="components/portal-targets.gts" />
+\`\`\`
+`,
+        {
+          compiler: wrapCompiler,
+          id: 'test.gjs.md',
+          virtualModulesByMarkdownFile,
+          scope: `import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';`,
+        }
+      );
+
+      expect(result.code).toMatchInlineSnapshot(`
+        "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
+        import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';
+        import repl_3 from 'kolay/virtual:live:repl_3.gjs.hbs';
+        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<WrapDemo><div id="repl_3" class="repl-sdk__demo"><repl_3 /></div></WrapDemo>\`, {
+            eval () {
+                return eval(arguments[0]);
+            }
+        });
+        "
+      `);
+    });
   });
 
   test('it allows top-level component invocation', async () => {

@@ -8,7 +8,6 @@ import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 import { visit } from 'unist-util-visit';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
-import { rehypeWrapDemos } from '../../wrap-demos.js';
 import { extFilter, normalizePath } from './utils.js';
 
 const processor = new Preprocessor();
@@ -106,9 +105,11 @@ function rehypeInjectComponentInvocation() {
 
     if (componentNamesById.size === 0) return;
 
-    visit(tree, 'raw', (node) => {
+    // 'glimmer_raw' too: a consumer's rehypeWrapDemos runs before this and
+    // retypes the placeholder — replacing the first `</div>` still targets
+    // the placeholder itself, inside the wrapper.
+    visit(tree, ['raw', 'glimmer_raw'], (node) => {
       if (node.tagName === 'code') return 'skip';
-      if (node.type !== 'raw') return;
 
       const id = node.value?.match(/id="([^"]+)"/)?.[1];
 
@@ -127,13 +128,7 @@ function rehypeInjectComponentInvocation() {
  * @porom {Options} options
  */
 export function createCompiler(options) {
-  // rehypeWrapDemos runs after the invocation is injected, so the wrapper
-  // ends up around the whole placeholder: <WrapDemo><div ...><Demo /></div></WrapDemo>
-  const rehypePlugins = [
-    ...(options.rehypePlugins ?? []),
-    rehypeInjectComponentInvocation,
-    rehypeWrapDemos,
-  ];
+  const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
 
   const compiler = buildCompiler({
     remarkPlugins: options.remarkPlugins,
@@ -183,10 +178,10 @@ export async function mdToGJS(input, { compiler, virtualModulesByMarkdownFile, i
     imports += `\nimport ${componentName} from '${virtualId}';`;
   }
 
-  if (imports && !scopeBindsWrapDemo(scope)) {
-    // rehypeWrapDemos wrapped each placeholder in <WrapDemo> — the default
-    // renders the demo unchanged. A scope that binds its own WrapDemo wraps
-    // demos in that component instead.
+  if (result.text.includes('<WrapDemo>') && !scopeBindsWrapDemo(scope)) {
+    // The opt-in rehypeWrapDemos plugin (or the author, by hand) invokes
+    // <WrapDemo> — the default renders the demo unchanged. A scope that
+    // binds its own WrapDemo wraps demos in that component instead.
     imports = `\nimport { WrapDemo } from 'kolay/wrap-demo';` + imports;
   }
 

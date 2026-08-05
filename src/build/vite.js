@@ -54,3 +54,13 @@ export function demos(src, options) {
 export function importEntrypoints(input, options) {
   return _importEntrypoints.vite([input, options]);
 }
+
+/**
+ * Opt-in rehype plugin that wraps every demo in a `<WrapDemo>` component
+ * resolved from scope — pass it to a `docs()` usage's `rehypePlugins` and
+ * bind your own `WrapDemo` in that usage's `scope`.
+ *
+ * (For runtime-compiled `.md` pages, pass the same plugin — re-exported
+ * from 'kolay/wrap-demo' — to `setupKolay`'s `rehypePlugins`.)
+ */
+export { rehypeWrapDemos } from '../wrap-demos.js';
