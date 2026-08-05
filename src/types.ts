@@ -13,6 +13,16 @@ export interface Manifest {
    * Item `path`s are prefixed with it; `appRelativePath`s are not.
    */
   base: string;
+  /**
+   * Path redirects from the project's kolay config file
+   * (`kolay.config.js` and friends, discovered via lilconfig at build
+   * time). Applied by `handlePotentialIndexVisit` when a visited URL
+   * matches. `[]` when there is no config file / no entries.
+   */
+  redirects: {
+    from: string;
+    to: string;
+  }[];
   groups: {
     name: string;
     list: Page[];

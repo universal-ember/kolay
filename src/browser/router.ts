@@ -1,6 +1,7 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
+import { resolveRedirect } from './redirects.ts';
 import { groupNameForRoute, registerScopedRoute, scopedRouteNameFor } from './scoped-routes.ts';
 import { docsManager } from './services/docs.ts';
 
@@ -98,6 +99,34 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
   const rawWildcardParam = parent?.params?.page;
   const wildcardParam =
     typeof rawWildcardParam === 'string' ? rawWildcardParam.replace(/\/+$/, '') : rawWildcardParam;
+
+  /**
+   * Redirects (from the project's kolay config file) apply to any page
+   * visit inside a wildcard mount, before the bare-index handling.
+   * Matching happens against the resolved app-relative URL — the mount's
+   * own URL plus the wildcard segment — so entries are written in URL
+   * space, independent of mount topology, and a rewritten path may land
+   * in a different mount entirely.
+   */
+  if (parent && typeof wildcardParam === 'string' && wildcardParam) {
+    const router = getOwner(context)?.lookup('service:router');
+
+    assert(`Expected to find the router service, but did not`, router);
+
+    // urlFor includes the rootURL; redirects are written app-relative
+    const url = router.urlFor(parent.name, wildcardParam);
+    const base = router.rootURL ?? '/';
+    const visited = base === '/' ? url : '/' + url.slice(base.length).replace(/^\/+/, '');
+
+    const target = resolveRedirect(visited.replace(/^\//, ''), docs.manifest.redirects);
+
+    if (target !== undefined) {
+      // app-relative: transitionTo prepends the rootURL itself
+      router.transitionTo('/' + target);
+
+      return;
+    }
+  }
 
   const candidates =
     transition.to.name === 'index'

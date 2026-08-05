@@ -20,6 +20,7 @@ export { selected } from './services/selected.ts';
 
 // Utilities
 export { isActive } from './is-active.ts';
+export { resolveRedirect } from './redirects.ts';
 export { getIndexPage, isCollection, isIndex } from './utils.ts';
 
 // Types

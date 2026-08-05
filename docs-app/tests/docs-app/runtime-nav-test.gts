@@ -73,6 +73,7 @@ module('Runtime docs navigation', function (hooks) {
       '<GroupNav />',
       '<PageNav />',
       'handlePotentialIndexVisit(...)',
+      'resolveRedirect(...)',
       'selected(...)',
       'docsManager(...)',
       '<Logs />',

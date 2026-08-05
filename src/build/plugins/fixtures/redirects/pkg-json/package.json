@@ -1,0 +1,12 @@
+{
+  "name": "redirects-pkg-json-fixture",
+  "private": true,
+  "kolay": {
+    "redirects": [
+      {
+        "from": "/docs/*",
+        "to": "/guides/*"
+      }
+    ]
+  }
+}

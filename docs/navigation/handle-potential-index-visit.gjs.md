@@ -2,6 +2,8 @@
 
 When using `addRoutes()`, navigating to a group URL (e.g. `/Runtime`) lands on an index route. If that group doesn't have an explicit index page, the user sees a blank page. `handlePotentialIndexVisit` solves this by automatically redirecting to the first page in the group.
 
+It is also where [configured redirects](/development/redirects.md) apply: before the index handling, the visited URL is checked against the project's `redirects` (from `kolay.config.js`), and a match transitions to the rewritten path.
+
 ## Usage
 
 Call it in the `beforeModel` hook of your page route:

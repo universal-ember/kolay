@@ -1,3 +1,9 @@
 {
-  "order": ["is-active", "group-nav", "page-nav", "handle-potential-index-visit"]
+  "order": [
+    "is-active",
+    "group-nav",
+    "page-nav",
+    "handle-potential-index-visit",
+    "resolve-redirect"
+  ]
 }
