@@ -1,30 +1,79 @@
 import { visit } from 'unist-util-visit';
 
 /**
+ * @typedef {object} EachDemo
+ * @property {'always' | 'opt-in'} [behavior] - 'always' (the default) wraps
+ *   every demo; 'opt-in' wraps only demos whose code fence has the `meta`
+ *   word.
+ * @property {string} [meta] - the fence meta word that opts a demo in.
+ *   Required when behavior is 'opt-in'; unused when behavior is 'always'.
+ * @property {string} [exclude] - a fence meta word that skips wrapping for
+ *   that demo, for either behavior.
+ *
+ * @typedef {object} WrapDemosOptions
+ * @property {string} componentName - which scope binding to wrap demos in
+ *   (a capitalized identifier). Runtime `.md` resolves it from
+ *   `setupKolay`'s `topLevelScope`; build-time `.gjs.md` from the docs()
+ *   usage's `scope`.
+ * @property {EachDemo} [eachDemo]
+ */
+
+/**
  * Opt-in rehype plugin that wraps every live demo's placeholder element in a
- * component invocation, resolved from scope like any other component — bind
- * your own component to wrap every demo in it (via `topLevelScope` for the
- * in-browser `.md` compiler, via the docs() `scope` option for the
- * build-time `.gjs.md` compiler).
+ * component invocation, resolved from scope like any other component.
  *
- * Add it to the `rehypePlugins` of the pipeline whose demos should be
- * wrapped:
- * - `.md`: `setupKolay(this, { rehypePlugins: [wrapDemos], ... })`
- * - `.gjs.md`: `docs('...', { rehypePlugins: [wrapDemos], ... })`
+ * Add it — with the scope binding to wrap demos in — to the `rehypePlugins`
+ * of the pipeline whose demos should be wrapped:
+ * - `.md`: `setupKolay(this, { rehypePlugins: [[wrapDemos, { componentName: 'Shadowed' }]] })`
+ * - `.gjs.md`: `docs('...', { rehypePlugins: [[wrapDemos, { componentName: 'Shadowed' }]] })`
  *
- * By default demos are wrapped in `<WrapDemo>` — without a binding of that
- * name, the passthrough default from 'kolay/wrap-demo' renders the demo
- * unchanged. To use a different scope binding, pass `componentName`
- * (a capitalized identifier, and then the binding must exist):
- * `[wrapDemos, { componentName: 'DemoFrame' }]`.
+ * `eachDemo` controls which demos are wrapped, via words in the code fence
+ * meta (e.g. ```` ```gjs live shadow ````):
+ * `{ behavior: 'always' | 'opt-in', meta: 'shadow', exclude: 'no-shadow' }`.
  *
  * This module is plain JS so both sides can use it: the browser re-exports
  * it from 'kolay/wrap-demo', the build from 'kolay/vite'.
  *
- * @param {{ componentName?: string }} [options]
+ * @param {WrapDemosOptions} options
  */
 export function wrapDemos(options) {
-  const componentName = options?.componentName ?? 'WrapDemo';
+  const { componentName, eachDemo = {} } = options ?? {};
+
+  if (typeof componentName !== 'string' || !/^[A-Z][a-zA-Z0-9_]*$/.test(componentName)) {
+    throw new Error(
+      `wrapDemos requires a componentName: which scope binding to wrap demos in ` +
+        `(a capitalized identifier, e.g. { componentName: 'Shadowed' }). ` +
+        `Got: ${JSON.stringify(componentName)}`
+    );
+  }
+
+  const { behavior = 'always', meta, exclude } = eachDemo;
+
+  if (behavior !== 'always' && behavior !== 'opt-in') {
+    throw new Error(
+      `wrapDemos' eachDemo.behavior must be 'always' or 'opt-in'. Got: ${JSON.stringify(behavior)}`
+    );
+  }
+
+  if (behavior === 'opt-in' && !meta) {
+    throw new Error(
+      `wrapDemos' eachDemo.behavior 'opt-in' requires eachDemo.meta: ` +
+        `the fence meta word that opts a demo in (e.g. { meta: 'shadow' })`
+    );
+  }
+
+  /**
+   * @param {unknown} blockMeta
+   */
+  function shouldWrap(blockMeta) {
+    // Word-matching, not substring: 'no-shadow' contains 'shadow'
+    const words = typeof blockMeta === 'string' ? blockMeta.split(/\s+/) : [];
+
+    if (exclude && words.includes(exclude)) return false;
+    if (behavior === 'opt-in') return words.includes(/** @type {string} */ (meta));
+
+    return true;
+  }
 
   /**
    * @param {{ type: string }} tree
@@ -40,7 +89,10 @@ export function wrapDemos(options) {
     for (const block of liveCode) {
       const demoId = block?.id ?? block?.placeholderId;
 
-      if (typeof demoId === 'string') ids.add(demoId);
+      if (typeof demoId !== 'string') continue;
+      if (!shouldWrap(block?.meta)) continue;
+
+      ids.add(demoId);
     }
 
     if (ids.size === 0) return;
@@ -58,8 +110,8 @@ export function wrapDemos(options) {
 
       node.value = `<${componentName}>${node.value}</${componentName}>`;
       // 'raw' nodes get reparsed as plain HTML (which would lowercase the
-      // tag, e.g. to <wrapdemo>); 'glimmer_raw' passes through the rest of
-      // the pipeline verbatim, like other component invocations.
+      // tag); 'glimmer_raw' passes through the rest of the pipeline
+      // verbatim, like other component invocations.
       node.type = 'glimmer_raw';
     });
   };

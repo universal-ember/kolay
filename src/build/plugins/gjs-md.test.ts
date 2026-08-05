@@ -54,71 +54,11 @@ inline code \`<Portal @to="popover">\`
     `);
   });
 
-  describe('with the opt-in wrapDemos plugin', () => {
-    const wrapCompiler = createCompiler({ rehypePlugins: [wrapDemos] });
-
-    test('the default WrapDemo is imported', async () => {
-      const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
-      const result = await mdToGJS(
-        `\`\`\`hbs live
-<SetupInstructions @src="components/portal-targets.gts" />
-\`\`\`
-`,
-        {
-          compiler: wrapCompiler,
-          id: 'test.gjs.md',
-          virtualModulesByMarkdownFile,
-        }
-      );
-
-      expect(result.code).toMatchInlineSnapshot(`
-        "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
-        import { WrapDemo } from 'kolay/wrap-demo';
-        import repl_2 from 'kolay/virtual:live:repl_2.gjs.hbs';
-        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<WrapDemo><div id="repl_2" class="repl-sdk__demo"><repl_2 /></div></WrapDemo>\`, {
-            eval () {
-                return eval(arguments[0]);
-            }
-        });
-        "
-      `);
-    });
-
-    test('a scope that binds WrapDemo replaces the default import', async () => {
-      const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
-      const result = await mdToGJS(
-        `\`\`\`hbs live
-<SetupInstructions @src="components/portal-targets.gts" />
-\`\`\`
-`,
-        {
-          compiler: wrapCompiler,
-          id: 'test.gjs.md',
-          virtualModulesByMarkdownFile,
-          scope: `import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';`,
-        }
-      );
-
-      expect(result.code).toMatchInlineSnapshot(`
-        "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
-        import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';
-        import repl_3 from 'kolay/virtual:live:repl_3.gjs.hbs';
-        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<WrapDemo><div id="repl_3" class="repl-sdk__demo"><repl_3 /></div></WrapDemo>\`, {
-            eval () {
-                return eval(arguments[0]);
-            }
-        });
-        "
-      `);
-    });
-  });
-
-  describe('with wrapDemos configured to use a different scope binding', () => {
-    const framedCompiler = createCompiler({
-      rehypePlugins: [[wrapDemos, { componentName: 'DemoFrame' }]],
-    });
-
-    test('demos are wrapped in that binding', async () => {
+  describe('with the wrapDemos plugin', () => {
+    test('demos are wrapped in the configured scope binding', async () => {
+      const framedCompiler = createCompiler({
+        rehypePlugins: [[wrapDemos, { componentName: 'DemoFrame' }]],
+      });
       const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
       const result = await mdToGJS(
         `\`\`\`hbs live
@@ -136,8 +76,89 @@ inline code \`<Portal @to="popover">\`
       expect(result.code).toMatchInlineSnapshot(`
         "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
         import { DemoFrame } from '#src/demo-frame.gts';
+        import repl_2 from 'kolay/virtual:live:repl_2.gjs.hbs';
+        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<DemoFrame><div id="repl_2" class="repl-sdk__demo"><repl_2 /></div></DemoFrame>\`, {
+            eval () {
+                return eval(arguments[0]);
+            }
+        });
+        "
+      `);
+    });
+
+    test('eachDemo.exclude skips demos with that fence meta word', async () => {
+      const excludingCompiler = createCompiler({
+        rehypePlugins: [
+          [wrapDemos, { componentName: 'DemoFrame', eachDemo: { exclude: 'no-frame' } }],
+        ],
+      });
+      const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
+      const result = await mdToGJS(
+        `\`\`\`hbs live
+<First />
+\`\`\`
+
+\`\`\`hbs live no-frame
+<Second />
+\`\`\`
+`,
+        {
+          compiler: excludingCompiler,
+          id: 'test.gjs.md',
+          virtualModulesByMarkdownFile,
+          scope: `import { DemoFrame } from '#src/demo-frame.gts';`,
+        }
+      );
+
+      expect(result.code).toMatchInlineSnapshot(`
+        "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
+        import { DemoFrame } from '#src/demo-frame.gts';
+        import repl_3 from 'kolay/virtual:live:repl_3.gjs.hbs';
         import repl_4 from 'kolay/virtual:live:repl_4.gjs.hbs';
-        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<DemoFrame><div id="repl_4" class="repl-sdk__demo"><repl_4 /></div></DemoFrame>\`, {
+        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<DemoFrame><div id="repl_3" class="repl-sdk__demo"><repl_3 /></div></DemoFrame>
+        <div id="repl_4" class="repl-sdk__demo"><repl_4></repl_4></div>\`, {
+            eval () {
+                return eval(arguments[0]);
+            }
+        });
+        "
+      `);
+    });
+
+    test("eachDemo.behavior 'opt-in' wraps only demos with the meta word", async () => {
+      const optInCompiler = createCompiler({
+        rehypePlugins: [
+          [
+            wrapDemos,
+            { componentName: 'DemoFrame', eachDemo: { behavior: 'opt-in', meta: 'frame' } },
+          ],
+        ],
+      });
+      const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
+      const result = await mdToGJS(
+        `\`\`\`hbs live frame
+<First />
+\`\`\`
+
+\`\`\`hbs live
+<Second />
+\`\`\`
+`,
+        {
+          compiler: optInCompiler,
+          id: 'test.gjs.md',
+          virtualModulesByMarkdownFile,
+          scope: `import { DemoFrame } from '#src/demo-frame.gts';`,
+        }
+      );
+
+      expect(result.code).toMatchInlineSnapshot(`
+        "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
+        import { DemoFrame } from '#src/demo-frame.gts';
+        import repl_5 from 'kolay/virtual:live:repl_5.gjs.hbs';
+        import repl_6 from 'kolay/virtual:live:repl_6.gjs.hbs';
+        export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<DemoFrame><div id="repl_5" class="repl-sdk__demo"><repl_5 /></div></DemoFrame>
+        <div id="repl_6" class="repl-sdk__demo"><repl_6></repl_6></div>\`, {
             eval () {
                 return eval(arguments[0]);
             }

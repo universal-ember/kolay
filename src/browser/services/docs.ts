@@ -13,7 +13,6 @@ import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { equalsIgnoreCase, samePagePath } from '../utils.ts';
-import { WrapDemo } from '../wrap-demo.gts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
@@ -66,7 +65,6 @@ export function compilerOptions({
     ComponentSignature,
     ModifierSignature,
     HelperSignature,
-    WrapDemo,
     ...topLevelScope,
   };
 
@@ -85,7 +83,6 @@ export function compilerOptions({
       kolay: () => import('../index.ts'),
       'kolay/components': () => import('../components.ts'),
       'kolay/typedoc': () => import('../typedoc/index.ts'),
-      'kolay/wrap-demo': () => import('../wrap-demo.gts'),
       ...modules,
     },
   };
@@ -138,10 +135,6 @@ class DocsService {
      * - for rendering your typedoc:
      *   - <APIDocs>
      *   - <ComponentSignature>
-     * - for wrapping demos (paired with the opt-in `wrapDemos` plugin
-     *   from 'kolay/wrap-demo', passed via `rehypePlugins`):
-     *   - <WrapDemo> — the default renders the demo unchanged; bind your
-     *     own WrapDemo here to wrap every demo in your own component.
      */
     topLevelScope?: ScopeMap;
 

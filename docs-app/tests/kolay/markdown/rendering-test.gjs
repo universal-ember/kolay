@@ -69,115 +69,7 @@ module('Markdown | Rendering', function (hooks) {
     assert.dom('output').containsText('general kenobi');
   });
 
-  module('with wrapDemos + a WrapDemo in topLevelScope', function (hooks) {
-    setupKolay(hooks, {
-      rehypePlugins: [wrapDemos],
-      topLevelScope: {
-        WrapDemo: <template>
-          <section data-demo-wrapper>{{yield}}</section>
-        </template>,
-      },
-    });
-
-    test('a live codefence renders inside the wrapper', async function (assert) {
-      const doc =
-        `# Hello there\n` +
-        `\n` +
-        '```hbs live no-shadow\n' +
-        '<output>\n' +
-        `\tgeneral kenobi\n\n` +
-        '</output>\n' +
-        '```\n';
-
-      class Demo {
-        @use doc = Compiled(() => doc);
-      }
-
-      const state = new Demo();
-
-      setOwner(state, this.owner);
-
-      await render(
-        <template>
-          {{#if state.doc.component}}
-            <state.doc.component />
-          {{/if}}
-        </template>
-      );
-
-      await waitUntil(() => state.doc.isReady);
-
-      assert.dom('[data-demo-wrapper] output').containsText('general kenobi');
-    });
-
-    test('two documents in a row both render wrapped demos', async function (assert) {
-      // Each document renders as its own island (renderComponent has its own
-      // program artifacts) -- this catches singleton components (WrapDemo,
-      // the user's wrapper) breaking on their second island.
-      const docFor = (who) =>
-        `# Hello there\n` +
-        `\n` +
-        '```gjs live preview\n' +
-        '<template>\n' +
-        `  <output>${who}</output>\n` +
-        '</template>\n' +
-        '```\n';
-
-      class Demo {
-        @tracked who = 'obi wan';
-
-        @use doc = Compiled(() => docFor(this.who));
-      }
-
-      const state = new Demo();
-
-      setOwner(state, this.owner);
-
-      await render(
-        <template>
-          {{#if state.doc.component}}
-            <state.doc.component />
-          {{/if}}
-        </template>
-      );
-
-      await waitUntil(() => state.doc.isReady);
-      assert.dom('[data-demo-wrapper] output').containsText('obi wan');
-
-      state.who = 'general kenobi';
-
-      await settled();
-      await waitUntil(() => state.doc.isReady);
-      assert.dom('[data-demo-wrapper] output').containsText('general kenobi');
-    });
-
-    test('non-live content is not wrapped', async function (assert) {
-      const doc = `# Hello there`;
-
-      class Demo {
-        @use doc = Compiled(() => doc);
-      }
-
-      const state = new Demo();
-
-      setOwner(state, this.owner);
-
-      await render(
-        <template>
-          {{#if state.doc.component}}
-            <state.doc.component />
-          {{/if}}
-        </template>
-      );
-
-      await waitUntil(() => state.doc.isReady);
-
-      assert.dom('h1').containsText('Hello there');
-      assert.dom('[data-demo-wrapper]').doesNotExist();
-    });
-  });
-
-  module('with wrapDemos configured to use a different scope binding', function (hooks) {
+  module('with wrapDemos', function (hooks) {
     setupKolay(hooks, {
       rehypePlugins: [[wrapDemos, { componentName: 'DemoFrame' }]],
       topLevelScope: {
@@ -187,7 +79,7 @@ module('Markdown | Rendering', function (hooks) {
       },
     });
 
-    test('a live codefence renders inside that binding', async function (assert) {
+    test('a live codefence renders inside the configured scope binding', async function (assert) {
       const doc =
         `# Hello there\n` +
         `\n` +
@@ -217,21 +109,94 @@ module('Markdown | Rendering', function (hooks) {
 
       assert.dom('[data-demo-frame] output').containsText('general kenobi');
     });
-  });
 
-  module('with wrapDemos and no WrapDemo binding', function (hooks) {
-    setupKolay(hooks, {
-      rehypePlugins: [wrapDemos],
-    });
-
-    test('the default WrapDemo renders the demo unchanged', async function (assert) {
-      const doc =
+    test('two documents in a row both render wrapped demos', async function (assert) {
+      // Each document renders as its own island (renderComponent has its own
+      // program artifacts) -- this catches singleton components (the
+      // configured wrapper) breaking on their second island.
+      const docFor = (who) =>
         `# Hello there\n` +
         `\n` +
+        '```gjs live preview\n' +
+        '<template>\n' +
+        `  <output>${who}</output>\n` +
+        '</template>\n' +
+        '```\n';
+
+      class Demo {
+        @tracked who = 'obi wan';
+
+        @use doc = Compiled(() => docFor(this.who));
+      }
+
+      const state = new Demo();
+
+      setOwner(state, this.owner);
+
+      await render(
+        <template>
+          {{#if state.doc.component}}
+            <state.doc.component />
+          {{/if}}
+        </template>
+      );
+
+      await waitUntil(() => state.doc.isReady);
+      assert.dom('[data-demo-frame] output').containsText('obi wan');
+
+      state.who = 'general kenobi';
+
+      await settled();
+      await waitUntil(() => state.doc.isReady);
+      assert.dom('[data-demo-frame] output').containsText('general kenobi');
+    });
+
+    test('non-live content is not wrapped', async function (assert) {
+      const doc = `# Hello there`;
+
+      class Demo {
+        @use doc = Compiled(() => doc);
+      }
+
+      const state = new Demo();
+
+      setOwner(state, this.owner);
+
+      await render(
+        <template>
+          {{#if state.doc.component}}
+            <state.doc.component />
+          {{/if}}
+        </template>
+      );
+
+      await waitUntil(() => state.doc.isReady);
+
+      assert.dom('h1').containsText('Hello there');
+      assert.dom('[data-demo-frame]').doesNotExist();
+    });
+  });
+
+  module('with wrapDemos and an eachDemo.exclude meta', function (hooks) {
+    setupKolay(hooks, {
+      rehypePlugins: [
+        [wrapDemos, { componentName: 'DemoFrame', eachDemo: { exclude: 'no-frame' } }],
+      ],
+      topLevelScope: {
+        DemoFrame: <template>
+          <section data-demo-frame>{{yield}}</section>
+        </template>,
+      },
+    });
+
+    test('an excluded fence is not wrapped, the others are', async function (assert) {
+      const doc =
         '```hbs live no-shadow\n' +
-        '<output>\n' +
-        `\tgeneral kenobi\n\n` +
-        '</output>\n' +
+        '<output>wrapped</output>\n' +
+        '```\n' +
+        `\n` +
+        '```hbs live no-shadow no-frame\n' +
+        '<output>bare</output>\n' +
         '```\n';
 
       class Demo {
@@ -252,7 +217,8 @@ module('Markdown | Rendering', function (hooks) {
 
       await waitUntil(() => state.doc.isReady);
 
-      assert.dom('output').containsText('general kenobi');
+      assert.dom('[data-demo-frame]').exists({ count: 1 });
+      assert.dom('[data-demo-frame] output').containsText('wrapped');
     });
   });
 
