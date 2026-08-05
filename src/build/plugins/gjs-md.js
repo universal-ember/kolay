@@ -41,9 +41,11 @@ function rehypeInjectComponentInvocation() {
 
     if (componentNamesById.size === 0) return;
 
-    visit(tree, 'raw', (node) => {
+    // 'glimmer_raw' too: a consumer's wrapDemos runs before this and
+    // retypes the placeholder — replacing the first `</div>` still targets
+    // the placeholder itself, inside the wrapper.
+    visit(tree, ['raw', 'glimmer_raw'], (node) => {
       if (node.tagName === 'code') return 'skip';
-      if (node.type !== 'raw') return;
 
       const id = node.value?.match(/id="([^"]+)"/)?.[1];
 
