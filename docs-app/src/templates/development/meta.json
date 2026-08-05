@@ -1,6 +1,7 @@
 {
   "order": [
     "rendering-pages",
+    "link-states",
     "ordering-pages",
     "renaming-pages",
     "testing",
