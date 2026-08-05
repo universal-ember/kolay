@@ -30,7 +30,7 @@ export default {
       'typedoc/index.js',
       'components.js',
       'virtual/*.js',
-      'wrap-demo.js',
+      'wrap-demos.js',
     ]),
     babel({
       extensions: ['.js', '.gjs', '.gts', '.ts'],

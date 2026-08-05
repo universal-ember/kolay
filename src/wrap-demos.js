@@ -31,8 +31,8 @@ import { visit } from 'unist-util-visit';
  * meta (e.g. ```` ```gjs live shadow ````):
  * `{ behavior: 'always' | 'opt-in', meta: 'shadow', exclude: 'no-shadow' }`.
  *
- * This module is plain JS so both sides can use it: the browser re-exports
- * it from 'kolay/wrap-demo', the build from 'kolay/vite'.
+ * This module is plain JS, so its 'kolay/wrap-demos' entrypoint works from
+ * both the browser and build config.
  *
  * @param {WrapDemosOptions} options
  */

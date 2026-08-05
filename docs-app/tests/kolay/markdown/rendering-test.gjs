@@ -6,7 +6,7 @@ import { setupRenderingTest } from 'ember-qunit';
 
 import { use } from 'ember-resources';
 import { Compiled } from 'kolay';
-import { wrapDemos } from 'kolay/wrap-demo';
+import { wrapDemos } from 'kolay/wrap-demos';
 
 import { setupKolay } from 'kolay/test-support';
 

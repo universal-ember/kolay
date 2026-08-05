@@ -6,7 +6,7 @@ For runtime-compiled `.md` pages, pass the plugin to `setupKolay` — `<Shadowed
 
 ```js
 import { setupKolay } from "kolay/setup";
-import { wrapDemos } from "kolay/wrap-demo";
+import { wrapDemos } from "kolay/wrap-demos";
 
 // e.g. in your application route's model() hook
 await setupKolay(this, {
@@ -20,7 +20,8 @@ For build-time-compiled `.gjs.md` pages, pass the plugin to the `docs()` usage a
 
 ```js
 // vite.config.js
-import { docs, wrapDemos } from "kolay/vite";
+import { docs } from "kolay/vite";
+import { wrapDemos } from "kolay/wrap-demos";
 
 docs("MyDocs", {
   src: "...",
