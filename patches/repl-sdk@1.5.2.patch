@@ -1,0 +1,34 @@
+diff --git a/src/compilers/ember/gjs.js b/src/compilers/ember/gjs.js
+index 852a8e1b4d6f9411b851c7b5f1a881feba50b137..66fb012407a903f159608e11f2a4fa4d3f2ce10d 100644
+--- a/src/compilers/ember/gjs.js
++++ b/src/compilers/ember/gjs.js
+@@ -170,7 +170,11 @@ export async function compiler(config, api) {
+       const { renderComponent } = await compiler.tryResolve('@ember/renderer');
+ 
+       const owner = makeOwner(config.owner);
+-      const result = renderComponent(compiled, { into: element, owner });
++      // Fresh delegate per render -- see the note in gmd.js's render.
++      const result = renderComponent(compiled, {
++        into: element,
++        owner: owner ? Object.create(owner) : owner,
++      });
+ 
+       return () => result.destroy();
+     },
+diff --git a/src/compilers/ember/gmd.js b/src/compilers/ember/gmd.js
+index 87f925e75fc418c3b6885dfb049ba7dad488392b..294753501cfe6b3c106f23a6bf5614912e365acd 100644
+--- a/src/compilers/ember/gmd.js
++++ b/src/compilers/ember/gmd.js
+@@ -100,7 +100,11 @@ export async function compiler(config, api) {
+ 
+       const result = renderComponent(compiled, {
+         into: element,
+-        owner: userOptions.owner,
++        // A fresh delegate per render: template instances (and their compiled
++        // handles) are cached per owner, but each renderComponent call has its
++        // own program artifacts -- sharing one owner across islands would make
++        // glimmer reuse a compiled handle from another island's program.
++        owner: userOptions.owner ? Object.create(userOptions.owner) : userOptions.owner,
+       });
+ 
+       const destroy = () => result.destroy();

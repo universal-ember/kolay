@@ -36,6 +36,10 @@
       "types": "./declarations/browser/test-support.d.ts",
       "default": "./dist/browser/test-support.js"
     },
+    "./wrap-demo": {
+      "types": "./declarations/browser/wrap-demo.d.ts",
+      "default": "./dist/browser/wrap-demo.js"
+    },
     "./types": {
       "types": "./declarations/types.d.ts"
     },
@@ -189,7 +193,9 @@
       "@glint/template": "1.7.8",
       "reactiveweb": "1.9.3"
     },
-    "patchedDependencies": {},
+    "patchedDependencies": {
+      "repl-sdk@1.5.2": "patches/repl-sdk@1.5.2.patch"
+    },
     "packageExtensions": {
       "ember-async-data": {
         "peerDependencies": {

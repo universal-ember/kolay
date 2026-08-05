@@ -7,12 +7,17 @@ settings:
 
 overrides:
   '@ember/test-waiters': ^4.0.0
-  '@glint/template': 1.7.8
   '@glimmer/component': ^2.0.0
   '@glimmer/validator': '>= 0.92.0'
+  '@glint/template': 1.7.8
   reactiveweb: 1.9.3
 
 packageExtensionsChecksum: sha256-I4/i17OOf0WifUwpGYE/KCRs9xMfb6hiQlSpKvR/tsk=
+
+patchedDependencies:
+  repl-sdk@1.5.2:
+    hash: 53736057bf2e7909a5700d16e61412e4c611e0eb1338e9450d639af7d590ec88
+    path: patches/repl-sdk@1.5.2.patch
 
 importers:
 
@@ -83,7 +88,7 @@ importers:
         version: 11.1.2
       repl-sdk:
         specifier: ^1.5.2
-        version: 1.5.2(6f4bb085e066dcd1e8cba157a733f3a5)
+        version: 1.5.2(patch_hash=53736057bf2e7909a5700d16e61412e4c611e0eb1338e9450d639af7d590ec88)(6f4bb085e066dcd1e8cba157a733f3a5)
       resolve.exports:
         specifier: ^2.0.3
         version: 2.0.3
@@ -13916,7 +13921,7 @@ snapshots:
       ember-resources: 7.0.8(ce9514d63fc47352d94b3ba2582fc477)
       ember-source: 6.12.0-alpha.3(@glimmer/component@2.0.0)(rsvp@4.8.5)
       reactiveweb: 1.9.3(8b23f86be972dd08569000b8599e5e82)
-      repl-sdk: 1.5.2(6f4bb085e066dcd1e8cba157a733f3a5)
+      repl-sdk: 1.5.2(patch_hash=53736057bf2e7909a5700d16e61412e4c611e0eb1338e9450d639af7d590ec88)(6f4bb085e066dcd1e8cba157a733f3a5)
     optionalDependencies:
       '@glint/template': 1.7.8
     transitivePeerDependencies:
@@ -17524,7 +17529,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  repl-sdk@1.5.2(6f4bb085e066dcd1e8cba157a733f3a5):
+  repl-sdk@1.5.2(patch_hash=53736057bf2e7909a5700d16e61412e4c611e0eb1338e9450d639af7d590ec88)(6f4bb085e066dcd1e8cba157a733f3a5):
     dependencies:
       '@codemirror/autocomplete': 6.20.0
       '@codemirror/commands': 6.10.2

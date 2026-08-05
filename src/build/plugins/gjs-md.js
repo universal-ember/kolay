@@ -8,6 +8,7 @@ import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 import { visit } from 'unist-util-visit';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { rehypeWrapDemos } from '../../wrap-demos.js';
 import { extFilter, normalizePath } from './utils.js';
 
 const processor = new Preprocessor();
@@ -62,7 +63,13 @@ function rehypeInjectComponentInvocation() {
  * @porom {Options} options
  */
 export function createCompiler(options) {
-  const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
+  // rehypeWrapDemos runs after the invocation is injected, so the wrapper
+  // ends up around the whole placeholder: <WrapDemo><div ...><Demo /></div></WrapDemo>
+  const rehypePlugins = [
+    ...(options.rehypePlugins ?? []),
+    rehypeInjectComponentInvocation,
+    rehypeWrapDemos,
+  ];
 
   const compiler = buildCompiler({
     remarkPlugins: options.remarkPlugins,
@@ -110,6 +117,12 @@ export async function mdToGJS(input, { compiler, virtualModulesByMarkdownFile, i
     virtualModules.set(virtualId, block);
 
     imports += `\nimport ${componentName} from '${virtualId}';`;
+  }
+
+  if (imports) {
+    // rehypeWrapDemos wrapped each placeholder in <WrapDemo>, which resolves
+    // the app's `setupKolay({ wrapDemo })` component at render time.
+    imports = `\nimport { WrapDemo } from 'kolay/wrap-demo';` + imports;
   }
 
   const built = (scope ?? '') + '\n\n' + imports + '\n\n' + `<template>${result.text}</template>`;

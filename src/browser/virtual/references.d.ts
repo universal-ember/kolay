@@ -1,4 +1,5 @@
 declare module 'kolay/setup' {
+  import type { ComponentLike } from '@glint/template';
   import type { ModuleMap, ScopeMap } from 'ember-repl';
   import type { Manifest } from 'kolay/types';
 
@@ -39,6 +40,23 @@ declare module 'kolay/setup' {
        * These can be used to add features syntax-highlighting to pre elements, etc
        */
       rehypePlugins?: unknown[];
+
+      /**
+       * A component to render around every demo (live code fence),
+       * receiving the demo as its default block:
+       *
+       * ```gjs
+       * await setupKolay(this, {
+       *   wrapDemo: <template>
+       *     <div class="demo">{{yield}}</div>
+       *   </template>,
+       * });
+       * ```
+       *
+       * Applies to both runtime-compiled `.md` pages and
+       * build-time-compiled `.gjs.md` / `.gts.md` pages.
+       */
+      wrapDemo?: ComponentLike<{ Blocks: { default: [] } }>;
     }
   ): Promise<Manifest>;
 }

@@ -7,17 +7,20 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { rehypeWrapDemos } from '../../wrap-demos.js';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { equalsIgnoreCase, samePagePath } from '../utils.ts';
+import { setDemoWrapper, WrapDemo } from '../wrap-demo.gts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
 import type { LoadTypedoc, Manifest, Page } from '../../types.ts';
+import type { DemoWrapper } from '../wrap-demo.gts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -65,6 +68,7 @@ export function compilerOptions({
     ComponentSignature,
     ModifierSignature,
     HelperSignature,
+    WrapDemo,
     ...topLevelScope,
   };
 
@@ -74,6 +78,10 @@ export function compilerOptions({
       gmd: {
         scope,
         ...md,
+        // Wraps every demo placeholder in <WrapDemo> (resolved from the
+        // scope above) — after the consumer's plugins, like the build-time
+        // `.gjs.md` pipeline does.
+        rehypePlugins: [...(rehypePlugins ?? []), rehypeWrapDemos],
       },
       hbs: {
         scope,
@@ -83,6 +91,7 @@ export function compilerOptions({
       kolay: () => import('../index.ts'),
       'kolay/components': () => import('../components.ts'),
       'kolay/typedoc': () => import('../typedoc/index.ts'),
+      'kolay/wrap-demo': () => import('../wrap-demo.gts'),
       ...modules,
     },
   };
@@ -158,10 +167,29 @@ class DocsService {
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
     rehypePlugins?: unknown[];
+
+    /**
+     * A component to render around every demo (live code fence),
+     * receiving the demo as its default block:
+     *
+     * ```gjs
+     * await setupKolay(this, {
+     *   wrapDemo: <template>
+     *     <div class="demo">{{yield}}</div>
+     *   </template>,
+     * });
+     * ```
+     *
+     * Applies to both runtime-compiled `.md` pages and
+     * build-time-compiled `.gjs.md` / `.gts.md` pages.
+     */
+    wrapDemo?: DemoWrapper;
   }) => {
     const [apiDocs, compiledDocs] = await Promise.all([options.apiDocs, options.compiledDocs]);
 
     this[PREPARE_DOCS](apiDocs, compiledDocs);
+
+    setDemoWrapper(options.wrapDemo);
 
     const optionsForCompiler = compilerOptions({
       rootURL: this.router.rootURL,
