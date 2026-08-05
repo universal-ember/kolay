@@ -6,6 +6,7 @@
     "renaming-pages",
     "redirects",
     "testing",
+    "config-file",
     "configuring-docs",
     "configuring-import-entrypoints",
     "configuring-api-docs",

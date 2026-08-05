@@ -11,23 +11,30 @@ const fixtures = join(here, 'fixtures', 'kolay-config');
 describe('loadKolayConfig', () => {
   // lilconfig owns the file forms / extensions — one fixture proves the
   // wiring, one proves our added config/ search directory
-  it('loads a discovered config file', async () => {
+  it('loads a discovered config file, reporting its path', async () => {
     expect(await loadKolayConfig(join(fixtures, 'js-config'))).toEqual({
-      redirects: [
-        { from: 'Old/*', to: 'New/*' },
-        { from: 'legacy/page', to: 'modern/page' },
-      ],
+      config: {
+        redirects: [
+          { from: 'Old/*', to: 'New/*' },
+          { from: 'legacy/page', to: 'modern/page' },
+        ],
+      },
+      filepath: join(fixtures, 'js-config', 'kolay.config.js'),
     });
   });
 
   it('also searches a config/ directory', async () => {
     expect(await loadKolayConfig(join(fixtures, 'config-dir'))).toEqual({
-      redirects: [{ from: 'in-config-dir/*', to: 'found/*' }],
+      config: { redirects: [{ from: 'in-config-dir/*', to: 'found/*' }] },
+      filepath: join(fixtures, 'config-dir', 'config', 'kolayrc.json'),
     });
   });
 
   it('defaults every known key when no config file exists', async () => {
-    expect(await loadKolayConfig(join(fixtures, 'none'))).toEqual({ redirects: [] });
+    expect(await loadKolayConfig(join(fixtures, 'none'))).toEqual({
+      config: { redirects: [] },
+      filepath: undefined,
+    });
   });
 });
 

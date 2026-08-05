@@ -2,7 +2,28 @@ import { lilconfig } from 'lilconfig';
 
 /**
  * @typedef {{ from: string, to: string }} Redirect
- * @typedef {{ redirects: Redirect[] }} KolayConfig
+ *
+ * One `docs()` usage: a group name and where its pages live (relative
+ * paths resolve from the config file's directory), plus any per-group
+ * markdown options. A plain string is shorthand for a path whose last
+ * segment names the group.
+ * @typedef {{ name?: string, src?: string } & Record<string, unknown>} DocsEntry
+ *
+ * @typedef {object} DemosEntry - one `demos()` usage
+ * @property {string} src - where the demo components live; relative paths resolve from the config file's directory
+ * @property {string} as - the import alias, e.g. '#demos/site'
+ *
+ * @typedef {object} ImportEntrypointsEntry - one `importEntrypoints()` usage; a plain string is shorthand for `{ input }`
+ * @property {string} input - a package name, or a path to a directory containing a package.json
+ * @property {string[]} [exclude] - subpath keys to leave out
+ *
+ * @typedef {object} KolayConfig
+ * @property {Redirect[]} redirects
+ * @property {Array<string | DocsEntry> | string | DocsEntry} [docs]
+ * @property {string[] | string} [apiDocs]
+ * @property {DemosEntry[] | DemosEntry} [demos]
+ * @property {Array<string | ImportEntrypointsEntry> | string | ImportEntrypointsEntry} [importEntrypoints]
+ * @property {object} [markdownOptions] - shared by every docs entry (scope, remarkPlugins, rehypePlugins, ...); plugin functions require a JS config form
  */
 
 const SUBTREE = '/*';
@@ -194,11 +215,12 @@ export function validateRedirects(value, source) {
 /**
  * Discovers and loads the project's kolay config file (see
  * `searchPlaces`), searching upward from `cwd`. The whole config is
- * returned — `redirects` is just the first thing it carries — with the
- * known keys validated and defaulted.
+ * returned, with the known keys validated and defaulted, along with the
+ * discovered file's path (undefined when there is no config file) —
+ * relative paths inside the config resolve from the file's directory.
  *
  * @param {string} cwd
- * @returns {Promise<KolayConfig>}
+ * @returns {Promise<{ config: KolayConfig, filepath: string | undefined }>}
  */
 export async function loadKolayConfig(cwd) {
   const result = await lilconfig('kolay', { searchPlaces }).search(cwd);
@@ -206,7 +228,10 @@ export async function loadKolayConfig(cwd) {
   const config = (result && !result.isEmpty && result.config) || {};
 
   return {
-    ...config,
-    redirects: validateRedirects(config.redirects, result?.filepath ?? 'the kolay config'),
+    config: {
+      ...config,
+      redirects: validateRedirects(config.redirects, result?.filepath ?? 'the kolay config'),
+    },
+    filepath: result?.filepath ?? undefined,
   };
 }

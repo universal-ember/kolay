@@ -6,7 +6,7 @@ If your site deploys to a host with its own redirect support (Netlify, Cloudflar
 
 ## The config file
 
-Redirects live in a project-level config file, discovered at build time with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`. Every rc and config-file form is also looked for inside a `.config/` or `config/` directory.
+Redirects are one key of [kolay.config.js](/development/config-file.md), the project-level config file (which can also describe your docs groups, api docs, demos, and import entrypoints):
 
 ```js
 // kolay.config.js
