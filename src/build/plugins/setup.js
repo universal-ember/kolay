@@ -9,6 +9,7 @@ import { stripIndent } from 'common-tags';
 import send from 'send';
 
 import { virtualFile } from './helpers.js';
+import { loadKolayConfig } from './kolay-config.js';
 import { reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
 import { sourceMeta } from './source-meta.js';
@@ -286,11 +287,19 @@ export const setup = (state) => {
    */
   let hasImportEntrypoints = true;
 
+  /**
+   * The project's kolay config file (`kolay.config.js` and friends, via
+   * lilconfig) — the whole config, since it will grow more keys over
+   * time. Cross-cutting, like `base`, so its data rides the
+   * metamanifest.
+   */
+  let kolayConfig = { redirects: [] };
+
   return {
     name: 'kolay:setup',
     vite: {
       api: { kolay: state },
-      configResolved(resolvedConfig) {
+      async configResolved(resolvedConfig) {
         baseUrl = resolvedConfig.base;
         isBuild = resolvedConfig.command === 'build';
         hasApiDocs = resolvedConfig.plugins.some((plugin) => plugin.name === 'kolay:apidocs');
@@ -318,6 +327,14 @@ export const setup = (state) => {
             usageState.usages = usages;
             usageState.isPrimary = i === 0;
           });
+        }
+
+        // The usages-discovery above has settled isPrimary (default true
+        // for a single usage) — discover the project config once, in the
+        // primary usage only. Validation errors fail the build / dev
+        // server start.
+        if (state.isPrimary) {
+          kolayConfig = await loadKolayConfig(cwd);
         }
 
         resolvedConfig.server ||= {};
@@ -536,6 +553,8 @@ export const setup = (state) => {
 
           return stripIndent`
             export const base = ${JSON.stringify(baseUrl)};
+
+            export const redirects = ${JSON.stringify(kolayConfig.redirects)};
 
             export const groups = [
               ${entries

@@ -1,5 +1,6 @@
 import { cached } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
+import { registerDestructor } from '@ember/destroyable';
 import { service } from '@ember/service';
 
 import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -7,6 +8,7 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
@@ -19,6 +21,7 @@ import { selected } from './selected.ts';
 
 import type { LoadTypedoc, Manifest, Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
+import type Transition from '@ember/routing/transition';
 import type { ComponentLike } from '@glint/template';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
@@ -202,6 +205,74 @@ class DocsService {
 
     if (compiledDocs?.manifest) {
       this._docs = compiledDocs.manifest;
+      this.#setupRedirects(compiledDocs.manifest);
+    }
+  }
+
+  #redirectsWired = false;
+
+  /**
+   * Serves the manifest's `redirects` (from the project's kolay config
+   * file) automatically: future transitions are checked in
+   * `routeWillChange`, and — because setup runs inside the application
+   * route's model hook, during the initial transition, whose
+   * `routeWillChange` has already fired — the URL the app arrives on is
+   * corrected when that transition lands (with `replaceWith`: the old
+   * URL is already in the history).
+   *
+   * Redirect targets can never themselves redirect (config validation
+   * rejects chains), so the redirecting transitions fire these handlers
+   * harmlessly.
+   */
+  #setupRedirects(manifest: Manifest) {
+    if (this.#redirectsWired) return;
+
+    const redirects = manifest.redirects;
+
+    if (redirects.length === 0) return;
+
+    this.#redirectsWired = true;
+
+    const router = this.router;
+
+    const onRouteWillChange = (transition: Transition) => {
+      const target = redirectTargetFor(transition, redirects);
+
+      if (target !== undefined) {
+        router.transitionTo(target);
+      }
+    };
+
+    router.on('routeWillChange', onRouteWillChange);
+    registerDestructor(this, () => router.off('routeWillChange', onRouteWillChange));
+
+    const checkArrival = () => {
+      // routeDidChange has fired: the router has arrived somewhere, so
+      // currentURL is set (the null in its type covers pre-arrival)
+      const current = router.currentURL;
+
+      if (!current) return;
+
+      const [path = ''] = current.split(/[?#]/);
+      const target = resolveRedirect(path.replace(/^\//, ''), redirects);
+
+      if (target !== undefined) {
+        router.replaceWith('/' + target);
+      }
+    };
+
+    // During normal boot, setup runs inside the application route's
+    // model hook — mid-initial-transition, so currentURL is still null
+    // and that transition's routeWillChange fired before the listener
+    // above existed. Correct the arrival URL when the transition lands.
+    // (A set currentURL means setup ran after boot — tests — where the
+    // app already arrived: check now, since routeDidChange won't refire.)
+    if (router.currentURL) {
+      checkArrival();
+    } else {
+      // self-removing; the router can't outlive this store (same owner),
+      // so no destructor is needed
+      router.one('routeDidChange', checkArrival);
     }
   }
 

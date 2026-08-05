@@ -50,6 +50,11 @@ export interface DocsGroupModule {
  */
 export interface MetaManifest {
   base: string;
+  /**
+   * Path redirects from the project's kolay config file — `[]` when
+   * there is no config file (or it has no `redirects`).
+   */
+  redirects: Array<{ from: string; to: string }>;
   groups: Array<{ name: string; load: () => Promise<DocsGroupModule> }>;
 }
 
@@ -67,6 +72,7 @@ export async function loadCompiledDocs(meta: MetaManifest): Promise<{
   return {
     manifest: {
       base: meta.base,
+      redirects: meta.redirects,
       groups: modules.map((mod) => mod.manifest),
     },
     pages: Object.assign({}, ...modules.map((mod) => mod.pages)) as DocsGroupModule['pages'],

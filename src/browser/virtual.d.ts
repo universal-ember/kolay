@@ -37,5 +37,7 @@ declare module 'kolay/compiled-docs:virtual' {
 
   export const base: string;
 
+  export const redirects: Array<{ from: string; to: string }>;
+
   export const groups: Array<{ name: string; load: () => Promise<DocsGroupModule> }>;
 }

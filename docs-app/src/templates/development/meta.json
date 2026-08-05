@@ -4,6 +4,7 @@
     "link-states",
     "ordering-pages",
     "renaming-pages",
+    "redirects",
     "testing",
     "configuring-docs",
     "configuring-import-entrypoints",
