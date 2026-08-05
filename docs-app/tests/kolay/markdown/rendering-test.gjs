@@ -6,7 +6,7 @@ import { setupRenderingTest } from 'ember-qunit';
 
 import { use } from 'ember-resources';
 import { Compiled } from 'kolay';
-import { rehypeWrapDemos } from 'kolay/wrap-demo';
+import { wrapDemos } from 'kolay/wrap-demo';
 
 import { setupKolay } from 'kolay/test-support';
 
@@ -69,9 +69,9 @@ module('Markdown | Rendering', function (hooks) {
     assert.dom('output').containsText('general kenobi');
   });
 
-  module('with rehypeWrapDemos + a WrapDemo in topLevelScope', function (hooks) {
+  module('with wrapDemos + a WrapDemo in topLevelScope', function (hooks) {
     setupKolay(hooks, {
-      rehypePlugins: [rehypeWrapDemos],
+      rehypePlugins: [wrapDemos],
       topLevelScope: {
         WrapDemo: <template>
           <section data-demo-wrapper>{{yield}}</section>
@@ -177,9 +177,51 @@ module('Markdown | Rendering', function (hooks) {
     });
   });
 
-  module('with rehypeWrapDemos and no WrapDemo binding', function (hooks) {
+  module('with wrapDemos configured to use a different scope binding', function (hooks) {
     setupKolay(hooks, {
-      rehypePlugins: [rehypeWrapDemos],
+      rehypePlugins: [[wrapDemos, { componentName: 'DemoFrame' }]],
+      topLevelScope: {
+        DemoFrame: <template>
+          <section data-demo-frame>{{yield}}</section>
+        </template>,
+      },
+    });
+
+    test('a live codefence renders inside that binding', async function (assert) {
+      const doc =
+        `# Hello there\n` +
+        `\n` +
+        '```hbs live no-shadow\n' +
+        '<output>\n' +
+        `\tgeneral kenobi\n\n` +
+        '</output>\n' +
+        '```\n';
+
+      class Demo {
+        @use doc = Compiled(() => doc);
+      }
+
+      const state = new Demo();
+
+      setOwner(state, this.owner);
+
+      await render(
+        <template>
+          {{#if state.doc.component}}
+            <state.doc.component />
+          {{/if}}
+        </template>
+      );
+
+      await waitUntil(() => state.doc.isReady);
+
+      assert.dom('[data-demo-frame] output').containsText('general kenobi');
+    });
+  });
+
+  module('with wrapDemos and no WrapDemo binding', function (hooks) {
+    setupKolay(hooks, {
+      rehypePlugins: [wrapDemos],
     });
 
     test('the default WrapDemo renders the demo unchanged', async function (assert) {

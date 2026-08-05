@@ -1,6 +1,6 @@
 import type { TOC } from '@ember/component/template-only';
 
-export { rehypeWrapDemos } from '../wrap-demos.js';
+export { wrapDemos } from '../wrap-demos.js';
 
 export interface WrapDemoSignature {
   Blocks: {
@@ -12,9 +12,10 @@ export interface WrapDemoSignature {
 }
 
 /**
- * With the opt-in `rehypeWrapDemos` plugin, every demo (live code fence) is
- * wrapped in a `<WrapDemo>`, resolved from scope — this is the default,
- * which renders the demo unchanged.
+ * With the opt-in `wrapDemos` plugin, every demo (live code fence) is
+ * wrapped in a `<WrapDemo>` (or the plugin's `componentName` option),
+ * resolved from scope — this is the default, which renders the demo
+ * unchanged.
  *
  * To wrap every demo in your own chrome, bind a component named `WrapDemo`
  * yourself:

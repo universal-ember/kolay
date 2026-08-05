@@ -105,7 +105,7 @@ function rehypeInjectComponentInvocation() {
 
     if (componentNamesById.size === 0) return;
 
-    // 'glimmer_raw' too: a consumer's rehypeWrapDemos runs before this and
+    // 'glimmer_raw' too: a consumer's wrapDemos runs before this and
     // retypes the placeholder — replacing the first `</div>` still targets
     // the placeholder itself, inside the wrapper.
     visit(tree, ['raw', 'glimmer_raw'], (node) => {
@@ -179,7 +179,7 @@ export async function mdToGJS(input, { compiler, virtualModulesByMarkdownFile, i
   }
 
   if (result.text.includes('<WrapDemo>') && !scopeBindsWrapDemo(scope)) {
-    // The opt-in rehypeWrapDemos plugin (or the author, by hand) invokes
+    // The opt-in wrapDemos plugin (or the author, by hand) invokes
     // <WrapDemo> — the default renders the demo unchanged. A scope that
     // binds its own WrapDemo wraps demos in that component instead.
     imports = `\nimport { WrapDemo } from 'kolay/wrap-demo';` + imports;
