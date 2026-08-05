@@ -14,9 +14,9 @@ await setupKolay(this, {
 });
 ```
 
-(`.md` pages are compiled as glimdown, so `topLevelScope` applies to them — and to their `gjs`/`hbs` fences. Any component you bind in `topLevelScope` can be named instead.)
+(`.md` pages are compiled as glimdown, so `topLevelScope` applies to them. Any component you bind in `topLevelScope` can be named instead.)
 
-For build-time-compiled `.gjs.md` / `.gts.md` pages, pass the plugin to the `docs()` usage and bind the component in its `scope`:
+For build-time-compiled `.gjs.md` pages, pass the plugin to the `docs()` usage and bind the component in its `scope`:
 
 ```js
 // vite.config.js
