@@ -2,7 +2,7 @@
 
 ## `resolveRedirect`
 
-The matching behind [configured redirects](/development/redirects.md): resolves a visited path against the `redirects` carried on the manifest, returning the rewritten path — or `undefined` when nothing matches. [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) applies it for you; it is exported for consumers building their own routing.
+The matching behind [configured redirects](/development/redirects.md): resolves a visited path against the `redirects` carried on the manifest, returning the rewritten path — or `undefined` when nothing matches. `setupKolay` wires this into the router service for you (transitions are checked in `routeWillChange`); it is exported for consumers building their own routing.
 
 ```gjs
 import { resolveRedirect } from 'kolay';

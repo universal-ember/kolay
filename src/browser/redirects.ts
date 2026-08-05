@@ -1,5 +1,8 @@
 import { equalsIgnoreCase } from './utils.ts';
 
+import type RouteInfo from '@ember/routing/route-info';
+import type RouterService from '@ember/routing/router-service';
+
 const SUBTREE = '/*';
 
 /**
@@ -43,4 +46,59 @@ export function resolveRedirect(
   }
 
   return undefined;
+}
+
+/**
+ * Where a transition's destination should redirect to, if anywhere:
+ * the app-relative URL the RouteInfo resolves to, resolved against the
+ * project's redirects. `setupKolay` wires this into the router service's
+ * `routeWillChange` for you.
+ *
+ * Returns an app-relative URL (leading slash — ready for
+ * `router.transitionTo`), or `undefined` when no entry matches.
+ */
+export function redirectTargetFor(
+  router: RouterService,
+  destination: RouteInfo,
+  redirects: { from: string; to: string }[]
+): string | undefined {
+  if (redirects.length === 0) return undefined;
+
+  // root → leaf, collecting every dynamic segment in order — urlFor
+  // needs them positionally
+  const chain: RouteInfo[] = [];
+
+  for (let info: RouteInfo | null = destination; info; info = info.parent) {
+    chain.unshift(info);
+  }
+
+  const params: string[] = [];
+
+  for (const info of chain) {
+    for (const name of info.paramNames) {
+      const value = info.params?.[name];
+
+      // URL-derived params are strings; a model object (from a
+      // transitionTo with models) has no URL representation here — the
+      // resulting URL just won't match any redirect
+      params.push(typeof value === 'string' ? value : '');
+    }
+  }
+
+  let url;
+
+  try {
+    url = router.urlFor(destination.name, ...params);
+  } catch {
+    // intermediate destinations (loading / error substates) have no URL
+    return undefined;
+  }
+
+  // urlFor includes the rootURL; redirects are written app-relative
+  const base = router.rootURL ?? '/';
+  const visited = base === '/' ? url : '/' + url.slice(base.length).replace(/^\/+/, '');
+
+  const target = resolveRedirect(visited.replace(/^\//, ''), redirects);
+
+  return target === undefined ? undefined : '/' + target;
 }

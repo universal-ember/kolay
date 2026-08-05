@@ -6,6 +6,27 @@ import { lilconfig } from 'lilconfig';
 
 const SUBTREE = '/*';
 
+const RC_FORMS = ['kolayrc', 'kolayrc.json', 'kolayrc.js', 'kolayrc.cjs', 'kolayrc.mjs'];
+const CONFIG_FORMS = ['kolay.config.js', 'kolay.config.cjs', 'kolay.config.mjs'];
+
+/**
+ * lilconfig's default search, widened: every file form is also looked
+ * for in a `.config/` and a `config/` directory (lilconfig's own
+ * defaults only cover `.config/`, and only for the rc forms).
+ *
+ * Per directory level: package.json's `"kolay"` key, `.kolayrc`
+ * (JSON) and `.kolayrc.{json,js,cjs,mjs}`, `kolay.config.{js,cjs,mjs}`,
+ * then the same rc + config forms under `.config/` and `config/`.
+ */
+export const searchPlaces = [
+  'package.json',
+  ...RC_FORMS.map((form) => `.${form}`),
+  ...CONFIG_FORMS,
+  ...['.config', 'config'].flatMap((dir) =>
+    [...RC_FORMS, ...CONFIG_FORMS].map((form) => `${dir}/${form}`)
+  ),
+];
+
 /**
  * @param {string} path
  */
@@ -161,10 +182,8 @@ export function validateRedirects(value, source) {
 }
 
 /**
- * Discovers the project's kolay config file — via `lilconfig('kolay')`'s
- * default search (`kolay.config.{js,cjs,mjs}`, `.kolayrc.{json,js,cjs,mjs}`,
- * a `.config/` variant of those, or a `"kolay"` key in package.json) —
- * upward from `cwd`, and returns its validated `redirects`.
+ * Discovers the project's kolay config file (see `searchPlaces`) upward
+ * from `cwd`, and returns its validated `redirects`.
  *
  * `[]` when there is no config file, or it has no `redirects`.
  *
@@ -172,7 +191,7 @@ export function validateRedirects(value, source) {
  * @returns {Promise<Redirect[]>}
  */
 export async function loadRedirects(cwd) {
-  const result = await lilconfig('kolay').search(cwd);
+  const result = await lilconfig('kolay', { searchPlaces }).search(cwd);
 
   if (!result || result.isEmpty) return [];
 

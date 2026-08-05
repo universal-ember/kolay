@@ -4,7 +4,7 @@ When a docs site restructures — a group renamed, a section moved, pages consol
 
 ## The config file
 
-Redirects live in a project-level config file, discovered at build time via [lilconfig](https://github.com/antonk52/lilconfig)'s default search: `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc.json` (or `.js` / `.cjs` / `.mjs`, also under `.config/`), or a `"kolay"` key in `package.json`.
+Redirects live in a project-level config file, discovered at build time with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json` — with every rc / config-file form also looked for inside a `.config/` or `config/` directory.
 
 ```js
 // kolay.config.js
@@ -20,11 +20,13 @@ export default {
 
 The file is intentionally not part of any `docs()` or `setupKolay()` options: a URL's shape is decided by where `addRoutes` is mounted in your `router.ts`, not by any one plugin usage — so redirects are declared once, globally, in URL space.
 
+There is nothing to wire up: when [`setupKolay`](/install/index.md) runs (in your application route), the router service is subscribed automatically — incoming transitions are rewritten before they land, and the URL the app boots on is corrected (with `replaceWith`, so the back button isn't left pointing at the dead URL).
+
 The two entries above are live in this site's own `kolay.config.js` — follow [/guides/rendering-pages.md](/guides/rendering-pages.md) or [/legacy-install](/legacy-install) and watch the URL bar.
 
 ## Matching
 
-Entries are plain path prefixes — not globs — matched against the app-relative URL of every visit inside an `addRoutes` mount:
+Entries are plain path prefixes — not globs — matched against the app-relative URL of every transition:
 
 - A trailing `/*` (on both `from` and `to`) matches the prefix itself and everything under it; the remainder is carried onto `to`. Without it, the entry matches only that exact path.
 - Matching is whole-segment (`Runtime/*` does not match `/RuntimeExtras/...`) and case-insensitive, consistent with how kolay matches paths everywhere else.
@@ -33,7 +35,7 @@ Entries are plain path prefixes — not globs — matched against the app-relati
 
 Because matching happens against the resolved URL, mount topology doesn't matter: root wildcard mounts, nested mounts, and scoped mounts all work the same, and a rewritten path may land in a different mount than the one that caught it.
 
-One boundary: a redirect can only fire for URLs some mount actually catches. With a top-level `addRoutes(this)` (like this site), that's every otherwise-unclaimed path; without one, paths outside your mounts 404 before kolay ever sees them.
+One boundary: a redirect can only fire for URLs your router recognizes. With a top-level `addRoutes(this)` (like this site), that's every otherwise-unclaimed path; without one, paths outside your routes 404 before kolay ever sees them.
 
 ## Validation
 

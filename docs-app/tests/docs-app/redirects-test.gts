@@ -1,4 +1,4 @@
-import { visit } from '@ember/test-helpers';
+import { settled, visit } from '@ember/test-helpers';
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 
@@ -16,6 +16,19 @@ module('redirects (from kolay.config.js)', function (hooks) {
     assert.strictEqual(router.currentURL, '/development/rendering-pages.md');
     assert.dom('[data-page-error]').doesNotExist();
     assert.dom('.home-doc').containsText('Rendering Pages');
+  });
+
+  test('an in-app transition to an old URL is redirected before it lands', async function (assert) {
+    await visit('/development/helpers.md');
+
+    const router = this.owner.lookup('service:router');
+
+    // the redirect (in routeWillChange) aborts this transition in
+    // favor of the rewritten one — swallow the TransitionAborted rejection
+    await router.transitionTo('/guides/ordering-pages.md').catch(() => null);
+    await settled();
+
+    assert.strictEqual(router.currentURL, '/development/ordering-pages.md');
   });
 
   test('matching is case-insensitive', async function (assert) {

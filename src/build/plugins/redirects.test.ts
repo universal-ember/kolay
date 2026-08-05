@@ -28,6 +28,24 @@ describe('loadRedirects', () => {
     ]);
   });
 
+  it('loads from a bare .kolayrc (JSON)', async () => {
+    expect(await loadRedirects(join(fixtures, 'rc-bare'))).toEqual([
+      { from: 'bare-rc', to: 'found' },
+    ]);
+  });
+
+  it('loads from a config/ directory', async () => {
+    expect(await loadRedirects(join(fixtures, 'config-dir'))).toEqual([
+      { from: 'in-config-dir/*', to: 'found/*' },
+    ]);
+  });
+
+  it('loads from a .config/ directory', async () => {
+    expect(await loadRedirects(join(fixtures, 'dot-config-dir'))).toEqual([
+      { from: 'in-dot-config-dir', to: 'found' },
+    ]);
+  });
+
   it('is [] when no config file exists', async () => {
     expect(await loadRedirects(join(fixtures, 'none'))).toEqual([]);
   });
