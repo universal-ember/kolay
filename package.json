@@ -105,7 +105,7 @@
     "decorator-transforms": "^2.3.0",
     "ember-modifier": "^4.3.0",
     "ember-primitives": "^0.60.1",
-    "ember-repl": "^8.0.2",
+    "ember-repl": "^8.2.2",
     "ember-resources": "^7.0.4",
     "globby": "^16.1.1",
     "json5": "^2.2.3",
@@ -116,7 +116,7 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
-    "repl-sdk": "^1.5.2",
+    "repl-sdk": "^1.6.2",
     "resolve.exports": "^2.0.3",
     "send": "^1.2.1",
     "tracked-built-ins": "^4.1.0",
@@ -192,9 +192,6 @@
       "@glimmer/validator": ">= 0.92.0",
       "@glint/template": "1.7.8",
       "reactiveweb": "1.9.3"
-    },
-    "patchedDependencies": {
-      "repl-sdk@1.5.2": "patches/repl-sdk@1.5.2.patch"
     },
     "packageExtensions": {
       "ember-async-data": {

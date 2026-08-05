@@ -13,6 +13,70 @@ import { extFilter, normalizePath } from './utils.js';
 
 const processor = new Preprocessor();
 
+/**
+ * Whether a usage's `scope` string already binds `WrapDemo` (an import, a
+ * variable, a class, or a function) — if so, the generated import of the
+ * default from 'kolay/wrap-demo' would collide with it, and the intent is
+ * clearly to wrap demos in that component instead.
+ *
+ * The scope may contain `<template>` tags, so it goes through content-tag
+ * before parsing. Cached per scope string: one usage's scope is parsed once,
+ * not once per markdown file.
+ *
+ * @type {Map<string, boolean>}
+ */
+const scopeBindsWrapDemoCache = new Map();
+
+/**
+ * @param {string | undefined} scope
+ */
+function scopeBindsWrapDemo(scope) {
+  if (!scope) return false;
+
+  let known = scopeBindsWrapDemoCache.get(scope);
+
+  if (known === undefined) {
+    known = computeScopeBindsWrapDemo(scope);
+    scopeBindsWrapDemoCache.set(scope, known);
+  }
+
+  return known;
+}
+
+/**
+ * @param {string} scope
+ */
+function computeScopeBindsWrapDemo(scope) {
+  let parsed;
+
+  try {
+    const { code } = processor.process(scope, { filename: 'kolay-docs-scope.gjs' });
+
+    parsed = babel.parseSync(code, { sourceType: 'module', configFile: false, babelrc: false });
+  } catch {
+    // A scope that doesn't parse fails the build anyway, when it's prepended
+    // to a page's module — that error has the better context.
+    return false;
+  }
+
+  return (parsed?.program.body ?? []).some((node) => {
+    switch (node.type) {
+      case 'ImportDeclaration':
+        return node.specifiers.some((specifier) => specifier.local.name === 'WrapDemo');
+      case 'VariableDeclaration':
+        return node.declarations.some(
+          (declaration) =>
+            declaration.id.type === 'Identifier' && declaration.id.name === 'WrapDemo'
+        );
+      case 'ClassDeclaration':
+      case 'FunctionDeclaration':
+        return node.id?.name === 'WrapDemo';
+      default:
+        return false;
+    }
+  });
+}
+
 function componentNameFromId(id) {
   return id
     .split(/[^A-Za-z0-9_]/g)
@@ -119,9 +183,10 @@ export async function mdToGJS(input, { compiler, virtualModulesByMarkdownFile, i
     imports += `\nimport ${componentName} from '${virtualId}';`;
   }
 
-  if (imports) {
-    // rehypeWrapDemos wrapped each placeholder in <WrapDemo>, which resolves
-    // the app's `setupKolay({ wrapDemo })` component at render time.
+  if (imports && !scopeBindsWrapDemo(scope)) {
+    // rehypeWrapDemos wrapped each placeholder in <WrapDemo> — the default
+    // renders the demo unchanged. A scope that binds its own WrapDemo wraps
+    // demos in that component instead.
     imports = `\nimport { WrapDemo } from 'kolay/wrap-demo';` + imports;
   }
 

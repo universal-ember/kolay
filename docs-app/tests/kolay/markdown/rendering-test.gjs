@@ -68,11 +68,13 @@ module('Markdown | Rendering', function (hooks) {
     assert.dom('output').containsText('general kenobi');
   });
 
-  module('with wrapDemo', function (hooks) {
+  module('with a WrapDemo override in topLevelScope', function (hooks) {
     setupKolay(hooks, {
-      wrapDemo: <template>
-        <section data-demo-wrapper>{{yield}}</section>
-      </template>,
+      topLevelScope: {
+        WrapDemo: <template>
+          <section data-demo-wrapper>{{yield}}</section>
+        </template>,
+      },
     });
 
     test('a live codefence renders inside the wrapper', async function (assert) {

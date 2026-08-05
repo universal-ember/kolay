@@ -1,64 +1,26 @@
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
-import { assert } from '@ember/debug';
+import type { TOC } from '@ember/component/template-only';
 
-import { createStore } from 'ember-primitives/store';
-
-import { findKey } from './services/lazy-load.ts';
-
-import type { ComponentLike } from '@glint/template';
-
-/**
- * The shape of the component `setupKolay({ wrapDemo })` accepts:
- * it receives each demo as its default block.
- */
-export type DemoWrapper = ComponentLike<{ Blocks: { default: [] } }>;
-
-class WrapperState {
-  @tracked component: DemoWrapper | undefined;
+export interface WrapDemoSignature {
+  Blocks: {
+    /**
+     * The rendered demo.
+     */
+    default: [];
+  };
 }
 
 /**
- * Stores the app's demo wrapper. The wrapper is global (demos render under
- * multiple owners) — `setupKolay({ wrapDemo })` calls this for you; it is
- * only exported for custom setups.
- */
-export function setDemoWrapper(component: DemoWrapper | undefined): void {
-  const owner = findKey();
-
-  assert(
-    `Cannot set a demo wrapper before setupKolay has run — ` +
-      `pass wrapDemo to setupKolay, or call setDemoWrapper after it.`,
-    owner || !component
-  );
-
-  if (!owner) return;
-
-  createStore(owner, WrapperState).component = component;
-}
-
-/**
- * Wraps a rendered demo (live code fence) in the component the app provided
- * via `setupKolay({ wrapDemo })`. With none provided, renders the demo
- * unchanged.
+ * Every demo (live code fence) is wrapped in a `<WrapDemo>`, resolved from
+ * scope — this is the default, which renders the demo unchanged.
  *
- * Both markdown pipelines invoke this around every demo placeholder
- * automatically — authors don't use it directly.
+ * To wrap every demo in your own chrome, provide a component named `WrapDemo`
+ * yourself:
+ * - for runtime-compiled `.md` pages: in `setupKolay`'s `topLevelScope`
+ * - for build-time-compiled `.gjs.md` / `.gts.md` pages: in the `scope`
+ *   option of the `docs()` plugin (when your scope binds `WrapDemo`, the
+ *   generated import of this default is skipped)
  */
-export class WrapDemo extends Component<{ Blocks: { default: [] } }> {
-  get wrapper(): DemoWrapper | undefined {
-    const owner = findKey();
-
-    if (!owner) return;
-
-    return createStore(owner, WrapperState).component;
-  }
-
-  <template>
-    {{#if this.wrapper}}
-      <this.wrapper>{{yield}}</this.wrapper>
-    {{else}}
-      {{yield}}
-    {{/if}}
-  </template>
-}
+export const WrapDemo: TOC<WrapDemoSignature> = <template>
+  {{! template-lint-disable no-yield-only }}
+  {{yield}}
+</template>;

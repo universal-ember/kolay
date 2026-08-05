@@ -14,13 +14,12 @@ import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { equalsIgnoreCase, samePagePath } from '../utils.ts';
-import { setDemoWrapper, WrapDemo } from '../wrap-demo.gts';
+import { WrapDemo } from '../wrap-demo.gts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
 import type { LoadTypedoc, Manifest, Page } from '../../types.ts';
-import type { DemoWrapper } from '../wrap-demo.gts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -144,6 +143,10 @@ class DocsService {
      * - for rendering your typedoc:
      *   - <APIDocs>
      *   - <ComponentSignature>
+     * - for wrapping demos (live code fences):
+     *   - <WrapDemo> — every demo placeholder is wrapped in it; the default
+     *     renders the demo unchanged. Provide your own WrapDemo here to wrap
+     *     every demo in your own component instead.
      */
     topLevelScope?: ScopeMap;
 
@@ -167,29 +170,10 @@ class DocsService {
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
     rehypePlugins?: unknown[];
-
-    /**
-     * A component to render around every demo (live code fence),
-     * receiving the demo as its default block:
-     *
-     * ```gjs
-     * await setupKolay(this, {
-     *   wrapDemo: <template>
-     *     <div class="demo">{{yield}}</div>
-     *   </template>,
-     * });
-     * ```
-     *
-     * Applies to both runtime-compiled `.md` pages and
-     * build-time-compiled `.gjs.md` / `.gts.md` pages.
-     */
-    wrapDemo?: DemoWrapper;
   }) => {
     const [apiDocs, compiledDocs] = await Promise.all([options.apiDocs, options.compiledDocs]);
 
     this[PREPARE_DOCS](apiDocs, compiledDocs);
-
-    setDemoWrapper(options.wrapDemo);
 
     const optionsForCompiler = compilerOptions({
       rootURL: this.router.rootURL,

@@ -54,6 +54,34 @@ inline code \`<Portal @to="popover">\`
     `);
   });
 
+  test('a scope that binds WrapDemo replaces the default import', async () => {
+    const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
+    const result = await mdToGJS(
+      `\`\`\`hbs live
+<SetupInstructions @src="components/portal-targets.gts" />
+\`\`\`
+`,
+      {
+        compiler,
+        id: 'test.gjs.md',
+        virtualModulesByMarkdownFile,
+        scope: `import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';`,
+      }
+    );
+
+    expect(result.code).toMatchInlineSnapshot(`
+      "import { template as template_fd9b2463e5f141cfb5666b64daa1f11a } from "@ember/template-compiler";
+      import { MyDemoFrame as WrapDemo } from '#src/my-demo-frame.gts';
+      import repl_2 from 'kolay/virtual:live:repl_2.gjs.hbs';
+      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<WrapDemo><div id="repl_2" class="repl-sdk__demo"><repl_2 /></div></WrapDemo>\`, {
+          eval () {
+              return eval(arguments[0]);
+          }
+      });
+      "
+    `);
+  });
+
   test('it allows top-level component invocation', async () => {
     const virtualModulesByMarkdownFile = new Map<string, Map<string, unknown>>();
     const result = await mdToGJS(

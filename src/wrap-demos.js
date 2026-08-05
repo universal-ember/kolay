@@ -2,14 +2,14 @@ import { visit } from 'unist-util-visit';
 
 /**
  * Rehype plugin that wraps every live demo's placeholder element in a
- * `<WrapDemo>` invocation, so a component the app provided via
- * `setupKolay({ wrapDemo })` renders around every demo.
+ * `<WrapDemo>` invocation, resolved from scope like any other component:
+ * the default (from 'kolay/wrap-demo') renders the demo unchanged, and an
+ * app wraps every demo in its own chrome by binding its own `WrapDemo` —
+ * via `topLevelScope` for the in-browser `.md` compiler, via the docs()
+ * `scope` option for the build-time `.gjs.md` compiler.
  *
- * `<WrapDemo>` (from 'kolay/wrap-demo') resolves the app's wrapper at render
- * time — with none configured it renders the demo unchanged. That's what lets
- * this run unconditionally in both markdown pipelines (the in-browser
- * compiler for `.md` and the build-time compiler for `.gjs.md`): whether a
- * wrapper exists is only known at runtime.
+ * The passthrough default is what lets this run unconditionally in both
+ * pipelines.
  *
  * This module is plain JS so the node-side build plugins can import it
  * directly.

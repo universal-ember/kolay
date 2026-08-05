@@ -4,7 +4,6 @@ import { loadCompiledDocs } from './load-compiled-docs.ts';
 import { compilerOptions, docsManager, PREPARE_DOCS } from './services/docs.ts';
 import { setupSecret } from './services/lazy-load.ts';
 import { forceFindOwner } from './utils.ts';
-import { setDemoWrapper } from './wrap-demo.gts';
 
 import type { setupTest } from 'ember-qunit';
 import type { setupKolay as setup } from 'kolay/setup';
@@ -28,8 +27,6 @@ export function setupKolay(hooks: NestedHooks, config?: Options): void {
     const compiledDocs = await loadCompiledDocs(meta);
 
     docs[PREPARE_DOCS](apiDocs, compiledDocs);
-
-    setDemoWrapper(config?.wrapDemo);
   });
 }
 
