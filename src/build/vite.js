@@ -6,6 +6,7 @@ import {
 } from './plugins/index.js';
 
 export { kolay } from './plugins/from-config.js';
+export { defineConfig } from './plugins/kolay-config.js';
 
 /**
  * The markdown-docs plugin. One usage per group:

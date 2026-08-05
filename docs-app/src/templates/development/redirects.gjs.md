@@ -10,14 +10,16 @@ Redirects are one key of [kolay.config.js](/development/config-file.md), the pro
 
 ```js
 // kolay.config.js
-export default {
+import { defineConfig } from "kolay/vite";
+
+export default defineConfig({
   redirects: [
     // a moved subtree
     { from: "docs/*", to: "TypeDoc/components/*" },
     // a single moved page
     { from: "usage/setup", to: "install/index.md" },
   ],
-};
+});
 ```
 
 There is nothing to wire up: when [`setupKolay`](/install/index.md) runs (in your application route), the router service is subscribed automatically. Incoming transitions are rewritten before they land, and the URL the app boots on is corrected with `replaceWith`, so the back button isn't left pointing at the dead URL.

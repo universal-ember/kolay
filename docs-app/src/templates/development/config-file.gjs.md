@@ -16,8 +16,9 @@ export default defineConfig({
 ```js
 // kolay.config.js
 import rehypeShiki from "@shikijs/rehype";
+import { defineConfig } from "kolay/vite";
 
-export default {
+export default defineConfig({
   // shared by every docs group; a group's own options win
   markdownOptions: {
     rehypePlugins: [[rehypeShiki, { themes: { light: "github-light", dark: "github-dark" } }]],
@@ -37,8 +38,10 @@ export default {
   importEntrypoints: ["ember-primitives"],
 
   redirects: [{ from: "old-section/*", to: "new-section/*" }],
-};
+});
 ```
+
+`defineConfig` is an identity function that types the config, so your editor completes and checks the keys.
 
 This site is set up this way: its [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) is the one-plugin form, and its [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) carries the groups, api docs, demos, import entrypoints, and redirects.
 

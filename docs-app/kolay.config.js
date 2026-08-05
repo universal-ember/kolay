@@ -1,6 +1,7 @@
 import rehypeShiki from '@shikijs/rehype';
+import { defineConfig } from 'kolay/vite';
 
-export default {
+export default defineConfig({
   // Shared by every docs group below. Carries plugin functions, so it
   // needs a JS config form (JSON forms can only hold data).
   markdownOptions: {
@@ -72,4 +73,4 @@ export default {
     { from: 'Runtime/util/logs', to: 'Runtime/demo-support/logs.md' },
     { from: 'Runtime/docs/owner', to: 'Runtime/demo-support/owner.md' },
   ],
-};
+});

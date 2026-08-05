@@ -3,11 +3,15 @@ import { lilconfig } from 'lilconfig';
 /**
  * @typedef {{ from: string, to: string }} Redirect
  *
+ * The markdown options shared by every docs group (a group's own
+ * options win). Plugin functions require a JS config form.
+ * @typedef {Omit<import('./docs-args.js').DocsOptions, 'src'>} MarkdownOptions
+ *
  * One `docs()` usage: a group name and where its pages live (relative
  * paths resolve from the config file's directory), plus any per-group
  * markdown options. A plain string is shorthand for a path whose last
  * segment names the group.
- * @typedef {{ name?: string, src?: string } & Record<string, unknown>} DocsEntry
+ * @typedef {{ name?: string } & import('./docs-args.js').DocsOptions} DocsEntry
  *
  * @typedef {object} DemosEntry - one `demos()` usage
  * @property {string} src - where the demo components live; relative paths resolve from the config file's directory
@@ -17,14 +21,37 @@ import { lilconfig } from 'lilconfig';
  * @property {string} input - a package name, or a path to a directory containing a package.json
  * @property {string[]} [exclude] - subpath keys to leave out
  *
- * @typedef {object} KolayConfig
- * @property {Redirect[]} redirects
+ * What a kolay.config.js may export.
+ * @typedef {object} KolayConfigInput
+ * @property {Redirect[]} [redirects]
  * @property {Array<string | DocsEntry> | string | DocsEntry} [docs]
  * @property {string[] | string} [apiDocs]
  * @property {DemosEntry[] | DemosEntry} [demos]
  * @property {Array<string | ImportEntrypointsEntry> | string | ImportEntrypointsEntry} [importEntrypoints]
- * @property {object} [markdownOptions] - shared by every docs entry (scope, remarkPlugins, rehypePlugins, ...); plugin functions require a JS config form
+ * @property {MarkdownOptions} [markdownOptions]
+ *
+ * The loaded config: the known keys validated and defaulted.
+ * @typedef {KolayConfigInput & { redirects: Redirect[] }} KolayConfig
  */
+
+/**
+ * Identity helper for authoring kolay.config.js with editor types:
+ *
+ * ```js
+ * // kolay.config.js
+ * import { defineConfig } from 'kolay/vite';
+ *
+ * export default defineConfig({
+ *   docs: [{ name: 'Runtime', src: '../docs' }],
+ * });
+ * ```
+ *
+ * @param {KolayConfigInput} config
+ * @returns {KolayConfigInput}
+ */
+export function defineConfig(config) {
+  return config;
+}
 
 const SUBTREE = '/*';
 
