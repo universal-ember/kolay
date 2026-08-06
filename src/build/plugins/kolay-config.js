@@ -35,7 +35,9 @@ import { lilconfig } from 'lilconfig';
  */
 
 /**
- * Identity helper for authoring kolay.config.js with editor types:
+ * Helper for authoring kolay.config.js: types the config for editor
+ * completion and checking, and validates the known keys while the
+ * config file is evaluated, so errors point at the file itself.
  *
  * ```js
  * // kolay.config.js
@@ -50,6 +52,10 @@ import { lilconfig } from 'lilconfig';
  * @returns {KolayConfigInput}
  */
 export function defineConfig(config) {
+  if (config.redirects !== undefined) {
+    return { ...config, redirects: validateRedirects(config.redirects, 'defineConfig()') };
+  }
+
   return config;
 }
 

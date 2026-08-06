@@ -14,8 +14,6 @@ export default defineConfig(async ({ mode }) => {
       inspect(),
       info(),
       ember(),
-      // docs, apiDocs, demos, and importEntrypoints, generated from
-      // this app's kolay.config.js
       kolay(),
       babel({
         babelHelpers: 'runtime',

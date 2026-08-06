@@ -43,11 +43,11 @@ export default defineConfig({
 
 `defineConfig` is an identity function that types the config, so your editor completes and checks the keys.
 
-This site is set up this way: its [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) is the one-plugin form, and its [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) carries the groups, api docs, demos, import entrypoints, and redirects.
+This site is set up this way: its [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) is the one-plugin form, and its [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) defines the groups, api docs, demos, import entrypoints, and redirects.
 
 ## Keys
 
-Every key is optional. With no `docs` entries, `kolay()` still serves the co-located pages (`app/templates` / `src/templates`) and the virtual modules `setupKolay` needs.
+Every key is optional, and a key you don't specify generates nothing.
 
 | Key                 | Generates                           | Shape                                                  |
 | ------------------- | ----------------------------------- | ------------------------------------------------------ |
@@ -56,7 +56,7 @@ Every key is optional. With no `docs` entries, `kolay()` still serves the co-loc
 | `demos`             | one `demos()` per entry             | `{ src, as }`                                          |
 | `importEntrypoints` | one `importEntrypoints()` per entry | a package name, or `{ input, exclude }`                |
 | `markdownOptions`   | (merged into every `docs` entry)    | `scope`, `remarkPlugins`, `rehypePlugins`, ...         |
-| `redirects`         | (carried on the manifest)           | see [Redirects](/development/redirects.md)             |
+| `redirects`         | (applied at runtime)                | see [Redirects](/development/redirects.md)             |
 
 Relative paths (`./demos`, `../docs`) resolve from the config file's directory.
 
@@ -64,7 +64,7 @@ Relative paths (`./demos`, `../docs`) resolve from the config file's directory.
 
 The file is discovered with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`, with every form also looked for inside a `.config/` or `config/` directory.
 
-`markdownOptions` (and a docs entry's own markdown options) usually carry plugin functions, so they need a JS config form. JSON forms can hold everything else.
+`markdownOptions` (and a docs entry's own markdown options) usually contain plugin functions, so they need a JS config form. JSON forms can hold everything else.
 
 ## Mixing with the individual plugins
 

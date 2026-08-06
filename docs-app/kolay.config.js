@@ -25,14 +25,14 @@ export default defineConfig({
   },
 
   docs: [
-    { name: 'Runtime', src: '../docs' },
-    { name: 'TypeDoc', src: '../docs-typedoc' },
+    { name: 'Runtime', src: import.meta.resolve('../docs') },
+    { name: 'TypeDoc', src: import.meta.resolve('../docs-typedoc') },
   ],
 
   apiDocs: ['kolay', 'ember-primitives', 'ember-resources', 'ember-repl'],
 
   // live codefences import these as '#demos/site/*'
-  demos: [{ src: './demos', as: '#demos/site' }],
+  demos: [{ src: import.meta.resolve('./demos'), as: '#demos/site' }],
 
   // .md fences can import ember-primitives with no modules config
   importEntrypoints: ['ember-primitives'],

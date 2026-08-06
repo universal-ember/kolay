@@ -32,10 +32,10 @@ function resolveFrom(configDir, src) {
 }
 
 /**
- * The plugins a kolay config describes: one `docs()` per `docs` entry
- * (or a single group-less one, so the co-located pages and the virtual
- * modules are always served), plus `apiDocs()`, `demos()`, and
- * `importEntrypoints()` when configured.
+ * The plugins a kolay config describes: one `docs()` per `docs` entry,
+ * one `demos()` / `importEntrypoints()` per entry of theirs, and one
+ * `apiDocs()` for the `apiDocs` list. A key that is not specified
+ * generates nothing.
  *
  * `markdownOptions` is shared by every docs entry; an entry's own
  * options win.
@@ -47,46 +47,48 @@ export function pluginsFromConfig(config, configDir) {
   const markdownOptions = config.markdownOptions ?? {};
   const plugins = [];
 
-  const docsEntries = toArray(config.docs);
-
-  if (docsEntries.length === 0) {
-    plugins.push(docs.vite([undefined, { ...markdownOptions }]));
-  }
-
-  for (const entry of docsEntries) {
+  for (const entry of toArray(config.docs)) {
     if (typeof entry === 'string') {
-      plugins.push(docs.vite([resolveFrom(configDir, entry), { ...markdownOptions }]));
+      const src = resolveFrom(configDir, entry);
+
+      plugins.push(docs.vite([src, { ...markdownOptions }]));
       continue;
     }
 
-    const { name, src, ...overrides } = entry ?? {};
+    const { name, src, ...entryOptions } = entry ?? {};
+    const resolvedSrc = resolveFrom(configDir, src);
+    const options = { src: resolvedSrc, ...markdownOptions, ...entryOptions };
 
-    plugins.push(
-      docs.vite([name, { src: resolveFrom(configDir, src), ...markdownOptions, ...overrides }])
-    );
+    plugins.push(docs.vite([name, options]));
   }
 
-  const apiDocsPackages = toArray(config.apiDocs);
+  const apiDocsInput = toArray(config.apiDocs);
 
-  if (apiDocsPackages.length > 0) {
-    plugins.push(apiDocs.vite(apiDocsPackages.map((pkg) => resolveFrom(configDir, pkg))));
+  if (apiDocsInput.length > 0) {
+    const packages = apiDocsInput.map((pkg) => resolveFrom(configDir, pkg));
+
+    plugins.push(apiDocs.vite(packages));
   }
 
   for (const entry of toArray(config.demos)) {
     const { src, ...options } = entry ?? {};
+    const resolvedSrc = resolveFrom(configDir, src);
 
-    plugins.push(demos.vite([resolveFrom(configDir, src), options]));
+    plugins.push(demos.vite([resolvedSrc, options]));
   }
 
   for (const entry of toArray(config.importEntrypoints)) {
     if (typeof entry === 'string') {
-      plugins.push(importEntrypoints.vite([resolveFrom(configDir, entry), undefined]));
+      const input = resolveFrom(configDir, entry);
+
+      plugins.push(importEntrypoints.vite([input, undefined]));
       continue;
     }
 
     const { input, ...options } = entry ?? {};
+    const resolvedInput = resolveFrom(configDir, input);
 
-    plugins.push(importEntrypoints.vite([resolveFrom(configDir, input), options]));
+    plugins.push(importEntrypoints.vite([resolvedInput, options]));
   }
 
   return plugins;

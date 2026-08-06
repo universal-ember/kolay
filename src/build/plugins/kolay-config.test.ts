@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { loadKolayConfig, validateRedirects } from './kolay-config.js';
+import { defineConfig, loadKolayConfig, validateRedirects } from './kolay-config.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(here, 'fixtures', 'kolay-config');
@@ -35,6 +35,20 @@ describe('loadKolayConfig', () => {
       config: { redirects: [] },
       filepath: undefined,
     });
+  });
+});
+
+describe('defineConfig', () => {
+  it('validates redirects while the config file is evaluated', () => {
+    expect(() => defineConfig({ redirects: [{ from: 'a/*', to: 'b' }] })).toThrow(/must agree/);
+
+    expect(defineConfig({ redirects: [{ from: '/a/*', to: '/b/*' }] })).toEqual({
+      redirects: [{ from: 'a/*', to: 'b/*' }],
+    });
+  });
+
+  it('does not add keys the config did not specify', () => {
+    expect(defineConfig({})).toEqual({});
   });
 });
 

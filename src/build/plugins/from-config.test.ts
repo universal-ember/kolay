@@ -27,11 +27,8 @@ function docsState(plugins: unknown[]) {
 }
 
 describe('pluginsFromConfig', () => {
-  it('an empty config still yields one docs usage (co-located pages, virtual modules)', () => {
-    const plugins = pluginsFromConfig({ redirects: [] }, configDir);
-
-    expect(names(plugins)).toContain('kolay:setup');
-    expect(docsState(plugins)).toHaveLength(1);
+  it('a key that is not specified generates nothing', () => {
+    expect(pluginsFromConfig({ redirects: [] }, configDir)).toEqual([]);
   });
 
   it('generates one docs usage per entry, resolving src from the config dir', () => {
