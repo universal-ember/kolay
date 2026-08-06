@@ -3,7 +3,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { defineConfig, loadKolayConfig, validateRedirects } from './kolay-config.js';
+import { defineConfig } from '../vite.js';
+import { loadKolayConfig, validateRedirects } from './kolay-config.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixtures = join(here, 'fixtures', 'kolay-config');

@@ -1,63 +1,13 @@
 import { lilconfig } from 'lilconfig';
 
 /**
- * @typedef {{ from: string, to: string }} Redirect
+ * The config-shape types live in '../vite.js', beside `kolay()` and
+ * `defineConfig`.
  *
- * The markdown options shared by every docs group (a group's own
- * options win). Plugin functions require a JS config form.
- * @typedef {Omit<import('./docs-args.js').DocsOptions, 'src'>} MarkdownOptions
- *
- * One `docs()` usage: a group name and where its pages live (relative
- * paths resolve from the config file's directory), plus any per-group
- * markdown options. A plain string is shorthand for a path whose last
- * segment names the group.
- * @typedef {{ name?: string } & import('./docs-args.js').DocsOptions} DocsEntry
- *
- * @typedef {object} DemosEntry - one `demos()` usage
- * @property {string} src - where the demo components live; relative paths resolve from the config file's directory
- * @property {string} as - the import alias, e.g. '#demos/site'
- *
- * @typedef {object} ImportEntrypointsEntry - one `importEntrypoints()` usage; a plain string is shorthand for `{ input }`
- * @property {string} input - a package name, or a path to a directory containing a package.json
- * @property {string[]} [exclude] - subpath keys to leave out
- *
- * What a kolay.config.js may export.
- * @typedef {object} KolayConfigInput
- * @property {Redirect[]} [redirects]
- * @property {Array<string | DocsEntry> | string | DocsEntry} [docs]
- * @property {string[] | string} [apiDocs]
- * @property {DemosEntry[] | DemosEntry} [demos]
- * @property {Array<string | ImportEntrypointsEntry> | string | ImportEntrypointsEntry} [importEntrypoints]
- * @property {MarkdownOptions} [markdownOptions]
- *
- * The loaded config: the known keys validated and defaulted.
+ * @typedef {import('../vite.js').Redirect} Redirect
+ * @typedef {import('../vite.js').KolayConfigInput} KolayConfigInput
  * @typedef {KolayConfigInput & { redirects: Redirect[] }} KolayConfig
  */
-
-/**
- * Helper for authoring kolay.config.js: types the config for editor
- * completion and checking, and validates the known keys while the
- * config file is evaluated, so errors point at the file itself.
- *
- * ```js
- * // kolay.config.js
- * import { defineConfig } from 'kolay/vite';
- *
- * export default defineConfig({
- *   docs: [{ name: 'Runtime', src: '../docs' }],
- * });
- * ```
- *
- * @param {KolayConfigInput} config
- * @returns {KolayConfigInput}
- */
-export function defineConfig(config) {
-  if (config.redirects !== undefined) {
-    return { ...config, redirects: validateRedirects(config.redirects, 'defineConfig()') };
-  }
-
-  return config;
-}
 
 const SUBTREE = '/*';
 

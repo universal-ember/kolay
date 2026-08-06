@@ -1,6 +1,6 @@
 # kolay.config.js
 
-One config file can describe your whole kolay setup. The `kolay` vite plugin reads it and generates the [`docs()`](/development/configuring-docs.md), [`apiDocs()`](/development/configuring-api-docs.md), [`demos()`](/authoring/sharing-demos.md), and [`importEntrypoints()`](/development/configuring-import-entrypoints.md) plugins it describes:
+One config file describes your whole kolay setup. The `kolay` vite plugin reads it and generates the [`docs()`](/development/configuring-docs.md), [`apiDocs()`](/development/configuring-api-docs.md), [`demos()`](/authoring/sharing-demos.md), and [`importEntrypoints()`](/development/configuring-import-entrypoints.md) plugins it describes:
 
 ```js
 // vite.config.js
@@ -26,14 +26,14 @@ export default defineConfig({
   },
 
   docs: [
-    { name: "Runtime", src: "../docs" },
+    { name: "Runtime", src: import.meta.resolve("../docs") },
     // a plain string works too; the last segment names the group
     "./guides",
   ],
 
   apiDocs: ["my-library"],
 
-  demos: [{ src: "./demos", as: "#demos/site" }],
+  demos: [{ src: import.meta.resolve("./demos"), as: "#demos/site" }],
 
   importEntrypoints: ["ember-primitives"],
 
@@ -41,31 +41,37 @@ export default defineConfig({
 });
 ```
 
-`defineConfig` is an identity function that types the config, so your editor completes and checks the keys.
-
-This site is set up this way: its [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) is the one-plugin form, and its [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) defines the groups, api docs, demos, import entrypoints, and redirects.
+`defineConfig` types the config and validates it as the file is evaluated. This site's own [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) and [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) use this form.
 
 ## Keys
 
-Every key is optional, and a key you don't specify generates nothing.
+Every key is optional, and a key you don't specify generates nothing. Relative paths resolve from the config file's directory.
 
-| Key                 | Generates                           | Shape                                                  |
-| ------------------- | ----------------------------------- | ------------------------------------------------------ |
-| `docs`              | one `docs()` per entry              | `{ name, src, ...markdown options }`, or a path string |
-| `apiDocs`           | `apiDocs()`                         | package names / paths                                  |
-| `demos`             | one `demos()` per entry             | `{ src, as }`                                          |
-| `importEntrypoints` | one `importEntrypoints()` per entry | a package name, or `{ input, exclude }`                |
-| `markdownOptions`   | (merged into every `docs` entry)    | `scope`, `remarkPlugins`, `rehypePlugins`, ...         |
-| `redirects`         | (applied at runtime)                | see [Redirects](/development/redirects.md)             |
-
-Relative paths (`./demos`, `../docs`) resolve from the config file's directory.
+| Key                 | Shape                                                                   |
+| ------------------- | ----------------------------------------------------------------------- |
+| `docs`              | `{ name, src, ...markdown options }` entries, or path strings           |
+| `apiDocs`           | package names / paths                                                   |
+| `demos`             | `{ src, as }` entries                                                   |
+| `importEntrypoints` | package names, or `{ input, exclude }`                                  |
+| `markdownOptions`   | `scope` / `remarkPlugins` / `rehypePlugins`, shared by every docs group |
+| `redirects`         | see [Redirects](/development/redirects.md)                              |
 
 ## Config file forms
 
-The file is discovered with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`, with every form also looked for inside a `.config/` or `config/` directory.
+The file is discovered with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`, each also inside a `.config/` or `config/` directory. `markdownOptions` usually contains plugin functions, so it needs a JS form; JSON forms can hold everything else.
 
-`markdownOptions` (and a docs entry's own markdown options) usually contain plugin functions, so they need a JS config form. JSON forms can hold everything else.
+The individual plugins keep working, alone or alongside `kolay()`.
 
-## Mixing with the individual plugins
+## API Reference
 
-The individual plugins keep working, on their own or alongside `kolay()`. Usages discover each other the same way multiple direct `docs()` usages already do, so you can keep one group in the config file and add another with `docs()` directly.
+<APIDocs @module="declarations/build/vite" @name="KolayConfigInput" @package="kolay" />
+
+<APIDocs @module="declarations/build/vite" @name="DocsEntry" @package="kolay" />
+
+<APIDocs @module="declarations/build/vite" @name="MarkdownOptions" @package="kolay" />
+
+<APIDocs @module="declarations/build/vite" @name="DemosEntry" @package="kolay" />
+
+<APIDocs @module="declarations/build/vite" @name="ImportEntrypointsEntry" @package="kolay" />
+
+<APIDocs @module="declarations/build/vite" @name="defineConfig" @package="kolay" />
