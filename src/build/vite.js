@@ -57,15 +57,16 @@ export { kolay } from './plugins/from-config.js';
  */
 
 /**
- * What a kolay.config.js may export.
+ * What a kolay.config.js may export. Every key is optional; when a key
+ * isn't specified, the plugin for it is not included in your app.
  *
  * @typedef {object} KolayConfigInput
- * @property {Array<string | DocsEntry> | string | DocsEntry} [docs]
+ * @property {Array<string | DocsEntry> | string | DocsEntry} [docs] - the docs groups; one `docs()` usage per entry
  * @property {string[] | string} [apiDocs] - package names / paths to generate typedoc for
- * @property {DemosEntry[] | DemosEntry} [demos]
- * @property {Array<string | ImportEntrypointsEntry> | string | ImportEntrypointsEntry} [importEntrypoints]
- * @property {MarkdownOptions} [markdownOptions]
- * @property {Redirect[]} [redirects]
+ * @property {DemosEntry[] | DemosEntry} [demos] - demo directories; one `demos()` usage per entry
+ * @property {Array<string | ImportEntrypointsEntry> | string | ImportEntrypointsEntry} [importEntrypoints] - packages live codefences may import; one `importEntrypoints()` usage per entry
+ * @property {MarkdownOptions} [markdownOptions] - markdown options shared by every docs group
+ * @property {Redirect[]} [redirects] - old paths and where they now live
  */
 
 /**

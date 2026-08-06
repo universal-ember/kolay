@@ -15,16 +15,9 @@ export default defineConfig({
 
 ```js
 // kolay.config.js
-import rehypeShiki from "@shikijs/rehype";
 import { defineConfig } from "kolay/vite";
 
 export default defineConfig({
-  // shared by every docs group; a group's own options win
-  markdownOptions: {
-    rehypePlugins: [[rehypeShiki, { themes: { light: "github-light", dark: "github-dark" } }]],
-    scope: `import { Callout } from '#ui';`,
-  },
-
   docs: [
     { name: "Runtime", src: import.meta.resolve("../docs") },
     // a plain string works too; the last segment names the group
@@ -45,33 +38,34 @@ export default defineConfig({
 
 ## Keys
 
-Every key is optional, and a key you don't specify generates nothing. Relative paths resolve from the config file's directory.
+Every key is optional. If a key isn't specified, the plugin for it is not included in your app. Relative paths resolve from the config file's directory, and `redirects` has its own page: [Redirects](/development/redirects.md).
 
-| Key                 | Shape                                                                   |
-| ------------------- | ----------------------------------------------------------------------- |
-| `docs`              | `{ name, src, ...markdown options }` entries, or path strings           |
-| `apiDocs`           | package names / paths                                                   |
-| `demos`             | `{ src, as }` entries                                                   |
-| `importEntrypoints` | package names, or `{ input, exclude }`                                  |
-| `markdownOptions`   | `scope` / `remarkPlugins` / `rehypePlugins`, shared by every docs group |
-| `redirects`         | see [Redirects](/development/redirects.md)                              |
+### `KolayConfigInput`
+
+<APIDocs @module="declarations/build/vite" @name="KolayConfigInput" @package="kolay" />
+
+### `DocsEntry`
+
+<APIDocs @module="declarations/build/vite" @name="DocsEntry" @package="kolay" />
+
+### `MarkdownOptions`
+
+<APIDocs @module="declarations/build/vite" @name="MarkdownOptions" @package="kolay" />
+
+### `DemosEntry`
+
+<APIDocs @module="declarations/build/vite" @name="DemosEntry" @package="kolay" />
+
+### `ImportEntrypointsEntry`
+
+<APIDocs @module="declarations/build/vite" @name="ImportEntrypointsEntry" @package="kolay" />
+
+## `defineConfig`
+
+<APIDocs @module="declarations/build/vite" @name="defineConfig" @package="kolay" />
 
 ## Config file forms
 
 The file is discovered with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`, each also inside a `.config/` or `config/` directory. `markdownOptions` usually contains plugin functions, so it needs a JS form; JSON forms can hold everything else.
 
 The individual plugins keep working, alone or alongside `kolay()`.
-
-## API Reference
-
-<APIDocs @module="declarations/build/vite" @name="KolayConfigInput" @package="kolay" />
-
-<APIDocs @module="declarations/build/vite" @name="DocsEntry" @package="kolay" />
-
-<APIDocs @module="declarations/build/vite" @name="MarkdownOptions" @package="kolay" />
-
-<APIDocs @module="declarations/build/vite" @name="DemosEntry" @package="kolay" />
-
-<APIDocs @module="declarations/build/vite" @name="ImportEntrypointsEntry" @package="kolay" />
-
-<APIDocs @module="declarations/build/vite" @name="defineConfig" @package="kolay" />
