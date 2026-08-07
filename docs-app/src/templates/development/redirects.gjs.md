@@ -6,29 +6,31 @@ If your site deploys to a host with its own redirect support (Netlify, Cloudflar
 
 ## The config file
 
-Redirects live in a project-level config file, discovered at build time with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`. Every rc and config-file form is also looked for inside a `.config/` or `config/` directory.
+Redirects are one key of [kolay.config.js](/development/config-file.md):
 
 ```js
 // kolay.config.js
-export default {
+import { defineConfig } from "kolay/vite";
+
+export default defineConfig({
   redirects: [
     // a moved subtree
     { from: "docs/*", to: "TypeDoc/components/*" },
     // a single moved page
     { from: "usage/setup", to: "install/index.md" },
   ],
-};
+});
 ```
 
 There is nothing to wire up: when [`setupKolay`](/install/index.md) runs (in your application route), the router service is subscribed automatically. Incoming transitions are rewritten before they land, and the URL the app boots on is corrected with `replaceWith`, so the back button isn't left pointing at the dead URL.
 
-The entries above are real: this site's own `kolay.config.js` carries the old URLs from its previous arrangements. Follow [/usage/setup](/usage/setup) or [/docs/component-signature](/docs/component-signature) and watch the URL bar.
+The entries above are real: this site's own `kolay.config.js` lists the old URLs from its previous arrangements. Follow [/usage/setup](/usage/setup) or [/docs/component-signature](/docs/component-signature) and watch the URL bar.
 
 ## Matching
 
 Entries are plain path prefixes, not globs, matched against the app-relative URL of every transition:
 
-- A trailing `/*` (on both `from` and `to`) matches the prefix itself and everything under it, carrying the remainder onto `to`. Without it, the entry matches only that exact path.
+- A trailing `/*` (on both `from` and `to`) matches the prefix itself and everything under it; the remainder is appended to `to`. Without it, the entry matches only that exact path.
 - Matching is whole-segment (`Runtime/*` does not match `/RuntimeExtras/...`) and case-insensitive, consistent with how kolay matches paths everywhere else. For exact entries, the `.md` extension is optional on the visited path, since pages are visitable with and without it.
 - Entries apply in order; the first match wins.
 - Paths are app-relative (a leading `/` is allowed and ignored). The deploy's `rootURL` is handled for you.

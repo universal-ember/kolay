@@ -1,8 +1,12 @@
 import { lilconfig } from 'lilconfig';
 
 /**
- * @typedef {{ from: string, to: string }} Redirect
- * @typedef {{ redirects: Redirect[] }} KolayConfig
+ * The config-shape types live in '../vite.js', beside `kolay()` and
+ * `defineConfig`.
+ *
+ * @typedef {import('../vite.js').Redirect} Redirect
+ * @typedef {import('../vite.js').KolayConfigInput} KolayConfigInput
+ * @typedef {KolayConfigInput & { redirects: Redirect[] }} KolayConfig
  */
 
 const SUBTREE = '/*';
@@ -194,11 +198,12 @@ export function validateRedirects(value, source) {
 /**
  * Discovers and loads the project's kolay config file (see
  * `searchPlaces`), searching upward from `cwd`. The whole config is
- * returned — `redirects` is just the first thing it carries — with the
- * known keys validated and defaulted.
+ * returned, with the known keys validated and defaulted, along with the
+ * discovered file's path (undefined when there is no config file) —
+ * relative paths inside the config resolve from the file's directory.
  *
  * @param {string} cwd
- * @returns {Promise<KolayConfig>}
+ * @returns {Promise<{ config: KolayConfig, filepath: string | undefined }>}
  */
 export async function loadKolayConfig(cwd) {
   const result = await lilconfig('kolay', { searchPlaces }).search(cwd);
@@ -206,7 +211,10 @@ export async function loadKolayConfig(cwd) {
   const config = (result && !result.isEmpty && result.config) || {};
 
   return {
-    ...config,
-    redirects: validateRedirects(config.redirects, result?.filepath ?? 'the kolay config'),
+    config: {
+      ...config,
+      redirects: validateRedirects(config.redirects, result?.filepath ?? 'the kolay config'),
+    },
+    filepath: result?.filepath ?? undefined,
   };
 }

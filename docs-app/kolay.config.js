@@ -1,4 +1,42 @@
-export default {
+import rehypeShiki from '@shikijs/rehype';
+import { defineConfig } from 'kolay/vite';
+
+export default defineConfig({
+  // Shared by every docs group below. Carries plugin functions, so it
+  // needs a JS config form (JSON forms can only hold data).
+  markdownOptions: {
+    rehypePlugins: [
+      [
+        rehypeShiki,
+        {
+          themes: {
+            light: 'github-light',
+            dark: 'github-dark',
+          },
+          defaultColor: 'light-dark()',
+        },
+      ],
+    ],
+    scope: `
+    import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
+    import { Shadowed } from 'ember-primitives/components/shadowed';
+    import { InViewport } from 'ember-primitives/viewport';
+    `,
+  },
+
+  docs: [
+    { name: 'Runtime', src: import.meta.resolve('../docs') },
+    { name: 'TypeDoc', src: import.meta.resolve('../docs-typedoc') },
+  ],
+
+  apiDocs: ['kolay', 'ember-primitives', 'ember-resources', 'ember-repl'],
+
+  // live codefences import these as '#demos/site/*'
+  demos: [{ src: import.meta.resolve('./demos'), as: '#demos/site' }],
+
+  // .md fences can import ember-primitives with no modules config
+  importEntrypoints: ['ember-primitives'],
+
   // Old URLs from previous arrangements of this docs site.
   // The Development page about redirects uses a few of these as its examples.
   redirects: [
@@ -35,4 +73,4 @@ export default {
     { from: 'Runtime/util/logs', to: 'Runtime/demo-support/logs.md' },
     { from: 'Runtime/docs/owner', to: 'Runtime/demo-support/owner.md' },
   ],
-};
+});

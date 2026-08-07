@@ -334,7 +334,7 @@ export const setup = (state) => {
         // primary usage only. Validation errors fail the build / dev
         // server start.
         if (state.isPrimary) {
-          kolayConfig = await loadKolayConfig(cwd);
+          kolayConfig = (await loadKolayConfig(cwd)).config;
         }
 
         resolvedConfig.server ||= {};
