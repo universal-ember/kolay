@@ -1,5 +1,69 @@
 # Changelog
 
+## Release (2026-08-07)
+
+* kolay 6.0.0 (major)
+
+#### :boom: Breaking Change
+* `kolay`
+  * [#343](https://github.com/universal-ember/kolay/pull/343) Color the typedoc renderer via CSS variables; document customizing ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#340](https://github.com/universal-ember/kolay/pull/340) Rework typedoc rendering CSS: types read like code ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#333](https://github.com/universal-ember/kolay/pull/333) Remove all deprecated code paths ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#325](https://github.com/universal-ember/kolay/pull/325) docs(groupName, options): one usage per group, each mountable as its own route ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#327](https://github.com/universal-ember/kolay/pull/327) Split the kolay plugin into docs() and typedoc() ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### :rocket: Enhancement
+* `kolay`
+  * [#364](https://github.com/universal-ember/kolay/pull/364) feat: kolay() plugin generated from kolay.config.js ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#363](https://github.com/universal-ember/kolay/pull/363) feat: path redirects via a kolay config file ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#361](https://github.com/universal-ember/kolay/pull/361) feat: wrap every demo in an app-provided component via setupKolay({ wrapDemo }) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#351](https://github.com/universal-ember/kolay/pull/351) importEntrypoints(): teach the runtime compiler a package's exports ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#348](https://github.com/universal-ember/kolay/pull/348) demos(): alias a directory of components for live codefences ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#344](https://github.com/universal-ember/kolay/pull/344) docs() sources expose meta: repository URL, docs path, meta.jsonc ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#343](https://github.com/universal-ember/kolay/pull/343) Color the typedoc renderer via CSS variables; document customizing ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#340](https://github.com/universal-ember/kolay/pull/340) Rework typedoc rendering CSS: types read like code ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#325](https://github.com/universal-ember/kolay/pull/325) docs(groupName, options): one usage per group, each mountable as its own route ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#332](https://github.com/universal-ember/kolay/pull/332) Rename typedoc() to apiDocs(); page json componentName to title ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#331](https://github.com/universal-ember/kolay/pull/331) Reorganize Home docs; support nav-only link entries ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#329](https://github.com/universal-ember/kolay/pull/329) typedoc() takes an array of names/paths (validated); typedoc docs get their own group ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#356](https://github.com/universal-ember/kolay/pull/356) fix(browser): isIndex() recognizes index.md, not just extension-less index ([@patricklx](https://github.com/patricklx))
+  * [#354](https://github.com/universal-ember/kolay/pull/354) Match paths case-insensitively in the browser router ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#352](https://github.com/universal-ember/kolay/pull/352) normalize page name by removing trailing slash ([@tg-optro](https://github.com/tg-optro))
+  * [#350](https://github.com/universal-ember/kolay/pull/350) Top-level scoped mounts register the real route name ('page', not 'application.page') ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#340](https://github.com/universal-ember/kolay/pull/340) Rework typedoc rendering CSS: types read like code ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#330](https://github.com/universal-ember/kolay/pull/330) Reorganize Runtime docs: rendering / navigation / utilities / demo-support ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### :memo: Documentation
+* `kolay`
+  * [#362](https://github.com/universal-ember/kolay/pull/362) docs: link states for plain anchors (active + loading) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#349](https://github.com/universal-ember/kolay/pull/349) Install docs: how to try unreleased kolay from the dist branch ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#347](https://github.com/universal-ember/kolay/pull/347) Enhance live demo capabilities description ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#346](https://github.com/universal-ember/kolay/pull/346) docs: state the runtime-vs-build-time import trade-off sharply ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#345](https://github.com/universal-ember/kolay/pull/345) docs-app: Prebuilt docs UI page (@universal-ember/docs-support) ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#344](https://github.com/universal-ember/kolay/pull/344) docs() sources expose meta: repository URL, docs path, meta.jsonc ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#343](https://github.com/universal-ember/kolay/pull/343) Color the typedoc renderer via CSS variables; document customizing ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#342](https://github.com/universal-ember/kolay/pull/342) Side nav collapses at 1000px ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#336](https://github.com/universal-ember/kolay/pull/336) Mark nav-only link entries so navs can signal the jump ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#339](https://github.com/universal-ember/kolay/pull/339) docs: show the DocsService store that docsManager() returns ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#341](https://github.com/universal-ember/kolay/pull/341) docs-app: Ecosystem page for ember-mobile-menu ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#338](https://github.com/universal-ember/kolay/pull/338) docs: show the Selected store that selected() returns ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#337](https://github.com/universal-ember/kolay/pull/337) docs: show the CompileState that Compiled gives back ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#335](https://github.com/universal-ember/kolay/pull/335) docs-app: drop the README aside from the memory-scroll links row ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#334](https://github.com/universal-ember/kolay/pull/334) docs-app: memory-scroll page behavior; Ecosystem docs section ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#333](https://github.com/universal-ember/kolay/pull/333) Remove all deprecated code paths ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#332](https://github.com/universal-ember/kolay/pull/332) Rename typedoc() to apiDocs(); page json componentName to title ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#331](https://github.com/universal-ember/kolay/pull/331) Reorganize Home docs; support nav-only link entries ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+  * [#330](https://github.com/universal-ember/kolay/pull/330) Reorganize Runtime docs: rendering / navigation / utilities / demo-support ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 4
+- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+- Patrick Pircher ([@patricklx](https://github.com/patricklx))
+- Trevor Gullstad ([@tg-optro](https://github.com/tg-optro))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2026-07-24)
 
 * kolay 5.4.0 (minor)
