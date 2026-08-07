@@ -1,0 +1,19 @@
+import './kolay.css';
+export { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature, } from './typedoc/index.ts';
+export { loadCompiledDocs } from './load-compiled-docs.ts';
+export { addRoutes, handlePotentialIndexVisit } from './router.ts';
+export { typedocLoader } from './services/api-docs.ts';
+export { CompiledDoc, compiledDoc } from './services/compiled-doc.ts';
+export { Compiled } from './services/compiler/reactive.ts';
+export { docsManager } from './services/docs.ts';
+export { selected } from './services/selected.ts';
+export { isActive } from './is-active.ts';
+export { resolveRedirect } from './redirects.ts';
+export { getIndexPage, isCollection, isIndex } from './utils.ts';
+export type { Collection, Manifest, Page } from '../types.ts';
+export type { DocsGroupModule, DocsSourceMeta, MetaManifest } from './load-compiled-docs.ts';
+export type { DocModule, DocSource } from './services/compiled-doc.ts';
+export type { SetupOptions } from './services/docs.ts';
+export type { DocsService } from './services/docs.ts';
+export type { Selected } from './services/selected.ts';
+//# sourceMappingURL=index.d.ts.map

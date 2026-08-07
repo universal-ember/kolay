@@ -1,0 +1,746 @@
+/*
+ * Colors — override via these variables (set them on :root or any
+ * ancestor). Defaults are light-dark() aware. Chip borders and
+ * backgrounds derive from currentColor, so they tint automatically.
+ *
+ *   --kolay-typedoc-name         member & declaration names
+ *   --kolay-typedoc-type         type references (classes, interfaces, components)
+ *   --kolay-typedoc-builtin      intrinsics & literals (string, number, "value")
+ *   --kolay-typedoc-param        function parameter names
+ *   --kolay-typedoc-punctuation  structure (: ( ) => | < > ,)
+ *   --kolay-typedoc-comment      doc comments rendered inside type shapes
+ *
+ * Reading model:
+ *
+ * - Member ROWS (a class/interface's members, a signature's args): name on
+ *   the left, type chip on the right, comment as prose beneath.
+ *
+ * - TYPE POSITIONS (everything to the right of a `:`): read like code —
+ *   references inline (`Name<Arg>`), unions inline (`a | b`), functions as
+ *   `(name: Type) => Return`, object shapes as indented `name: type` lines.
+ *   A component signature appearing inside a type (`ComponentLike<{...}>`)
+ *   compacts to the same code-ish look (`.typedoc__nested-signature`).
+ *
+ * All borders derive from currentColor so both themes work.
+ */
+
+/* ---------------------------------------------------------------- *
+ * Leaf tokens (chips)
+ * ---------------------------------------------------------------- */
+
+.typedoc__reference__name {
+  color: var(--kolay-typedoc-type, light-dark(#6639ba, #d2a8ff));
+}
+
+.typedoc__unknown__yield,
+.typedoc__intrinsic,
+.typedoc__literal {
+  color: var(--kolay-typedoc-builtin, light-dark(#116329, #7ee787));
+}
+
+.typedoc__type-link,
+.typedoc__unknown__yield,
+.typedoc__intrinsic,
+.typedoc__reference__name,
+.typedoc__literal {
+  display: inline;
+  width: fit-content;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent);
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, currentColor 6%, transparent);
+  font-style: normal;
+  font-family: var(--pico-font-family-monospace, monospace);
+  font-size: 0.8em;
+  margin: 0;
+  padding: 0.05em 0.4em;
+}
+
+.typedoc__unknown {
+  display: inline;
+  font-family: var(--pico-font-family-monospace, monospace);
+}
+
+/* ---------------------------------------------------------------- *
+ * Member rows
+ * ---------------------------------------------------------------- */
+
+.typedoc__declaration-name {
+  margin: 0;
+  display: inline-block;
+  line-height: 1.5rem;
+  font-weight: bold;
+  color: var(--kolay-typedoc-name, light-dark(#0550ae, #79c0ff));
+}
+
+/* the root declaration's name is a heading, not a code token */
+section > .typedoc__declaration > .typedoc__declaration-name {
+  color: inherit;
+}
+
+.typedoc__declaration {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: max-content 1fr max-content;
+  grid-template-areas:
+    "name . type"
+    "comment comment comment";
+
+  .typedoc__declaration-name {
+    grid-area: name;
+  }
+
+  .typedoc__declaration-type {
+    grid-area: type;
+  }
+
+  .typedoc-rendered-comment {
+    grid-area: comment;
+  }
+
+  &:has(> .typedoc__declaration-signatures) {
+    grid-auto-flow: column;
+    grid-template-columns: unset;
+    grid-template-areas:
+      "name"
+      "comment";
+  }
+}
+
+/* A member whose type is a multi-line shape (an object type, a nested
+ * component signature): the far-right column would orphan it — stack
+ * `name:` above the indented shape instead, like source code. */
+.typedoc__declaration:has(
+  > .typedoc__declaration-type :is(ul.typedoc__declaration-children, .typedoc__nested-signature)
+) {
+  display: block;
+
+  > .typedoc__declaration-name::after {
+    content: ":";
+    font-weight: normal;
+    color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+  }
+
+  > .typedoc__declaration-type {
+    display: block;
+    margin: 0.25rem 0 0.5rem;
+  }
+}
+
+/* a declaration that is a member list (a class, an interface): the
+ * side-by-side grid would spend a whole column on the name — the name
+ * is a heading line, members span the full width below it */
+.typedoc__declaration:has(> ul.typedoc__declaration-children) {
+  display: block;
+}
+
+section {
+  > .typedoc__declaration {
+    > .typedoc__declaration-name {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.typedoc__heading {
+  display: block;
+}
+
+.typedoc__property {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.typedoc__declaration-signatures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  > li {
+    list-style: none;
+    border-bottom: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
+  }
+}
+
+/* a function type inside a type position flows inline with the
+ * expression around it (e.g. inside a union) */
+:is(
+    .typedoc__declaration-type,
+    .typedoc__reference__typeArgument,
+    .typedoc__union__type,
+    .typedoc__function__parameter__type,
+    .typedoc__function__return_type
+  )
+  .typedoc__declaration:has(> .typedoc__declaration-signatures) {
+  display: inline;
+  padding: 0;
+
+  > .typedoc__declaration-signatures {
+    display: inline;
+
+    > li {
+      display: inline;
+      border: none;
+    }
+  }
+}
+
+/* member lists at row level: one member per row, separated */
+.typedoc__declaration-children,
+.typedoc__declaration-children li {
+  list-style: none;
+  padding: 0 0.5rem;
+}
+
+.typedoc__declaration-children li {
+  border-bottom: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
+}
+
+/* narrow screens: the side-by-side row (and the far-right max-content
+ * type column, which cannot wrap) would squeeze or clip signatures —
+ * stack each row: name, then type (wrapping), then comment */
+@media (max-width: 40rem) {
+  .typedoc__declaration {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "name"
+      "type"
+      "comment";
+    gap: 0.25rem;
+
+    > * {
+      min-width: 0;
+    }
+
+    > .typedoc__declaration-type {
+      justify-self: start;
+    }
+
+    &:has(> .typedoc__declaration-signatures) {
+      grid-auto-flow: row;
+    }
+  }
+
+  section {
+    > .typedoc__declaration {
+      > .typedoc__declaration-name {
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  /* indentation is precious at 390px */
+  .typedoc__property,
+  .typedoc__modifier-signature__arg,
+  .typedoc__helper-signature__arg,
+  .typedoc__component-signature__arg,
+  .typedoc__modifier-signature__element,
+  .typedoc__component-signature__element,
+  .typedoc__component-signature__block {
+    padding-left: 0.25rem;
+    padding-right: 0;
+  }
+
+  ul.typedoc__declaration-children {
+    padding-left: 0.5rem;
+  }
+
+  .typedoc__nested-signature {
+    margin-left: 0.1rem;
+    padding-left: 0.5rem;
+  }
+
+  :is(
+      .typedoc__declaration-type,
+      .typedoc__reference__typeArgument,
+      .typedoc__nested-signature,
+      .typedoc__property
+    )
+    .typedoc__declaration
+    .typedoc-rendered-comment {
+    margin-left: 0.5rem;
+  }
+}
+
+/* ---------------------------------------------------------------- *
+ * Type positions: code-like flow
+ * ---------------------------------------------------------------- */
+
+/* nested declarations become `name: type` code lines */
+:is(
+    .typedoc__declaration-type,
+    .typedoc__reference__typeArgument,
+    .typedoc__union__type,
+    .typedoc__function__parameter__type,
+    .typedoc__function__return_type,
+    .typedoc__array,
+    .typedoc__nested-signature,
+    .typedoc__property
+  )
+  .typedoc__declaration {
+  display: block;
+  grid-template-columns: unset;
+  grid-template-areas: unset;
+  gap: 0;
+  padding: 0.1rem 0;
+
+  > .typedoc__declaration-name {
+    font-size: inherit;
+    font-weight: 600;
+    font-family: var(--pico-font-family-monospace, monospace);
+    line-height: inherit;
+
+    &::after {
+      content: ": ";
+      font-weight: normal;
+      color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+    }
+  }
+
+  > .typedoc__declaration-type {
+    display: inline;
+    margin: 0 0 0 0.25rem;
+  }
+}
+
+/* nested object shapes: indented member lines behind a soft rule */
+:is(
+    .typedoc__declaration-type,
+    .typedoc__reference__typeArgument,
+    .typedoc__union__type,
+    .typedoc__function__parameter__type,
+    .typedoc__function__return_type,
+    .typedoc__nested-signature,
+    .typedoc__property
+  )
+  ul.typedoc__declaration-children {
+  display: block;
+  margin: 0 0 0 0.25rem;
+  padding: 0 0 0 0.9rem;
+  border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
+
+  > li {
+    list-style: none;
+    border: none;
+    padding: 0.05rem 0;
+  }
+}
+
+/* comments inside a type shape: muted prose under the member they describe */
+:is(
+    .typedoc__declaration-type,
+    .typedoc__reference__typeArgument,
+    .typedoc__nested-signature,
+    .typedoc__property
+  )
+  .typedoc__declaration
+  .typedoc-rendered-comment {
+  font-size: 0.85em;
+  color: var(
+    --kolay-typedoc-comment,
+    var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+  );
+  margin: 0.1rem 0 0.4rem 0.9rem;
+
+  :is(p, pre) {
+    margin: 0.15rem 0;
+  }
+}
+
+/* ---------------------------------------------------------------- *
+ * References: Name<Arg, Arg> inline
+ * ---------------------------------------------------------------- */
+
+.typedoc__reference,
+.typedoc__reference:has(.typedoc__reference__typeArguments),
+.typedoc__reference__typeArguments,
+.typedoc__reference__typeArgument {
+  display: inline;
+  width: auto;
+}
+
+/* the < > , between type arguments; tokens inside re-color themselves */
+.typedoc__reference__typeArguments {
+  color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+}
+
+.typedoc__reference__typeArgument + .typedoc__reference__typeArgument::before {
+  content: ", ";
+}
+
+/* ---------------------------------------------------------------- *
+ * Arrays
+ * ---------------------------------------------------------------- */
+
+.typedoc__array,
+.typedoc__array__indicator {
+  display: inline;
+}
+
+.typedoc__array__indicator {
+  font-style: italic;
+  margin-right: 0.25rem;
+}
+
+/* ---------------------------------------------------------------- *
+ * Functions: (name: Type, ...) => Return
+ * ---------------------------------------------------------------- */
+
+.typedoc__function,
+.typedoc__function__type,
+.typedoc__function__parameters,
+.typedoc__function__parameter__container,
+.typedoc__function__parameter,
+.typedoc__function__parameter__type,
+.typedoc__function__open,
+.typedoc__function__close,
+.typedoc__function__return_type {
+  display: inline;
+}
+
+.typedoc__function__parameter__container + .typedoc__function__parameter__container::before {
+  content: ", ";
+}
+
+.typedoc__function__open,
+.typedoc__function__close,
+.typedoc__function__parameter__container + .typedoc__function__parameter__container::before {
+  color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+}
+
+.typedoc__function__close {
+  margin: 0 0.25rem;
+}
+
+.typedoc__function__parameter__name {
+  display: inline;
+  font-style: normal;
+  font-family: var(--pico-font-family-monospace, monospace);
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--kolay-typedoc-param, light-dark(#953800, #ffa657));
+
+  &::after {
+    content: ": ";
+    font-weight: normal;
+    color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+  }
+}
+
+/* a parameter with docs gets its own line, like a formatted long signature */
+.typedoc__function__parameter__container:has(.typedoc-rendered-comment) {
+  display: block;
+  margin-left: 1.5rem;
+
+  .typedoc-rendered-comment {
+    font-size: 0.85em;
+    color: var(
+      --kolay-typedoc-comment,
+      var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+    );
+    margin: 0.1rem 0 0.4rem 0.9rem;
+
+    :is(p, pre) {
+      margin: 0.15rem 0;
+    }
+  }
+}
+
+.typedoc__function__parameter__comment {
+  display: inline;
+}
+
+/* the wrapper is always rendered — only give it room when a comment
+ * actually rendered, so empty ones don't break inline signatures */
+.typedoc__function_comment {
+  display: inline;
+}
+
+.typedoc__function_comment:has(.typedoc-rendered-comment) {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- *
+ * Literals & unions
+ * ---------------------------------------------------------------- */
+
+.typedoc__literal {
+  font-family: var(--pico-font-family-monospace, monospace);
+}
+
+.typedoc__union,
+.typedoc__union__type {
+  display: inline;
+}
+
+.typedoc__union__type::before {
+  content: "| ";
+  color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+}
+
+.typedoc__union .typedoc__union__type:first-child::before {
+  content: none;
+}
+
+/* ---------------------------------------------------------------- *
+ * Argument flags
+ * ---------------------------------------------------------------- */
+
+.typedoc__arg-flags {
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  justify-content: flex-start;
+  margin: 0.5rem 0;
+}
+
+.typedoc__arg-flags > .typedoc__flag {
+  display: inline-block;
+  margin: 0;
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent);
+  border-radius: var(--pico-border-radius);
+  font-family: var(--pico-font-family-monospace, monospace);
+}
+
+/* ---------------------------------------------------------------- *
+ * Component / modifier / helper signatures (top level)
+ * ---------------------------------------------------------------- */
+
+.typedoc__modifier-signature__arg,
+.typedoc__helper-signature__arg,
+.typedoc__component-signature__arg {
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  grid-template-areas:
+    "info"
+    "comment";
+}
+
+.typedoc__component-signature__arg-info,
+.typedoc__helper-signature__arg-info,
+.typedoc__modifier-signature__arg-info {
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+/* named tuple members read like code: `name: type` */
+.typedoc__named-tuple {
+  display: inline;
+
+  > .typedoc__name {
+    display: inline;
+    margin: 0;
+    font-family: var(--pico-font-family-monospace, monospace);
+    font-weight: 600;
+    font-size: inherit;
+    color: var(--kolay-typedoc-name, light-dark(#0550ae, #79c0ff));
+
+    &::after {
+      content: ": ";
+      font-weight: normal;
+      color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
+    }
+  }
+}
+
+.typedoc__component-signature__arg-info > .typedoc__name,
+.typedoc__helper-signature__arg-info > .typedoc__name,
+.typedoc__modifier-signature__arg-info > .typedoc__name {
+  display: inline-block;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.typedoc__component-signature__arg-info,
+.typedoc__modifier-signature__arg-info,
+.typedoc__helper-signature__arg-info {
+  border-bottom: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
+  grid-area: info;
+  display: flex;
+  justify-content: space-between;
+}
+
+.typedoc__helper__return {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.typedoc__helper__return > .typedoc__heading {
+  margin: 0;
+}
+
+.typedoc__modifier-signature__element,
+.typedoc__component-signature__element,
+.typedoc__component-signature__block {
+  display: block;
+  padding: 0 1rem;
+}
+
+/* the element's name and its type link sit together, not pushed apart */
+.typedoc__modifier-signature__element-type,
+.typedoc__component-signature__element-type {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  justify-content: flex-start;
+}
+
+.typedoc__modifier-signature__element-type > .typedoc__name,
+.typedoc__component-signature__element-type > .typedoc__name {
+  display: inline-block;
+  margin: 0;
+  line-height: 1.5rem;
+}
+
+.typedoc__modifier-signature__element-header,
+.typedoc__component-signature__element-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+/* only the block's own comment gets the separating rule — member
+ * comments deeper inside keep the muted inline treatment */
+.typedoc__helper-signature__block > .typedoc-rendered-comment,
+.typedoc__helper-signature__block > * > .typedoc-rendered-comment,
+.typedoc__component-signature__block > .typedoc__property > .typedoc-rendered-comment {
+  border-top: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.typedoc__component-signature__block .typedoc__declaration-name + .typedoc__reference {
+  margin-bottom: -0.25rem;
+}
+
+.typedoc__component-signature__block > .typedoc__property {
+  border-left: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
+}
+
+.typedoc__helper-signature__arg,
+.typedoc__modifier-signature__arg,
+.typedoc__component-signature__arg {
+  margin-bottom: 0.5rem;
+  display: block;
+  gap: 0.25rem;
+}
+
+.typedoc__helper-signature__arg > .typedoc__name,
+.typedoc__modifier-signature__arg > .typedoc__name,
+.typedoc__component-signature__arg > .typedoc__name,
+.typedoc__component-signature__block > .typedoc__name {
+  font-size: 1.2rem;
+  overflow: hidden;
+  margin: 0;
+  max-height: unset;
+}
+
+.typedoc__helper-signature__arg .typedoc-rendered-comment p,
+.typedoc__modifier-signature__arg .typedoc-rendered-comment p,
+.typedoc__component-signature__arg .typedoc-rendered-comment p {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+/* ---------------------------------------------------------------- *
+ * Component signatures inside a type position: compact
+ * ---------------------------------------------------------------- */
+
+.typedoc__nested-signature {
+  display: block;
+  margin: 0.15rem 0 0.15rem 0.25rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
+
+  section {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* "Element" / "Arguments" / "Blocks" become small labels, not headings */
+  .typedoc__heading {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(
+      --kolay-typedoc-comment,
+      var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+    );
+    margin: 0.5rem 0 0.15rem;
+  }
+
+  /* the element label and its type link share a line */
+  .typedoc__heading:is(
+    .typedoc__component-signature__element-header,
+    .typedoc__modifier-signature__element-header
+  ) {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+
+  .typedoc__heading :is(.typedoc__type-link, .typedoc__name) {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.9rem;
+  }
+
+  /* block names (<:default>) are plain code text, not banded pre blocks */
+  pre.typedoc__name {
+    display: inline-block;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.9em;
+  }
+
+  .typedoc__component-signature__element,
+  .typedoc__component-signature__block,
+  .typedoc__component-signature__arg,
+  .typedoc__modifier-signature__element,
+  .typedoc__modifier-signature__arg,
+  .typedoc__helper-signature__arg {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  .typedoc__property {
+    padding: 0 0 0 0.9rem;
+    border: none;
+  }
+
+  .typedoc__component-signature__block .typedoc-rendered-comment {
+    border-top: none;
+    padding-top: 0;
+    margin: 0.1rem 0 0.4rem 0.9rem;
+    font-size: 0.85em;
+    color: var(
+      --kolay-typedoc-comment,
+      var(--pico-muted-color, color-mix(in oklab, currentColor 65%, transparent))
+    );
+  }
+}
+
+/* ---------------------------------------------------------------- *
+ * Union variants (discriminated union signatures)
+ * ---------------------------------------------------------------- */
+
+.typedoc__union-variant + .typedoc__union-variant {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+}
