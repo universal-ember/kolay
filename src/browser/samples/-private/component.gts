@@ -2,8 +2,10 @@
 import Component from '@glimmer/component';
 
 import type DefaultClassA from './default-export-component.gts';
+import type { ESignature, helperLikeB } from './helper.ts';
+import type { functionModifierC, ModifierSignatureA } from './modifier.ts';
 import type { TOC } from '@ember/component/template-only';
-import type { ComponentLike, WithBoundArgs } from '@glint/template';
+import type { ComponentLike, HelperLike, ModifierLike, WithBoundArgs } from '@glint/template';
 
 export interface SignatureA {
   Element: HTMLDivElement;
@@ -165,6 +167,33 @@ export type UnionSignature =
         content: [];
       };
     };
+
+/**
+ * The invokables a component can hand back through a block: as a plain
+ * `*Like` type, and with args already bound.
+ */
+export interface YieldsInvokables {
+  Blocks: {
+    default: [
+      component: ComponentLike<SignatureA>,
+      modifier: ModifierLike<ModifierSignatureA>,
+      helper: HelperLike<ESignature>,
+      /**
+       * `@foo` is bound, `@bar` is not.
+       */
+      boundComponent: WithBoundArgs<typeof ClassA, 'foo'>,
+      /**
+       * `invert` is bound, the positional args are not.
+       */
+      boundModifier: WithBoundArgs<typeof functionModifierC, 'invert'>,
+      /**
+       * `optional` is bound.
+       */
+      boundHelper: WithBoundArgs<typeof helperLikeB, 'optional'>,
+      onChange: (value: string) => void,
+    ];
+  };
+}
 
 /**
  * Components may yield bound copies of each other -- rendering the bound

@@ -3,12 +3,12 @@
 // @ts-nocheck
 import Component from '@glimmer/component';
 import { assert } from '@ember/debug';
-import { hash } from '@ember/helper';
 import { getOwner } from '@ember/owner';
 
 import { Consume } from 'ember-primitives/dom-context';
 
 import { compileText } from '../services/compiler/reactive.ts';
+import { isKindWrapper, Kind, kindOf } from './kind.gts';
 import { isLiteral } from './narrowing.ts';
 import {
   ComponentDeclaration,
@@ -138,7 +138,12 @@ export class Comment extends Component<CommentSignature> {
   </template>
 }
 
-const isIgnored = (name: string) => ['__type', 'TOC', 'TemplateOnlyComponent'].includes(name);
+/**
+ * Names that carry no information for a reader: either internal, or a Glint
+ * wrapper whose only job is to say what kind of thing it wraps -- which the
+ * kind label says instead, in plainer words.
+ */
+const isIgnored = (name: string) => name === '__type' || isKindWrapper(name);
 const isConst = (x: { flags: { isConst: boolean } }) => x.flags.isConst;
 const not = (x: unknown) => !x;
 const or = (...args: unknown) => args.find((x) => !!x);
@@ -272,31 +277,29 @@ const isUnion = (x: SomeType | undefined): x is UnionType => {
 //   return extended.typeArguments[0]
 // }
 //
-const isInvokable = (info: ReferenceType) => info.name === 'Invokable';
-
 const Reference: TOC<{ info: ReferenceType }> = <template>
-  {{#if (isInvokable @info)}}
-    <div class='typedoc__unknown__yield'>
-      <Intrinsic @info={{hash name='Component'}} />
-    </div>
-  {{else}}
-    <div class='typedoc__reference'>
-      {{#if (not (isIgnored @info.name))}}
-        <div class='typedoc__reference__name'>{{or @info.reflection.name @info.name}}</div>
+  <div class='typedoc__reference'>
+    {{#if (not (isIgnored @info.name))}}
+      <div class='typedoc__reference__name'>{{or @info.reflection.name @info.name}}</div>
+    {{/if}}
+    {{#let (kindOf @info) as |kind|}}
+      {{! what the thing *is* -- a component, modifier, or helper }}
+      {{#if kind}}
+        <Kind @kind={{kind}} />
       {{/if}}
-      {{#if @info.typeArguments.length}}
-        <div class='typedoc__reference__typeArguments'>
-          &lt;
-          {{#each @info.typeArguments as |typeArg|}}
-            <div class='typedoc__reference__typeArgument'>
-              <Type @info={{typeArg}} />
-            </div>
-          {{/each}}
-          &gt;
-        </div>
-      {{/if}}
-    </div>
-  {{/if}}
+    {{/let}}
+    {{#if @info.typeArguments.length}}
+      <div class='typedoc__reference__typeArguments'>
+        &lt;
+        {{#each @info.typeArguments as |typeArg|}}
+          <div class='typedoc__reference__typeArgument'>
+            <Type @info={{typeArg}} />
+          </div>
+        {{/each}}
+        &gt;
+      </div>
+    {{/if}}
+  </div>
 </template>;
 
 const Intrinsic: TOC<{ info: { name: string } }> = <template>
@@ -333,6 +336,7 @@ const Array: TOC<{ Args: { info: ArrayType } }> = <template>
 const Function: TOC<{ Args: { info: SignatureReflection } }> = <template>
   <div class='typedoc__function'>
     <div class='typedoc__function__type'>
+      <Kind @kind='function' />
       <div class='typedoc__function__open'>(</div>
       <div class='typedoc__function__parameters'>
         {{#each @info.parameters as |param|}}

@@ -9,7 +9,7 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { ProjectReflection, Reflection, SomeType } from 'typedoc';
 
-export type SingleSignature = { Element: any; Args: any; Blocks: any };
+export type SingleSignature = { Element: any; Args: any; Blocks: any; Return: any };
 export type UnionSignature = { variants: SingleSignature[] };
 export type SignatureResult = SingleSignature | UnionSignature;
 
@@ -73,12 +73,14 @@ function getSignatureFromType(type: Reflection): SingleSignature | undefined {
   const Element = findChildDeclaration(type, 'Element');
   const Args = findChildDeclaration(type, 'Args');
   const Blocks = findChildDeclaration(type, 'Blocks');
+  // components don't have one -- helpers, which share this shape, do
+  const Return = findChildDeclaration(type, 'Return');
 
-  const hasAny = Element || Args || Blocks;
+  const hasAny = Element || Args || Blocks || Return;
 
   if (!hasAny) return;
 
-  return { Element, Args, Blocks };
+  return { Element, Args, Blocks, Return };
 }
 
 export function getSignature(

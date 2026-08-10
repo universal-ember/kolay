@@ -119,7 +119,7 @@ function getReturn(info: any) {
   }
 }
 
-const Return: TOC<{ Args: { info: any } }> = <template>
+export const Return: TOC<{ Args: { info: any } }> = <template>
   {{#if @info}}
     <section class='typedoc__helper__return'>
       <Heading class='typedoc__heading'>Return</Heading>

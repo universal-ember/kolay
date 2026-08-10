@@ -1,8 +1,9 @@
 import Component from '@glimmer/component';
 
+import { isKindWrapper, Kind, type Kind as KindName, kindOf } from '../kind.gts';
 import { isLiteral, isReference } from '../narrowing.ts';
 import { Type } from '../renderer.gts';
-import { listifyArgs } from './args.gts';
+import { Args, listifyArgs } from './args.gts';
 import {
   ComponentDeclaration,
   getSignature,
@@ -10,6 +11,8 @@ import {
   type SignatureResult,
   type SingleSignature,
 } from './component.gts';
+import { Element } from './element.gts';
+import { Return } from './helper.gts';
 
 import type { ProjectReflection, ReferenceType, Reflection, SomeType } from 'typedoc';
 
@@ -52,28 +55,66 @@ function boundArgNames(type: SomeType | undefined): string[] {
   return [];
 }
 
+/**
+ * A component's args are the direct children of `Args`. A modifier's or
+ * helper's named args live one level down, under `Named` -- and those are
+ * what `WithBoundArgs` binds, so they have to be reachable by name too.
+ */
+function namedArgs(arg: any): any[] {
+  if (arg?.name !== 'Named') return [arg];
+
+  return arg.type?.declaration?.children ?? [arg];
+}
+
 function omitArgs(signature: SingleSignature, bound: Set<string>): SingleSignature {
   if (!signature.Args) return signature;
 
   return {
     ...signature,
-    Args: listifyArgs(signature.Args).filter((arg) => !bound.has(arg?.name)),
+    Args: listifyArgs(signature.Args)
+      .flatMap(namedArgs)
+      .filter((arg) => !bound.has(arg?.name)),
   };
 }
 
 /**
- * The component a `WithBoundArgs<...>` binds args to, if it is part of the
- * generated docs. Components that aren't (not exported, or from a package
- * that isn't documented) have no signature to render.
+ * `typeof foo`, where `foo` is typed as `ModifierLike<{...}>` (or any other
+ * `*Like`), reaches us as the wrapper rather than as a reference to `foo` --
+ * the signature is the wrapper's type argument.
  */
-export function boundComponent(
-  info: ReferenceType
-): { type: SomeType; reflection: Reflection | undefined } | undefined {
+function wrappedSignature(type: ReferenceType): Reflection | undefined {
+  if (!isKindWrapper(type.name)) return;
+
+  const arg = type.typeArguments?.[0];
+
+  if (!arg) return;
+
+  if (arg.type === 'reflection') return arg.declaration;
+
+  if (isReference(arg)) return arg.reflection;
+
+  return;
+}
+
+/**
+ * What a `WithBoundArgs<...>` binds args to: the reference as written, and
+ * the declaration holding its signature -- which is missing when the target
+ * isn't part of the generated docs (not exported, or from a package that
+ * isn't documented).
+ */
+export function boundComponent(info: ReferenceType) {
   const type = componentType(info.typeArguments?.[0]);
 
   if (!isReference(type)) return;
 
-  return { type, reflection: type.reflection };
+  return {
+    type,
+    /**
+     * A wrapper has no name worth rendering -- its kind label stands in.
+     */
+    isWrapper: isKindWrapper(type.name),
+    reflection: type.reflection ?? wrappedSignature(type),
+  };
 }
 
 /**
@@ -134,6 +175,17 @@ export class WithBoundArgs extends Component<{
     return this.#component?.reflection?.id;
   }
 
+  /**
+   * A named target (a class, or an alias for one) is worth naming. A `*Like`
+   * wrapper isn't -- and rendering it would render its signature a second
+   * time, as its type argument.
+   */
+  get named() {
+    if (this.#component?.isWrapper) return;
+
+    return this.componentType;
+  }
+
   get #isRecursive() {
     if (this.id === undefined) return false;
 
@@ -148,17 +200,37 @@ export class WithBoundArgs extends Component<{
     return variantsOf(boundArgsSignature(this.args.info, this.args.project));
   }
 
+  /**
+   * `WithBoundArgs` binds modifiers and helpers too, and their signatures are
+   * rendered differently from a component's.
+   */
+  get kind() {
+    return kindOf(this.componentType) ?? 'component';
+  }
+
   <template>
     {{this.anchor}}
 
-    {{#if this.componentType}}
-      <Type @info={{this.componentType}} />
+    {{#if this.named}}
+      <Type @info={{this.named}} />
+    {{else}}
+      <Kind @kind={{this.kind}} />
     {{/if}}
 
     {{#each this.variants as |variant|}}
       <span class='typedoc__nested-signature' data-typedoc-expanded={{this.id}}>
-        <ComponentDeclaration @signature={{variant}} />
+        {{#if (is this.kind 'modifier')}}
+          <Element @kind='modifier' @info={{variant.Element}} />
+          <Args @kind='modifier' @info={{variant.Args}} />
+        {{else if (is this.kind 'helper')}}
+          <Args @kind='helper' @info={{variant.Args}} />
+          <Return @info={{variant.Return.type}} />
+        {{else}}
+          <ComponentDeclaration @signature={{variant}} />
+        {{/if}}
       </span>
     {{/each}}
   </template>
 }
+
+const is = (kind: KindName, expected: KindName) => kind === expected;

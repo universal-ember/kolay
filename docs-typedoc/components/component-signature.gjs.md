@@ -138,9 +138,42 @@ export const TemplateOnlyD: TOC<{
 
 `WithBoundArgs<typeof ClassA, 'foo'>` describes what is left of `<ClassA>` after `@foo` has already been passed -- it names the args that a consumer *cannot* pass, which is the inverse of what a reader needs.
 
-So these render as the bound component's own signature, without the args that are already bound -- `namedBlockC` binds every arg of `<ClassA>`, `namedBlockE` binds only `@foo`, leaving `@bar`.
+So these render as the bound component's own signature, without the args that are already bound.
 
-Components that aren't part of the generated docs (not exported, or from a package that isn't documented) have no signature to render, so they are only named.
+These are the two components being bound below -- a class, and a `ComponentLike` alias:
+
+```gts
+export class ClassA extends Component<{
+  Element: HTMLDivElement;
+  Args: {
+    foo: number;
+    bar: string;
+  };
+  Blocks: {
+    default: [first: number, second: string];
+    namedBlockA: [first: typeof ClassA];
+    namedBlockB: [boolean];
+  };
+}> {}
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='ClassA'
+  @package='kolay'
+/>
+
+```gts
+export type ClassC = ComponentLike<SignatureC>;
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='ClassC'
+  @package='kolay'
+/>
+
+And this is what binding them looks like. `namedBlockC` binds every arg of `<ClassA>`, so nothing is left to pass; `namedBlockE` binds only `@foo`, leaving `@bar`. `namedBlockD` binds `<ClassC>`, whose signature is this same one -- a component that hands back a bound copy of itself stops expanding once it has been rendered.
 
 ```gts
 export interface SignatureC {
@@ -157,6 +190,39 @@ export interface SignatureC {
 <ComponentSignature
   @module='declarations/browser/samples/-private'
   @name='SignatureC'
+  @package='kolay'
+/>
+
+Components that aren't part of the generated docs (not exported, or from a package that isn't documented) have no signature to render, so they are only named.
+
+</fieldset>
+
+<fieldset>
+  <summary>Yielded modifiers and helpers</summary>
+
+Anything yielded is labelled with what it *is* -- a component, a modifier, a helper, or a function -- so `ComponentLike`, `ModifierLike`, `HelperLike` and the rest of the Glint plumbing don't have to be read as type names.
+
+Modifiers and helpers can be bound the same way components are, and render in their own shape: a modifier keeps its Element and positional args, a helper keeps its Return.
+
+```gts
+export interface YieldsInvokables {
+  Blocks: {
+    default: [
+      component: ComponentLike<SignatureA>,
+      modifier: ModifierLike<ModifierSignatureA>,
+      helper: HelperLike<ESignature>,
+      boundComponent: WithBoundArgs<typeof ClassA, 'foo'>,
+      boundModifier: WithBoundArgs<typeof functionModifierC, 'invert'>,
+      boundHelper: WithBoundArgs<typeof helperLikeB, 'optional'>,
+      onChange: (value: string) => void,
+    ];
+  };
+}
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='YieldsInvokables'
   @package='kolay'
 />
 

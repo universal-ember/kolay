@@ -9,6 +9,7 @@
  *   --kolay-typedoc-param        function parameter names
  *   --kolay-typedoc-punctuation  structure (: ( ) => | < > ,)
  *   --kolay-typedoc-comment      doc comments rendered inside type shapes
+ *   --kolay-typedoc-kind         kind labels (Component, Modifier, Helper, Function)
  *
  * Reading model:
  *
@@ -58,6 +59,29 @@
 .typedoc__unknown {
   display: inline;
   font-family: var(--pico-font-family-monospace, monospace);
+}
+
+/*
+ * Not a type — a label saying what the thing *is*. Sits next to the name
+ * (or stands in for a Glint wrapper's name), so it reads as an annotation
+ * rather than another token in the type expression.
+ */
+.typedoc__kind {
+  display: inline;
+  width: fit-content;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent);
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, currentColor 6%, transparent);
+  color: var(--kolay-typedoc-kind, light-dark(#953800, #ffa657));
+  font-family: var(--pico-font-family-monospace, monospace);
+  font-size: 0.65em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0.05em 0.4em;
+  vertical-align: 0.1em;
 }
 
 /* ---------------------------------------------------------------- *
@@ -360,6 +384,12 @@ section {
   width: auto;
 }
 
+/* the kind label annotates whatever precedes it, so it needs its own space */
+.typedoc__reference__name + .typedoc__kind,
+.typedoc__kind + .typedoc__reference__typeArguments {
+  margin-left: 0.3em;
+}
+
 /* the < > , between type arguments; tokens inside re-color themselves */
 .typedoc__reference__typeArguments {
   color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
@@ -411,6 +441,10 @@ section {
 
 .typedoc__function__close {
   margin: 0 0.25rem;
+}
+
+.typedoc__kind + .typedoc__function__open {
+  margin-left: 0.3em;
 }
 
 .typedoc__function__parameter__name {

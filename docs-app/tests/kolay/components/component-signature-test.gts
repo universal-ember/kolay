@@ -30,6 +30,39 @@ function block(name: string): Element {
   return found;
 }
 
+/**
+ * A yielded tuple member (`default: [name: SomeType]`) of the signature under
+ * test -- again, the outermost match, so nested signatures don't shadow it.
+ */
+function member(name: string): Element {
+  const members = [...document.querySelectorAll('.typedoc__named-tuple')].filter(
+    (el) => !el.closest('.typedoc__nested-signature')
+  );
+  const found = members.find(
+    (el) => el.querySelector('.typedoc__name')?.textContent?.trim() === name
+  );
+
+  if (!found) {
+    throw new Error(
+      `Could not find a rendered "${name}" tuple member. Found: ${members
+        .map((el) => el.querySelector('.typedoc__name')?.textContent?.trim())
+        .join(', ')}`
+    );
+  }
+
+  return found;
+}
+
+/**
+ * The names of the args rendered inside `parent` -- the arg rows only, not
+ * the names of the types they're annotated with.
+ */
+function argNames(parent: Element): string[] {
+  return [...parent.querySelectorAll('[class*="-signature__arg"] > .typedoc__name')].map(
+    (el) => el.textContent?.trim() ?? ''
+  );
+}
+
 module('<ComponentSignature>', function (hooks) {
   setupRenderingTest(hooks);
   setupKolay(hooks);
@@ -234,6 +267,56 @@ module('<ComponentSignature>', function (hooks) {
     // but not expanded again -- <Pong> is already an ancestor of it
     assert.dom(yielded).containsText('Ping');
     assert.dom('[data-typedoc-expanded]', yielded).exists({ count: 2 });
+  });
+
+  test('yielded invokables are labelled with what they are', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="YieldsInvokables"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    assert.dom(member('component')).containsText('Component');
+    assert.dom(member('component')).containsText('SignatureA');
+    assert.dom(member('modifier')).containsText('Modifier');
+    assert.dom(member('helper')).containsText('Helper');
+    assert.dom(member('onChange')).containsText('Function');
+
+    // the labels say what the Glint wrappers used to, in plainer words
+    assert.dom().doesNotContainText('ComponentLike');
+    assert.dom().doesNotContainText('ModifierLike');
+    assert.dom().doesNotContainText('HelperLike');
+    assert.dom().doesNotContainText('WithBoundArgs');
+  });
+
+  test('bound modifiers and helpers render as modifiers and helpers', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="YieldsInvokables"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // a component keeps its name, and its `@`-prefixed args
+    assert.dom(member('boundComponent')).containsText('ClassA');
+    assert.deepEqual(argNames(member('boundComponent')), ['@bar'], 'only @foo was bound');
+
+    // a modifier keeps its Element, and its positional args
+    assert.dom(member('boundModifier')).containsText('Modifier');
+    assert.dom(member('boundModifier')).containsText('HTMLDivElement');
+    assert.deepEqual(argNames(member('boundModifier')), ['x', 'y'], 'invert was bound');
+
+    // a helper keeps its Return
+    assert.dom(member('boundHelper')).containsText('Helper');
+    assert.dom(member('boundHelper')).containsText('Return');
+    assert.deepEqual(argNames(member('boundHelper')), ['first', 'second'], 'optional was bound');
   });
 
   test('template-only:reference', async function (assert) {
