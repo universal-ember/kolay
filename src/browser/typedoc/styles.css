@@ -743,6 +743,16 @@ section {
     list-style: none;
     color: var(--kolay-typedoc-comment, var(--pico-muted-color, currentColor));
 
+    /*
+     * Whether a signature can be opened says nothing about how big its name
+     * is -- but a host theme (pico, say) sets <summary> up as a heading, and
+     * the chips size in `em`, so the label would grow just for being one.
+     */
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+
     &::-webkit-details-marker {
       display: none;
     }
