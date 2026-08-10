@@ -62,26 +62,36 @@
 }
 
 /*
- * Not a type — a label saying what the thing *is*. Sits next to the name
- * (or stands in for a Glint wrapper's name), so it reads as an annotation
- * rather than another token in the type expression.
+ * Not types — labels. One says what the thing *is* (and stands in for a Glint
+ * wrapper's name); the other says the signature is already on the page, above.
+ * Both read as annotations rather than as tokens in the type expression.
  */
+.typedoc__recursive,
 .typedoc__kind {
   display: inline;
   width: fit-content;
   border: 1px solid color-mix(in oklab, currentColor 30%, transparent);
   border-radius: 0.25rem;
   background: color-mix(in oklab, currentColor 6%, transparent);
-  color: var(--kolay-typedoc-kind, light-dark(#953800, #ffa657));
   font-family: var(--pico-font-family-monospace, monospace);
   font-size: 0.65em;
   font-style: normal;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin: 0;
+  margin: 0 0 0 0.3em;
   padding: 0.05em 0.4em;
   vertical-align: 0.1em;
+}
+
+.typedoc__kind {
+  color: var(--kolay-typedoc-kind, light-dark(#953800, #ffa657));
+}
+
+.typedoc__recursive {
+  color: var(--kolay-typedoc-comment, var(--pico-muted-color, currentColor));
+  border-style: dashed;
+  background: none;
 }
 
 /* ---------------------------------------------------------------- *
@@ -384,10 +394,16 @@ section {
   width: auto;
 }
 
-/* the kind label annotates whatever precedes it, so it needs its own space */
-.typedoc__reference__name + .typedoc__kind,
-.typedoc__kind + .typedoc__reference__typeArguments {
-  margin-left: 0.3em;
+.typedoc__signature-root {
+  display: contents;
+}
+
+/* a name, what it is, and whether it's already been rendered -- one unit */
+.typedoc__invokable {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.15em;
 }
 
 /* the < > , between type arguments; tokens inside re-color themselves */
@@ -691,10 +707,62 @@ section {
  * ---------------------------------------------------------------- */
 
 .typedoc__nested-signature {
-  display: block;
+  /* closed, it is one more token on the line it belongs to; open, it owns
+     the width it needs for a signature */
+  display: inline-block;
+  vertical-align: top;
   margin: 0.15rem 0 0.15rem 0.25rem;
   padding-left: 0.9rem;
   border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
+
+  &[open] {
+    display: block;
+  }
+
+  /* the name and kind of the thing, and the control that opens its signature */
+  > summary {
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.15em;
+    width: fit-content;
+    list-style: none;
+    color: var(--kolay-typedoc-comment, var(--pico-muted-color, currentColor));
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    /* an explicit marker: the default one lands after the chips */
+    &::before {
+      content: "▸";
+      font-size: 0.75em;
+      line-height: 1;
+    }
+
+    /* a host theme (pico, say) may float a chevron of its own in here */
+    &::after {
+      display: none;
+    }
+
+    &:hover .typedoc__reference__name {
+      background: color-mix(in oklab, currentColor 14%, transparent);
+    }
+  }
+
+  &[open] > summary::before {
+    content: "▾";
+  }
+
+  /* closed, it is a single line -- the guide line shouldn't outrun it */
+  &:not([open]) {
+    border-left-color: transparent;
+  }
+
+  > .typedoc__nested-signature__body {
+    padding-top: 0.15rem;
+  }
 
   section {
     margin: 0;
@@ -752,9 +820,11 @@ section {
     margin: 0;
   }
 
+  /* the guide line stays: it's what ties a block to what it yields */
   .typedoc__property {
     padding: 0 0 0 0.9rem;
     border: none;
+    border-left: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
   }
 
   .typedoc__component-signature__block .typedoc-rendered-comment {

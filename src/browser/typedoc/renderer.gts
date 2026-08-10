@@ -14,7 +14,7 @@ import {
   ComponentDeclaration,
   getSignature as getComponentSignature,
 } from './signature/component.gts';
-import { isWithBoundArgs, WithBoundArgs } from './signature/with-bound-args.gts';
+import { Invokable, isInvokable } from './signature/invokable.gts';
 import { Load } from './utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -409,9 +409,9 @@ export const Type: TOC<{ Args: { info: SomeType } }> = <template>
         <span class='typedoc__nested-signature'>
           <ComponentDeclaration @signature={{maybe}} />
         </span>
-      {{else if (isWithBoundArgs @info)}}
-        {{! the bound component's signature, minus the args already bound }}
-        <WithBoundArgs @info={{@info}} @project={{project.data}} />
+      {{else if (isInvokable @info)}}
+        {{! a component/modifier/helper renders as its signature }}
+        <Invokable @info={{@info}} @project={{project.data}} />
       {{else if (isReference @info)}}
         {{! @glint-expect-error }}
         <Reference @info={{@info}} />

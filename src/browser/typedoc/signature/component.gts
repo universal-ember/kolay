@@ -126,6 +126,21 @@ export function isUnionSignature(info: SignatureResult | undefined): info is Uni
   return info !== undefined && 'variants' in info;
 }
 
+/**
+ * The declaration a signature is read from. Different types can lead to the
+ * same one -- `SignatureC`, `ComponentLike<SignatureC>`, and
+ * `WithBoundArgs<ClassC, ...>` all do -- which is what makes it usable as the
+ * identity of a signature, for spotting one that refers back to itself.
+ */
+export function signatureSource(
+  info: Reflection | undefined,
+  project: ProjectReflection
+): Reflection | undefined {
+  if (!info) return;
+
+  return getSignatureType(info, project) ?? undefined;
+}
+
 export const ComponentSignature: TOC<{
   Args: {
     /**
@@ -143,16 +158,26 @@ export const ComponentSignature: TOC<{
   };
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
-    {{#let (getSignature declaration project) as |info|}}
-      {{#if (isUnionSignature info)}}
-        {{#each info.variants as |variant|}}
-          <div class='typedoc__union-variant'>
-            <ComponentDeclaration @signature={{variant}} />
-          </div>
-        {{/each}}
-      {{else}}
-        <ComponentDeclaration @signature={{info}} />
-      {{/if}}
+    {{#let
+      (getSignature declaration project) (signatureSource declaration project)
+      as |info source|
+    }}
+      {{!
+        Marks the signature being documented, so that a type further down
+        that leads back to it renders as a reference to what is already on
+        the page, rather than repeating it.
+      }}
+      <div class='typedoc__signature-root' data-typedoc-signature={{source.id}}>
+        {{#if (isUnionSignature info)}}
+          {{#each info.variants as |variant|}}
+            <div class='typedoc__union-variant'>
+              <ComponentDeclaration @signature={{variant}} />
+            </div>
+          {{/each}}
+        {{else}}
+          <ComponentDeclaration @signature={{info}} />
+        {{/if}}
+      </div>
     {{/let}}
   </Load>
 </template>;

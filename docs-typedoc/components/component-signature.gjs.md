@@ -136,46 +136,13 @@ export const TemplateOnlyD: TOC<{
 <fieldset>
   <summary>Yielded components (`WithBoundArgs`)</summary>
 
-`WithBoundArgs<typeof ClassA, 'foo'>` describes what is left of `<ClassA>` after `@foo` has already been passed -- it names the args that a consumer *cannot* pass, which is the inverse of what a reader needs.
+`WithBoundArgs<typeof ClassA, 'foo'>` names the args a consumer *cannot* pass -- the inverse of what a reader needs. It renders as `<ClassA>`'s own signature instead, minus the bound args.
 
-So these render as the bound component's own signature, without the args that are already bound.
-
-These are the two components being bound below -- a class, and a `ComponentLike` alias:
-
-```gts
-export class ClassA extends Component<{
-  Element: HTMLDivElement;
-  Args: {
-    foo: number;
-    bar: string;
-  };
-  Blocks: {
-    default: [first: number, second: string];
-    namedBlockA: [first: typeof ClassA];
-    namedBlockB: [boolean];
-  };
-}> {}
-```
-
-<ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='ClassA'
-  @package='kolay'
-/>
+`<ClassA>` takes `@foo` and `@bar`; `ClassC` is an alias for the signature below. So: `namedBlockC` binds both args, leaving nothing to pass. `namedBlockE` binds only `@foo`, leaving `@bar`. `namedBlockD` leads back to the signature it appears in, so it is marked `recursive` instead of repeating it.
 
 ```gts
 export type ClassC = ComponentLike<SignatureC>;
-```
 
-<ComponentSignature
-  @module='declarations/browser/samples/-private'
-  @name='ClassC'
-  @package='kolay'
-/>
-
-And this is what binding them looks like. `namedBlockC` binds every arg of `<ClassA>`, so nothing is left to pass; `namedBlockE` binds only `@foo`, leaving `@bar`. `namedBlockD` binds `<ClassC>`, whose signature is this same one -- a component that hands back a bound copy of itself stops expanding once it has been rendered.
-
-```gts
 export interface SignatureC {
   Element: HTMLDivElement;
   Args: ArgsC;

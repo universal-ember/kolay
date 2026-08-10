@@ -54,6 +54,16 @@ function member(name: string): Element {
 }
 
 /**
+ * The `recursive` marker belonging to `parent` itself, rather than to
+ * anything rendered inside it.
+ */
+function marker(parent: Element): Element | null {
+  return parent.querySelector(
+    ':scope > .typedoc__property > .typedoc__invokable > .typedoc__recursive'
+  );
+}
+
+/**
  * The names of the args rendered inside `parent` -- the arg rows only, not
  * the names of the types they're annotated with.
  */
@@ -83,7 +93,15 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom('h3.typedoc__heading').exists({ count: 3 });
     assert.dom('h1.typedoc__heading').doesNotExist();
     assert.dom('h2.typedoc__heading').doesNotExist();
-    assert.dom('h4.typedoc__heading').doesNotExist();
+
+    // deeper headings belong to the signatures of yielded components, which
+    // are subsections of the block that yields them
+    const deeper = [...document.querySelectorAll('h4.typedoc__heading')];
+
+    assert.true(
+      deeper.every((el) => el.closest('[data-typedoc-nested]')),
+      'every deeper heading is inside a yielded signature'
+    );
   });
 
   test('headings inside declaration comments do not shift the signature headings', async function (assert) {
@@ -219,6 +237,46 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom(block('namedBlockD')).containsText('ClassC');
   });
 
+  test('a signature that leads back to itself is marked, not repeated', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassC"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // <ClassC> *is* this signature, so rendering it again would repeat the
+    // whole page -- it is named and marked instead
+    assert.dom(marker(block('namedBlockD'))).exists();
+    assert.dom('[data-typedoc-nested]', block('namedBlockD')).doesNotExist();
+
+    // a component that isn't the one being documented still expands
+    assert.dom(marker(block('namedBlockE'))).doesNotExist();
+    assert.dom('[data-typedoc-nested]', block('namedBlockE')).exists();
+  });
+
+  test('expansion stops after one level', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassC"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // <ClassA> expands, and the components *it* yields are named only --
+    // what's yielded by what's yielded is a page of its own
+    const expansion = block('namedBlockE').querySelector('[data-typedoc-nested]');
+
+    assert.dom(expansion).exists();
+    assert.dom('[data-typedoc-nested]', expansion as Element).doesNotExist();
+  });
+
   test('bound args are omitted from the bound component signature', async function (assert) {
     await render(
       <template>
@@ -263,10 +321,9 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom(yielded).containsText('@pong');
     assert.dom(yielded).doesNotContainText('@ping');
 
-    // ... and the <Pong> that the yielded <Ping> yields is named,
-    // but not expanded again -- <Pong> is already an ancestor of it
+    // ... and the <Ping> that <Pong> yields is named, but not expanded again
     assert.dom(yielded).containsText('Ping');
-    assert.dom('[data-typedoc-expanded]', yielded).exists({ count: 2 });
+    assert.dom('[data-typedoc-nested]', yielded).exists({ count: 1 });
   });
 
   test('yielded invokables are labelled with what they are', async function (assert) {
@@ -281,10 +338,14 @@ module('<ComponentSignature>', function (hooks) {
     );
 
     assert.dom(member('component')).containsText('Component');
-    assert.dom(member('component')).containsText('SignatureA');
     assert.dom(member('modifier')).containsText('Modifier');
     assert.dom(member('helper')).containsText('Helper');
     assert.dom(member('onChange')).containsText('Function');
+
+    // the wrapped signature is rendered, rather than named -- what a
+    // consumer is handed is the signature, not `ComponentLike<SignatureA>`
+    assert.dom(member('component')).containsText('@foo');
+    assert.dom(member('component')).containsText(':namedBlockA');
 
     // the labels say what the Glint wrappers used to, in plainer words
     assert.dom().doesNotContainText('ComponentLike');
