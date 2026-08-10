@@ -136,9 +136,7 @@ export const TemplateOnlyD: TOC<{
 <fieldset>
   <summary>Yielded components (`WithBoundArgs`)</summary>
 
-`WithBoundArgs<typeof ClassA, 'foo'>` names the args a consumer *cannot* pass -- the inverse of what a reader needs. It renders as `<ClassA>`'s own signature instead, minus the bound args.
-
-`<ClassA>` takes `@foo` and `@bar`; `ClassC` is an alias for the signature below. So: `namedBlockC` binds both args, leaving nothing to pass. `namedBlockE` binds only `@foo`, leaving `@bar`. `namedBlockD` leads back to the signature it appears in, so it is marked `recursive` instead of repeating it.
+`WithBoundArgs` names the args a consumer *cannot* pass, so the bound component renders as its own signature, minus those args. One that leads back to the signature it appears in is marked `recursive`.
 
 ```gts
 export type ClassC = ComponentLike<SignatureC>;
@@ -160,16 +158,12 @@ export interface SignatureC {
   @package='kolay'
 />
 
-Components that aren't part of the generated docs (not exported, or from a package that isn't documented) have no signature to render, so they are only named.
-
 </fieldset>
 
 <fieldset>
   <summary>Yielded modifiers and helpers</summary>
 
-Anything yielded is labelled with what it *is* -- a component, a modifier, a helper, or a function -- so `ComponentLike`, `ModifierLike`, `HelperLike` and the rest of the Glint plumbing don't have to be read as type names.
-
-Modifiers and helpers can be bound the same way components are, and render in their own shape: a modifier keeps its Element and positional args, a helper keeps its Return.
+Anything yielded is labelled with what it *is* -- component, modifier, helper, or function. Modifiers and helpers can be bound too, and render in their own shape.
 
 ```gts
 export interface YieldsInvokables {
