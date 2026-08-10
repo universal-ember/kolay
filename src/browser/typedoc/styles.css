@@ -9,6 +9,7 @@
  *   --kolay-typedoc-param        function parameter names
  *   --kolay-typedoc-punctuation  structure (: ( ) => | < > ,)
  *   --kolay-typedoc-comment      doc comments rendered inside type shapes
+ *   --kolay-typedoc-kind         kind labels (Component, Modifier, Helper, Function)
  *
  * Reading model:
  *
@@ -58,6 +59,39 @@
 .typedoc__unknown {
   display: inline;
   font-family: var(--pico-font-family-monospace, monospace);
+}
+
+/*
+ * Not types — labels. One says what the thing *is* (and stands in for a Glint
+ * wrapper's name); the other says the signature is already on the page, above.
+ * Both read as annotations rather than as tokens in the type expression.
+ */
+.typedoc__recursive,
+.typedoc__kind {
+  display: inline;
+  width: fit-content;
+  border: 1px solid color-mix(in oklab, currentColor 30%, transparent);
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, currentColor 6%, transparent);
+  font-family: var(--pico-font-family-monospace, monospace);
+  font-size: 0.65em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 0 0.3em;
+  padding: 0.05em 0.4em;
+  vertical-align: 0.1em;
+}
+
+.typedoc__kind {
+  color: var(--kolay-typedoc-kind, light-dark(#953800, #ffa657));
+}
+
+.typedoc__recursive {
+  color: var(--kolay-typedoc-comment, var(--pico-muted-color, currentColor));
+  border-style: dashed;
+  background: none;
 }
 
 /* ---------------------------------------------------------------- *
@@ -360,6 +394,18 @@ section {
   width: auto;
 }
 
+.typedoc__signature-root {
+  display: contents;
+}
+
+/* a name, what it is, and whether it's already been rendered -- one unit */
+.typedoc__invokable {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.15em;
+}
+
 /* the < > , between type arguments; tokens inside re-color themselves */
 .typedoc__reference__typeArguments {
   color: var(--kolay-typedoc-punctuation, light-dark(#59636e, #9198a1));
@@ -411,6 +457,10 @@ section {
 
 .typedoc__function__close {
   margin: 0 0.25rem;
+}
+
+.typedoc__kind + .typedoc__function__open {
+  margin-left: 0.3em;
 }
 
 .typedoc__function__parameter__name {
@@ -657,10 +707,80 @@ section {
  * ---------------------------------------------------------------- */
 
 .typedoc__nested-signature {
-  display: block;
-  margin: 0.15rem 0 0.15rem 0.25rem;
-  padding-left: 0.9rem;
-  border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
+  /*
+   * Closed, it is one more token on the line it belongs to: no box of its
+   * own, no indent, nothing but the summary. Opening it is what earns the
+   * indent and the guide line down the side of the signature.
+   *
+   * `border` and `padding` are zeroed rather than left unset: a host theme
+   * (pico, say) styles <details> as an accordion, which draws a rule across
+   * the width of the page under every one of these.
+   */
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  &[open] {
+    display: block;
+    margin: 0.15rem 0 0.15rem 0.25rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
+  }
+
+  /* the name and kind of the thing, and the control that opens its signature */
+  > summary {
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.15em;
+    width: fit-content;
+    margin: 0;
+    padding: 0;
+    border: none;
+    list-style: none;
+    color: var(--kolay-typedoc-comment, var(--pico-muted-color, currentColor));
+
+    /*
+     * Whether a signature can be opened says nothing about how big its name
+     * is -- but a host theme (pico, say) sets <summary> up as a heading, and
+     * the chips size in `em`, so the label would grow just for being one.
+     */
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    /* an explicit marker: the default one lands after the chips */
+    &::before {
+      content: "▸";
+      font-size: 0.75em;
+      line-height: 1;
+    }
+
+    /* a host theme (pico, say) may float a chevron of its own in here */
+    &::after {
+      display: none;
+    }
+
+    &:hover .typedoc__reference__name {
+      background: color-mix(in oklab, currentColor 14%, transparent);
+    }
+  }
+
+  &[open] > summary::before {
+    content: "▾";
+  }
+
+  > .typedoc__nested-signature__body {
+    padding-top: 0.15rem;
+  }
 
   section {
     margin: 0;
@@ -718,9 +838,11 @@ section {
     margin: 0;
   }
 
+  /* the guide line stays: it's what ties a block to what it yields */
   .typedoc__property {
     padding: 0 0 0 0.9rem;
     border: none;
+    border-left: 1px dashed color-mix(in oklab, currentColor 25%, transparent);
   }
 
   .typedoc__component-signature__block .typedoc-rendered-comment {

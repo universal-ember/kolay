@@ -134,6 +134,62 @@ export const TemplateOnlyD: TOC<{
 </fieldset>
 
 <fieldset>
+  <summary>Yielded components (`WithBoundArgs`)</summary>
+
+`WithBoundArgs` names the args a consumer *cannot* pass, so the bound component renders as its own signature, minus those args. One that leads back to the signature it appears in is marked `recursive`.
+
+```gts
+export type ClassC = ComponentLike<SignatureC>;
+
+export interface SignatureC {
+  Element: HTMLDivElement;
+  Args: ArgsC;
+  Blocks: {
+    namedBlockC: [WithBoundArgs<typeof ClassA, 'foo' | 'bar'>];
+    namedBlockD: [WithBoundArgs<ClassC, 'foo' | 'bar'>];
+    namedBlockE: [WithBoundArgs<typeof ClassA, 'foo'>];
+  };
+}
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='SignatureC'
+  @package='kolay'
+/>
+
+</fieldset>
+
+<fieldset>
+  <summary>Yielded modifiers and helpers</summary>
+
+Anything yielded is labelled with what it *is* -- component, modifier, helper, or function. Modifiers and helpers can be bound too, and render in their own shape.
+
+```gts
+export interface YieldsInvokables {
+  Blocks: {
+    default: [
+      component: ComponentLike<SignatureA>,
+      modifier: ModifierLike<ModifierSignatureA>,
+      helper: HelperLike<ESignature>,
+      boundComponent: WithBoundArgs<typeof ClassA, 'foo'>,
+      boundModifier: WithBoundArgs<typeof functionModifierC, 'invert'>,
+      boundHelper: WithBoundArgs<typeof helperLikeB, 'optional'>,
+      onChange: (value: string) => void,
+    ];
+  };
+}
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='YieldsInvokables'
+  @package='kolay'
+/>
+
+</fieldset>
+
+<fieldset>
   <summary>Union Type (Discriminated Union)</summary>
 
 A component signature can be a discriminated union to express multiple usage modes. Each variant is rendered separately.

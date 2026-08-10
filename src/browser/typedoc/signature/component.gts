@@ -9,9 +9,9 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { ProjectReflection, Reflection, SomeType } from 'typedoc';
 
-type SingleSignature = { Element: any; Args: any; Blocks: any };
-type UnionSignature = { variants: SingleSignature[] };
-type SignatureResult = SingleSignature | UnionSignature;
+export type SingleSignature = { Element: any; Args: any; Blocks: any; Return: any };
+export type UnionSignature = { variants: SingleSignature[] };
+export type SignatureResult = SingleSignature | UnionSignature;
 
 function getSignatureType(info: Reflection, project: ProjectReflection) {
   /**
@@ -73,12 +73,14 @@ function getSignatureFromType(type: Reflection): SingleSignature | undefined {
   const Element = findChildDeclaration(type, 'Element');
   const Args = findChildDeclaration(type, 'Args');
   const Blocks = findChildDeclaration(type, 'Blocks');
+  // components don't have one -- helpers, which share this shape, do
+  const Return = findChildDeclaration(type, 'Return');
 
-  const hasAny = Element || Args || Blocks;
+  const hasAny = Element || Args || Blocks || Return;
 
   if (!hasAny) return;
 
-  return { Element, Args, Blocks };
+  return { Element, Args, Blocks, Return };
 }
 
 export function getSignature(
@@ -120,8 +122,23 @@ export function getSignature(
   return getSignatureFromType(type);
 }
 
-function isUnionSignature(info: SignatureResult | undefined): info is UnionSignature {
+export function isUnionSignature(info: SignatureResult | undefined): info is UnionSignature {
   return info !== undefined && 'variants' in info;
+}
+
+/**
+ * The declaration a signature is read from. Different types can lead to the
+ * same one -- `SignatureC`, `ComponentLike<SignatureC>`, and
+ * `WithBoundArgs<ClassC, ...>` all do -- which is what makes it usable as the
+ * identity of a signature, for spotting one that refers back to itself.
+ */
+export function signatureSource(
+  info: Reflection | undefined,
+  project: ProjectReflection
+): Reflection | undefined {
+  if (!info) return;
+
+  return getSignatureType(info, project) ?? undefined;
 }
 
 export const ComponentSignature: TOC<{
@@ -141,16 +158,26 @@ export const ComponentSignature: TOC<{
   };
 }> = <template>
   <Load @package={{@package}} @module={{@module}} @name={{@name}} as |declaration project|>
-    {{#let (getSignature declaration project) as |info|}}
-      {{#if (isUnionSignature info)}}
-        {{#each info.variants as |variant|}}
-          <div class='typedoc__union-variant'>
-            <ComponentDeclaration @signature={{variant}} />
-          </div>
-        {{/each}}
-      {{else}}
-        <ComponentDeclaration @signature={{info}} />
-      {{/if}}
+    {{#let
+      (getSignature declaration project) (signatureSource declaration project)
+      as |info source|
+    }}
+      {{!
+        Marks the signature being documented, so that a type further down
+        that leads back to it renders as a reference to what is already on
+        the page, rather than repeating it.
+      }}
+      <div class='typedoc__signature-root' data-typedoc-signature={{source.id}}>
+        {{#if (isUnionSignature info)}}
+          {{#each info.variants as |variant|}}
+            <div class='typedoc__union-variant'>
+              <ComponentDeclaration @signature={{variant}} />
+            </div>
+          {{/each}}
+        {{else}}
+          <ComponentDeclaration @signature={{info}} />
+        {{/if}}
+      </div>
     {{/let}}
   </Load>
 </template>;

@@ -60,7 +60,7 @@ export const Args: TOC<{
   {{/if}}
 </template>;
 
-function listifyArgs(info: DeclarationReflection | Reflection): any[] {
+export function listifyArgs(info: DeclarationReflection | Reflection): any[] {
   if (!info) return [];
 
   if (Array.isArray(info)) {
