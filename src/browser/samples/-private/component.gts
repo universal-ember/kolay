@@ -60,9 +60,6 @@ export interface SignatureC {
     namedBlockB: [boolean];
     namedBlockC: [WithBoundArgs<typeof ClassA, 'foo' | 'bar'>];
     namedBlockD: [WithBoundArgs<ClassC, 'foo' | 'bar'>];
-    /**
-     * Only `foo` is bound, so `bar` is still the consumer's to pass.
-     */
     namedBlockE: [WithBoundArgs<typeof ClassA, 'foo'>];
   };
 }
