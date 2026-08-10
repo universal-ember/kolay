@@ -6,6 +6,30 @@ import { ComponentSignature } from 'kolay';
 
 import { setupKolay } from 'kolay/test-support';
 
+/**
+ * The rendered `<:name>` block of the signature under test, so that
+ * assertions can be scoped to it. Nested signatures render blocks of their
+ * own -- those aren't what a test asks for by name.
+ */
+function block(name: string): Element {
+  const blocks = [...document.querySelectorAll('.typedoc__component-signature__block')].filter(
+    (el) => !el.closest('.typedoc__nested-signature')
+  );
+  const found = blocks.find(
+    (el) => el.querySelector('.typedoc__name')?.textContent?.trim() === `<:${name}>`
+  );
+
+  if (!found) {
+    throw new Error(
+      `Could not find a rendered <:${name}> block. Found: ${blocks
+        .map((el) => el.querySelector('.typedoc__name')?.textContent?.trim())
+        .join(', ')}`
+    );
+  }
+
+  return found;
+}
+
 module('<ComponentSignature>', function (hooks) {
   setupRenderingTest(hooks);
   setupKolay(hooks);
@@ -154,9 +178,62 @@ module('<ComponentSignature>', function (hooks) {
     assert.dom().containsText('Blocks');
     assert.dom().containsText(':namedBlockA');
     assert.dom().containsText(':namedBlockB');
-    assert.dom().containsText('WithBoundArgs < ClassA');
-    assert.dom().containsText('WithBoundArgs < ClassC');
-    assert.dom().containsText('ClassA');
+
+    // WithBoundArgs is a Glint implementation detail -- the bound components
+    // are rendered as themselves, minus the args that are already bound
+    assert.dom().doesNotContainText('WithBoundArgs');
+    assert.dom(block('namedBlockC')).containsText('ClassA');
+    assert.dom(block('namedBlockD')).containsText('ClassC');
+  });
+
+  test('bound args are omitted from the bound component signature', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="ClassC"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    // <ClassA> has @foo and @bar -- namedBlockC binds both of them
+    assert.dom(block('namedBlockC')).doesNotContainText('@foo');
+    assert.dom(block('namedBlockC')).doesNotContainText('@bar');
+    assert.dom(block('namedBlockC')).doesNotContainText('Arguments');
+
+    // ... and namedBlockE binds only @foo
+    assert.dom(block('namedBlockE')).containsText('Arguments');
+    assert.dom(block('namedBlockE')).containsText('@bar');
+    assert.dom(block('namedBlockE')).doesNotContainText('@foo');
+
+    // the rest of the bound component's signature is still rendered
+    assert.dom(block('namedBlockE')).containsText('HTMLDivElement');
+    assert.dom(block('namedBlockE')).containsText(':namedBlockA');
+  });
+
+  test('components that yield bound copies of each other stop expanding', async function (assert) {
+    await render(
+      <template>
+        <ComponentSignature
+          @module="declarations/browser/samples/-private"
+          @name="Ping"
+          @package="kolay"
+        />
+      </template>
+    );
+
+    const yielded = block('default');
+
+    // <Pong> is expanded, without the @ping it was given
+    assert.dom(yielded).containsText('Pong');
+    assert.dom(yielded).containsText('@pong');
+    assert.dom(yielded).doesNotContainText('@ping');
+
+    // ... and the <Pong> that the yielded <Ping> yields is named,
+    // but not expanded again -- <Pong> is already an ancestor of it
+    assert.dom(yielded).containsText('Ping');
+    assert.dom('[data-typedoc-expanded]', yielded).exists({ count: 2 });
   });
 
   test('template-only:reference', async function (assert) {
@@ -238,6 +315,10 @@ module('<ComponentSignature>', function (hooks) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     await waitUntil(() => (this as any).element?.textContent?.includes('Arguments'));
     assert.dom().containsText('first DefaultClassA');
-    assert.dom().containsText('WithBoundArgs < DefaultClassA "foo" >');
+
+    // DefaultClassA isn't exported, so it has no documented signature to
+    // render -- but the WithBoundArgs wrapper is still not worth showing
+    assert.dom(block('namedBlockB')).containsText('DefaultClassA');
+    assert.dom().doesNotContainText('WithBoundArgs');
   });
 });

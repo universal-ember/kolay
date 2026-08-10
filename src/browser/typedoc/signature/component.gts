@@ -9,9 +9,9 @@ import { Element } from './element.gts';
 import type { TOC } from '@ember/component/template-only';
 import type { ProjectReflection, Reflection, SomeType } from 'typedoc';
 
-type SingleSignature = { Element: any; Args: any; Blocks: any };
-type UnionSignature = { variants: SingleSignature[] };
-type SignatureResult = SingleSignature | UnionSignature;
+export type SingleSignature = { Element: any; Args: any; Blocks: any };
+export type UnionSignature = { variants: SingleSignature[] };
+export type SignatureResult = SingleSignature | UnionSignature;
 
 function getSignatureType(info: Reflection, project: ProjectReflection) {
   /**
@@ -120,7 +120,7 @@ export function getSignature(
   return getSignatureFromType(type);
 }
 
-function isUnionSignature(info: SignatureResult | undefined): info is UnionSignature {
+export function isUnionSignature(info: SignatureResult | undefined): info is UnionSignature {
   return info !== undefined && 'variants' in info;
 }
 

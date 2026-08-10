@@ -14,6 +14,7 @@ import {
   ComponentDeclaration,
   getSignature as getComponentSignature,
 } from './signature/component.gts';
+import { isWithBoundArgs, WithBoundArgs } from './signature/with-bound-args.gts';
 import { Load } from './utils.gts';
 
 import type { TOC } from '@ember/component/template-only';
@@ -397,13 +398,16 @@ const Literal: TOC<{ Args: { info: LiteralType } }> = <template>
 
 export const Type: TOC<{ Args: { info: SomeType } }> = <template>
   <Consume @key='project' as |project|>
-    {{#let (getComponentSignature @info.declaration project) as |maybe|}}
+    {{#let (getComponentSignature @info.declaration project.data) as |maybe|}}
       {{#if maybe}}
         {{! a component signature in a type position renders compactly —
             the class scopes the code-like styling }}
         <span class='typedoc__nested-signature'>
           <ComponentDeclaration @signature={{maybe}} />
         </span>
+      {{else if (isWithBoundArgs @info)}}
+        {{! the bound component's signature, minus the args already bound }}
+        <WithBoundArgs @info={{@info}} @project={{project.data}} />
       {{else if (isReference @info)}}
         {{! @glint-expect-error }}
         <Reference @info={{@info}} />

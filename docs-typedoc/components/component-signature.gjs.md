@@ -134,6 +134,35 @@ export const TemplateOnlyD: TOC<{
 </fieldset>
 
 <fieldset>
+  <summary>Yielded components (`WithBoundArgs`)</summary>
+
+`WithBoundArgs<typeof ClassA, 'foo'>` describes what is left of `<ClassA>` after `@foo` has already been passed -- it names the args that a consumer *cannot* pass, which is the inverse of what a reader needs.
+
+So these render as the bound component's own signature, without the args that are already bound -- `namedBlockC` binds every arg of `<ClassA>`, `namedBlockE` binds only `@foo`, leaving `@bar`.
+
+Components that aren't part of the generated docs (not exported, or from a package that isn't documented) have no signature to render, so they are only named.
+
+```gts
+export interface SignatureC {
+  Element: HTMLDivElement;
+  Args: ArgsC;
+  Blocks: {
+    namedBlockC: [WithBoundArgs<typeof ClassA, 'foo' | 'bar'>];
+    namedBlockD: [WithBoundArgs<ClassC, 'foo' | 'bar'>];
+    namedBlockE: [WithBoundArgs<typeof ClassA, 'foo'>];
+  };
+}
+```
+
+<ComponentSignature
+  @module='declarations/browser/samples/-private'
+  @name='SignatureC'
+  @package='kolay'
+/>
+
+</fieldset>
+
+<fieldset>
   <summary>Union Type (Discriminated Union)</summary>
 
 A component signature can be a discriminated union to express multiple usage modes. Each variant is rendered separately.

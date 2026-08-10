@@ -58,6 +58,10 @@ export interface SignatureC {
     namedBlockB: [boolean];
     namedBlockC: [WithBoundArgs<typeof ClassA, 'foo' | 'bar'>];
     namedBlockD: [WithBoundArgs<ClassC, 'foo' | 'bar'>];
+    /**
+     * Only `foo` is bound, so `bar` is still the consumer's to pass.
+     */
+    namedBlockE: [WithBoundArgs<typeof ClassA, 'foo'>];
   };
 }
 
@@ -161,6 +165,29 @@ export type UnionSignature =
         content: [];
       };
     };
+
+/**
+ * Components may yield bound copies of each other -- rendering the bound
+ * signatures has to stop somewhere.
+ */
+export class Ping extends Component<{
+  Args: {
+    foo: number;
+  };
+  Blocks: {
+    default: [WithBoundArgs<typeof Pong, 'ping'>];
+  };
+}> {}
+
+export class Pong extends Component<{
+  Args: {
+    ping: string;
+    pong: string;
+  };
+  Blocks: {
+    default: [WithBoundArgs<typeof Ping, 'foo'>];
+  };
+}> {}
 
 export default class ClassE extends Component<{
   Element: HTMLDivElement;
