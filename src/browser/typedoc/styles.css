@@ -707,16 +707,26 @@ section {
  * ---------------------------------------------------------------- */
 
 .typedoc__nested-signature {
-  /* closed, it is one more token on the line it belongs to; open, it owns
-     the width it needs for a signature */
+  /*
+   * Closed, it is one more token on the line it belongs to: no box of its
+   * own, no indent, nothing but the summary. Opening it is what earns the
+   * indent and the guide line down the side of the signature.
+   *
+   * `border` and `padding` are zeroed rather than left unset: a host theme
+   * (pico, say) styles <details> as an accordion, which draws a rule across
+   * the width of the page under every one of these.
+   */
   display: inline-block;
   vertical-align: top;
-  margin: 0.15rem 0 0.15rem 0.25rem;
-  padding-left: 0.9rem;
-  border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
+  margin: 0;
+  padding: 0;
+  border: none;
 
   &[open] {
     display: block;
+    margin: 0.15rem 0 0.15rem 0.25rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid color-mix(in oklab, currentColor 15%, transparent);
   }
 
   /* the name and kind of the thing, and the control that opens its signature */
@@ -727,6 +737,9 @@ section {
     flex-wrap: wrap;
     gap: 0.15em;
     width: fit-content;
+    margin: 0;
+    padding: 0;
+    border: none;
     list-style: none;
     color: var(--kolay-typedoc-comment, var(--pico-muted-color, currentColor));
 
@@ -753,11 +766,6 @@ section {
 
   &[open] > summary::before {
     content: "▾";
-  }
-
-  /* closed, it is a single line -- the guide line shouldn't outrun it */
-  &:not([open]) {
-    border-left-color: transparent;
   }
 
   > .typedoc__nested-signature__body {
