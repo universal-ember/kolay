@@ -38,7 +38,7 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
 
 <template>
   <header style="display: flex; align-items: baseline; gap: 1rem;">
-    <GroupNav />
+    <GroupNav @homeName="Docs Home" />
   </header>
 
   <div class="big-layout">

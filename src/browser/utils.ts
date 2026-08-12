@@ -4,6 +4,14 @@ import { getOwner } from '@ember/owner';
 import type { Page, PageTree } from '../types.ts';
 import type Owner from '@ember/owner';
 
+/**
+ * The co-located pages' group (app/templates, src/templates), as the build
+ * names it (`displayName` in build/plugins/setup.js's `homeSource`). Its
+ * pages live in the root URL space rather than under the group's name, so
+ * its nav link is the app's root.
+ */
+export const HOME_GROUP = 'Home';
+
 export function isPageTree(x: Page | PageTree): x is PageTree {
   return 'pages' in x;
 }

@@ -2,10 +2,6 @@ import { currentURL, render, visit } from "@ember/test-helpers";
 import { module, test } from "qunit";
 import { setupApplicationTest, setupRenderingTest } from "ember-qunit";
 
-// build-time resolution of a demos() alias: this import is compiled
-// like any other module in the app graph
-import Hello from "#demos/kit/hello";
-
 import { docsManager } from "kolay";
 import {
   manifest as demosManifest,
@@ -13,6 +9,10 @@ import {
   name as demosName,
 } from "virtual:kolay/docs/demos";
 import { meta as guidesMeta } from "virtual:kolay/docs/guides";
+
+// build-time resolution of a demos() alias: this import is compiled
+// like any other module in the app graph
+import Hello from "#demos/kit/hello";
 
 module("Multiple docs routes", function (hooks) {
   setupApplicationTest(hooks);
@@ -68,6 +68,19 @@ module("Multiple docs routes", function (hooks) {
 
     assert.dom("[data-page-error]").doesNotExist();
     assert.dom("h1").containsText("Welcome home");
+  });
+
+  test("the co-located pages' nav link is the app root, and @homeName names it", async function (assert) {
+    await visit("/welcome/home.md");
+
+    assert
+      .dom('header nav a[href="/"]')
+      .exists("links at the root, where the co-located pages live")
+      .hasText("Docs Home", "and @homeName is what names it")
+      .hasClass("active", "and reads active while reading one of them");
+    assert
+      .dom('header nav a[href="/Home"]')
+      .doesNotExist("not the group name: no page is served under it");
   });
 
   test("a .md page renders from the scoped /help mount (group: guides)", async function (assert) {
