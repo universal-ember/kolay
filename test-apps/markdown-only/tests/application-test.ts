@@ -1,6 +1,6 @@
+import { visit } from "@ember/test-helpers";
 import { module, skip, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
-import { visit } from "@ember/test-helpers";
 
 import { visitAllLinks } from "@universal-ember/test-support";
 

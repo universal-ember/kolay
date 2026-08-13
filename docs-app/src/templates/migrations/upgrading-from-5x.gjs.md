@@ -96,11 +96,11 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 
 `setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
 
-## `Collection` is now `PageTree`
+## `Collection` is now `PageTree`/`section`
 
-A node in a page tree — the thing built from a directory of markdown files — was called a `Collection`. It is now a **`PageTree`**, which frees the word "collection" for the navigation-level concept of one group collecting others.
+A node in a page tree (the object built from a directory of markdown files) was previously called a `Collection`. It is now called a **`PageTree`** in order to free up the word "collection" for the navigation-level concept of one group "collecting" others.
 
-The type and the type guard rename directly:
+For the type and type guard, this is a direct rename:
 
 ```diff
 - import { isCollection } from 'kolay';
@@ -112,7 +112,7 @@ The type and the type guard rename directly:
 + if (isPageTree(node)) { … }
 ```
 
-`<PageNav />`'s named block moves too, but **not** to `pageTree` — it is now `<:section>`:
+Similarly, `<PageNav />`'s `<:collection>` named block is now called `<:section>`:
 
 ```diff
   <PageNav>
@@ -133,9 +133,9 @@ The type and the type guard rename directly:
   </PageNav>
 ```
 
-The block names what you are rendering — a section of the nav — while the type names the data it carries, a `PageTree`. They differ on purpose: a section is usually a folder of markdown files, but a group that collects other groups contributes one section per collected group, and those are not folders anywhere on disk. Both arrive through this block, and `x.section` is a `PageTree` either way.
+This block is named after what you are rendering — a "section" of the nav — while the type names the data itself, a `PageTree`. They differ on purpose: a section is usually a folder of markdown files, but once we merge a feature allowing groups to "collect" other groups, the section will be made up of this collection. In the example above, `x.section` is a `PageTree` either way.
 
-This block is the change most likely to break a build, and it breaks quietly: an unrenamed `<:collection>` block is simply never invoked, so section headings disappear from the nav instead of raising an error.
+Renaming a named block would normally break quietly, since an unrecognized block is never invoked and its headings would just stop rendering. `<PageNav />` asserts in development when it is still given a `:collection` block, so this surfaces as an error rather than a silently emptier nav. The assertion is stripped from production builds.
 
 `getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 

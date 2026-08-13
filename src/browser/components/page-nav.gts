@@ -1,4 +1,5 @@
 import Component from '@glimmer/component';
+import { assert } from '@ember/debug';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
@@ -10,6 +11,18 @@ import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
+
+/**
+ * v5 named this block `:collection`. Renaming it is a silent break — an
+ * unrecognized block is simply never invoked, so section headings vanish
+ * rather than erroring — so say so, loudly, in development.
+ */
+const blockWasRenamed = () => {
+  assert(
+    '<PageNav /> has no `:collection` block. It is now called `:section`, and yields `section` rather than `collection`. See "Upgrading from 5.x" in the migration guide.',
+    false
+  );
+};
 
 type InternalPageYield = {
   page: Page;
@@ -127,6 +140,7 @@ export class PageNav extends Component<{
    */
   <template>
     {{!log this.docs}}
+    {{#if (has-block 'collection')}}{{blockWasRenamed}}{{/if}}
     <nav aria-label='Selected Group' ...attributes>
       <Pages @item={{this.docs.tree}}>
 
