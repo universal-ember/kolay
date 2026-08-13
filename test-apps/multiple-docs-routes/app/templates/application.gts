@@ -23,15 +23,15 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
           {{nameFor x.page}}
         </x.Link>
       </:page>
-      <:collection as |x|>
+      <:section as |x|>
         {{#if x.index}}
           <x.index.Link>
-            {{x.collection.name}}
+            {{x.section.name}}
           </x.index.Link>
         {{else}}
-          {{x.collection.name}}
+          {{x.section.name}}
         {{/if}}
-      </:collection>
+      </:section>
     </PageNav>
   </aside>
 </template>;

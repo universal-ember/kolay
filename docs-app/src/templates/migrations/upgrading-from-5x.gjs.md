@@ -96,6 +96,49 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 
 `setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
 
+## `Collection` is now `PageTree`/`section`
+
+A node in a page tree (the object built from a directory of markdown files) was previously called a `Collection`. It is now called a **`PageTree`** in order to free up the word "collection" for the navigation-level concept of one group "collecting" others.
+
+For the type and type guard, this is a direct rename:
+
+```diff
+- import { isCollection } from 'kolay';
+- import type { Collection } from 'kolay';
++ import { isPageTree } from 'kolay';
++ import type { PageTree } from 'kolay';
+
+- if (isCollection(node)) { … }
++ if (isPageTree(node)) { … }
+```
+
+Similarly, `<PageNav />`'s `<:collection>` named block is now called `<:section>`:
+
+```diff
+  <PageNav>
+    <:page as |x|>
+      <x.Link>{{x.page.name}}</x.Link>
+    </:page>
+-   <:collection as |x|>
++   <:section as |x|>
+      {{#if x.index}}
+-       <x.index.Link>{{x.collection.name}}</x.index.Link>
++       <x.index.Link>{{x.section.name}}</x.index.Link>
+      {{else}}
+-       {{x.collection.name}}
++       {{x.section.name}}
+      {{/if}}
+-   </:collection>
++   </:section>
+  </PageNav>
+```
+
+This block is named after what you are rendering — a "section" of the nav — while the type names the data itself, a `PageTree`. They differ on purpose: a section is usually a folder of markdown files, but once we merge a feature allowing groups to "collect" other groups, the section will be made up of this collection. In the example above, `x.section` is a `PageTree` either way.
+
+To assist in this migration, `<PageNav />` will `assert` in development when it is still given a `:collection` block to remind you to migrate to `:section`. The assertion is stripped from production builds.
+
+`getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
+
 ## Removed types
 
 `Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.

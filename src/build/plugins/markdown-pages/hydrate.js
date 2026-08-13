@@ -40,7 +40,7 @@ export async function reshape({ paths, configs, cwd, prefix, base }) {
  * @param {Root} tree
  * @param {string} prefix app-relative group prefix ('/Documentation' or '/')
  * @param {string} base the app's base URL / rootURL
- * @param {string | null} [parentAppRelative] the containing collection's appRelativePath (null at the root)
+ * @param {string | null} [parentAppRelative] the containing folder's appRelativePath (null at the root)
  */
 export function addPaths(tree, prefix, base, parentAppRelative = null) {
   if (!('pages' in tree)) {
@@ -61,7 +61,7 @@ export function addPaths(tree, prefix, base, parentAppRelative = null) {
     return tree;
   }
 
-  // a collection: `tree.path` stays a bare segment (e.g. 'sub-folder');
+  // a folder: `tree.path` stays a bare segment (e.g. 'sub-folder');
   // appRelativePath locates it in URL space
   tree.appRelativePath = parentAppRelative === null ? prefix : join(parentAppRelative, tree.path);
 
@@ -110,7 +110,7 @@ export function addInTheFirstPage(tree) {
 }
 
 /**
- * @param {import('./types.ts').Collection} tree
+ * @param {import('./types.ts').PageTree} tree
  * @return {import('./types.ts').Page[]}
  */
 export function getList(tree) {

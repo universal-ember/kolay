@@ -1,15 +1,23 @@
 import Component from '@glimmer/component';
+import { assert } from '@ember/debug';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
 import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isCollection, isIndex } from '../utils.ts';
+import { getIndexPage, isIndex, isPageTree } from '../utils.ts';
 
-import type { Collection, Page } from '../../types.ts';
+import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
+
+const blockWasRenamed = () => {
+  assert(
+    '<PageNav /> has no `:collection` block. It is now called `:section`, and yields `section` rather than `collection`. See "Upgrading from 5.x" in the migration guide.',
+    false
+  );
+};
 
 type InternalPageYield = {
   page: Page;
@@ -67,8 +75,12 @@ export class PageNav extends Component<{
       },
     ];
     /**
-     * If provided, this block will yield back the collection for customizing the name.
-     * By default the `name` property will be used or a link will be rendered if an index page is present..
+     * If provided, this block will yield back the section for customizing the
+     * name. By default the `name` property will be used or a link will be
+     * rendered if an index page is present..
+     *
+     * A section is a `PageTree`: the pages under one folder of markdown
+     * files, plus any sections nested within it.
      *
      * Example:
      * ```gjs live preview
@@ -77,24 +89,24 @@ export class PageNav extends Component<{
      *
      * <template>
      *   <PageNav>
-     *     <:collection as |x|>
+     *     <:section as |x|>
      *       <pre>{{JSON.stringify x null 3}}</pre>
      *       {{#if x.index}}
      *         <x.index.Link>
-     *           {{sentenceCase x.collection.name}}
+     *           {{sentenceCase x.section.name}}
      *         </x.index.Link>
      *       {{else}}
-     *         {{sentenceCase x.collection.name}}
+     *         {{sentenceCase x.section.name}}
      *       {{/if}}
-     *     </:collection>
+     *     </:section>
      *   </PageNav>
      *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */
-    collection: [
+    section: [
       {
-        collection: Collection;
+        section: PageTree;
         /**
          * If there is an index page, it'll be provided here,
          * and omitted from the :page block.
@@ -122,6 +134,7 @@ export class PageNav extends Component<{
    */
   <template>
     {{!log this.docs}}
+    {{#if (has-block 'collection')}}{{blockWasRenamed}}{{/if}}
     <nav aria-label='Selected Group' ...attributes>
       <Pages @item={{this.docs.tree}}>
 
@@ -135,19 +148,19 @@ export class PageNav extends Component<{
           {{/if}}
         </:page>
 
-        <:collection as |c|>
-          {{#if (has-block 'collection')}}
-            {{yield c to='collection'}}
+        <:section as |c|>
+          {{#if (has-block 'section')}}
+            {{yield c to='section'}}
           {{else}}
             {{#if c.index}}
               <c.index.Link>
                 {{c.index.page.name}}
               </c.index.Link>
             {{else}}
-              {{c.collection.name}}
+              {{c.section.name}}
             {{/if}}
           {{/if}}
-        </:collection>
+        </:section>
       </Pages>
     </nav>
   </template>
@@ -157,48 +170,48 @@ const not = (x: unknown) => !x;
 
 const Pages: TOC<{
   Args: {
-    item: Page | Collection;
+    item: Page | PageTree;
     activeClass?: string;
   };
   Blocks: {
     page: [InternalPageYield];
-    collection: [
+    section: [
       {
-        collection: Collection;
+        section: PageTree;
         index?: InternalPageYield;
       },
     ];
   };
 }> = <template>
-  {{#if (isCollection @item)}}
+  {{#if (isPageTree @item)}}
     <ul>
       {{#each @item.pages as |page|}}
         {{#if (not (isIndex page))}}
           <li>
-            {{#if (isCollection page)}}
+            {{#if (isPageTree page)}}
 
-              {{! index.md pages can make the whole collection clickable }}
+              {{! index.md pages can make the whole section clickable }}
               {{#let (getIndexPage page) as |indexPage|}}
                 {{#if indexPage}}
                   {{yield
                     (hash
-                      collection=page
+                      section=page
                       index=(hash
                         page=indexPage
                         Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
-                    to='collection'
+                    to='section'
                   }}
                 {{else}}
-                  {{yield (hash collection=page) to='collection'}}
+                  {{yield (hash section=page) to='section'}}
                 {{/if}}
               {{/let}}
             {{/if}}
 
             <Pages @item={{page}}>
               <:page as |p|>{{yield p to='page'}}</:page>
-              <:collection as |c|>{{yield c to='collection'}}</:collection>
+              <:section as |c|>{{yield c to='section'}}</:section>
             </Pages>
           </li>
         {{/if}}

@@ -11,7 +11,7 @@ import { betterSort } from './sort.js';
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs; when given, configs are taken from here instead of read from disk (the paths may not be resolvable against cwd, e.g. the stripped app/src/templates prefix)
  *
- * @returns {Promise<import('./types.ts').Collection>}
+ * @returns {Promise<import('./types.ts').PageTree>}
  */
 export async function parse(paths, cwd, providedConfigs) {
   const docs = await gather(paths, cwd, providedConfigs);
@@ -57,7 +57,7 @@ export function cleanSegment(segment) {
  * @param {import('./types.ts').GatheredDocs} docs
  */
 export function build(docs) {
-  /** @type {import('./types.ts').Collection} */
+  /** @type {import('./types.ts').PageTree} */
   const result = { name: 'root', pages: [], path: 'root' };
 
   for (let { mdPath, config } of docs) {
@@ -78,8 +78,8 @@ export function build(docs) {
     if (groups.length === 0) continue;
     if (!name) continue;
 
-    /** @type {import('./types.ts').Collection} */
-    let leafestCollection = result;
+    /** @type {import('./types.ts').PageTree} */
+    let leafestPageTree = result;
     let leafestGroupName;
     const groupStack = [];
 
@@ -87,13 +87,13 @@ export function build(docs) {
       groupStack.push(group);
 
       /** @type {any} */
-      let currentCollection = leafestCollection.pages.find(
+      let currentPageTree = leafestPageTree.pages.find(
         (page) => 'pages' in page && page.name === group
       );
 
-      if (!currentCollection) {
-        /** @type {import('./types.ts').Collection} */
-        currentCollection = {
+      if (!currentPageTree) {
+        /** @type {import('./types.ts').PageTree} */
+        currentPageTree = {
           path: group,
           /**
            * Since we sort on 'name' (above),
@@ -111,11 +111,11 @@ export function build(docs) {
           pages: [],
         };
 
-        preAddCheck(groupStack.join('/'), group, leafestCollection);
-        leafestCollection.pages.push(currentCollection);
+        preAddCheck(groupStack.join('/'), group, leafestPageTree);
+        leafestPageTree.pages.push(currentPageTree);
       }
 
-      leafestCollection = currentCollection;
+      leafestPageTree = currentPageTree;
       leafestGroupName = group;
     }
 
@@ -137,9 +137,9 @@ export function build(docs) {
       cleanedName,
     };
 
-    preAddCheck(mdPath, cleanedName, leafestCollection);
+    preAddCheck(mdPath, cleanedName, leafestPageTree);
 
-    leafestCollection.pages.push(pageInfo);
+    leafestPageTree.pages.push(pageInfo);
   }
 
   return result;
@@ -148,10 +148,10 @@ export function build(docs) {
 /**
  * @param {string} attemptedPath
  * @param {string} searchFor
- * @param {import('./types.ts').Collection} collection
+ * @param {import('./types.ts').PageTree} folder
  */
-function preAddCheck(attemptedPath, searchFor, collection) {
-  const matching = collection.pages.find((page) => stripExt(page.name) === searchFor);
+function preAddCheck(attemptedPath, searchFor, folder) {
+  const matching = folder.pages.find((page) => stripExt(page.name) === searchFor);
 
   if (matching) {
     const suggestion = stripExt(attemptedPath);
