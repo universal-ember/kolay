@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 
 import { isIndex } from 'kolay';
 
-import type { Collection, Page } from 'kolay';
+import type { Page, PageTree } from 'kolay';
 
 function page(path: string): Page {
   return {
@@ -14,7 +14,7 @@ function page(path: string): Page {
   };
 }
 
-function collection(path: string, pages: (Page | Collection)[]): Collection {
+function collection(path: string, pages: (Page | PageTree)[]): PageTree {
   return { path, appRelativePath: path, name: path, pages };
 }
 

@@ -4,9 +4,9 @@ import { service } from '@ember/service';
 
 import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isFolder, isIndex } from '../utils.ts';
+import { getIndexPage, isIndex, isPageTree } from '../utils.ts';
 
-import type { Folder, Page } from '../../types.ts';
+import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
@@ -77,16 +77,16 @@ export class PageNav extends Component<{
      *
      * <template>
      *   <PageNav>
-     *     <:folder as |x|>
+     *     <:pageTree as |x|>
      *       <pre>{{JSON.stringify x null 3}}</pre>
      *       {{#if x.index}}
      *         <x.index.Link>
-     *           {{sentenceCase x.folder.name}}
+     *           {{sentenceCase x.pageTree.name}}
      *         </x.index.Link>
      *       {{else}}
-     *         {{sentenceCase x.folder.name}}
+     *         {{sentenceCase x.pageTree.name}}
      *       {{/if}}
-     *     </:folder>
+     *     </:pageTree>
      *   </PageNav>
      *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
@@ -94,7 +94,7 @@ export class PageNav extends Component<{
      */
     folder: [
       {
-        folder: Folder;
+        folder: PageTree;
         /**
          * If there is an index page, it'll be provided here,
          * and omitted from the :page block.
@@ -135,7 +135,7 @@ export class PageNav extends Component<{
           {{/if}}
         </:page>
 
-        <:folder as |c|>
+        <:pageTree as |c|>
           {{#if (has-block 'folder')}}
             {{yield c to='folder'}}
           {{else}}
@@ -144,10 +144,10 @@ export class PageNav extends Component<{
                 {{c.index.page.name}}
               </c.index.Link>
             {{else}}
-              {{c.folder.name}}
+              {{c.pageTree.name}}
             {{/if}}
           {{/if}}
-        </:folder>
+        </:pageTree>
       </Pages>
     </nav>
   </template>
@@ -157,25 +157,25 @@ const not = (x: unknown) => !x;
 
 const Pages: TOC<{
   Args: {
-    item: Page | Folder;
+    item: Page | PageTree;
     activeClass?: string;
   };
   Blocks: {
     page: [InternalPageYield];
     folder: [
       {
-        folder: Folder;
+        folder: PageTree;
         index?: InternalPageYield;
       },
     ];
   };
 }> = <template>
-  {{#if (isFolder @item)}}
+  {{#if (isPageTree @item)}}
     <ul>
       {{#each @item.pages as |page|}}
         {{#if (not (isIndex page))}}
           <li>
-            {{#if (isFolder page)}}
+            {{#if (isPageTree page)}}
 
               {{! index.md pages can make the whole folder clickable }}
               {{#let (getIndexPage page) as |indexPage|}}
@@ -198,7 +198,7 @@ const Pages: TOC<{
 
             <Pages @item={{page}}>
               <:page as |p|>{{yield p to='page'}}</:page>
-              <:folder as |c|>{{yield c to='folder'}}</:folder>
+              <:pageTree as |c|>{{yield c to='folder'}}</:pageTree>
             </Pages>
           </li>
         {{/if}}

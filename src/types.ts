@@ -26,11 +26,11 @@ export interface Manifest {
   groups: {
     name: string;
     list: Page[];
-    tree: Folder;
+    tree: PageTree;
   }[];
 }
 
-export interface Folder {
+export interface PageTree {
   /**
    * The folder's own directory segment, e.g. 'sub-folder'.
    */
@@ -42,7 +42,7 @@ export interface Folder {
   appRelativePath: string;
   name: string;
   first?: string;
-  pages: (Folder | Page)[];
+  pages: (PageTree | Page)[];
   groupName?: never;
 }
 
@@ -77,7 +77,7 @@ export interface Page {
   href?: string;
 }
 
-export type Node = Page | Folder;
+export type Node = Page | PageTree;
 
 /**
  * @internal

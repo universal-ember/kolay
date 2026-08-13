@@ -1,6 +1,6 @@
-import { isFolder, samePagePath } from './utils.ts';
+import { isPageTree, samePagePath } from './utils.ts';
 
-import type { Folder, Page } from '../types.ts';
+import type { Page, PageTree } from '../types.ts';
 
 /**
  * Whether a manifest item is the currently visited page.
@@ -10,7 +10,7 @@ import type { Folder, Page } from '../types.ts';
  * params / hash, and treating paths with and without the `.md` extension as
  * the same page (both are visitable).
  *
- * For a `Folder`, this is true when any page within it (recursively) is
+ * For a `PageTree`, this is true when any page within it (recursively) is
  * active — useful for highlighting or expanding the branch of a nav tree that
  * contains the current page.
  *
@@ -21,8 +21,8 @@ import type { Folder, Page } from '../types.ts';
  * isActive(item, this.router.currentURL);
  * ```
  */
-export function isActive(item: Page | Folder, currentURL: string | null | undefined): boolean {
-  if (isFolder(item)) {
+export function isActive(item: Page | PageTree, currentURL: string | null | undefined): boolean {
+  if (isPageTree(item)) {
     return item.pages.some((child) => isActive(child, currentURL));
   }
 

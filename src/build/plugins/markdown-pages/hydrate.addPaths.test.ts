@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { addPaths } from './hydrate.js';
 
-import type { Folder } from '#types';
+import type { PageTree } from '#types';
 
 describe('addPaths', () => {
   test('adds base-prefixed paths and appRelativePaths', () => {
@@ -17,7 +17,7 @@ describe('addPaths', () => {
           cleanedName: 'foo',
         },
       ],
-    } as Folder;
+    } as PageTree;
 
     tree = addPaths(tree, '/Documentation', '/my-github-project/');
 
@@ -51,7 +51,7 @@ describe('addPaths', () => {
           cleanedName: 'foo',
         },
       ],
-    } as Folder;
+    } as PageTree;
 
     addPaths(tree, '/', '/');
 
@@ -85,7 +85,7 @@ describe('addPaths', () => {
           ],
         },
       ],
-    } as Folder;
+    } as PageTree;
 
     addPaths(tree, '/Documentation', '/prefix/');
 

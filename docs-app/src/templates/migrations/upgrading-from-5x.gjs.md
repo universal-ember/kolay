@@ -96,9 +96,9 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 
 `setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
 
-## `Collection` is now `Folder`
+## `PageTree` is now `PageTree`
 
-A node in a page tree — the thing built from a directory of markdown files — was called a `Collection`. It is now a **`Folder`**, so that "collection" is free to mean something else, and because that is what the docs already called these ("Sorting folders", and the utils page's own examples).
+A node in a page tree — the thing built from a directory of markdown files — was called a `PageTree`. It is now a **`PageTree`**, so that "collection" is free to mean something else, and because that is what the docs already called these ("Sorting folders", and the utils page's own examples).
 
 The type, the type guard, and `<PageNav />`'s named block all move together. The block is the one that will break a build:
 
@@ -108,30 +108,30 @@ The type, the type guard, and `<PageNav />`'s named block all move together. The
       <x.Link>{{x.page.name}}</x.Link>
     </:page>
 -   <:collection as |x|>
-+   <:folder as |x|>
++   <:pageTree as |x|>
       {{#if x.index}}
 -       <x.index.Link>{{x.collection.name}}</x.index.Link>
-+       <x.index.Link>{{x.folder.name}}</x.index.Link>
++       <x.index.Link>{{x.pageTree.name}}</x.index.Link>
       {{else}}
 -       {{x.collection.name}}
-+       {{x.folder.name}}
++       {{x.pageTree.name}}
       {{/if}}
 -   </:collection>
-+   </:folder>
++   </:pageTree>
   </PageNav>
 ```
 
 ```diff
-- import { isCollection } from 'kolay';
-- import type { Collection } from 'kolay';
-+ import { isFolder } from 'kolay';
-+ import type { Folder } from 'kolay';
+- import { isPageTree } from 'kolay';
+- import type { PageTree } from 'kolay';
++ import { isPageTree } from 'kolay';
++ import type { PageTree } from 'kolay';
 
-- if (isCollection(node)) { … }
-+ if (isFolder(node)) { … }
+- if (isPageTree(node)) { … }
++ if (isPageTree(node)) { … }
 ```
 
-`getIndexPage` keeps its name (it takes a `Folder` now), and `Node` is `Page | Folder`. The `Runtime/utilities/collection-utils` page is now `folder-utils`, with a redirect from the old URL.
+`getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
 ## Removed types
 

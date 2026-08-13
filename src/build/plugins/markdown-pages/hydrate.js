@@ -110,7 +110,7 @@ export function addInTheFirstPage(tree) {
 }
 
 /**
- * @param {import('./types.ts').Folder} tree
+ * @param {import('./types.ts').PageTree} tree
  * @return {import('./types.ts').Page[]}
  */
 export function getList(tree) {

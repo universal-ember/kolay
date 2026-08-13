@@ -1,4 +1,4 @@
-import type { Folder, Manifest, Page } from '../types.ts';
+import type { Manifest, Page, PageTree } from '../types.ts';
 import type { ComponentLike } from '@glint/template';
 
 /**
@@ -25,9 +25,11 @@ export interface DocsSourceMeta {
 export interface DocsGroupModule {
   name: string;
   /**
-   * The group's own manifest.
+   * The group's own manifest: its pages flat, and the root of its page
+   * tree — a `PageTree` named after the group, whose `pages` are the
+   * folders and pages one level in.
    */
-  manifest: { name: string; list: Page[]; tree: Folder };
+  manifest: { name: string; list: Page[]; tree: PageTree };
   /**
    * The source's meta: repository URL, repo-relative docs path, and
    * anything from the source root's `meta.jsonc`.

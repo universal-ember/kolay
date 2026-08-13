@@ -173,7 +173,7 @@ inline code \`<Portal @to="popover">\`
     const result = await mdToGJS(
       `# Heading
 
-<APIDocs @module="declarations/browser" @name="isFolder" @package="kolay" />`,
+<APIDocs @module="declarations/browser" @name="isPageTree" @package="kolay" />`,
       {
         compiler,
         id: 'test.gjs.md',
@@ -197,7 +197,7 @@ inline code \`<Portal @to="popover">\`
       import { Shadowed } from 'ember-primitives/components/shadowed';
       import { InViewport } from 'ember-primitives/viewport';
       export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="heading">Heading</h1>
-      <p><APIDocs @module="declarations/browser" @name="isFolder" @package="kolay" /></p>\`, {
+      <p><APIDocs @module="declarations/browser" @name="isPageTree" @package="kolay" /></p>\`, {
           eval () {
               return eval(arguments[0]);
           }

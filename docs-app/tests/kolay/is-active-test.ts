@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 
 import { isActive } from 'kolay';
 
-import type { Collection, Page } from 'kolay';
+import type { Page, PageTree } from 'kolay';
 
 /** As generated at build time: `path` carries the base, appRelativePath does not. */
 function page(appRelativePath: string, base = '/'): Page {
@@ -15,7 +15,7 @@ function page(appRelativePath: string, base = '/'): Page {
   };
 }
 
-function collection(appRelativePath: string, pages: (Page | Collection)[]): Collection {
+function collection(appRelativePath: string, pages: (Page | PageTree)[]): PageTree {
   return { path: appRelativePath, appRelativePath, name: appRelativePath, pages };
 }
 
