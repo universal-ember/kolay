@@ -135,7 +135,7 @@ Similarly, `<PageNav />`'s `<:collection>` named block is now called `<:section>
 
 This block is named after what you are rendering — a "section" of the nav — while the type names the data itself, a `PageTree`. They differ on purpose: a section is usually a folder of markdown files, but once we merge a feature allowing groups to "collect" other groups, the section will be made up of this collection. In the example above, `x.section` is a `PageTree` either way.
 
-Renaming a named block would normally break quietly, since an unrecognized block is never invoked and its headings would just stop rendering. `<PageNav />` asserts in development when it is still given a `:collection` block, so this surfaces as an error rather than a silently emptier nav. The assertion is stripped from production builds.
+To assist in this migration, `<PageNav />` will `assert` in development when it is still given a `:collection` block to remind you to migrate to `:section`. The assertion is stripped from production builds.
 
 `getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 

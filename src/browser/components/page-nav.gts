@@ -12,11 +12,6 @@ import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
-/**
- * v5 named this block `:collection`. Renaming it is a silent break — an
- * unrecognized block is simply never invoked, so section headings vanish
- * rather than erroring — so say so, loudly, in development.
- */
 const blockWasRenamed = () => {
   assert(
     '<PageNav /> has no `:collection` block. It is now called `:section`, and yields `section` rather than `collection`. See "Upgrading from 5.x" in the migration guide.',
@@ -84,9 +79,8 @@ export class PageNav extends Component<{
      * name. By default the `name` property will be used or a link will be
      * rendered if an index page is present..
      *
-     * A section is a `PageTree` — usually a folder of markdown files, though
-     * a group that collects others contributes one section per collected
-     * group. Both arrive through this block.
+     * A section is a `PageTree`: the pages under one folder of markdown
+     * files, plus any sections nested within it.
      *
      * Example:
      * ```gjs live preview
