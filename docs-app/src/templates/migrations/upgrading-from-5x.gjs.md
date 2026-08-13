@@ -96,11 +96,23 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 
 `setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
 
-## `PageTree` is now `PageTree`
+## `Collection` is now `PageTree`
 
-A node in a page tree — the thing built from a directory of markdown files — was called a `PageTree`. It is now a **`PageTree`**, so that "collection" is free to mean something else, and because that is what the docs already called these ("Sorting folders", and the utils page's own examples).
+A node in a page tree — the thing built from a directory of markdown files — was called a `Collection`. It is now a **`PageTree`**, which frees the word "collection" for the navigation-level concept of one group collecting others.
 
-The type, the type guard, and `<PageNav />`'s named block all move together. The block is the one that will break a build:
+The type and the type guard rename directly:
+
+```diff
+- import { isCollection } from 'kolay';
+- import type { Collection } from 'kolay';
++ import { isPageTree } from 'kolay';
++ import type { PageTree } from 'kolay';
+
+- if (isCollection(node)) { … }
++ if (isPageTree(node)) { … }
+```
+
+`<PageNav />`'s named block moves too, but **not** to `pageTree` — it is now `<:section>`:
 
 ```diff
   <PageNav>
@@ -108,28 +120,22 @@ The type, the type guard, and `<PageNav />`'s named block all move together. The
       <x.Link>{{x.page.name}}</x.Link>
     </:page>
 -   <:collection as |x|>
-+   <:pageTree as |x|>
++   <:section as |x|>
       {{#if x.index}}
 -       <x.index.Link>{{x.collection.name}}</x.index.Link>
-+       <x.index.Link>{{x.pageTree.name}}</x.index.Link>
++       <x.index.Link>{{x.section.name}}</x.index.Link>
       {{else}}
 -       {{x.collection.name}}
-+       {{x.pageTree.name}}
++       {{x.section.name}}
       {{/if}}
 -   </:collection>
-+   </:pageTree>
++   </:section>
   </PageNav>
 ```
 
-```diff
-- import { isPageTree } from 'kolay';
-- import type { PageTree } from 'kolay';
-+ import { isPageTree } from 'kolay';
-+ import type { PageTree } from 'kolay';
+The block names what you are rendering — a section of the nav — while the type names the data it carries, a `PageTree`. They differ on purpose: a section is usually a folder of markdown files, but a group that collects other groups contributes one section per collected group, and those are not folders anywhere on disk. Both arrive through this block, and `x.section` is a `PageTree` either way.
 
-- if (isPageTree(node)) { … }
-+ if (isPageTree(node)) { … }
-```
+This block is the change most likely to break a build, and it breaks quietly: an unrenamed `<:collection>` block is simply never invoked, so section headings disappear from the nav instead of raising an error.
 
 `getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 

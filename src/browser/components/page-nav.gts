@@ -67,8 +67,13 @@ export class PageNav extends Component<{
       },
     ];
     /**
-     * If provided, this block will yield back the folder for customizing the name.
-     * By default the `name` property will be used or a link will be rendered if an index page is present..
+     * If provided, this block will yield back the section for customizing the
+     * name. By default the `name` property will be used or a link will be
+     * rendered if an index page is present..
+     *
+     * A section is a `PageTree` — usually a folder of markdown files, though
+     * a group that collects others contributes one section per collected
+     * group. Both arrive through this block.
      *
      * Example:
      * ```gjs live preview
@@ -77,24 +82,24 @@ export class PageNav extends Component<{
      *
      * <template>
      *   <PageNav>
-     *     <:pageTree as |x|>
+     *     <:section as |x|>
      *       <pre>{{JSON.stringify x null 3}}</pre>
      *       {{#if x.index}}
      *         <x.index.Link>
-     *           {{sentenceCase x.pageTree.name}}
+     *           {{sentenceCase x.section.name}}
      *         </x.index.Link>
      *       {{else}}
-     *         {{sentenceCase x.pageTree.name}}
+     *         {{sentenceCase x.section.name}}
      *       {{/if}}
-     *     </:pageTree>
+     *     </:section>
      *   </PageNav>
      *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */
-    folder: [
+    section: [
       {
-        folder: PageTree;
+        section: PageTree;
         /**
          * If there is an index page, it'll be provided here,
          * and omitted from the :page block.
@@ -135,19 +140,19 @@ export class PageNav extends Component<{
           {{/if}}
         </:page>
 
-        <:pageTree as |c|>
-          {{#if (has-block 'folder')}}
-            {{yield c to='folder'}}
+        <:section as |c|>
+          {{#if (has-block 'section')}}
+            {{yield c to='section'}}
           {{else}}
             {{#if c.index}}
               <c.index.Link>
                 {{c.index.page.name}}
               </c.index.Link>
             {{else}}
-              {{c.pageTree.name}}
+              {{c.section.name}}
             {{/if}}
           {{/if}}
-        </:pageTree>
+        </:section>
       </Pages>
     </nav>
   </template>
@@ -162,9 +167,9 @@ const Pages: TOC<{
   };
   Blocks: {
     page: [InternalPageYield];
-    folder: [
+    section: [
       {
-        folder: PageTree;
+        section: PageTree;
         index?: InternalPageYield;
       },
     ];
@@ -177,28 +182,28 @@ const Pages: TOC<{
           <li>
             {{#if (isPageTree page)}}
 
-              {{! index.md pages can make the whole folder clickable }}
+              {{! index.md pages can make the whole section clickable }}
               {{#let (getIndexPage page) as |indexPage|}}
                 {{#if indexPage}}
                   {{yield
                     (hash
-                      folder=page
+                      section=page
                       index=(hash
                         page=indexPage
                         Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
-                    to='folder'
+                    to='section'
                   }}
                 {{else}}
-                  {{yield (hash folder=page) to='folder'}}
+                  {{yield (hash section=page) to='section'}}
                 {{/if}}
               {{/let}}
             {{/if}}
 
             <Pages @item={{page}}>
               <:page as |p|>{{yield p to='page'}}</:page>
-              <:pageTree as |c|>{{yield c to='folder'}}</:pageTree>
+              <:section as |c|>{{yield c to='section'}}</:section>
             </Pages>
           </li>
         {{/if}}

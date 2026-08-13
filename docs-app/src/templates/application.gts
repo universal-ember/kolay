@@ -84,19 +84,19 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
           {{/if}}
         </x.Link>
       </:page>
-      <:pageTree as |x|>
+      <:section as |x|>
         {{#if x.index}}
           <x.index.Link>
             {{#if x.index.page.title}}
               {{x.index.page.title}}
             {{else}}
-              {{sentenceCase x.pageTree.name}}
+              {{sentenceCase x.section.name}}
             {{/if}}
           </x.index.Link>
         {{else}}
-          {{sentenceCase x.pageTree.name}}
+          {{sentenceCase x.section.name}}
         {{/if}}
-      </:pageTree>
+      </:section>
     </PageNav>
   </aside>
 </template>;
