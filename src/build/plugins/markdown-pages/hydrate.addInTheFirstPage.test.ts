@@ -2,11 +2,11 @@ import { describe, expect, test } from 'vitest';
 
 import { addInTheFirstPage } from './hydrate.js';
 
-import type { Collection } from '#types';
+import type { Folder } from '#types';
 
 describe('addInTheFirstPage', () => {
   test('adds in the first page to a shallow object', () => {
-    const tree: Collection = {
+    const tree: Folder = {
       name: 'top',
       path: 'top',
       appRelativePath: '/top',
@@ -43,7 +43,7 @@ describe('addInTheFirstPage', () => {
   });
 
   test('adds in the first page', () => {
-    const tree: Collection = {
+    const tree: Folder = {
       name: 'top',
       path: 'top',
       appRelativePath: '/top',
@@ -95,7 +95,7 @@ describe('addInTheFirstPage', () => {
   });
 
   test('adds in the index page', () => {
-    const tree: Collection = {
+    const tree: Folder = {
       name: 'top',
       path: 'top',
       appRelativePath: '/top',

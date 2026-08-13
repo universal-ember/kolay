@@ -4,9 +4,9 @@ import { service } from '@ember/service';
 
 import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isCollection, isIndex } from '../utils.ts';
+import { getIndexPage, isFolder, isIndex } from '../utils.ts';
 
-import type { Collection, Page } from '../../types.ts';
+import type { Folder, Page } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
@@ -67,7 +67,7 @@ export class PageNav extends Component<{
       },
     ];
     /**
-     * If provided, this block will yield back the collection for customizing the name.
+     * If provided, this block will yield back the folder for customizing the name.
      * By default the `name` property will be used or a link will be rendered if an index page is present..
      *
      * Example:
@@ -77,24 +77,24 @@ export class PageNav extends Component<{
      *
      * <template>
      *   <PageNav>
-     *     <:collection as |x|>
+     *     <:folder as |x|>
      *       <pre>{{JSON.stringify x null 3}}</pre>
      *       {{#if x.index}}
      *         <x.index.Link>
-     *           {{sentenceCase x.collection.name}}
+     *           {{sentenceCase x.folder.name}}
      *         </x.index.Link>
      *       {{else}}
-     *         {{sentenceCase x.collection.name}}
+     *         {{sentenceCase x.folder.name}}
      *       {{/if}}
-     *     </:collection>
+     *     </:folder>
      *   </PageNav>
      *   <style>@scope { pre { max-height: 200px; } ul { display: grid; }}</style>
      * </template>
      * ```
      */
-    collection: [
+    folder: [
       {
-        collection: Collection;
+        folder: Folder;
         /**
          * If there is an index page, it'll be provided here,
          * and omitted from the :page block.
@@ -135,19 +135,19 @@ export class PageNav extends Component<{
           {{/if}}
         </:page>
 
-        <:collection as |c|>
-          {{#if (has-block 'collection')}}
-            {{yield c to='collection'}}
+        <:folder as |c|>
+          {{#if (has-block 'folder')}}
+            {{yield c to='folder'}}
           {{else}}
             {{#if c.index}}
               <c.index.Link>
                 {{c.index.page.name}}
               </c.index.Link>
             {{else}}
-              {{c.collection.name}}
+              {{c.folder.name}}
             {{/if}}
           {{/if}}
-        </:collection>
+        </:folder>
       </Pages>
     </nav>
   </template>
@@ -157,48 +157,48 @@ const not = (x: unknown) => !x;
 
 const Pages: TOC<{
   Args: {
-    item: Page | Collection;
+    item: Page | Folder;
     activeClass?: string;
   };
   Blocks: {
     page: [InternalPageYield];
-    collection: [
+    folder: [
       {
-        collection: Collection;
+        folder: Folder;
         index?: InternalPageYield;
       },
     ];
   };
 }> = <template>
-  {{#if (isCollection @item)}}
+  {{#if (isFolder @item)}}
     <ul>
       {{#each @item.pages as |page|}}
         {{#if (not (isIndex page))}}
           <li>
-            {{#if (isCollection page)}}
+            {{#if (isFolder page)}}
 
-              {{! index.md pages can make the whole collection clickable }}
+              {{! index.md pages can make the whole folder clickable }}
               {{#let (getIndexPage page) as |indexPage|}}
                 {{#if indexPage}}
                   {{yield
                     (hash
-                      collection=page
+                      folder=page
                       index=(hash
                         page=indexPage
                         Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
-                    to='collection'
+                    to='folder'
                   }}
                 {{else}}
-                  {{yield (hash collection=page) to='collection'}}
+                  {{yield (hash folder=page) to='folder'}}
                 {{/if}}
               {{/let}}
             {{/if}}
 
             <Pages @item={{page}}>
               <:page as |p|>{{yield p to='page'}}</:page>
-              <:collection as |c|>{{yield c to='collection'}}</:collection>
+              <:folder as |c|>{{yield c to='folder'}}</:folder>
             </Pages>
           </li>
         {{/if}}

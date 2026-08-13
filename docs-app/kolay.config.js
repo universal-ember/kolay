@@ -69,7 +69,9 @@ export default defineConfig({
     },
     { from: 'Runtime/util/selected', to: 'Runtime/utilities/selected.md' },
     { from: 'Runtime/util/docs-manager', to: 'Runtime/utilities/docs-manager.md' },
-    { from: 'Runtime/util/collection-utils', to: 'Runtime/utilities/collection-utils.md' },
+    { from: 'Runtime/util/collection-utils', to: 'Runtime/utilities/folder-utils.md' },
+    // 2026-08: Collection was renamed Folder, and the page with it
+    { from: 'Runtime/utilities/collection-utils', to: 'Runtime/utilities/folder-utils.md' },
     { from: 'Runtime/util/logs', to: 'Runtime/demo-support/logs.md' },
     { from: 'Runtime/docs/owner', to: 'Runtime/demo-support/owner.md' },
   ],

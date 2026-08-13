@@ -96,6 +96,43 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 
 `setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
 
+## `Collection` is now `Folder`
+
+A node in a page tree — the thing built from a directory of markdown files — was called a `Collection`. It is now a **`Folder`**, so that "collection" is free to mean something else, and because that is what the docs already called these ("Sorting folders", and the utils page's own examples).
+
+The type, the type guard, and `<PageNav />`'s named block all move together. The block is the one that will break a build:
+
+```diff
+  <PageNav>
+    <:page as |x|>
+      <x.Link>{{x.page.name}}</x.Link>
+    </:page>
+-   <:collection as |x|>
++   <:folder as |x|>
+      {{#if x.index}}
+-       <x.index.Link>{{x.collection.name}}</x.index.Link>
++       <x.index.Link>{{x.folder.name}}</x.index.Link>
+      {{else}}
+-       {{x.collection.name}}
++       {{x.folder.name}}
+      {{/if}}
+-   </:collection>
++   </:folder>
+  </PageNav>
+```
+
+```diff
+- import { isCollection } from 'kolay';
+- import type { Collection } from 'kolay';
++ import { isFolder } from 'kolay';
++ import type { Folder } from 'kolay';
+
+- if (isCollection(node)) { … }
++ if (isFolder(node)) { … }
+```
+
+`getIndexPage` keeps its name (it takes a `Folder` now), and `Node` is `Page | Folder`. The `Runtime/utilities/collection-utils` page is now `folder-utils`, with a redirect from the old URL.
+
 ## Removed types
 
 `Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.

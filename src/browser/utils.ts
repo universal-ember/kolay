@@ -1,23 +1,23 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
-import type { Collection, Page } from '../types.ts';
+import type { Folder, Page } from '../types.ts';
 import type Owner from '@ember/owner';
 
-export function isCollection(x: Page | Collection): x is Collection {
+export function isFolder(x: Page | Folder): x is Folder {
   return 'pages' in x;
 }
 
-export function isIndex(x: Page | Collection) {
-  if (isCollection(x)) return false;
+export function isIndex(x: Page | Folder) {
+  if (isFolder(x)) return false;
 
   return x.path.replace(/\.md$/, '').endsWith('index');
 }
 
-export function getIndexPage(x: Collection): Page | undefined {
+export function getIndexPage(x: Folder): Page | undefined {
   const page = x.pages.find(isIndex);
 
-  if (page && isCollection(page)) return;
+  if (page && isFolder(page)) return;
 
   return page;
 }

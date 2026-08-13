@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { addPaths } from './hydrate.js';
 
-import type { Collection } from '#types';
+import type { Folder } from '#types';
 
 describe('addPaths', () => {
   test('adds base-prefixed paths and appRelativePaths', () => {
@@ -17,7 +17,7 @@ describe('addPaths', () => {
           cleanedName: 'foo',
         },
       ],
-    } as Collection;
+    } as Folder;
 
     tree = addPaths(tree, '/Documentation', '/my-github-project/');
 
@@ -51,7 +51,7 @@ describe('addPaths', () => {
           cleanedName: 'foo',
         },
       ],
-    } as Collection;
+    } as Folder;
 
     addPaths(tree, '/', '/');
 
@@ -61,7 +61,7 @@ describe('addPaths', () => {
     expect(page?.appRelativePath).toBe('/top/foo.md');
   });
 
-  test('works on deep objects, locating nested collections', () => {
+  test('works on deep objects, locating nested folders', () => {
     const tree = {
       name: 'top',
       path: 'root',
@@ -85,7 +85,7 @@ describe('addPaths', () => {
           ],
         },
       ],
-    } as Collection;
+    } as Folder;
 
     addPaths(tree, '/Documentation', '/prefix/');
 

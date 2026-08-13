@@ -26,23 +26,23 @@ export interface Manifest {
   groups: {
     name: string;
     list: Page[];
-    tree: Collection;
+    tree: Folder;
   }[];
 }
 
-export interface Collection {
+export interface Folder {
   /**
-   * The collection's own directory segment, e.g. 'sub-folder'.
+   * The folder's own directory segment, e.g. 'sub-folder'.
    */
   path: string;
   /**
-   * URL-space location of the collection as if the app were deployed at '/',
+   * URL-space location of the folder as if the app were deployed at '/',
    * e.g. '/Documentation/sub-folder'.
    */
   appRelativePath: string;
   name: string;
   first?: string;
-  pages: (Collection | Page)[];
+  pages: (Folder | Page)[];
   groupName?: never;
 }
 
@@ -77,7 +77,7 @@ export interface Page {
   href?: string;
 }
 
-export type Node = Page | Collection;
+export type Node = Page | Folder;
 
 /**
  * @internal

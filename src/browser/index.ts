@@ -21,10 +21,10 @@ export { selected } from './services/selected.ts';
 // Utilities
 export { isActive } from './is-active.ts';
 export { resolveRedirect } from './redirects.ts';
-export { getIndexPage, isCollection, isIndex } from './utils.ts';
+export { getIndexPage, isFolder, isIndex } from './utils.ts';
 
 // Types
-export type { Collection, Manifest, Page } from '../types.ts';
+export type { Folder, Manifest, Page } from '../types.ts';
 export type { DocsGroupModule, DocsSourceMeta, MetaManifest } from './load-compiled-docs.ts';
 export type { DocModule, DocSource } from './services/compiled-doc.ts';
 export type { SetupOptions } from './services/docs.ts';

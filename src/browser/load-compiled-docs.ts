@@ -1,4 +1,4 @@
-import type { Collection, Manifest, Page } from '../types.ts';
+import type { Folder, Manifest, Page } from '../types.ts';
 import type { ComponentLike } from '@glint/template';
 
 /**
@@ -27,7 +27,7 @@ export interface DocsGroupModule {
   /**
    * The group's own manifest.
    */
-  manifest: { name: string; list: Page[]; tree: Collection };
+  manifest: { name: string; list: Page[]; tree: Folder };
   /**
    * The source's meta: repository URL, repo-relative docs path, and
    * anything from the source root's `meta.jsonc`.
