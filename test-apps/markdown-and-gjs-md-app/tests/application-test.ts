@@ -9,7 +9,6 @@ const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? ski
 module("Group index redirects", function (hooks) {
   setupApplicationTest(hooks);
 
-  // The crawl can't catch this: it only compares URLs, and an erroring `/Docs` still sits at `/Docs`.
   test("visiting a group root redirects to its first page", async function (assert) {
     await visit("/Docs");
 
