@@ -20,7 +20,7 @@ import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
-import type { LoadTypedoc, Manifest, NavEntry, Page } from '../../types.ts';
+import type { Group, LoadTypedoc, Manifest, NavEntry, Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type Transition from '@ember/routing/transition';
 import type { ComponentLike } from '@glint/template';
@@ -502,12 +502,29 @@ class DocsService {
 
   /**
    * The nav entry with this name, rather than the entry presenting this
-   * group. A collection group with no `src` is only named in the
-   * navigation, so nothing in `availableGroups` resolves it — index
-   * redirects use this to land its URL on the first group it collects.
+   * group. A collection group with no `src` is only ever named in the
+   * navigation, so nothing in `availableGroups` resolves it.
    */
   navEntryNamed = (name: string): NavEntry | undefined => {
     return navEntryNamed(this.navEntries, name);
+  };
+
+  /**
+   * The group whose first page a visit to `name` should land on: the group
+   * of that name, or the landing group of the entry of that name.
+   *
+   * The second case is a group that collects others and has no `src`, which
+   * owns no pages and so appears in no manifest. `handlePotentialIndexVisit`
+   * asks for this rather than resolving the two separately, so routing needs
+   * to know only that some group answers for a URL segment.
+   */
+  groupToLandOn = (name: string): Group | undefined => {
+    const canonical = this.canonicalGroupName(name);
+
+    if (canonical) return this.groupFor(canonical);
+
+    // an entry presents its landing group first — see `navEntriesFor`
+    return this.navEntryNamed(name)?.groups[0];
   };
 
   /**

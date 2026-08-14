@@ -60,8 +60,7 @@ export interface NavGroup {
    */
   group: string;
   /**
-   * The groups this one collects, in the order they were declared. Each
-   * may collect groups of its own.
+   * The groups this one collects, in the order they were declared.
    */
   children: NavNode[];
 }
@@ -83,8 +82,8 @@ export interface NavCollection {
  */
 export interface NavEntry {
   /**
-   * What the entry is called: the group's name.
-   * Display formatting is the app's (as it already is for group names).
+   * Formatting this for display is the app's job, as it already is for
+   * group names.
    */
   name: string;
   /**
@@ -94,10 +93,9 @@ export interface NavEntry {
    */
   isCollection: boolean;
   /**
-   * The groups whose pages this entry presents — its own (when it has
-   * any), then the ones it collects, in declaration order, depth first.
-   * The manifest records for those groups, where `tree` below is the one
-   * page hierarchy to render for the entry.
+   * The groups whose pages this entry presents: its own first when it has
+   * any, then the ones it collects, in declaration order, depth first. The
+   * first is where the entry lands, which is what `href` points at.
    */
   groups: Group[];
   /**

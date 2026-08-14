@@ -77,11 +77,15 @@ export class GroupNav extends Component<{
    * link is the app's root, and `@homeName` names it.
    */
   get entries() {
-    return this.#docs.navEntries.map((entry) => ({
-      name: entry.name,
-      text: entry.name === HOME_GROUP ? this.homeName : entry.name,
-      href: entry.name === HOME_GROUP ? this.rootURL : entry.href,
-    }));
+    return this.#docs.navEntries.map((entry) => {
+      const isHome = entry.name === HOME_GROUP;
+
+      return {
+        name: entry.name,
+        text: isHome ? this.homeName : entry.name,
+        href: isHome ? this.rootURL : entry.href,
+      };
+    });
   }
 
   isActive = (name: string) => {
