@@ -120,14 +120,26 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
     )
     .find((match): match is string => match !== undefined);
 
-  if (!groupName) return;
+  /**
+   * A group that collects others and has no `src` of its own is a name in
+   * the navigation rather than a group: nothing resolves it in
+   * `availableGroups`, because no page lives under it. Its entry still
+   * knows where it lands, so its URL redirects there like a group's does.
+   */
+  const group = groupName
+    ? docs.groupFor(groupName)
+    : candidates
+        .map((candidate) =>
+          typeof candidate === 'string' ? docs.navEntryNamed(candidate) : undefined
+        )
+        .find((entry) => entry !== undefined)?.groups[0];
 
-  const group = docs.groupFor(groupName);
+  if (!group) return;
 
   const first = group.list[0];
 
   if (!first) {
-    console.warn(`Could not determine first page in group: ${groupName}`);
+    console.warn(`Could not determine first page in group: ${group.name}`);
 
     return;
   }

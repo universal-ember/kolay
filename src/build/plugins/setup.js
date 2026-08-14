@@ -112,10 +112,10 @@ function assertNav(nav) {
       if (owner !== undefined && owner !== node) {
         throw new Error(
           owner.name === name && node.name === name
-            ? `Two navigation entries are named '${name}'. A group that collects others is ` +
-                `named alongside the groups nothing collects, so those names have to differ.`
-            : `'${name}' is collected by '${node.name}' and by '${owner.name}'. A group is ` +
-                `collected by one group: it has one set of pages, and would otherwise be ` +
+            ? `Two navigation entries are named '${name}'. Every entry in the top-level ` +
+                `navigation needs its own name, whether it collects other groups or not.`
+            : `'${name}' is collected by '${node.name}' and by '${owner.name}'. A group can be ` +
+                `collected by only one group: it has one set of pages, and would otherwise be ` +
                 `presented in two places at once.`
         );
       }

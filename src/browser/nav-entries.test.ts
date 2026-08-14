@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
 import { groupNamesIn } from '../nav.js';
-import { navEntriesFor, navEntryFor, treeFor } from './nav-entries.ts';
+import { navEntriesFor, navEntryFor, navEntryNamed, treeFor } from './nav-entries.ts';
 
 import type { Group, NavNode, Page, PageTree } from '../types.ts';
 
@@ -226,5 +226,30 @@ describe('navEntryFor', () => {
 
   test('undefined for a group that is not in the navigation', () => {
     expect(navEntryFor(entries, 'nope')).toBeUndefined();
+  });
+});
+
+describe('navEntryNamed', () => {
+  const entries = navEntriesFor(
+    [leaf('Home'), collectsOnly('data', leaf('warp-drive'), collects('schema', leaf('json-api')))],
+    groupFor,
+    hrefForGroup
+  );
+
+  test('a collection group with no src of its own resolves by its own name', () => {
+    // nothing else can resolve it: it is in no manifest and owns no pages
+    expect(navEntryNamed(entries, 'data')?.groups[0]?.name).toBe('warp-drive');
+  });
+
+  test('case-insensitively, like group names', () => {
+    expect(navEntryNamed(entries, 'DATA')?.name).toBe('data');
+  });
+
+  test('a collected group does not resolve — it is not an entry', () => {
+    expect(navEntryNamed(entries, 'warp-drive')).toBeUndefined();
+  });
+
+  test('undefined for a name that is not in the navigation', () => {
+    expect(navEntryNamed(entries, 'nope')).toBeUndefined();
   });
 });

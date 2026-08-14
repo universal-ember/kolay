@@ -242,6 +242,27 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("h1").containsText("Buttons demo");
   });
 
+  // `Docs` collects both groups and has no `src`, so nothing in
+  // availableGroups resolves it and it has no mount of its own. Its URL is
+  // still reachable by hand, so it lands where its entry links.
+  test("visiting a collection group's own URL redirects to where its entry links", async function (assert) {
+    await visit("/Docs");
+
+    const docs = docsManager(this.owner);
+
+    assert.strictEqual(
+      currentURL(),
+      "/help/getting-started/intro.md",
+      "the first group it collects, in its mount's URL space",
+    );
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.strictEqual(
+      docs.activeNavEntry?.name,
+      "Docs",
+      "and the entry the reader arrived from is the active one",
+    );
+  });
+
   test("visiting a mount's index with a trailing slash also redirects", async function (assert) {
     await visit("/help/");
 

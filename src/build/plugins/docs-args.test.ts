@@ -193,9 +193,7 @@ describe('parseDocsArgs | collection', () => {
   });
 
   test('a collection with no group to collect into is an error', () => {
-    expect(() => parseDocsArgs({ collection } as never)).toThrowError(
-      /has no group to collect them into/
-    );
+    expect(() => parseDocsArgs({ collection })).toThrowError(/has no group to collect them into/);
   });
 
   test('an empty or non-array collection is an error', () => {

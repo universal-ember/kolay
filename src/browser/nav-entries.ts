@@ -78,3 +78,16 @@ export function navEntriesFor(
 export function navEntryFor(entries: NavEntry[], groupName: string): NavEntry | undefined {
   return entries.find((entry) => entry.groups.some((group) => group.name === groupName));
 }
+
+/**
+ * The entry with this name — its own name, rather than a group it presents.
+ * A collection group with no `src` of its own is only ever named here, so
+ * this is the only way to resolve it. Case-insensitive, like group names.
+ *
+ * The comparison is inline rather than `equalsIgnoreCase` from
+ * `browser/utils.ts`: this module's unit tests run in node, and that file
+ * imports `@ember/debug`.
+ */
+export function navEntryNamed(entries: NavEntry[], name: string): NavEntry | undefined {
+  return entries.find((entry) => entry.name.toLowerCase() === name.toLowerCase());
+}

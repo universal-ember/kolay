@@ -8,7 +8,7 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
-import { navEntriesFor, navEntryFor } from '../nav-entries.ts';
+import { navEntriesFor, navEntryFor, navEntryNamed } from '../nav-entries.ts';
 import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
@@ -498,6 +498,16 @@ class DocsService {
    */
   collectionOf = (groupName: string): string | undefined => {
     return navEntryFor(this.navEntries, groupName)?.name;
+  };
+
+  /**
+   * The nav entry with this name, rather than the entry presenting this
+   * group. A collection group with no `src` is only named in the
+   * navigation, so nothing in `availableGroups` resolves it — index
+   * redirects use this to land its URL on the first group it collects.
+   */
+  navEntryNamed = (name: string): NavEntry | undefined => {
+    return navEntryNamed(this.navEntries, name);
   };
 
   /**
