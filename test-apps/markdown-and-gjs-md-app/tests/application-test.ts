@@ -9,7 +9,6 @@ const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? ski
 module("Group index redirects", function (hooks) {
   setupApplicationTest(hooks);
 
-  // The crawl can't catch this: it only compares URLs, and an erroring `/Docs` still sits at `/Docs`.
   test("visiting a group root redirects to its first page", async function (assert) {
     await visit("/Docs");
 
@@ -31,7 +30,6 @@ module("All Links", function (hooks) {
       visited.push(path);
     });
 
-    // Sorted because visit order depends on rendering timing; the set of pages does not.
     assert.deepEqual(visited.sort(), [
       "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
