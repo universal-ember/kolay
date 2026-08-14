@@ -28,7 +28,6 @@ module("All Links", function (hooks) {
       visited.push(path);
     }, KNOWN_REDIRECTS);
 
-    // Sorted because visit order depends on rendering timing; the set of pages does not.
     assert.deepEqual(visited.sort(), [
       "/my-github-project/",
       "/my-github-project/Documentation",
