@@ -167,7 +167,9 @@ Guides   Packages
              Helpers
 ```
 
-A collected group is a group like any other: the same entry shape, even taking an (optional) `src` and [markdown options](#scope) of its own. Markdown options set on the collecting group are inherited by the groups inside it, unless one sets its own options. Options never travel between separate `docs()` calls, only down into a `collection`.
+A collected group is a group like any other: the same entry shape, taking an `src` and [markdown options](#scope) of its own. A plain string works too, and its last path segment names the group, exactly as it does for a `docs()` usage. Markdown options set on the collecting group are inherited by the groups inside it, unless one sets its own options. Options never travel between separate `docs()` calls, only down into a `collection`.
+
+`src` is required for a collected group, under the same rule as anywhere else: a group needs one _unless_ it collects other groups.
 
 Collected groups can be nested: a collected group can itself collect groups that have `collection` configs of their own, and so on, as deep as you need.
 
@@ -191,14 +193,14 @@ Every page in a collected group shows the collecting group's page list, with a s
 
 The following rules are enforced at buildtime:
 
-- Two navigation entries cannot have the same name. A collecting group is named alongside the groups that nothing collects.
+- Two navigation entries cannot have the same name. A collecting group's name sits in the top-level navigation next to the groups nothing collects, so it has to be unique among them.
 - A group can be collected by only one group. It has one set of pages, and would otherwise appear in two places at once.
 
 ### Collections at runtime
 
 `<GroupNav />` and `<PageNav />` need no changes. `<GroupNav />` renders one link per entry, and `<PageNav />` renders the collecting group's page list when the reader is inside one.
 
-A collected group is an ordinary `PageTree`, so it goes through `<PageNav />`'s `<:section>` block. That is the same block a folder of markdown files goes through, which is why the block is named for the nav role rather than the filesystem. A section's label is a link when its group has an `index.md`, and plain text otherwise.
+A collected group is an ordinary [`PageTree`](/Runtime/utilities/page-tree-utils.md), so it goes through `<PageNav />`'s `<:section>` block. That is the same block a folder of markdown files goes through, which is why the block is named for the nav role rather than the filesystem. A section's label is a link when its group has an `index.md`, and plain text otherwise.
 
 Hand-rolled navigation reads the entries from [`docsManager`](/Runtime/utilities/docs-manager.md):
 
@@ -209,6 +211,8 @@ docs.navEntries; // the top-level navigation: a group, with what it collects
 docs.activeNavEntry; // the entry the current page belongs to
 docs.collectionOf("plugins"); // 'Packages'
 ```
+
+`collectionOf` takes a group name and returns the name of the entry presenting it, which is the collecting group's name, or the group's own when nothing collects it.
 
 An entry is `{ name, isCollection, groups, href, tree }`. `href` is where it links. `groups` are the groups whose pages it presents, its own first and then the collected ones, depth first. `tree` is the one page list to render for it, and `isCollection` says whether it collects any. Compare `entry.name` against `activeNavEntry.name` for the active state:
 
@@ -223,7 +227,9 @@ An entry is `{ name, isCollection, groups, href, tree }`. `href` is where it lin
 
 A sidebar built on `docs.tree` needs no change, because it is already the tree to render, whether that is the current group's or the collecting group's. `currentGroup.tree` is still the group's own.
 
-`availableGroups` and `selectedGroup` are deliberately untouched. Both answer page-resolution questions: which group owns this URL, and which group the reader is in. A collecting group is not where a page lives, so a top-level nav built on `availableGroups` keeps working and keeps listing every group. Switch that loop to `navEntries` to make a collection visible.
+`availableGroups` and `selectedGroup` are deliberately untouched, because they answer where a page lives rather than how the navigation is arranged. `selectedGroup` is the group the current URL resolves to — always the group itself, never the entry presenting it — where `activeNavEntry` is that entry, which is the collecting group when one is involved. Reading `/plugins/writing-one.md`, `selectedGroup` is `plugins` and `activeNavEntry.name` is `Packages`.
+
+So a top-level nav built on `availableGroups` keeps working, and keeps listing every group individually. Switch that loop to `navEntries` to make a collection visible.
 
 ## Each group's virtual module
 
