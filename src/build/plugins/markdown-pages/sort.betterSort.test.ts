@@ -90,10 +90,14 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  test('if there is a path ending in index.md, it must be first', () => {
+  // `name` is the basename `build()` derives from `path`, and it strips
+  // `.gjs.md` / `.gts.md` on the way — so those pages arrive as `/c/index`.
+  // A fixture whose `name` and `path` disagree pins a shape the build never
+  // emits.
+  test('an index page must be first', () => {
     const list: Entry[] = [
       { name: 'b', path: '/c/b.md' },
-      { name: 'c', path: '/c/index.md' },
+      { name: 'index', path: '/c/index.md' },
       { name: 'a', path: '/c/a.md' },
     ];
     const sorted = list.sort(betterSort('name'));
@@ -101,7 +105,7 @@ describe('addInTheFirstPage', () => {
     expect(sorted).toMatchInlineSnapshot(`
       [
         {
-          "name": "c",
+          "name": "index",
           "path": "/c/index.md",
         },
         {
@@ -114,6 +118,18 @@ describe('addInTheFirstPage', () => {
         },
       ]
     `);
+  });
+
+  // The case the old path-based hoist missed: it tested `path` for
+  // `index.md`, which a stripped path never ends in.
+  test('an index page must be first when its extension was stripped', () => {
+    const list: Entry[] = [
+      { name: 'apple', path: '/c/apple' },
+      { name: 'index', path: '/c/index' },
+    ];
+    const sorted = list.sort(betterSort('name'));
+
+    expect(sorted.map((x) => x.name)).toEqual(['index', 'apple']);
   });
 
   describe('From the Tutorial', () => {

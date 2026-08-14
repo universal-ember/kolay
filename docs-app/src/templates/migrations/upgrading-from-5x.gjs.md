@@ -142,3 +142,16 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 ## Removed types
 
 `Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
+
+## A folder's index page now sorts first regardless of extension
+
+`index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not, despite `betterSort` appearing to test for them — the build strips those extensions off `path` before sorting runs, so the test never matched. They now sort first too.
+
+Two things move as a result, on any folder that has a `.gjs.md` / `.gts.md` index and no `meta.json` `order`:
+
+- The nav lists the index page first, where it previously appeared in alphabetical position.
+- `group.list[0]` — and so the page a group's own URL redirects to — becomes that index page.
+
+A folder with a `meta.json` `order` is unaffected: `applyPredestinedOrder` already hoisted `index` on its own, independently of this sort.
+
+If you were relying on the old placement, add a `meta.json` `order` to that folder to state the order you want explicitly.

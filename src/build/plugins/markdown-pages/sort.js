@@ -35,12 +35,12 @@ export function betterSort(property) {
     const aFull = property ? a[property] : a;
     const bFull = property ? b[property] : b;
 
-    if ('path' in a && 'path' in b && typeof a.path === 'string' && typeof b.path === 'string') {
-      if (a.path.endsWith('index.md')) return -1;
-      if (a.path.endsWith('index.gjs.md')) return -1;
-      if (b.path.endsWith('index.md')) return 1;
-      if (b.path.endsWith('index.gjs.md')) return 1;
-    }
+    // A folder's index page sorts to the top of it. On name, not path:
+    // `build()` strips `.gjs.md` / `.gts.md` off `path`, so a path test caught
+    // only plain `.md`. Folders sort here too, so one named `index` hoists.
+    if (aFull === 'index' && bFull === 'index') return 0;
+    if (aFull === 'index') return -1;
+    if (bFull === 'index') return 1;
 
     const [aNumStr, ...aRest] = aFull.split('-');
     const [bNumStr, ...bRest] = bFull.split('-');
