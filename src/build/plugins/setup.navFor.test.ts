@@ -27,11 +27,11 @@ describe('navFor', () => {
     expect(navFor(state({ groups: [] }, group('guides')))).toEqual([leaf('Home'), leaf('guides')]);
   });
 
-  test("a collecting group's tree replaces the groups inside it, in its own position", () => {
+  test("a collection group's tree replaces the groups inside it, in its own position", () => {
     const nav = { name: 'data', group: 'data', children: [leaf('warp-drive')] };
 
     // the shape docs('data', { src, collection: [...] }) produces: the tree on
-    // the collecting group's own usage, then a usage per group it collects
+    // the collection group's own usage, then a usage per group it collects
     expect(navFor(state(group('guides'), { ...group('data'), nav }, group('warp-drive')))).toEqual([
       leaf('Home'),
       leaf('guides'),
@@ -39,7 +39,7 @@ describe('navFor', () => {
     ]);
   });
 
-  test('a collecting group with no pages of its own is a nav-only usage', () => {
+  test('a collection group with no pages of its own is a nav-only usage', () => {
     const nav = { name: 'data', group: null, children: [leaf('warp-drive'), leaf('schema')] };
 
     expect(

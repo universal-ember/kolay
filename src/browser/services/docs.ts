@@ -516,7 +516,7 @@ class DocsService {
    * The nav entry the current page is presented by: the entry of the group
    * that collects the current one, or the current group's own. Nav
    * components read this for the active entry — a collected group's page
-   * keeps the collecting group's entry active.
+   * keeps the collection group's entry active.
    */
   @cached
   get activeNavEntry(): NavEntry | undefined {

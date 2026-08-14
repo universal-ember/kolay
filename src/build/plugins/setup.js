@@ -43,7 +43,7 @@ function assertUniqueGroupNames(groups) {
 
 /**
  * Every name in a nav node's subtree — group names plus the names of the
- * collecting groups that contribute no pages of their own.
+ * collection groups that contribute no pages of their own.
  */
 function namesIn(node) {
   return [node.name, ...node.children.flatMap(namesIn)];
@@ -54,7 +54,7 @@ function namesIn(node) {
  * then a node per top-level group — where a group that collects others
  * stands in for all of them.
  *
- * A collecting group's `docs()` usage carries the whole tree it describes
+ * A collection group's `docs()` usage carries the whole tree it describes
  * (`usage.nav`), and the groups inside it have usages of their own for
  * their files; those are placed by the tree rather than at the top level.
  *

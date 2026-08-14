@@ -111,7 +111,7 @@ describe('parseDocsArgs | collection', () => {
     expect(usages.slice(1).every((usage) => usage.nav === undefined)).toBe(true);
   });
 
-  test('a collecting group needs no src of its own', () => {
+  test('a collection group needs no src of its own', () => {
     const usages = parseDocsArgs('packages', { collection });
 
     expect(usages[0]).toEqual({

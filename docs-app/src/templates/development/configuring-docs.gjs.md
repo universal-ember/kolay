@@ -121,13 +121,13 @@ Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` li
 
 ## `collection`
 
-As monorepos grow, authors frequently want to "collect" packages together in groups in their docs. For example, take a repo publishing `@my-lib/core`, `@my-lib/plugins`, and `@my-lib/utilities`, each documenting itself in its own folder, plus a `guides` folder at the root. By default, this results in four group entries across the top of the site:
+As monorepos grow, authors frequently want to "collect" packages together in groups in their docs. For example, consider a repo publishing `@my-lib/core`, `@my-lib/plugins`, and `@my-lib/utilities`, each documenting itself in its own folder, plus a `guides` folder at the root. By default, this results in four group entries across the top of the site:
 
 ```
 Guides   Core   Plugins   Utilities
 ```
 
-Each package's docs stay next to the code they describe. A collection changes only how they are grouped when rendered: every collected group keeps its own pages, URLs, and routes.
+Each package's docs stay next to the code they describe. A collection changes only how they are grouped when rendered: every collected group keeps its own pages, URLs, and routes. That includes how it is mounted — a group in a scoped or nested mount ([above](#using-the-plugin-multiple-times)) keeps that mount's URLs when it is collected, and its section links there rather than at `/GroupName`.
 
 These entries can be optionally grouped into "collected groups" by moving them to their respective `collection` array:
 
@@ -167,7 +167,7 @@ Guides   Packages
              Helpers
 ```
 
-A collected group is a group like any other: the same entry shape, taking an `src` and [markdown options](#scope) of its own. A plain string works too, and its last path segment names the group, exactly as it does for a `docs()` usage. Markdown options set on the collecting group are inherited by the groups inside it, unless one sets its own options. Options never travel between separate `docs()` calls, only down into a `collection`.
+A collected group is a group like any other: the same entry shape, taking an `src` and [markdown options](#scope) of its own. A plain string works too, and its last path segment names the group, exactly as it does for a `docs()` usage. Markdown options set on the collection group are inherited by the groups inside it, unless one sets its own options. Options never travel between separate `docs()` calls, only down into a `collection`.
 
 `src` is required for a collected group, under the same rule as anywhere else: a group needs one _unless_ it collects other groups.
 
@@ -182,18 +182,18 @@ docs("Packages", {
 }),
 ```
 
-The collecting group takes the place of the groups it collects. `Core`, `Plugins`, and `Utilities` no longer appear across the top of the site; `Packages` stands where they were, in its own declared position. The navigation shows its name, formatted however the app already formats group names.
+The collection group takes the place of the groups it collects. `Core`, `Plugins`, and `Utilities` no longer appear across the top of the site; `Packages` stands where they were, in its own declared position. The navigation shows its name, formatted however the app already formats group names.
 
-Every page in a collected group shows the collecting group's page list, with a section per collected group in declaration order. A reader on `/plugins/writing-one.md` still sees `Core` / `Plugins` / `Utilities`, with `Packages` highlighted.
+Every page in a collected group shows the collection group's page list, with a section per collected group in declaration order. A reader on `/plugins/writing-one.md` still sees `Core` / `Plugins` / `Utilities`, with `Packages` highlighted.
 
-`src` is optional for a collecting group, and whether it has one decides where its entry links:
+`src` is optional for a collection group, and whether it has one decides where its entry links:
 
-- **A collecting group needs no `src`.** `Packages` above has none, because it contributes no pages of its own. Give it one and its pages come first in the page list, above the sections, and its entry links to its own URL.
+- **A collection group needs no `src`.** `Packages` above has none, because it contributes no pages of its own. Give it one and its pages come first in the page list, above the sections, and its entry links to its own URL.
 - **Otherwise the entry links at the first group with pages**, its own or the first it collects, however deep. Clicking `Packages` lands on the `core` group's landing page, so that group's route needs [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) as usual. Reorder the `collection` to land somewhere else.
 
 The following rules are enforced at buildtime, and breaking either one fails the build with the reason:
 
-- A collecting group's name sits in the top-level navigation next to the groups nothing collects, so it has to be unique among them.
+- A collection group's name sits in the top-level navigation next to the groups nothing collects, so it has to be unique among them.
 
   ```
   Two navigation entries are named 'Packages'. A group that collects others is named
@@ -211,7 +211,7 @@ A collected group with no `src` and no `collection` of its own fails the build t
 
 ### Collections at runtime
 
-`<GroupNav />` and `<PageNav />` need no changes. `<GroupNav />` renders one link per entry, and `<PageNav />` renders the collecting group's page list when the reader is inside one.
+`<GroupNav />` and `<PageNav />` need no changes. `<GroupNav />` renders one link per entry, and `<PageNav />` renders the collection group's page list when the reader is inside one.
 
 A collected group is an ordinary [`PageTree`](/Runtime/utilities/page-tree-utils.md), so it goes through `<PageNav />`'s `<:section>` block. That is the same block a folder of markdown files goes through, which is why the block is named for the nav role rather than the filesystem. A section's label is a link when its group has an `index.md`, and plain text otherwise.
 
@@ -225,7 +225,7 @@ docs.activeNavEntry; // the entry the current page belongs to
 docs.collectionOf("plugins"); // 'Packages'
 ```
 
-`collectionOf` takes a group name and returns the name of the entry presenting it, which is the collecting group's name, or the group's own when nothing collects it.
+`collectionOf` takes a group name and returns the name of the entry presenting it, which is the collection group's name, or the group's own when nothing collects it.
 
 A top-level nav needs three things from each entry, and `{ name, href, tree }` are them: what to show, where to link, and the page list to render beside it. Compare `entry.name` against `activeNavEntry.name` for the active state:
 
@@ -240,9 +240,9 @@ A top-level nav needs three things from each entry, and `{ name, href, tree }` a
 
 An entry carries two more fields, for rarer jobs. `groups` is the flat list of groups whose pages it presents, its own first and then the collected ones, depth first, for a nav that wants to name what is inside an entry. `isCollection` answers whether the entry collects anything at all, which `groups.length` cannot: a group collecting exactly one group presents exactly one group, the same as a plain group does.
 
-A sidebar built on `docs.tree` needs no change, because it is already the tree to render, whether that is the current group's or the collecting group's. `currentGroup.tree` is still the group's own.
+A sidebar built on `docs.tree` needs no change, because it is already the tree to render, whether that is the current group's or the collection group's. `currentGroup.tree` is still the group's own.
 
-`availableGroups` and `selectedGroup` are deliberately untouched, because they answer where a page lives rather than how the navigation is arranged. `selectedGroup` is the group the current URL resolves to — always the group itself, never the entry presenting it — where `activeNavEntry` is that entry, which is the collecting group when one is involved. Reading `/plugins/writing-one.md`, `selectedGroup` is `plugins` and `activeNavEntry.name` is `Packages`.
+`availableGroups` and `selectedGroup` are deliberately untouched, because they answer where a page lives rather than how the navigation is arranged. `selectedGroup` is the group the current URL resolves to — always the group itself, never the entry presenting it — where `activeNavEntry` is that entry, which is the collection group when one is involved. Reading `/plugins/writing-one.md`, `selectedGroup` is `plugins` and `activeNavEntry.name` is `Packages`.
 
 So a top-level nav built on `availableGroups` keeps working, and keeps listing every group individually. Switch that loop to `navEntries` to make a collection visible.
 

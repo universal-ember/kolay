@@ -241,7 +241,7 @@ function parseCollection({ name, src, collection, options }, source) {
       );
     }
 
-    // markdown options set here win over the collecting group's; anything
+    // markdown options set here win over the collection group's; anything
     // else (src) is the entry's own
     const childOptions = { ...markdownOptions(options), ...markdownOptions(entryOptions) };
 

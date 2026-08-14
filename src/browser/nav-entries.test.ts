@@ -76,7 +76,7 @@ describe('groupNamesIn', () => {
     expect(groupNamesIn(leaf('guides'))).toEqual(['guides']);
   });
 
-  test("a collecting group's own group comes first, then its children, depth first", () => {
+  test("a collection group's own group comes first, then its children, depth first", () => {
     expect(
       groupNamesIn(collects('data', collects('warp-drive', leaf('json-api')), leaf('schema')))
     ).toEqual(['data', 'warp-drive', 'json-api', 'schema']);
@@ -92,13 +92,13 @@ describe('treeFor', () => {
     expect(treeFor(leaf('guides'), groupFor)).toBe(groupFor('guides').tree);
   });
 
-  test('a collecting group names the tree, and its own pages come first', () => {
+  test('a collection group names the tree, and its own pages come first', () => {
     const tree = treeFor(collects('data', leaf('warp-drive'), leaf('schema')), groupFor);
 
     expect(tree.name).toBe('data');
     expect(tree.path).toBe('data');
     expect(tree.pages.map((entry) => entry.name)).toEqual([
-      // the collecting group's own page folder, hoisted above the sections
+      // the collection group's own page folder, hoisted above the sections
       'pages',
       'warp-drive',
       'schema',
@@ -130,7 +130,7 @@ describe('treeFor', () => {
   });
 
   test('the landing group supplies the location and landing page', () => {
-    // the collecting group's own, when it has pages
+    // the collection group's own, when it has pages
     expect(treeFor(collects('data', leaf('schema')), groupFor)).toMatchObject({
       appRelativePath: '/data',
       first: '/data/pages/index.md',
@@ -183,7 +183,7 @@ describe('navEntriesFor', () => {
     expect(home?.href).toBe('/root-url/Home');
   });
 
-  test('a collecting group with pages of its own is one entry, not two', () => {
+  test('a collection group with pages of its own is one entry, not two', () => {
     const [entry] = navEntriesFor([collects('data', leaf('schema'))], groupFor, hrefForGroup);
 
     expect(entry?.name).toBe('data');
