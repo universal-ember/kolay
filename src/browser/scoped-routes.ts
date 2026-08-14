@@ -25,7 +25,27 @@ export function scopedRouteNameFor(parent: string | null | undefined): string {
   return prefix ? `${prefix}.page` : 'page';
 }
 
+/**
+ * `addRoutes` adds one wildcard route to the route it is called from, so
+ * two scoped mounts in the same route would both claim that one wildcard —
+ * the second silently winning, leaving the first group unreachable. Refuse
+ * it instead.
+ *
+ * A plain throw rather than `@ember/debug`'s `assert`: this module's unit
+ * tests run in node, and a mount that never resolves is as broken in
+ * production as it is in development.
+ */
 export function registerScopedRoute(routeName: string, groupName: string): void {
+  const claimed = scopedRouteGroups.get(routeName);
+
+  if (claimed !== undefined && claimed !== groupName) {
+    throw new Error(
+      `The '${routeName}' route already mounts the '${claimed}' group, so it cannot also ` +
+        `mount '${groupName}'. addRoutes(context, groupName) adds one wildcard route to the ` +
+        `route it is called from — give each mount its own route.`
+    );
+  }
+
   scopedRouteGroups.set(routeName, groupName);
 }
 

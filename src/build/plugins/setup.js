@@ -98,31 +98,54 @@ function leaf(name) {
  * inside one group's `collection` cannot be a group that lives somewhere
  * else, or the reader would meet it twice.
  *
- * One pass covers both: the map is keyed by name and holds the node that
- * claimed it, so a second claim is either a duplicate top-level entry (the
- * claimant is the name itself) or a group collected twice.
+ * One pass covers both: the map holds the claim on each name, so a second
+ * claim is either a duplicate top-level entry (the claimant is the name
+ * itself) or a group collected twice.
+ *
+ * Keyed case-insensitively, because that is how the names are resolved:
+ * `canonicalGroupName` and `navEntryNamed` both match that way, so two
+ * entries differing only in case would be ambiguous at runtime rather than
+ * merely confusing to read.
  */
 function assertNav(nav) {
   const claimed = new Map();
 
   for (const node of nav) {
     for (const name of namesIn(node)) {
-      const owner = claimed.get(name);
+      const key = name.toLowerCase();
+      const claim = claimed.get(key);
 
-      if (owner !== undefined && owner !== node) {
-        throw new Error(
-          owner.name === name && node.name === name
-            ? `Two navigation entries are named '${name}'. Every entry in the top-level ` +
-                `navigation needs its own name, whether it collects other groups or not.`
-            : `'${name}' is collected by '${node.name}' and by '${owner.name}'. A group can be ` +
-                `collected by only one group: it has one set of pages, and would otherwise be ` +
-                `presented in two places at once.`
-        );
+      if (claim !== undefined && claim.node !== node) {
+        throw new Error(navCollision(claim, { node, name }));
       }
 
-      claimed.set(name, node);
+      claimed.set(key, { node, name });
     }
   }
+}
+
+/**
+ * Which collision this is: two top-level entries sharing a name, or one
+ * group collected by two. A claim names an entry when the name is the
+ * node's own rather than one of the groups beneath it.
+ */
+function navCollision(first, second) {
+  const namesAnEntry = (claim) => claim.node.name === claim.name;
+
+  if (namesAnEntry(first) && namesAnEntry(second)) {
+    return first.name === second.name
+      ? `Two navigation entries are named '${first.name}'. Every entry in the top-level ` +
+          `navigation needs its own name.`
+      : `Two navigation entries are named '${first.name}' and '${second.name}', which differ ` +
+          `only in case. Every entry in the top-level navigation needs its own name, and names ` +
+          `are matched without regard to case.`;
+  }
+
+  return (
+    `'${second.name}' is collected by '${second.node.name}' and by '${first.node.name}'. ` +
+    `A group can be collected by only one group: it has one set of pages, and would otherwise ` +
+    `be presented in two places at once.`
+  );
 }
 
 /**

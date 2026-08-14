@@ -76,6 +76,16 @@ describe('navFor', () => {
     );
   });
 
+  test('two entries differing only in case are an error too', () => {
+    // `canonicalGroupName` and `navEntryNamed` both resolve names without
+    // regard to case, so these two would be ambiguous at runtime
+    const nav = { name: 'Guides', group: null, children: [leaf('warp-drive')] };
+
+    expect(() => navFor(state({ groups: [], nav }, group('warp-drive'), group('guides')))).toThrow(
+      /named 'Guides' and 'guides', which differ only in case/
+    );
+  });
+
   test('a group cannot be collected by two groups', () => {
     const data = { name: 'data', group: null, children: [leaf('warp-drive')] };
     const schema = { name: 'schema', group: null, children: [leaf('warp-drive')] };

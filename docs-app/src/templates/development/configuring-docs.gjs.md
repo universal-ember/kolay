@@ -207,7 +207,7 @@ The following rules are enforced at buildtime, and breaking either one fails the
 
   ```
   Two navigation entries are named 'Packages'. Every entry in the top-level navigation
-  needs its own name, whether it collects other groups or not.
+  needs its own name.
   ```
 
 - A group can be collected by only one collection group.
