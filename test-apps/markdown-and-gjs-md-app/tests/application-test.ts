@@ -6,11 +6,11 @@ import { visitAllLinks } from "@universal-ember/test-support";
 
 const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? skip : test;
 
-// Must stay above the crawl: ember-repl's compiler wedges if anything runs after it.
+// Must stay above the crawl: once it runs, ember-repl's compiler can no longer serve a new test app.
 module("Group index redirects", function (hooks) {
   setupApplicationTest(hooks);
 
-  // The crawl can't catch this: it compares URLs, and an erroring `/Docs` keeps its own.
+  // The crawl can't catch this: it only compares URLs, and an erroring `/Docs` still sits at `/Docs`.
   test("visiting a group root redirects to its first page", async function (assert) {
     await visit("/Docs");
 
