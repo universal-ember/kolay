@@ -22,7 +22,7 @@ Pages are standard [CommonMark](https://commonmark.org/), plus the extensions be
 
 ### Strikethrough
 
-Both `~~double~~` and `~single~` tildes work: ~~double~~, ~single~.
+Both `~~double~~` and `~single~` tildes work: ~~double~~, ~~single~~.
 
 ### Task lists
 
