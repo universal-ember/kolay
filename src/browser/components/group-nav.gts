@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
 import { docsManager } from '../services/docs.ts';
+import { HOME_GROUP } from '../utils.ts';
 
 import type RouterService from '@ember/routing/router-service';
 
@@ -65,8 +66,11 @@ export class GroupNav extends Component<{
 
   get groups() {
     return this.#docs.availableGroups.map((groupName) => {
-      if (groupName === 'root') {
-        return { text: this.homeName, value: '/', href: this.rootURL };
+      // The co-located pages are a group, but they live in the root URL
+      // space rather than under their name, so the link is the app's root
+      // and `@homeName` names it.
+      if (groupName === HOME_GROUP) {
+        return { text: this.homeName, value: HOME_GROUP, href: this.rootURL };
       }
 
       return {
@@ -79,13 +83,11 @@ export class GroupNav extends Component<{
     });
   }
 
-  isActive = (subPath: string) => {
-    if (subPath === '/') return false;
-
+  isActive = (groupName: string) => {
     // The group is derived from the URL by the docs service (rootURL-aware),
     // rather than comparing the group name against currentURL directly
     // (which always failed: 'Docs' never prefixes '/Docs/...').
-    return this.#docs.selectedGroup === subPath;
+    return this.#docs.selectedGroup === groupName;
   };
 
   get activeClass() {
