@@ -107,7 +107,7 @@ export function getSignature(
           'declaration' in unionMember &&
           unionMember.declaration
         ) {
-          return getSignatureFromType(unionMember.declaration as Reflection);
+          return getSignatureFromType(unionMember.declaration);
         }
 
         return undefined;

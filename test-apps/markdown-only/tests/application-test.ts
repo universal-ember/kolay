@@ -36,17 +36,8 @@ module("All Links", function (hooks) {
       "/Docs",
       "/my-folder-name/bar.md",
       "/my-folder-name/foo.md",
-      "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
       "/Docs/sub-folder/ember-resources.md",
-      "/Docs",
-      "/my-folder-name/foo.md",
-      "/my-folder-name/bar.md",
-      "/Docs",
-      "/Docs/sub-folder/ember-resources.md",
-      "/Docs/sub-folder/ember-primitives.md",
-      "/Docs",
-      "/Docs",
     ]);
   });
 });
