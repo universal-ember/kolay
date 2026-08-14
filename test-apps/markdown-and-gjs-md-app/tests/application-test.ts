@@ -6,7 +6,6 @@ import { visitAllLinks } from "@universal-ember/test-support";
 
 const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? skip : test;
 
-// Must stay above the crawl: once it runs, ember-repl's compiler can no longer serve a new test app.
 module("Group index redirects", function (hooks) {
   setupApplicationTest(hooks);
 
