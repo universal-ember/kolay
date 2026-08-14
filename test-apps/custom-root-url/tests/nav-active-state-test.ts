@@ -5,11 +5,6 @@ import { setupApplicationTest } from "ember-qunit";
 const GROUP_NAV = 'nav[aria-label="Groups"]';
 const PAGE_NAV = 'nav[aria-label="Selected Group"]';
 
-// The co-located pages' group links at the app root rather than under its own
-// name, so under this rootURL its nav link is `/my-github-project/` and
-// nothing points at `/my-github-project/Home`. It still reads active by group
-// name rather than by href, so the active-state assertions below are unchanged.
-
 module("Nav active state under a custom rootURL", function (hooks) {
   setupApplicationTest(hooks);
 
