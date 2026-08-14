@@ -14,7 +14,7 @@ function page(path: string): Page {
   };
 }
 
-function collection(path: string, pages: (Page | PageTree)[]): PageTree {
+function pageTree(path: string, pages: (Page | PageTree)[]): PageTree {
   return { path, appRelativePath: path, name: path, pages };
 }
 
@@ -31,7 +31,7 @@ module('isIndex', function () {
     assert.false(isIndex(page('/Documentation/sub-folder/x.md')));
   });
 
-  test('a collection is never an index, regardless of its path', function (assert) {
-    assert.false(isIndex(collection('/Documentation/index', [])));
+  test('a page tree is never an index, regardless of its path', function (assert) {
+    assert.false(isIndex(pageTree('/Documentation/index', [])));
   });
 });
