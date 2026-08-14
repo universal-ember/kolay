@@ -30,7 +30,6 @@ module("All Links", function (hooks) {
       visited.push(path);
     });
 
-    // Sorted because visit order depends on rendering timing; the set of pages does not.
     assert.deepEqual(visited.sort(), [
       "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
