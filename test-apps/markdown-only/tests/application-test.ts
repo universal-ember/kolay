@@ -29,28 +29,24 @@ module("All Links", function (hooks) {
       return new Promise((resolve) => setTimeout(resolve, 250));
     });
 
+    // The co-located pages' link is the app root now, rather than `/Home`
+    // where nothing is served — so the crawl no longer visits `/Home`, and
+    // the root sends it on to the first group.
     assert.verifySteps([
-      "/Home",
       "/Docs",
       "/my-folder-name/bar.md",
       "/my-folder-name/foo.md",
-      "/Home",
-      "/my-folder-name/bar.md",
-      "/Home",
+      "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
       "/Docs/sub-folder/ember-resources.md",
-      "/Home",
-      "/my-folder-name/foo.md",
       "/Docs",
       "/my-folder-name/foo.md",
       "/my-folder-name/bar.md",
       "/Docs",
-      "/Home",
-      "/Home",
       "/Docs/sub-folder/ember-resources.md",
-      "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
-      "/Home",
+      "/Docs",
+      "/Docs",
     ]);
   });
 });
