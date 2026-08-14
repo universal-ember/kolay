@@ -9,47 +9,31 @@ module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 
   skippable("are visitable without error", async function (assert) {
-    await visitAllLinks(async (path) => {
-      assert.step(path);
+    const visited: string[] = [];
 
-      return new Promise((resolve) => setTimeout(resolve, 250));
+    await visitAllLinks((path) => {
+      visited.push(path);
     });
 
+    // A snapshot of the crawl: every reachable in-app page. Sorted and
+    // deduplicated, because the crawler's visit order — and how many source
+    // pages it happens to collect a link from — depend on rendering timing,
+    // but the set of reachable pages does not. This intentionally fails when
+    // pages are added or removed — update the list to match the new reality.
+    //
+    // `/Home` is absent because the co-located pages' group links at the app
+    // root rather than under its own name (0dab708). Nothing replaces it in the
+    // list: this app's rootURL is `/`, and the crawler skips a bare `/` as the
+    // page it already started on.
+    for (const path of [...new Set(visited)].sort()) assert.step(path);
+
     assert.verifySteps([
-      "/Home",
-      "/Docs",
-      "/my-folder-name/bar.md",
-      "/my-folder-name/baz",
-      "/my-folder-name/foo",
-      "/Home",
-      "/my-folder-name/bar.md",
-      "/my-folder-name/foo",
       "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
       "/Docs/sub-folder/ember-resources",
-      "/Home",
+      "/my-folder-name/bar.md",
       "/my-folder-name/baz",
-      "/Home",
       "/my-folder-name/foo",
-      "/my-folder-name/bar.md",
-      "/Home",
-      "/Home",
-      "/Docs/sub-folder/ember-primitives.md",
-      "/Home",
-      "/Docs/sub-folder/ember-resources",
-      "/Docs",
-      "/Docs/sub-folder/ember-resources",
-      "/my-folder-name/bar.md",
-      "/Docs",
-      "/my-folder-name/baz",
-      "/Docs",
-      "/my-folder-name/foo",
-      "/my-folder-name/baz",
-      "/my-folder-name/bar.md",
-      "/my-folder-name/bar.md",
-      "/Docs/sub-folder/ember-primitives.md",
-      "/Docs",
-      "/Home",
     ]);
   });
 });
