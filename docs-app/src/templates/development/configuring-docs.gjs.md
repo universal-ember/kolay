@@ -167,9 +167,9 @@ Guides   Packages
              Helpers
 ```
 
-A collected group is a group like any other: the same entry shape, even taking an (optional) `src` and [markdown options](#scope) of its own. Markdown options set on the collecting group are inherited by the groups inside it, unless one sets its own options. A separate `docs()` call never inherits, so nesting is what makes the difference.
+A collected group is a group like any other: the same entry shape, even taking an (optional) `src` and [markdown options](#scope) of its own. Markdown options set on the collecting group are inherited by the groups inside it, unless one sets its own options. Options never travel between separate `docs()` calls, only down into a `collection`.
 
-Collected groups can be nested: a collected group can itself collect groups that have `collection` configs of their own, and so on, as deep as the reader needs.
+Collected groups can be nested: a collected group can itself collect groups that have `collection` configs of their own, and so on, as deep as you need.
 
 The [`docs()`](#docs) plugin takes `collection` the same way, for a project configuring plugins directly rather than through [`kolay.config.js`](/development/config-file.md):
 
@@ -180,11 +180,11 @@ docs("Packages", {
 }),
 ```
 
-The collecting group takes the place of the groups it collects. `Core`, `Plugins`, and `Utilities` no longer appear across the top of the site; `Packages` stands where they were, in its own declared position. Its name is what the navigation shows, and apps format it however they already format group names.
+The collecting group takes the place of the groups it collects. `Core`, `Plugins`, and `Utilities` no longer appear across the top of the site; `Packages` stands where they were, in its own declared position. The navigation shows its name, formatted however the app already formats group names.
 
-Every page in a collected group shows the same page list: the collecting group's, with a section per collected group in declaration order. Reading `/plugins/writing-one.md` still shows `Core` / `Plugins` / `Utilities`, and `Packages` stays highlighted the whole time the reader is inside any of them.
+Every page in a collected group shows the collecting group's page list, with a section per collected group in declaration order. A reader on `/plugins/writing-one.md` still sees `Core` / `Plugins` / `Utilities`, with `Packages` highlighted.
 
-Two things are worth knowing when writing the config:
+`src` is optional for a collecting group, and whether it has one decides where its entry links:
 
 - **A collecting group needs no `src`.** `Packages` above has none, because it contributes no pages of its own. Give it one and its pages come first in the page list, above the sections, and its entry links to its own URL.
 - **Otherwise the entry links at the first group with pages**, its own or the first it collects, however deep. Clicking `Packages` lands on the `core` group's landing page, so that group's route needs [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) as usual. Reorder the `collection` to land somewhere else.
@@ -198,9 +198,9 @@ The following rules are enforced at buildtime:
 
 `<GroupNav />` and `<PageNav />` need no changes. `<GroupNav />` renders one link per entry, and `<PageNav />` renders the collecting group's page list when the reader is inside one.
 
-A collected group arrives as an ordinary `PageTree`, so it goes through `<PageNav />`'s `<:section>` block — the same block a folder of markdown files goes through, which is why that block is named for the nav role rather than the filesystem. A section's label is a link when its group has an `index.md`, and plain text otherwise.
+A collected group is an ordinary `PageTree`, so it goes through `<PageNav />`'s `<:section>` block. That is the same block a folder of markdown files goes through, which is why the block is named for the nav role rather than the filesystem. A section's label is a link when its group has an `index.md`, and plain text otherwise.
 
-Hand-rolled navigation reads the navigation from [`docsManager`](/Runtime/utilities/docs-manager.md):
+Hand-rolled navigation reads the entries from [`docsManager`](/Runtime/utilities/docs-manager.md):
 
 ```js
 const docs = docsManager(this);
@@ -221,9 +221,9 @@ An entry is `{ name, isCollection, groups, href, tree }`. `href` is where it lin
 {{/each}}
 ```
 
-A sidebar built on `docs.tree` needs no change at all: it is already the tree to render, whether that is the current group's or the collecting group's. `currentGroup.tree` is still the group's own.
+A sidebar built on `docs.tree` needs no change, because it is already the tree to render, whether that is the current group's or the collecting group's. `currentGroup.tree` is still the group's own.
 
-`availableGroups` and `selectedGroup` are deliberately untouched. They answer how a _page_ is resolved — which group owns this URL, which group am I in — and a collecting group is not where a page lives. A top-level nav built on `availableGroups` therefore keeps working, and keeps listing every group. Switching that loop to `navEntries` is what makes a collection visible.
+`availableGroups` and `selectedGroup` are deliberately untouched. Both answer page-resolution questions: which group owns this URL, and which group the reader is in. A collecting group is not where a page lives, so a top-level nav built on `availableGroups` keeps working and keeps listing every group. Switch that loop to `navEntries` to make a collection visible.
 
 ## Each group's virtual module
 
