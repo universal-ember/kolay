@@ -155,7 +155,7 @@ describe('navEntriesFor', () => {
     expect(entries.map((entry) => entry.name)).toEqual(['Home', 'data', 'guides']);
   });
 
-  test('a collecting entry carries every group beneath it, in order', () => {
+  test('a collecting entry has every group beneath it, in order', () => {
     const [, includer] = entries;
 
     expect(includer?.isCollection).toBe(true);

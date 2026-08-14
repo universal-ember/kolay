@@ -92,7 +92,7 @@ function lastSegment(path) {
  * Returns one normalized usage per group the call contributes — usually
  * one, `{ ...options, groups: [] | [{ name, src }] }`; a `collection`
  * contributes a usage per group in its tree, so every group keeps its own
- * markdown options, and the first of them carries the `nav` tree.
+ * markdown options, and the first of them has the `nav` tree.
  *
  * @param {string | DocsOptions} [groupName]
  * @param {DocsOptions} [options]
@@ -283,7 +283,7 @@ function usagesFor(node, rootOptions, isRoot = true) {
 }
 
 /**
- * The tree as the manifest carries it: a node per group, `group` naming
+ * The tree as the manifest has it: a node per group, `group` naming
  * the group whose pages it contributes (null when it has none of its own).
  */
 function navNode(node) {

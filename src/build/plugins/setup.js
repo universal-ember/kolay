@@ -50,11 +50,11 @@ function namesIn(node) {
 }
 
 /**
- * The navigation, as the metamanifest carries it: the co-located pages,
+ * The navigation, as the metamanifest has it: the co-located pages,
  * then a node per top-level group — where a group that collects others
  * stands in for all of them.
  *
- * A collection group's `docs()` usage carries the whole tree it describes
+ * A collection group's `docs()` usage has the whole tree it describes
  * (`usage.nav`), and the groups inside it have usages of their own for
  * their files; those are placed by the tree rather than at the top level.
  *

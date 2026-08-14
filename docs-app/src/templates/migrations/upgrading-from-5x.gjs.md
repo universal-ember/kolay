@@ -139,7 +139,7 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## `kolay/compiled-docs:virtual` carries the navigation
+## `kolay/compiled-docs:virtual` exports the navigation
 
 Alongside `base`, `redirects`, and `groups`, the metamanifest now exports `nav` — a node per top-level group, with the groups it collects beneath it (see [`collection`](/development/configuring-docs.md)). `loadCompiledDocs` puts it on `Manifest.nav`, so `setupKolay()` needs nothing from you.
 

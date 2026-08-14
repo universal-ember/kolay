@@ -165,7 +165,7 @@ Guides   Packages
              Helpers
 ```
 
-Every page in a collected group shows the collection group's page list, with a section per collected group in declaration order. In our example, a reader on `/plugins/writing-one.md` still sees `Core` / `Plugins` / `Utilities`, with `Packages` highlighted.
+Every page in a collected group shows the parent collection group's page list, with a section per collected group in declaration order. In our example, a reader on `/plugins/writing-one.md` still sees `Core` / `Plugins` / `Utilities`, with `Packages` highlighted.
 
 Each collected group is still a group: the same entry shape, taking an `src` and [markdown options](#scope) of its own. A plain string works too, and its last path segment names the group, exactly as it does for a `docs()` usage. `src` is required for each collected group, under the same rule as anywhere else: a group needs one _unless_ it collects other groups.
 
@@ -203,7 +203,7 @@ Either way the collection group's own URL — `/Packages` here — redirects to 
 
 The following rules are enforced at buildtime, and breaking either one fails the build with the reason:
 
-- Every entry in the top-level navigation needs its own name. A collection group is named there alongside the groups that no collection group collects, so it cannot reuse one of those names.
+- Every entry in the top-level navigation needs its own name. Group names already have to be unique across every `docs()` usage, collections or not; this rule extends that to a collection group with no `src`, which is a name in the navigation without being a group.
 
   ```
   Two navigation entries are named 'Packages'. Every entry in the top-level navigation
@@ -243,7 +243,9 @@ Router.map(function () {
 });
 ```
 
-One `Docs` entry with a section each. Reading `/help/getting-started/intro.md` or `/demos/components/buttons` keeps that entry active and shows the same page list, while each page keeps its own URL. Because a collection adds no route of its own, `handlePotentialIndexVisit` still belongs in each mount's route, exactly as it would without the collection.
+That gives one `Docs` entry in the top nav, with a `guides` section and a `demos` section, while the pages stay at `/help/…` and `/demos/…` — the URLs their mounts give them, not `/Docs/…`. Reading either keeps the `Docs` entry active and shows the same page list. Because a collection adds no route of its own, `handlePotentialIndexVisit` still belongs in each mount's route, exactly as it would without the collection.
+
+The mounts can share a prefix if you would rather the URLs read that way — nesting both routes inside a `docs` route gives `/docs/guides/…` and `/docs/demos/…`, and the collection is unaffected, since mount depth only changes the route names `addRoutes` registers under.
 
 A collection group with no `src` has no mount at all — no pages, and no `virtual:kolay/docs/<name>` module. It exists only as a name in the navigation, which is why its own URL resolves through the navigation rather than through a group, as [above](#collection).
 
@@ -265,18 +267,9 @@ docs.collectionOf("plugins"); // 'Packages'
 
 `collectionOf` takes a group name and returns the name of the entry presenting it, which is the collection group's name, or the group's own when nothing collects it.
 
-A top-level nav needs three things from each entry, and `{ name, href, tree }` are them: what to show, where to link, and the page list to render beside it. Compare `entry.name` against `activeNavEntry.name` for the active state:
+A top-level nav needs three things from each entry, and `{ name, href, tree }` are them: what to show, where to link, and the page list to render beside it. The active state compares `entry.name` against `activeNavEntry.name`, as in the diff below.
 
-```hbs
-{{#each this.docs.navEntries as |entry|}}
-  <a
-    href={{entry.href}}
-    class={{if (eq entry.name this.docs.activeNavEntry.name) "active"}}
-  >{{entry.name}}</a>
-{{/each}}
-```
-
-An entry carries two more fields, for rarer jobs. `groups` is the flat list of groups whose pages it presents, its own first and then the collected ones, depth first, for a nav that wants to name what is inside an entry. `isCollection` answers whether the entry collects anything at all, which `groups.length` cannot: a group collecting exactly one group presents exactly one group, the same as a plain group does.
+An entry has two more fields, for rarer jobs. `groups` is the flat list of groups whose pages it presents, its own first and then the collected ones, depth first, for a nav that wants to name what is inside an entry. `isCollection` answers whether the entry collects anything at all, which `groups.length` cannot: a group collecting exactly one group presents exactly one group, the same as a plain group does.
 
 A sidebar built on `docs.tree` needs no change to show a collection, because `docs.tree` is already the tree to render — the current group's, or the collection group's when one presents it. `currentGroup.tree` is still the group's own, for a sidebar that wants only the group.
 
