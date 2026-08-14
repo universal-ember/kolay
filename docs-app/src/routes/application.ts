@@ -3,6 +3,7 @@ import Route from '@ember/routing/route';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 import { sentenceCase } from 'change-case';
 import { colorScheme, sync } from 'ember-primitives/color-scheme';
+import { setupTabster } from 'ember-primitives/tabster';
 import { setupKolay } from 'kolay/setup';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
@@ -15,6 +16,10 @@ sync();
 
 export default class ApplicationRoute extends Route {
   async model(): Promise<{ manifest: Manifest }> {
+    // once per app: the focus managers would fight each other otherwise.
+    // Search results are a mover — see templates/search.gts.
+    await setupTabster(this);
+
     const highlighter = await createHighlighterCore({
       themes: [import('shiki/themes/github-dark.mjs'), import('shiki/themes/github-light.mjs')],
       langs: [

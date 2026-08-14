@@ -1,4 +1,5 @@
 const { buildMacros } = require('@embroider/macros/babel');
+const { scopedCSS } = require('ember-scoped-css/babel');
 
 const macros = buildMacros();
 
@@ -20,7 +21,7 @@ module.exports = {
           'ember-cli-htmlbars-inline-precompile',
           'htmlbars-inline-precompile',
         ],
-        transforms: [...macros.templateMacros],
+        transforms: [...macros.templateMacros, scopedCSS.template({})],
       },
     ],
     [

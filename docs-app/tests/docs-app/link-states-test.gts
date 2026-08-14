@@ -3,7 +3,7 @@ import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 
 function demoNav() {
-  const host = [...document.querySelectorAll('.home-doc *')].find((el) => el.shadowRoot);
+  const host = [...document.querySelectorAll('[data-design="home"] *')].find((el) => el.shadowRoot);
 
   return host?.shadowRoot?.querySelector('nav[aria-label="Link states demo"]');
 }
@@ -35,6 +35,6 @@ module('Link states demo', function (hooks) {
     const router = this.owner.lookup('service:router');
 
     assert.strictEqual(router.currentURL, '/development/ordering-pages.md');
-    assert.dom('.home-doc').containsText('Ordering');
+    assert.dom('[data-design="home"]').containsText('Ordering');
   });
 });

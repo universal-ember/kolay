@@ -30,6 +30,26 @@ export interface Manifest {
   }[];
 }
 
+export interface SearchEntry {
+  path: string;
+  appRelativePath: string;
+  groupName: string;
+  title: string;
+  headings: string[];
+  /**
+   * The page's markdown, when the build could inline it. Pages it couldn't
+   * are loaded on demand — from `appRelativePath`, since where a page can be
+   * read from is only known once the app is running under its rootURL.
+   */
+  text: string;
+}
+
+export interface SearchResult extends SearchEntry {
+  score: number;
+  match: string;
+  excerptRange: { start: number; end: number };
+}
+
 export interface PageTree {
   /**
    * The folder's own directory segment, e.g. 'sub-folder'.

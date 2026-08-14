@@ -16,6 +16,7 @@ export default class Router extends EmberRouter {
 Router.map(function () {
   // the co-located pages (Home)
   addRoutes(this);
+  this.route('search');
 
   // each group in its own mount, so each can have its own page template
   // (and with it, its own design — see templates/runtime and

@@ -30,20 +30,22 @@ module('Runtime docs navigation', function (hooks) {
   test('each group mount has its own design', async function (assert) {
     await visit('/Runtime/rendering/page.md');
 
-    assert.dom('.runtime-doc[data-design="runtime"]').exists();
-    assert.dom('.runtime-doc .guide-eyebrow').containsText('Guide');
+    // each design's class names are scoped to its own template, so the
+    // designs are addressed here the way app.css addresses them: by attribute
+    assert.dom('[data-design="runtime"]').exists();
+    assert.dom('[data-design="runtime"] > p:first-child').containsText('Guide');
 
     await visit('/TypeDoc/components/api-docs.md');
 
-    assert.dom('.typedoc-doc[data-design="typedoc"]').exists();
+    assert.dom('[data-design="typedoc"]').exists();
     assert
-      .dom('.typedoc-doc .term__title')
+      .dom('[data-design="typedoc"] header code')
       .containsText('api reference', 'the typedoc layout has its own structure');
-    assert.dom('.typedoc-doc .guide-sheet').doesNotExist('designs are not shared');
+    assert.dom('[data-design="typedoc"] [data-design]').doesNotExist('designs are not shared');
 
     await visit('/install/index');
 
-    assert.dom('.home-doc[data-design="home"]').exists();
+    assert.dom('[data-design="home"]').exists();
   });
 
   test('the Compiled page shows the CompileState it gives back', async function (assert) {
@@ -58,7 +60,7 @@ module('Runtime docs navigation', function (hooks) {
     assert.ok(label, 'CompileState renders, labeled once by the declaration');
 
     for (const field of ['component', 'error', 'isReady', 'promise', 'reason']) {
-      assert.dom('.runtime-doc').containsText(field);
+      assert.dom('[data-design="runtime"]').containsText(field);
     }
   });
 
@@ -93,17 +95,19 @@ module('Runtime docs navigation', function (hooks) {
     assert.ok(label, 'Selected renders, labeled once by the declaration');
 
     for (const member of ['doc', 'prose', 'isReady', 'isPending', 'hasError', 'error']) {
-      assert.dom('.runtime-doc').containsText(member);
+      assert.dom('[data-design="runtime"]').containsText(member);
     }
 
     assert
-      .dom('.runtime-doc')
+      .dom('[data-design="runtime"]')
       .containsText(
         'A human-readable error message',
         'accessor doc comments render (they live on the get signature)'
       );
 
-    assert.dom('.runtime-doc').doesNotContainText('router', 'private members stay hidden');
+    assert
+      .dom('[data-design="runtime"]')
+      .doesNotContainText('router', 'private members stay hidden');
   });
 
   test('the docsManager page shows the DocsService store it returns', async function (assert) {
@@ -113,7 +117,7 @@ module('Runtime docs navigation', function (hooks) {
 
     const labels = [
       ...document.querySelectorAll(
-        '.runtime-doc h1, .runtime-doc h2, .runtime-doc h3, .runtime-doc .typedoc__declaration-name'
+        '[data-design="runtime"] h1, [data-design="runtime"] h2, [data-design="runtime"] h3, [data-design="runtime"] .typedoc__declaration-name'
       ),
     ]
       .map((el) => el.textContent?.trim())
@@ -136,9 +140,11 @@ module('Runtime docs navigation', function (hooks) {
       'groupHrefFor',
       'selectGroup',
     ]) {
-      assert.dom('.runtime-doc').containsText(member);
+      assert.dom('[data-design="runtime"]').containsText(member);
     }
 
-    assert.dom('.runtime-doc').doesNotContainText('PREPARE_DOCS', 'internal wiring stays hidden');
+    assert
+      .dom('[data-design="runtime"]')
+      .doesNotContainText('PREPARE_DOCS', 'internal wiring stays hidden');
   });
 });

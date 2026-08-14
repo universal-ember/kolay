@@ -12,5 +12,6 @@ export default class Router extends EmbroiderRouter {
 }
 
 Router.map(function () {
+  this.route("search");
   addRoutes(this);
 });

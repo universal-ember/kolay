@@ -1,4 +1,4 @@
-import type { Manifest, Page, PageTree } from '../types.ts';
+import type { Manifest, Page, PageTree, SearchEntry } from '../types.ts';
 import type { ComponentLike } from '@glint/template';
 
 /**
@@ -30,6 +30,7 @@ export interface DocsGroupModule {
    * folders and pages one level in.
    */
   manifest: { name: string; list: Page[]; tree: PageTree };
+  search: () => Promise<SearchEntry[]>;
   /**
    * The source's meta: repository URL, repo-relative docs path, and
    * anything from the source root's `meta.jsonc`.
@@ -68,6 +69,7 @@ export interface MetaManifest {
 export async function loadCompiledDocs(meta: MetaManifest): Promise<{
   manifest: Manifest;
   pages: DocsGroupModule['pages'];
+  loadSearchData: () => Promise<SearchEntry[]>;
 }> {
   const modules = await Promise.all(meta.groups.map((group) => group.load()));
 
@@ -78,5 +80,12 @@ export async function loadCompiledDocs(meta: MetaManifest): Promise<{
       groups: modules.map((mod) => mod.manifest),
     },
     pages: Object.assign({}, ...modules.map((mod) => mod.pages)) as DocsGroupModule['pages'],
+    loadSearchData: async () => {
+      const searchModules = await Promise.all(
+        meta.groups.map((group) => group.load().then((mod) => mod.search()))
+      );
+
+      return searchModules.flat();
+    },
   };
 }

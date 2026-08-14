@@ -1,13 +1,13 @@
 import 'ember-mobile-menu/themes/android';
 
 import Component from '@glimmer/component';
-import { on } from '@ember/modifier';
 import { service } from '@ember/service';
 
 import { pascalCase, sentenceCase } from 'change-case';
 // @ts-expect-error no types for the mobile-menu
 import MenuWrapper from 'ember-mobile-menu/components/mobile-menu-wrapper';
 import { pageTitle } from 'ember-page-title';
+import { Form } from 'ember-primitives/components/form';
 import Route from 'ember-route-template';
 import { GroupNav, PageNav } from 'kolay/components';
 import rememberDocumentScroll from 'memory-scroll/modifiers/remember-document-scroll';
@@ -73,6 +73,83 @@ const Menu: TOC<{ Element: SVGElement }> = <template>
     ></path></svg>
 </template>;
 
+class HeaderSearch extends Component<{ Args: Record<string, never> }> {
+  @service declare router: RouterService;
+
+  get isSearchRoute() {
+    return this.router.currentRouteName === 'search';
+  }
+
+  submit = (data: { q?: string }) => {
+    const q = data.q ?? '';
+
+    this.router.transitionTo('search', { queryParams: { q } });
+  };
+
+  <template>
+    {{#unless this.isSearchRoute}}
+      <Form data-search @onChange={{this.submit}}>
+        <input aria-label="Search documentation" placeholder="Search docs" name="q" />
+        <button type="submit" aria-label="Search">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path
+              d="m16 16 5 5"
+            ></path></svg>
+        </button>
+      </Form>
+    {{/unless}}
+
+    <style scoped>
+      [data-search] {
+        flex: 1;
+        display: flex;
+        max-width: 24rem;
+        margin: 0;
+        input {
+          min-width: 0;
+          width: 100%;
+          margin: 0;
+          padding: 0.5rem 1rem;
+          line-height: 1rem;
+          height: auto;
+          border-radius: 0.35rem 0 0 0.35rem;
+        }
+
+        button {
+          display: inline-flex;
+          width: auto;
+          align-items: center;
+          justify-content: center;
+          margin: 0;
+          padding: 0.4rem 0.65rem;
+          border-radius: 0 0.35rem 0.35rem 0;
+        }
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+          fill: none;
+          stroke: currentColor;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 2;
+        }
+      }
+
+      @media (width < 1000px) {
+        [data-search] {
+          max-width: 18rem;
+        }
+      }
+
+      @media (width < 600px) {
+        [data-search] {
+          max-width: none;
+        }
+      }
+    </style>
+  </template>
+}
+
 const SideNav: TOC<{ Element: HTMLElement }> = <template>
   <aside>
     <PageNav ...attributes>
@@ -125,6 +202,7 @@ export default Route(
             <mmw.Toggle><Menu /></mmw.Toggle>
             <GroupNav />
           </div>
+          <HeaderSearch />
           <div>
             <ExternalLink href="https://github.com/universal-ember/kolay">GitHub</ExternalLink>
           </div>
@@ -187,11 +265,26 @@ export default Route(
         .big-layout aside { display: none; }
       }
 
+      @media (width < 600px) {
+        header { flex-wrap: wrap; }
+        header > :nth-child(2) { order: 3; flex-basis: 100%; }
+      }
+
       /* The whole viewport is the page: short docs still fill it, so the
        * groups' full-height designs hold their shape. Width is fluid —
        * pico's stepped .container max-widths would leave dead margins at
        * in-between sizes — with one cap for very large screens and a
        * gutter that scales with the viewport. */
+      /* The drawer's own boxes clip with `overflow: hidden`, which makes each
+       * of them a scroll container. None of them ever scrolls — they grow,
+       * and the page scrolls — but a `position: sticky` descendant (the
+       * search box) anchors to the innermost scroll container, so it would
+       * never stick to the viewport. `clip` clips just the same without
+       * being scrollable. */
+      div.mobile-menu-wrapper {
+        overflow: clip;
+      }
+
       .mobile-menu-wrapper__content.container {
         min-height: 100dvh;
         display: flex;
@@ -200,6 +293,8 @@ export default Route(
         max-width: 90rem;
         margin-inline: auto;
         padding-inline: clamp(0.6rem, 2.5vw, 2rem);
+        overflow-x: clip;
+        overflow-y: visible;
       }
 
       .big-layout {
@@ -213,12 +308,12 @@ export default Route(
           max-width: 100%;
           display: flex;
           flex-direction: column;
-          overflow-x: hidden;
+          overflow-x: clip;
         }
       }
 
       .mobile-menu__tray, .big-layout {
-        overflow-x: hidden;
+        overflow-x: clip;
 
         nav {
           ul {
