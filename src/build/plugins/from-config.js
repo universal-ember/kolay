@@ -32,6 +32,33 @@ function resolveFrom(configDir, src) {
 }
 
 /**
+ * A docs entry with its paths resolved — its own `src`, and those of every
+ * group it collects, however deep. A group an entry collects is a group
+ * like any other, so the config file's rule for a relative path has to
+ * hold at every depth.
+ *
+ * @param {string} configDir
+ * @param {object} entry
+ */
+function resolveEntry(configDir, entry) {
+  const { collection, src, ...rest } = entry;
+
+  return {
+    ...rest,
+    ...(src === undefined ? {} : { src: resolveFrom(configDir, src) }),
+    ...(collection === undefined
+      ? {}
+      : {
+          collection: toArray(collection).map((included) =>
+            typeof included === 'string'
+              ? resolveFrom(configDir, included)
+              : resolveEntry(configDir, included ?? {})
+          ),
+        }),
+  };
+}
+
+/**
  * The plugins a kolay config describes: one `docs()` per `docs` entry,
  * one `demos()` / `importEntrypoints()` per entry of theirs, and one
  * `apiDocs()` for the `apiDocs` list. A key that is not specified
@@ -55,11 +82,9 @@ export function pluginsFromConfig(config, configDir) {
       continue;
     }
 
-    const { name, src, ...entryOptions } = entry ?? {};
-    const resolvedSrc = resolveFrom(configDir, src);
-    const options = { src: resolvedSrc, ...markdownOptions, ...entryOptions };
+    const { name, ...options } = resolveEntry(configDir, entry ?? {});
 
-    plugins.push(docs.vite([name, options]));
+    plugins.push(docs.vite([name, { ...markdownOptions, ...options }]));
   }
 
   const apiDocsInput = toArray(config.apiDocs);

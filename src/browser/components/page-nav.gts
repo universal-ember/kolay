@@ -29,7 +29,7 @@ type InternalPageYield = {
 
 export class PageNav extends Component<{
   /**
-   * The `<nav>` element. It has a default `aria-label` of "Selected Group".
+   * The `<nav>` element. It has a default `aria-label` of "Pages".
    * Normally an `aria-label` is not required,
    * but when there are multiple `<nav>` elements on a screen, it is required.
    */
@@ -80,7 +80,9 @@ export class PageNav extends Component<{
      * rendered if an index page is present..
      *
      * A section is a `PageTree`: the pages under one folder of markdown
-     * files, plus any sections nested within it.
+     * files, plus any sections nested within it. A group that collects
+     * other groups contributes one section per group it collects, so a
+     * section is not always a folder on disk.
      *
      * Example:
      * ```gjs live preview
@@ -135,7 +137,7 @@ export class PageNav extends Component<{
   <template>
     {{!log this.docs}}
     {{#if (has-block 'collection')}}{{blockWasRenamed}}{{/if}}
-    <nav aria-label='Selected Group' ...attributes>
+    <nav aria-label='Pages' ...attributes>
       <Pages @item={{this.docs.tree}}>
 
         <:page as |p|>

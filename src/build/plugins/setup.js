@@ -8,16 +8,18 @@ import { join, relative } from 'node:path';
 import { stripIndent } from 'common-tags';
 import send from 'send';
 
+import { groupNamesIn, HOME_GROUP } from '../../nav.js';
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
 import { reshape } from './markdown-pages/hydrate.js';
-import { readJSONC } from './markdown-pages/parse.js';
+import { cleanSegment, readJSONC } from './markdown-pages/parse.js';
 import { sourceMeta } from './source-meta.js';
 import { normalizePath } from './utils.js';
 
 /**
- * All groups contributed by every `docs()` usage in the config,
- * in plugin order.
+ * All groups contributed by every `docs()` usage in the config, in plugin
+ * order — vite reports its resolved plugins in the order they were
+ * configured, so this is the order the `docs()` usages appear in.
  */
 function allGroups(state) {
   return state.usages.flatMap((usage) => usage.groups ?? []);
@@ -36,6 +38,90 @@ function assertUniqueGroupNames(groups) {
       `Group names must be unique across every usage of the docs() plugin. ` +
         `Duplicate group name(s): ${[...duplicates].join(', ')}`
     );
+  }
+}
+
+/**
+ * Every name in a nav node's subtree — group names plus the names of the
+ * collecting groups that contribute no pages of their own.
+ */
+function namesIn(node) {
+  return [node.name, ...node.children.flatMap(namesIn)];
+}
+
+/**
+ * The navigation, as the metamanifest carries it: the co-located pages,
+ * then a node per top-level group — where a group that collects others
+ * stands in for all of them.
+ *
+ * A collecting group's `docs()` usage carries the whole tree it describes
+ * (`usage.nav`), and the groups inside it have usages of their own for
+ * their files; those are placed by the tree rather than at the top level.
+ *
+ * (Exported for tests. The shape of a `collection` is checked while the
+ *  plugin's arguments are parsed — this is the whole-config view, which
+ *  needs every usage.)
+ */
+export function navFor(state) {
+  const collected = new Set(
+    state.usages.flatMap((usage) => (usage.nav ? groupNamesIn(usage.nav) : []))
+  );
+
+  const nav = [leaf(HOME_GROUP)];
+
+  for (const usage of state.usages) {
+    if (usage.nav) {
+      nav.push(usage.nav);
+      continue;
+    }
+
+    for (const group of usage.groups ?? []) {
+      if (!collected.has(group.name)) nav.push(leaf(group.name));
+    }
+  }
+
+  assertNav(nav);
+
+  return nav;
+}
+
+/**
+ * A nav node for a group that collects nothing.
+ */
+function leaf(name) {
+  return { name, group: name, children: [] };
+}
+
+/**
+ * A group that collects others is named alongside the groups nothing
+ * collects, so two entries cannot be called the same thing; and a name
+ * inside one group's `collection` cannot be a group that lives somewhere
+ * else, or the reader would meet it twice.
+ *
+ * One pass covers both: the map is keyed by name and holds the node that
+ * claimed it, so a second claim is either a duplicate top-level entry (the
+ * claimant is the name itself) or a group collected twice.
+ */
+function assertNav(nav) {
+  const claimed = new Map();
+
+  for (const node of nav) {
+    for (const name of namesIn(node)) {
+      const owner = claimed.get(name);
+
+      if (owner !== undefined && owner !== node) {
+        throw new Error(
+          owner.name === name && node.name === name
+            ? `Two navigation entries are named '${name}'. A group that collects others is ` +
+                `named alongside the groups nothing collects, so those names have to differ.`
+            : `'${name}' is collected by '${node.name}' and by '${owner.name}'. A group is ` +
+                `collected by one group: it has one set of pages, and would otherwise be ` +
+                `presented in two places at once.`
+        );
+      }
+
+      claimed.set(name, node);
+    }
   }
 }
 
@@ -148,6 +234,16 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     base: baseUrl,
   });
 
+  // Parsing names the tree's root 'root' — a placeholder, because the name
+  // belongs to the group, and `sortTree` matches on it. Now that sorting is
+  // done, name it after the group: a group whose pages are collected by
+  // another group's nav entry renders its tree as a section there, and that
+  // section's heading is this name (`cleanedName` alongside it, like every
+  // other folder in the tree has).
+  found.tree.name = displayName;
+  found.tree.path = displayName;
+  found.tree.cleanedName = cleanSegment(displayName);
+
   return {
     manifestGroup: { name: displayName, ...found },
     loaders,
@@ -159,7 +255,7 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
  */
 function homeSource(cwd) {
   return {
-    displayName: 'Home',
+    displayName: HOME_GROUP,
     urlPrefix: '',
     sourceCwd: cwd,
     entries: glob('./{app,src}/templates/**/*.{md,gjs.md,gts.md,json,jsonc}', {
@@ -222,7 +318,7 @@ export function docsVirtualGuard(state) {
       if (!id.startsWith(DOCS_MODULE_PREFIX)) return;
 
       const [groupName = ''] = id.slice(DOCS_MODULE_PREFIX.length).split('?');
-      const known = ['Home', ...allGroups(state).map((group) => group.name)];
+      const known = [HOME_GROUP, ...allGroups(state).map((group) => group.name)];
 
       if (known.includes(groupName)) return;
 
@@ -547,7 +643,7 @@ export const setup = (state) => {
           assertUniqueGroupNames(groups);
 
           const entries = [
-            { name: 'Home', id: docsModuleId('Home') },
+            { name: HOME_GROUP, id: docsModuleId(HOME_GROUP) },
             ...groups.map((group) => ({ name: group.name, id: docsModuleId(group.name) })),
           ];
 
@@ -560,10 +656,13 @@ export const setup = (state) => {
               ${entries
                 .map(
                   (entry) =>
-                    `{ name: ${JSON.stringify(entry.name)}, load: () => import(${JSON.stringify(entry.id)}) }`
+                    `{ name: ${JSON.stringify(entry.name)}, ` +
+                    `load: () => import(${JSON.stringify(entry.id)}) }`
                 )
                 .join(',\n')}
             ];
+
+            export const nav = ${JSON.stringify(navFor(state))};
           `;
         },
       },
@@ -573,7 +672,7 @@ export const setup = (state) => {
          * the primary usage. Its addRoutes is unscoped: Home pages live in
          * the root URL space.
          */
-        importPath: docsModuleId('Home'),
+        importPath: docsModuleId(HOME_GROUP),
         content: async () => {
           const source = homeSource(cwd);
           const enumerated = await enumerateSource(source, baseUrl);

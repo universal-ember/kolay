@@ -33,7 +33,8 @@ export { kolay } from './plugins/from-config.js';
  *
  * @typedef {object} DocsEntry
  * @property {string} [name] - the group name
- * @property {string} [src] - where the group's pages live; relative paths resolve from the config file's directory
+ * @property {string} [src] - where the group's pages live; relative paths resolve from the config file's directory. Optional for a group with a `collection`, which may contribute only the pages of the groups it collects
+ * @property {Array<string | DocsEntry>} [collection] - other groups this one presents together with its own pages: they become sections of its nav entry instead of top-level entries of their own, and each keeps its own pages, URLs, and routes. Entries are groups like any other — they may have collections of their own, and take their own markdown options
  * @property {unknown[]} [remarkPlugins] - remark plugins for this group's `.gjs.md` files
  * @property {unknown[]} [rehypePlugins] - rehype plugins for this group's `.gjs.md` files
  * @property {string} [scope] - import statements made available in this group's live codefences

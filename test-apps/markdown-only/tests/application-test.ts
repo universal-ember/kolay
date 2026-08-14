@@ -15,7 +15,7 @@ module("PageNav", function (hooks) {
   test("renders a heading for each section", async function (assert) {
     await visit("/Docs/sub-folder/ember-primitives.md");
 
-    assert.dom('nav[aria-label="Selected Group"]').includesText("sub-folder");
+    assert.dom('nav[aria-label="Pages"]').includesText("sub-folder");
   });
 });
 

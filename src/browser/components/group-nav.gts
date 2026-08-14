@@ -1,8 +1,8 @@
 import Component from '@glimmer/component';
 import { service } from '@ember/service';
 
+import { HOME_GROUP } from '../../nav.js';
 import { docsManager } from '../services/docs.ts';
-import { HOME_GROUP } from '../utils.ts';
 
 import type RouterService from '@ember/routing/router-service';
 
@@ -64,30 +64,32 @@ export class GroupNav extends Component<{
     return this.router.rootURL;
   }
 
-  get groups() {
-    return this.#docs.availableGroups.map((groupName) => {
-      // The co-located pages are a group, but they live in the root URL
-      // space rather than under their name, so the link is the app's root
-      // and `@homeName` names it.
-      if (groupName === HOME_GROUP) {
-        return { text: this.homeName, value: HOME_GROUP, href: this.rootURL };
-      }
-
-      return {
-        text: groupName,
-        value: groupName,
-        // scoped mounts (addRoutes(context, groupName)) live at their own
-        // URL, not at /GroupName
-        href: this.#docs.groupHrefFor(groupName),
-      };
-    });
+  /**
+   * One link per top-level nav entry: a group, or a group that collects
+   * others (whose links it replaces). The docs service computes the
+   * entries and their URLs — scoped mounts
+   * (`addRoutes(context, groupName)`) live at their own URL, not at
+   * /GroupName, and a group that collects others links at its first group
+   * with pages.
+   *
+   * The co-located pages are the exception: they are a group ('Home'), but
+   * they live in the root URL space rather than under their name, so the
+   * link is the app's root, and `@homeName` names it.
+   */
+  get entries() {
+    return this.#docs.navEntries.map((entry) => ({
+      name: entry.name,
+      text: entry.name === HOME_GROUP ? this.homeName : entry.name,
+      href: entry.name === HOME_GROUP ? this.rootURL : entry.href,
+    }));
   }
 
-  isActive = (groupName: string) => {
-    // The group is derived from the URL by the docs service (rootURL-aware),
+  isActive = (name: string) => {
+    // The entry is derived from the URL by the docs service (rootURL-aware),
     // rather than comparing the group name against currentURL directly
     // (which always failed: 'Docs' never prefixes '/Docs/...').
-    return this.#docs.selectedGroup === groupName;
+    // A collected group's page keeps the collecting entry active.
+    return this.#docs.activeNavEntry?.name === name;
   };
 
   get activeClass() {
@@ -97,14 +99,14 @@ export class GroupNav extends Component<{
   <template>
     <nav aria-label='Groups' ...attributes>
       <ul>
-        {{#each this.groups as |group|}}
+        {{#each this.entries as |entry|}}
           <li>
-            <a href={{group.href}} class={{if (this.isActive group.value) this.activeClass}}>
+            <a href={{entry.href}} class={{if (this.isActive entry.name) this.activeClass}}>
 
               {{#if (has-block)}}
-                {{yield group.text}}
+                {{yield entry.text}}
               {{else}}
-                {{group.text}}
+                {{entry.text}}
               {{/if}}
 
             </a>

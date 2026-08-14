@@ -23,11 +23,96 @@ export interface Manifest {
     from: string;
     to: string;
   }[];
-  groups: {
-    name: string;
-    list: Page[];
-    tree: PageTree;
-  }[];
+  groups: Group[];
+  /**
+   * The navigation, as the groups' `docs()` usages describe it: a node per
+   * top-level group, where a group that collects others (`collection: [...]`)
+   * stands in for the whole tree beneath it. Routing is unaffected — every
+   * group in it keeps its own pages, URLs, and (when it has one) scoped
+   * mount.
+   */
+  nav: NavNode[];
+}
+
+export interface Group {
+  name: string;
+  list: Page[];
+  tree: PageTree;
+}
+
+/**
+ * One group in the navigation, with the groups it collects beneath it —
+ * either a group with pages of its own, or one with none, which exists to
+ * present the groups it collects and so must collect at least one.
+ */
+export type NavNode = NavGroup | NavCollection;
+
+/**
+ * A group with pages of its own, and any groups it collects.
+ */
+export interface NavGroup {
+  /**
+   * The group's name, which is what the navigation shows.
+   */
+  name: string;
+  /**
+   * The group whose pages this node contributes — the same as `name`.
+   */
+  group: string;
+  /**
+   * The groups this one collects, in the order they were declared. Each
+   * may collect groups of its own.
+   */
+  children: NavNode[];
+}
+
+/**
+ * A group with no `src` of its own: it contributes no pages, and exists to
+ * present the groups it collects — so it collects at least one, which is
+ * what makes it possible to say where its nav entry lands.
+ */
+export interface NavCollection {
+  name: string;
+  group: null;
+  children: [NavNode, ...NavNode[]];
+}
+
+/**
+ * One top-level navigation entry: a group, together with any groups it
+ * collects. `navEntries` on the docs service computes these.
+ */
+export interface NavEntry {
+  /**
+   * What the entry is called: the group's name.
+   * Display formatting is the app's (as it already is for group names).
+   */
+  name: string;
+  /**
+   * Whether this group collects others. Not derivable from `groups`: a
+   * group with no pages of its own that collects one other group presents
+   * exactly one group, the same as a group that collects nothing does.
+   */
+  isCollection: boolean;
+  /**
+   * The groups whose pages this entry presents — its own (when it has
+   * any), then the ones it collects, in declaration order, depth first.
+   * The manifest records for those groups, where `tree` below is the one
+   * page hierarchy to render for the entry.
+   */
+  groups: Group[];
+  /**
+   * Where the entry's nav link points: its group's own URL, or — for a
+   * group with no pages of its own — the first collected group's, since
+   * there is nothing else to land on. Includes the rootURL, like
+   * `groupHrefFor`.
+   */
+  href: string;
+  /**
+   * The page tree to render for the entry: the group's own tree, or — when
+   * it collects others — its own pages followed by a labeled section per
+   * collected group.
+   */
+  tree: PageTree;
 }
 
 export interface PageTree {

@@ -25,6 +25,76 @@ module("Multiple docs routes", function (hooks) {
     assert.deepEqual(docs.availableGroups, ["Home", "guides", "demos"]);
   });
 
+  test("a group that collects others is one nav entry", async function (assert) {
+    await visit("/welcome/home.md");
+
+    const docs = docsManager(this.owner);
+
+    assert.deepEqual(
+      docs.navEntries.map((entry) => entry.name),
+      ["Home", "Docs"],
+      "the collecting group replaces the groups inside it",
+    );
+
+    const includer = docs.navEntries[1];
+
+    assert.true(includer?.isCollection);
+    assert.deepEqual(
+      includer?.groups.map((group) => group.name),
+      ["guides", "demos"],
+      "the collected groups, in declaration order",
+    );
+    assert.deepEqual(
+      includer?.tree.pages.map((section) => section.name),
+      ["guides", "demos"],
+      "and the tree is a section per collected group",
+    );
+    assert.strictEqual(
+      includer?.href,
+      docs.groupHrefFor("guides"),
+      "it links at its landing group, having no pages of its own (that group's mount URL, here)",
+    );
+
+    assert.strictEqual(docs.collectionOf("demos"), "Docs");
+    assert.strictEqual(docs.collectionOf("Home"), "Home", "nothing collects Home");
+  });
+
+  test("collected groups keep their own routes and pages", async function (assert) {
+    await visit("/help/getting-started/intro.md");
+
+    const docs = docsManager(this.owner);
+
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md", "routing is untouched");
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.strictEqual(docs.selectedGroup, "guides", "the group still resolves per page");
+    assert.strictEqual(
+      docs.activeNavEntry?.name,
+      "Docs",
+      "a collected group's page keeps the collecting entry active",
+    );
+    assert.deepEqual(
+      docs.tree.pages.map((section) => section.name),
+      ["guides", "demos"],
+      "and the page tree is the collecting group's, without the app asking for it",
+    );
+    assert.deepEqual(
+      docs.currentGroup.tree.pages.map((folder) => folder.name),
+      ["getting-started"],
+      "the group's own tree is still the group's own",
+    );
+    assert
+      .dom('aside nav a[href="/help/getting-started/usage.md"]')
+      .exists("a collected group's pages render from that tree, at their own URLs");
+
+    assert
+      .dom('header nav a[href="/help"]')
+      .exists("one link, for the collecting group")
+      .hasClass("active");
+    assert
+      .dom('header nav a[href="/demos"]')
+      .doesNotExist("a collected group has no link of its own");
+  });
+
   test("each docs() usage enables a virtual module with its own manifest", function (assert) {
     assert.strictEqual(demosName, "demos");
     assert.strictEqual(demosManifest.name, "demos");

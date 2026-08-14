@@ -3,7 +3,7 @@ import { module, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
 
 const GROUP_NAV = 'nav[aria-label="Groups"]';
-const PAGE_NAV = 'nav[aria-label="Selected Group"]';
+const PAGE_NAV = 'nav[aria-label="Pages"]';
 
 module("Nav active state under a custom rootURL", function (hooks) {
   setupApplicationTest(hooks);

@@ -1,4 +1,4 @@
-import type { Manifest, Page, PageTree } from '../types.ts';
+import type { Manifest, NavNode, Page, PageTree } from '../types.ts';
 import type { ComponentLike } from '@glint/template';
 
 /**
@@ -58,6 +58,13 @@ export interface MetaManifest {
    */
   redirects: Array<{ from: string; to: string }>;
   groups: Array<{ name: string; load: () => Promise<DocsGroupModule> }>;
+  /**
+   * The navigation the groups' `docs()` usages describe: a node per
+   * top-level group, with the groups it collects (`collection: [...]`)
+   * beneath it. The nav-layer grouping lives here, at the metamanifest
+   * level, rather than inside each group's own module.
+   */
+  nav: NavNode[];
 }
 
 /**
@@ -76,6 +83,9 @@ export async function loadCompiledDocs(meta: MetaManifest): Promise<{
       base: meta.base,
       redirects: meta.redirects,
       groups: modules.map((mod) => mod.manifest),
+      // the navigation is metamanifest data — it spans the groups, rather
+      // than belonging to any one of them
+      nav: meta.nav,
     },
     pages: Object.assign({}, ...modules.map((mod) => mod.pages)) as DocsGroupModule['pages'],
   };

@@ -33,11 +33,17 @@ declare module 'kolay/api-docs:virtual' {
  * (via `loadCompiledDocs` from 'kolay').
  */
 declare module 'kolay/compiled-docs:virtual' {
-  import type { DocsGroupModule } from 'kolay';
+  import type { DocsGroupModule, NavNode } from 'kolay';
 
   export const base: string;
 
   export const redirects: Array<{ from: string; to: string }>;
 
   export const groups: Array<{ name: string; load: () => Promise<DocsGroupModule> }>;
+
+  /**
+   * The navigation the groups' `docs()` usages describe: a node per
+   * top-level group, with the groups it collects beneath it.
+   */
+  export const nav: NavNode[];
 }
