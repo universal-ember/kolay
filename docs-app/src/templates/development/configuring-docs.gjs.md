@@ -245,7 +245,7 @@ Router.map(function () {
 
 That gives one `Docs` entry in the top nav, with a `guides` section and a `demos` section, while the pages stay at `/help/…` and `/demos/…` — the URLs their mounts give them, not `/Docs/…`. Reading either keeps the `Docs` entry active and shows the same page list. Because a collection adds no route of its own, `handlePotentialIndexVisit` still belongs in each mount's route, exactly as it would without the collection.
 
-The mounts can share a prefix if you would rather the URLs read that way — nesting both routes inside a `docs` route gives `/docs/guides/…` and `/docs/demos/…`, and the collection is unaffected, since mount depth only changes the route names `addRoutes` registers under.
+The mounts can share a prefix if you would rather the URLs read that way: nesting both routes inside a `docs` route gives `/docs/guides/…` and `/docs/demos/…`, and the collection is unaffected either way. Both mounts have to be **scoped** for that, though — an unscoped mount takes its group from the first segment of the URL, so it only works while it sits at the top level. A scoped mount is bound to its group by name, so it can nest as deep as you like.
 
 A collection group with no `src` has no mount at all — no pages, and no `virtual:kolay/docs/<name>` module. It exists only as a name in the navigation, which is why its own URL resolves through the navigation rather than through a group, as [above](#collection).
 
