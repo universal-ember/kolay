@@ -209,6 +209,34 @@ The following rules are enforced at buildtime, and breaking either one fails the
 
 A collected group with no `src` and no `collection` of its own fails the build too, with the same missing-`src` error any group gets when nothing says where its docs live.
 
+### Collections and mounts
+
+Collecting a group and mounting it are independent decisions: a collection is navigation, a [mount](#using-the-plugin-multiple-times) is routing. A collected group keeps whatever mount it had, so its pages stay at that mount's URLs and its section links there rather than at `/GroupName`. kolay's own test app collects two groups that are mounted two different ways:
+
+```js
+// vite.config.js
+docs("Docs", { collection: ["./guides", "./demos"] }),
+```
+
+```js
+// app/router.js
+Router.map(function () {
+  // a scoped mount: the path need not match the group's name
+  this.route("help", function () {
+    addGuidesRoutes(this);
+  });
+
+  // an unscoped nested mount: the path is the group's name
+  this.route("demos", function () {
+    addRoutes(this);
+  });
+});
+```
+
+One `Docs` entry with a section each. Reading `/help/getting-started/intro.md` or `/demos/components/buttons` keeps that entry active and shows the same page list, while each page keeps its own URL. Because a collection adds no route of its own, `handlePotentialIndexVisit` still belongs in each mount's route, exactly as it would without the collection.
+
+A collection group with no `src` has no mount at all — no pages, and no `virtual:kolay/docs/<name>` module. It exists only as a name in the navigation.
+
 ### Collections at runtime
 
 `<GroupNav />` and `<PageNav />` need no changes. `<GroupNav />` renders one link per entry, and `<PageNav />` renders the collection group's page list when the reader is inside one.

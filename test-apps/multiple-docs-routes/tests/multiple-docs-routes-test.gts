@@ -188,6 +188,37 @@ module("Multiple docs routes", function (hooks) {
       .hasClass("active", "the mounted group is the selected group");
   });
 
+  // the sibling test above enters through `guides`, which is a *scoped*
+  // mount (/help). This one enters through `demos`, an unscoped nested
+  // mount, so both mount styles are covered from inside a collection.
+  test("a collected group in an unscoped nested mount is presented the same way", async function (assert) {
+    await visit("/demos/components/buttons");
+
+    const docs = docsManager(this.owner);
+
+    assert.strictEqual(currentURL(), "/demos/components/buttons", "routing is untouched");
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.strictEqual(docs.selectedGroup, "demos", "the group still resolves per page");
+    assert.strictEqual(
+      docs.activeNavEntry?.name,
+      "Docs",
+      "the collection entry is active from inside a nested mount too",
+    );
+    assert.deepEqual(
+      docs.tree.pages.map((section) => section.name),
+      ["guides", "demos"],
+      "and the page tree is the collection group's, not this group's own",
+    );
+    assert.deepEqual(
+      docs.currentGroup.tree.pages.map((folder) => folder.name),
+      ["components"],
+      "while currentGroup.tree is still this group's own",
+    );
+    assert
+      .dom('aside nav a[href="/demos/components/buttons"]')
+      .exists("its pages render from the collection group's tree, at the mount's URL");
+  });
+
   test("a .gjs.md page (with a live codefence) renders from the demos mount", async function (assert) {
     await visit("/demos/components/buttons");
 
