@@ -42,12 +42,12 @@ function group(name: string): Group {
 
 /** A nav node for a group that collects nothing. */
 function leaf(name: string): NavNode {
-  return { name, group: name, children: [] };
+  return { name, hasOwnPages: true, children: [] };
 }
 
 /** A nav node for a group that collects others, with pages of its own. */
 function collects(name: string, ...children: NavNode[]): NavNode {
-  return { name, group: name, children };
+  return { name, hasOwnPages: true, children };
 }
 
 /**
@@ -55,7 +55,7 @@ function collects(name: string, ...children: NavNode[]): NavNode {
  * least one group, so that its entry has somewhere to land.
  */
 function collectsOnly(name: string, first: NavNode, ...rest: NavNode[]): NavNode {
-  return { name, group: null, children: [first, ...rest] };
+  return { name, hasOwnPages: false, children: [first, ...rest] };
 }
 
 const GROUPS = ['Home', 'guides', 'data', 'warp-drive', 'schema', 'json-api'].map(group);

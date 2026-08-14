@@ -19,7 +19,7 @@ import type { Group, NavEntry, NavNode, PageTree } from '../types.ts';
  * collects at least one group, which `NavCollection` states.
  */
 function landingGroup(node: NavNode): string {
-  if (node.group !== null) return node.group;
+  if (node.hasOwnPages) return node.name;
 
   return landingGroup(node.children[0]);
 }
@@ -35,7 +35,7 @@ function landingGroup(node: NavNode): string {
  * renaming — `PageNav` renders it like any other folder in a tree.
  */
 export function treeFor(node: NavNode, groupFor: (name: string) => Group): PageTree {
-  const own = node.group === null ? undefined : groupFor(node.group).tree;
+  const own = node.hasOwnPages ? groupFor(node.name).tree : undefined;
 
   if (own && node.children.length === 0) return own;
 

@@ -151,8 +151,8 @@ If you build a manifest by hand (a fixture, a bespoke loader), add it: an empty 
     redirects: [],
     groups: [guides, demos],
 +   nav: [
-+     { name: "guides", group: "guides", children: [] },
-+     { name: "demos", group: "demos", children: [] },
++     { name: "guides", hasOwnPages: true, children: [] },
++     { name: "demos", hasOwnPages: true, children: [] },
 +   ],
   };
 ```

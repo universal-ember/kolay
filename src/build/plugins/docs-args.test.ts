@@ -102,10 +102,10 @@ describe('parseDocsArgs | collection', () => {
 
     expect(usages[0]?.nav).toEqual({
       name: 'packages',
-      group: 'packages',
+      hasOwnPages: true,
       children: [
-        { name: 'store', group: 'store', children: [] },
-        { name: 'ember', group: 'ember', children: [] },
+        { name: 'store', hasOwnPages: true, children: [] },
+        { name: 'ember', hasOwnPages: true, children: [] },
       ],
     });
     expect(usages.slice(1).every((usage) => usage.nav === undefined)).toBe(true);
@@ -119,10 +119,10 @@ describe('parseDocsArgs | collection', () => {
       nav: {
         name: 'packages',
         // no pages of its own
-        group: null,
+        hasOwnPages: false,
         children: [
-          { name: 'store', group: 'store', children: [] },
-          { name: 'ember', group: 'ember', children: [] },
+          { name: 'store', hasOwnPages: true, children: [] },
+          { name: 'ember', hasOwnPages: true, children: [] },
         ],
       },
     });
@@ -145,12 +145,12 @@ describe('parseDocsArgs | collection', () => {
 
     expect(usages[0]?.nav).toEqual({
       name: 'packages',
-      group: null,
+      hasOwnPages: false,
       children: [
         {
           name: 'store',
-          group: 'store',
-          children: [{ name: 'json-api', group: 'json-api', children: [] }],
+          hasOwnPages: true,
+          children: [{ name: 'json-api', hasOwnPages: true, children: [] }],
         },
       ],
     });
@@ -164,7 +164,7 @@ describe('parseDocsArgs | collection', () => {
     // last path segment names the group
     const usages = parseDocsArgs('packages', { collection: ['./packages/store'] as never });
 
-    expect(usages[0]?.nav?.children).toEqual([{ name: 'store', group: 'store', children: [] }]);
+    expect(usages[0]?.nav?.children).toEqual([{ name: 'store', hasOwnPages: true, children: [] }]);
     expect(usages[1]?.groups).toEqual([{ name: 'store', src: './packages/store' }]);
   });
 

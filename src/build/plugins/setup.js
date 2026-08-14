@@ -25,18 +25,30 @@ function allGroups(state) {
   return state.usages.flatMap((usage) => usage.groups ?? []);
 }
 
+/**
+ * Names are compared without regard to case because that is how they are
+ * resolved: `canonicalGroupName` matches a URL segment to a group that way,
+ * so two groups differing only in case would be one group as far as a
+ * reader's URL is concerned, and which one they reached would be an
+ * accident of declaration order.
+ */
 function assertUniqueGroupNames(groups) {
-  const seen = new Set();
-  const duplicates = new Set();
+  const byName = new Map();
 
   for (const group of groups) {
-    (seen.has(group.name) ? duplicates : seen).add(group.name);
+    const key = group.name.toLowerCase();
+
+    byName.set(key, [...(byName.get(key) ?? []), group.name]);
   }
 
-  if (duplicates.size > 0) {
+  const duplicates = [...byName.values()]
+    .filter((names) => names.length > 1)
+    .map((names) => [...new Set(names)].join(' and '));
+
+  if (duplicates.length > 0) {
     throw new Error(
-      `Group names must be unique across every usage of the docs() plugin. ` +
-        `Duplicate group name(s): ${[...duplicates].join(', ')}`
+      `Group names must be unique across every usage of the docs() plugin, and are compared ` +
+        `without regard to case. Duplicate group name(s): ${duplicates.join('; ')}`
     );
   }
 }
@@ -89,7 +101,7 @@ export function navFor(state) {
  * A nav node for a group that collects nothing.
  */
 function leaf(name) {
-  return { name, group: name, children: [] };
+  return { name, hasOwnPages: true, children: [] };
 }
 
 /**

@@ -28,5 +28,5 @@ export const HOME_GROUP = 'Home';
  * @returns {string[]}
  */
 export function groupNamesIn(node) {
-  return [...(node.group === null ? [] : [node.group]), ...node.children.flatMap(groupNamesIn)];
+  return [...(node.hasOwnPages ? [node.name] : []), ...node.children.flatMap(groupNamesIn)];
 }

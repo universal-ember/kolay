@@ -289,8 +289,8 @@ function usagesFor(node, rootOptions, isRoot = true) {
 function navNode(node) {
   return {
     name: node.name,
-    // null when the group has no src: it contributes no pages of its own
-    group: node.src ? node.name : null,
+    // false when the group has no src: it contributes no pages of its own
+    hasOwnPages: Boolean(node.src),
     children: node.children.map(navNode),
   };
 }

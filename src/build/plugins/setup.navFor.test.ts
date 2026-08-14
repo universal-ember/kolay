@@ -12,7 +12,7 @@ function group(name: string) {
   return { groups: [{ name, src: `./${name}` }] };
 }
 
-const leaf = (name: string) => ({ name, group: name, children: [] });
+const leaf = (name: string) => ({ name, hasOwnPages: true, children: [] });
 
 describe('navFor', () => {
   test('the co-located pages come first, then a node per group', () => {
@@ -28,7 +28,7 @@ describe('navFor', () => {
   });
 
   test("a collection group's tree replaces the groups inside it, in its own position", () => {
-    const nav = { name: 'data', group: 'data', children: [leaf('warp-drive')] };
+    const nav = { name: 'data', hasOwnPages: true, children: [leaf('warp-drive')] };
 
     // the shape docs('data', { src, collection: [...] }) produces: the tree on
     // the collection group's own usage, then a usage per group it collects
@@ -40,7 +40,11 @@ describe('navFor', () => {
   });
 
   test('a collection group with no pages of its own is a nav-only usage', () => {
-    const nav = { name: 'data', group: null, children: [leaf('warp-drive'), leaf('schema')] };
+    const nav = {
+      name: 'data',
+      hasOwnPages: false,
+      children: [leaf('warp-drive'), leaf('schema')],
+    };
 
     expect(
       navFor(state({ groups: [], nav }, group('warp-drive'), group('schema'), group('guides')))
@@ -50,8 +54,8 @@ describe('navFor', () => {
   test('groups collected deeper down are still not top-level entries', () => {
     const nav = {
       name: 'data',
-      group: null,
-      children: [{ name: 'warp-drive', group: 'warp-drive', children: [leaf('json-api')] }],
+      hasOwnPages: false,
+      children: [{ name: 'warp-drive', hasOwnPages: true, children: [leaf('json-api')] }],
     };
 
     expect(navFor(state({ groups: [], nav }, group('warp-drive'), group('json-api')))).toEqual([
@@ -61,7 +65,7 @@ describe('navFor', () => {
   });
 
   test('two entries of the same name are an error', () => {
-    const nav = { name: 'guides', group: null, children: [leaf('warp-drive')] };
+    const nav = { name: 'guides', hasOwnPages: false, children: [leaf('warp-drive')] };
 
     expect(() => navFor(state({ groups: [], nav }, group('warp-drive'), group('guides')))).toThrow(
       /Two navigation entries are named 'guides'/
@@ -69,7 +73,7 @@ describe('navFor', () => {
   });
 
   test('the co-located pages cannot be collected, or shadowed', () => {
-    const nav = { name: 'Home', group: null, children: [leaf('warp-drive')] };
+    const nav = { name: 'Home', hasOwnPages: false, children: [leaf('warp-drive')] };
 
     expect(() => navFor(state({ groups: [], nav }, group('warp-drive')))).toThrow(
       /Two navigation entries are named 'Home'/
@@ -79,16 +83,26 @@ describe('navFor', () => {
   test('two entries differing only in case are an error too', () => {
     // `canonicalGroupName` and `navEntryNamed` both resolve names without
     // regard to case, so these two would be ambiguous at runtime
-    const nav = { name: 'Guides', group: null, children: [leaf('warp-drive')] };
+    const nav = { name: 'Guides', hasOwnPages: false, children: [leaf('warp-drive')] };
 
     expect(() => navFor(state({ groups: [], nav }, group('warp-drive'), group('guides')))).toThrow(
       /named 'Guides' and 'guides', which differ only in case/
     );
   });
 
+  test('a collected group shadowing a real one is NOT caught here', () => {
+    // `navFor` skips a group that something collects, so two groups of the
+    // same name — one standalone, one collected — never meet in the nav.
+    // `assertUniqueGroupNames` is what catches this, which is why both
+    // checks exist: neither is a subset of the other.
+    const nav = { name: 'pkgs', hasOwnPages: false, children: [leaf('guides')] };
+
+    expect(() => navFor(state({ groups: [], nav }, group('guides')))).not.toThrow();
+  });
+
   test('a group cannot be collected by two groups', () => {
-    const data = { name: 'data', group: null, children: [leaf('warp-drive')] };
-    const schema = { name: 'schema', group: null, children: [leaf('warp-drive')] };
+    const data = { name: 'data', hasOwnPages: false, children: [leaf('warp-drive')] };
+    const schema = { name: 'schema', hasOwnPages: false, children: [leaf('warp-drive')] };
 
     expect(() =>
       navFor(state({ groups: [], nav: data }, { groups: [], nav: schema }, group('warp-drive')))

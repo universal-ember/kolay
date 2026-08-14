@@ -52,13 +52,11 @@ export type NavNode = NavGroup | NavCollection;
  */
 export interface NavGroup {
   /**
-   * The group's name, which is what the navigation shows.
+   * The group's name, which is what the navigation shows. Its pages are
+   * the ones this node contributes.
    */
   name: string;
-  /**
-   * The group whose pages this node contributes — the same as `name`.
-   */
-  group: string;
+  hasOwnPages: true;
   /**
    * The groups this one collects, in the order they were declared.
    */
@@ -72,7 +70,7 @@ export interface NavGroup {
  */
 export interface NavCollection {
   name: string;
-  group: null;
+  hasOwnPages: false;
   children: [NavNode, ...NavNode[]];
 }
 
