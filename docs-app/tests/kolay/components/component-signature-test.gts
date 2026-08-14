@@ -274,7 +274,7 @@ module('<ComponentSignature>', function (hooks) {
     const expansion = block('namedBlockE').querySelector('[data-typedoc-nested]');
 
     assert.dom(expansion).exists();
-    assert.dom('[data-typedoc-nested]', expansion as Element).doesNotExist();
+    assert.dom('[data-typedoc-nested]', expansion).doesNotExist();
   });
 
   test('bound args are omitted from the bound component signature', async function (assert) {

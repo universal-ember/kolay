@@ -37,17 +37,17 @@ module("All Links", function (hooks) {
       visited.push(path);
     });
 
-    // A snapshot of the crawl: every reachable in-app page. Sorted and
-    // deduplicated, because the crawler's visit order — and how many source
-    // pages it happens to collect a link from — depend on rendering timing,
-    // but the set of reachable pages does not. This intentionally fails when
-    // pages are added or removed — update the list to match the new reality.
+    // A snapshot of the crawl: every reachable in-app page. test-support
+    // visits each target once, so this is already a set — but it is still in
+    // visit order, and that order depends on rendering timing, which this
+    // app's runtime-compiled .gjs.md pages make especially loose. Sort it, so
+    // the assertion only fails when pages are actually added or removed.
     //
     // `/Home` is absent because the co-located pages' group links at the app
     // root rather than under its own name (0dab708). Nothing replaces it in the
     // list: this app's rootURL is `/`, and the crawler skips a bare `/` as the
     // page it already started on.
-    for (const path of [...new Set(visited)].sort()) assert.step(path);
+    for (const path of [...visited].sort()) assert.step(path);
 
     assert.verifySteps([
       "/Docs",
