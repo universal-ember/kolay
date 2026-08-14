@@ -30,7 +30,7 @@
     "start:vite": "vite",
     "start:test": "pnpm start:vite --open /tests/",
     "test:ember": "pnpm build:tests && pnpm test:browser",
-    "test:browser": "testem ci --port 0"
+    "test:browser": "testem ci --port 0 && testem ci --port 0 --file testem.crawl.cjs"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
