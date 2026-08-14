@@ -16,7 +16,7 @@ module("Nav active state under a custom rootURL", function (hooks) {
       .dom(`${GROUP_NAV} a[href="/my-github-project/Documentation"]`)
       .hasClass("active", "the selected group's link is active");
     assert
-      .dom(`${GROUP_NAV} a[href="/my-github-project/Home"]`)
+      .dom(`${GROUP_NAV} a[href="/my-github-project/"]`)
       .doesNotHaveClass("active", "the other group's link is not active");
 
     assert
@@ -32,7 +32,7 @@ module("Nav active state under a custom rootURL", function (hooks) {
     await waitFor(`${PAGE_NAV} a`);
 
     assert
-      .dom(`${GROUP_NAV} a[href="/my-github-project/Home"]`)
+      .dom(`${GROUP_NAV} a[href="/my-github-project/"]`)
       .hasClass("active", "the selected group's link is active");
     assert
       .dom(`${GROUP_NAV} a[href="/my-github-project/Documentation"]`)
@@ -41,6 +41,10 @@ module("Nav active state under a custom rootURL", function (hooks) {
     assert
       .dom(`${PAGE_NAV} a[href="/my-github-project/my-folder-name/bar.md"]`)
       .hasClass("active", "the current page's link is active");
+
+    assert
+      .dom(`${GROUP_NAV} a[href="/my-github-project/Home"]`)
+      .doesNotExist("not the group name: no page is served under it");
   });
 
   test("a page is rendered and marked active when visited with different casing", async function (assert) {
@@ -54,7 +58,7 @@ module("Nav active state under a custom rootURL", function (hooks) {
       .dom(`${GROUP_NAV} a[href="/my-github-project/Documentation"]`)
       .hasClass("active", "the selected group's link is active, in its canonical casing");
     assert
-      .dom(`${GROUP_NAV} a[href="/my-github-project/Home"]`)
+      .dom(`${GROUP_NAV} a[href="/my-github-project/"]`)
       .doesNotHaveClass("active", "the other group's link is not active");
 
     assert
