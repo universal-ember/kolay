@@ -1,4 +1,4 @@
-import { visit } from "@ember/test-helpers";
+import { currentURL, visit } from "@ember/test-helpers";
 import { module, skip, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
 
@@ -19,25 +19,36 @@ module("PageNav", function (hooks) {
   });
 });
 
+module("Group index redirects", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test("visiting a group root redirects to its first page", async function (assert) {
+    await visit("/Docs");
+
+    assert.strictEqual(
+      currentURL(),
+      "/Docs/sub-folder/ember-primitives.md",
+      "the Docs group index redirects to its first page",
+    );
+  });
+});
+
 module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 
   skippable("are visitable without error", async function (assert) {
-    await visitAllLinks(async (path) => {
-      assert.step(path);
+    const visited: string[] = [];
 
-      return new Promise((resolve) => setTimeout(resolve, 250));
+    await visitAllLinks((path) => {
+      visited.push(path);
     });
 
-    // The co-located pages' link is the app root now, rather than `/Home`
-    // where nothing is served — so the crawl no longer visits `/Home`, and
-    // the root sends it on to the first group.
-    assert.verifySteps([
+    assert.deepEqual(visited.sort(), [
       "/Docs",
-      "/my-folder-name/bar.md",
-      "/my-folder-name/foo.md",
       "/Docs/sub-folder/ember-primitives.md",
       "/Docs/sub-folder/ember-resources.md",
+      "/my-folder-name/bar.md",
+      "/my-folder-name/foo.md",
     ]);
   });
 });
