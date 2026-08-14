@@ -5,7 +5,13 @@ if (typeof module !== "undefined") {
     // The app is built with base/rootURL "/my-github-project/", so serve the
     // test page under that prefix and route the prefix back to `dist` —
     // otherwise the base-prefixed asset URLs 404 and the app never boots.
-    test_page: "my-github-project/tests/index.html?hidepassed",
+    //
+    // `skipAllLinks` for the same reason docs-app passes it: the crawl trips
+    // the revisit flake 0d52f50 left open — visitAllLinks clicks a found
+    // anchor without retrying when async content has not re-rendered yet, so
+    // `find` returns null and `click` throws. It reproduces on CI, not
+    // locally. Drop this once test-support waits for the anchor.
+    test_page: "my-github-project/tests/index.html?hidepassed&skipAllLinks",
     routes: {
       "/my-github-project": ".",
     },
