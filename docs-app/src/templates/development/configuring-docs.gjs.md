@@ -191,10 +191,23 @@ Every page in a collected group shows the collecting group's page list, with a s
 - **A collecting group needs no `src`.** `Packages` above has none, because it contributes no pages of its own. Give it one and its pages come first in the page list, above the sections, and its entry links to its own URL.
 - **Otherwise the entry links at the first group with pages**, its own or the first it collects, however deep. Clicking `Packages` lands on the `core` group's landing page, so that group's route needs [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) as usual. Reorder the `collection` to land somewhere else.
 
-The following rules are enforced at buildtime:
+The following rules are enforced at buildtime, and breaking either one fails the build with the reason:
 
-- Two navigation entries cannot have the same name. A collecting group's name sits in the top-level navigation next to the groups nothing collects, so it has to be unique among them.
-- A group can be collected by only one group. It has one set of pages, and would otherwise appear in two places at once.
+- A collecting group's name sits in the top-level navigation next to the groups nothing collects, so it has to be unique among them.
+
+  ```
+  Two navigation entries are named 'Packages'. A group that collects others is named
+  alongside the groups nothing collects, so those names have to differ.
+  ```
+
+- A group can be collected by only one group.
+
+  ```
+  'core' is collected by 'Packages' and by 'Libraries'. A group is collected by one
+  group: it has one set of pages, and would otherwise be presented in two places at once.
+  ```
+
+A collected group with no `src` and no `collection` of its own fails the build too, with the same missing-`src` error any group gets when nothing says where its docs live.
 
 ### Collections at runtime
 
@@ -214,7 +227,7 @@ docs.collectionOf("plugins"); // 'Packages'
 
 `collectionOf` takes a group name and returns the name of the entry presenting it, which is the collecting group's name, or the group's own when nothing collects it.
 
-An entry is `{ name, isCollection, groups, href, tree }`. `href` is where it links. `groups` are the groups whose pages it presents, its own first and then the collected ones, depth first. `tree` is the one page list to render for it, and `isCollection` says whether it collects any. Compare `entry.name` against `activeNavEntry.name` for the active state:
+A top-level nav needs three things from each entry, and `{ name, href, tree }` are them: what to show, where to link, and the page list to render beside it. Compare `entry.name` against `activeNavEntry.name` for the active state:
 
 ```hbs
 {{#each this.docs.navEntries as |entry|}}
@@ -224,6 +237,8 @@ An entry is `{ name, isCollection, groups, href, tree }`. `href` is where it lin
   >{{entry.name}}</a>
 {{/each}}
 ```
+
+An entry carries two more fields, for rarer jobs. `groups` is the flat list of groups whose pages it presents, its own first and then the collected ones, depth first, for a nav that wants to name what is inside an entry. `isCollection` answers whether the entry collects anything at all, which `groups.length` cannot: a group collecting exactly one group presents exactly one group, the same as a plain group does.
 
 A sidebar built on `docs.tree` needs no change, because it is already the tree to render, whether that is the current group's or the collecting group's. `currentGroup.tree` is still the group's own.
 
