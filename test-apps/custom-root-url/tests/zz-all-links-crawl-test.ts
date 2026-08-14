@@ -28,15 +28,8 @@ module("All Links", function (hooks) {
       visited.push(path);
     }, KNOWN_REDIRECTS);
 
-    // A snapshot of the crawl: every reachable in-app page. Sorted and
-    // deduplicated, because the crawler's visit order — and how many source
-    // pages it happens to collect a link from — depend on rendering timing,
-    // but the set of reachable pages does not. This intentionally fails
-    // when pages are added or removed — update the list to match the new
-    // reality.
-    for (const path of [...new Set(visited)].sort()) assert.step(path);
-
-    assert.verifySteps([
+    // Sorted because visit order depends on rendering timing; the set of pages does not.
+    assert.deepEqual(visited.sort(), [
       "/my-github-project/",
       "/my-github-project/Documentation",
       "/my-github-project/Documentation/sub-folder/build-time",
