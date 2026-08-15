@@ -145,13 +145,24 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 ## A folder's index page now sorts first regardless of extension
 
-`index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not, despite `betterSort` appearing to test for them — the build strips those extensions off `path` before sorting runs, so the test never matched. They now sort first too.
+`index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not, even though `betterSort` appeared to test for them: the build strips those extensions off `path` before sorting runs, so the test never matched. They now sort first too.
 
-Two things move as a result, on any folder that has a `.gjs.md` / `.gts.md` index and no `meta.json` `order`:
+Two things move on any folder with a `.gjs.md` or `.gts.md` index and no `meta.json` `order`:
 
-- The nav lists the index page first, where it previously appeared in alphabetical position.
-- `group.list[0]` — and so the page a group's own URL redirects to — becomes that index page.
+- The nav lists the index page first, where it used to appear in alphabetical position.
+- `group.list[0]` becomes that index page, and with it the page a group's own URL resolves to.
 
-A folder with a `meta.json` `order` is unaffected: `applyPredestinedOrder` already hoisted `index` on its own, independently of this sort.
+A folder with a `meta.json` `order` is unaffected, because `applyPredestinedOrder` already hoisted `index` on its own.
 
-If you were relying on the old placement, add a `meta.json` `order` to that folder to state the order you want explicitly.
+To keep the old placement, give that folder a `meta.json` `order`. The match also moved from path to name, so a folder named `index` now sorts first among its siblings.
+
+## A page tree's URL resolves to its first page, without wiring
+
+`/Group/sub-folder` used to render the error page. It now redirects to that tree's first page, wired by `setupKolay` to the router rather than by any hook you call.
+
+Two consequences:
+
+- A URL that used to error now navigates. Anything asserting on the error page for a folder URL will need updating.
+- A group root resolves this way too, wherever the group's name is in the URL — so on a top-level mount, `/Group` no longer depends on `handlePotentialIndexVisit`. An app that never called it gets those redirects anyway.
+
+Keep calling `handlePotentialIndexVisit` where the URL has no wildcard param for a transition to resolve: the app root (`/`), and a nested mount's own URL (`/guides`). Calling it elsewhere is harmless.

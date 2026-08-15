@@ -33,6 +33,18 @@ module("Group index redirects", function (hooks) {
   });
 });
 
+module("Redirect precedence", function (hooks) {
+  setupApplicationTest(hooks);
+
+  // Without the config redirect in kolay.config.js, this URL would land on
+  // the tree's first page, ember-primitives.md.
+  test("a configured redirect beats the page-tree redirect", async function (assert) {
+    await visit("/Docs/sub-folder");
+
+    assert.strictEqual(currentURL(), "/Docs/sub-folder/ember-resources.md");
+  });
+});
+
 module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 

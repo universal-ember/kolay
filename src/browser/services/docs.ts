@@ -14,7 +14,7 @@ import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
-import { equalsIgnoreCase, samePagePath } from '../utils.ts';
+import { equalsIgnoreCase, findPageTree, firstPageIn, samePagePath } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
@@ -205,7 +205,82 @@ class DocsService {
 
     if (compiledDocs?.manifest) {
       this._docs = compiledDocs.manifest;
+
       this.#setupRedirects(compiledDocs.manifest);
+      this.#setupPageTreeRedirects();
+    }
+  }
+
+  #pageTreeRedirectsWired = false;
+
+  /**
+   * `undefined` unless the URL names a `PageTree`. A page visit also resolves
+   * to the wildcard's index, with the page as its param.
+   */
+  #landingForRouteInfo(to: Transition['to'] | RouterService['currentRoute']): Page | undefined {
+    if (to?.localName !== 'index') return;
+
+    const parent = to.parent;
+    const raw = parent?.params?.page;
+    const wildcardParam = typeof raw === 'string' ? raw.replace(/\/+$/, '') : undefined;
+
+    if (!wildcardParam) return;
+
+    // Three mount shapes: a scoped mount names its group in the binding, an
+    // unscoped nested mount as its path, a top-level mount not at all — the
+    // group is already in its wildcard. The name goes through
+    // `canonicalGroupName` because `addRoutes` stores it verbatim, unchecked.
+    const mountGroup = this.canonicalGroupName(
+      (parent ? groupNameForRoute(parent.name) : undefined) ?? parent?.parent?.localName ?? ''
+    );
+
+    if (!mountGroup) return this.landingForPageTree(`/${wildcardParam}`);
+
+    // Not always the group's name: `Home`'s prefix is the root.
+    const prefix = this.groupFor(mountGroup).tree.appRelativePath.replace(/\/$/, '');
+
+    return this.landingForPageTree(`${prefix}/${wildcardParam}`, mountGroup);
+  }
+
+  /**
+   * On `routeWillChange`, not a route's `beforeModel`: a mount route has no
+   * dynamic segment, so Ember doesn't re-enter it when only the wildcard's
+   * param changes — and clicking an authored link (`properLinks` makes it an
+   * in-app transition) is how readers arrive. No loop: the destination is a
+   * page path, which `landingForPageTree` declines.
+   */
+  #setupPageTreeRedirects() {
+    if (this.#pageTreeRedirectsWired) return;
+
+    this.#pageTreeRedirectsWired = true;
+
+    const router = this.router;
+
+    const onRouteWillChange = (transition: Transition) => {
+      const landing = this.#landingForRouteInfo(transition.to);
+
+      if (landing) {
+        router.transitionTo(this.appRelativeHrefFor(landing));
+      }
+    };
+
+    router.on('routeWillChange', onRouteWillChange);
+    registerDestructor(this, () => router.off('routeWillChange', onRouteWillChange));
+
+    const checkArrival = () => {
+      const landing = this.#landingForRouteInfo(router.currentRoute);
+
+      if (landing) {
+        router.replaceWith(this.appRelativeHrefFor(landing));
+      }
+    };
+
+    // Same boot problem, and fix, as `#setupRedirects` below: setup runs
+    // mid-initial-transition, after that transition's `routeWillChange`.
+    if (router.currentURL) {
+      checkArrival();
+    } else {
+      router.one('routeDidChange', checkArrival);
     }
   }
 
@@ -528,6 +603,44 @@ class DocsService {
    */
   findByPath = (path: string) => {
     return this.pages.find((page) => samePagePath(page.appRelativePath, path));
+  };
+
+  /**
+   * The page a tree's own URL should land on: its first. Takes a
+   * manifest-space path, and answers `undefined` when that path names a page,
+   * or nothing. `groupName` scopes the search — two groups can hold one
+   * manifest path — and a name matching no group answers `undefined`.
+   */
+  landingForPageTree = (appRelativePath: string, groupName?: string): Page | undefined => {
+    let groups = this.manifest?.groups ?? [];
+
+    if (groupName !== undefined) {
+      const canonical = this.canonicalGroupName(groupName);
+
+      if (!canonical) return undefined;
+
+      groups = [this.groupFor(canonical)];
+    }
+
+    // A path naming a page must not redirect. Not via `findByPath`: it
+    // searches `currentGroup`, derived from `router.currentURL`, which is
+    // still the previous page while a transition resolves.
+    for (const group of groups) {
+      if (group.list.some((page) => samePagePath(page.appRelativePath, appRelativePath))) return;
+    }
+
+    for (const group of groups) {
+      const tree = findPageTree(group.tree, appRelativePath);
+
+      if (!tree) continue;
+
+      const first = firstPageIn(tree);
+
+      // A tree with no pages shouldn't end the search for a group that has one.
+      if (first) return first;
+    }
+
+    return undefined;
   };
 }
 
