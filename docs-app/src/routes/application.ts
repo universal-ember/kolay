@@ -3,6 +3,7 @@ import Route from '@ember/routing/route';
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core';
 import { sentenceCase } from 'change-case';
 import { colorScheme, sync } from 'ember-primitives/color-scheme';
+import { setupTabster } from 'ember-primitives/tabster';
 import { setupKolay } from 'kolay/setup';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
@@ -13,8 +14,25 @@ import type { Manifest } from 'kolay';
 
 sync();
 
+/**
+ * Tabster is one instance per window (search results are a mover — see
+ * templates/search.gts), so it is set up once for the page rather than once
+ * per application instance.
+ *
+ * The owner would be the obvious context to hand it, but `setupTabster`
+ * registers a destructor that disposes tabster, and a test builds and tears
+ * down an application instance per test: the second test would set up against
+ * the instance the first one disposed, and disposing it again throws `Using
+ * disposed Tabster`. This context is never destroyed, which is the lifetime
+ * a window-wide singleton actually has.
+ */
+const TABSTER_HOST = {};
+let tabster: Promise<void> | undefined;
+
 export default class ApplicationRoute extends Route {
   async model(): Promise<{ manifest: Manifest }> {
+    await (tabster ??= setupTabster(TABSTER_HOST));
+
     const highlighter = await createHighlighterCore({
       themes: [import('shiki/themes/github-dark.mjs'), import('shiki/themes/github-light.mjs')],
       langs: [

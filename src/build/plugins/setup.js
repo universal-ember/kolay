@@ -109,6 +109,7 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
   const loaders = {};
   const paths = [];
   const configs = [];
+  const sources = new Map();
 
   for await (const entry of entries) {
     if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
@@ -134,6 +135,10 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
       if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
         query = '?raw';
       }
+
+      if (entry.endsWith('.gjs.md') || entry.endsWith('.gts.md')) {
+        sources.set(name, { source: (await readFile(join(sourceCwd, entry))).toString() });
+      }
     }
 
     loaders[name] = `() => import("${full}${query}")`;
@@ -148,9 +153,54 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     base: baseUrl,
   });
 
+  const search = found.list.flatMap((page) => {
+    const source = sources.get(page.path) ?? sources.get(`${page.path}.md`);
+
+    if (!source) {
+      if (page.href) return [];
+
+      // No inline source (a plain `.md` page): the runtime loads the text on
+      // demand. Deliberately no URL to load it from — this manifest is built
+      // against `config.base`, and the app it ends up in may be served under
+      // a different rootURL, so that URL is the runtime's to build.
+      return [
+        {
+          path: page.path,
+          appRelativePath: page.appRelativePath,
+          groupName: displayName,
+          title: page.title ?? page.cleanedName,
+          headings: [],
+          text: '',
+        },
+      ];
+    }
+
+    // headings are shown as-is (a page's title is usually its first one),
+    // so the source's inline syntax is stripped: emphasis and code marks,
+    // and the `[^label]` a footnote reference leaves behind
+    const headings = [...source.source.matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)].map(([, heading]) =>
+      heading
+        .replaceAll(/\[\^[^\]]+\]/g, '')
+        .replaceAll(/[`*_]/g, '')
+        .trim()
+    );
+
+    return [
+      {
+        path: page.path,
+        appRelativePath: page.appRelativePath,
+        groupName: displayName,
+        title: page.title ?? headings[0] ?? page.cleanedName,
+        headings,
+        text: source.source,
+      },
+    ];
+  });
+
   return {
     manifestGroup: { name: displayName, ...found },
     loaders,
+    search,
   };
 }
 
@@ -199,6 +249,7 @@ function groupSource(group) {
 }
 
 const DOCS_MODULE_PREFIX = 'virtual:kolay/docs/';
+const SEARCH_MODULE_PREFIX = 'virtual:kolay/search/';
 
 function docsModuleId(groupName) {
   return `${DOCS_MODULE_PREFIX}${groupName}`;
@@ -240,7 +291,7 @@ export function docsVirtualGuard(state) {
  * the group's manifest, its page loaders, its meta, and an `addRoutes`
  * scoped to it.
  */
-function groupModuleContent({ manifestGroup, loaders, meta }, { scopedTo } = {}) {
+function groupModuleContent({ manifestGroup, loaders, meta, searchModuleId }, { scopedTo } = {}) {
   return stripIndent`
     import { addRoutes as _addRoutes } from 'kolay';
 
@@ -249,6 +300,8 @@ function groupModuleContent({ manifestGroup, loaders, meta }, { scopedTo } = {})
     export const manifest = ${JSON.stringify(manifestGroup)};
 
     export const meta = ${JSON.stringify(meta ?? {})};
+
+    export const search = () => import(${JSON.stringify(searchModuleId)}).then((mod) => mod.default);
 
     export const pages = {
       ${Object.entries(loaders)
@@ -375,7 +428,9 @@ export const setup = (state) => {
             return next();
           }
 
-          if (!ASSET_EXT.test(urlPath)) return next();
+          const isMarkdownRequest = urlPath.endsWith('.md');
+
+          if (!ASSET_EXT.test(urlPath) && !isMarkdownRequest) return next();
 
           for (const { name, dir } of roots) {
             const prefix = baseUrl + (name ? name + '/' : '');
@@ -383,13 +438,26 @@ export const setup = (state) => {
             if (!urlPath.startsWith(prefix)) continue;
 
             const rel = urlPath.slice(prefix.length);
+            const markdownRel = rel.replace(/\.md$/, '.md');
             const candidate = join(dir, decodeURIComponent(rel));
 
             // Path-traversal guard, and fall through to the other roots when
             // this one doesn't have the file — the unnamed templates roots
             // match every URL under the base.
             if (relative(dir, candidate).startsWith('..')) continue;
-            if (!existsSync(candidate)) continue;
+
+            if (!existsSync(candidate)) {
+              const sourceCandidate = join(dir, decodeURIComponent(markdownRel));
+
+              if (!isMarkdownRequest || !existsSync(sourceCandidate)) continue;
+
+              send(req, markdownRel, { root: dir })
+                .type('text/markdown')
+                .on('error', () => next())
+                .pipe(res);
+
+              return;
+            }
 
             send(req, rel, { root: dir })
               .on('error', () => next())
@@ -579,7 +647,11 @@ export const setup = (state) => {
           const enumerated = await enumerateSource(source, baseUrl);
           const meta = await sourceMeta(homeMetaCwd(cwd));
 
-          return groupModuleContent({ ...enumerated, meta });
+          return groupModuleContent({
+            ...enumerated,
+            meta,
+            searchModuleId: `${SEARCH_MODULE_PREFIX}Home`,
+          });
         },
       },
       /**
@@ -593,7 +665,30 @@ export const setup = (state) => {
           const enumerated = await enumerateSource(groupSource(group), baseUrl);
           const meta = await sourceMeta(normalizePath(group.src));
 
-          return groupModuleContent({ ...enumerated, meta }, { scopedTo: group.name });
+          return groupModuleContent(
+            {
+              ...enumerated,
+              meta,
+              searchModuleId: `${SEARCH_MODULE_PREFIX}${group.name}`,
+            },
+            { scopedTo: group.name }
+          );
+        },
+      })),
+      {
+        importPath: `${SEARCH_MODULE_PREFIX}Home`,
+        content: async () => {
+          const enumerated = await enumerateSource(homeSource(cwd), baseUrl);
+
+          return `export default ${JSON.stringify(enumerated.search)};`;
+        },
+      },
+      ...(state.options.groups ?? []).map((group) => ({
+        importPath: `${SEARCH_MODULE_PREFIX}${group.name}`,
+        content: async () => {
+          const enumerated = await enumerateSource(groupSource(group), baseUrl);
+
+          return `export default ${JSON.stringify(enumerated.search)};`;
         },
       })),
     ]),

@@ -5,6 +5,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "types": [
       "ember-source/types",
+      "ember-scoped-css/types",
       "kolay/virtual",
       "vite/client",
       "vitest/importMeta",

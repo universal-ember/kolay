@@ -4,6 +4,175 @@ a.active {
   font-weight: bold;
 }
 
+::highlight(search-query) {
+  background: color-mix(in oklab, var(--pico-primary), transparent 65%);
+  color: var(--pico-color);
+  text-decoration: underline;
+  text-decoration-color: var(--pico-primary);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.14em;
+}
+
+/*
+ * The search result card (templates/search.gts), which is itself the link.
+ *
+ * Global rather than scoped for the specificity: pico styles anchors through
+ * `a:is([href], [role=link]):is(:hover, :focus, :active)`, which outranks a
+ * scoped class, so a card would take the link colour and pull an underline
+ * across all of its text on hover. Anchors also carry pico's link values for
+ * `--pico-color` and `--pico-background-color` down to every child, which is
+ * how the excerpt and the search highlight ended up tinted.
+ */
+a[data-search-result],
+a[data-search-result]:is(:hover, :focus, :active) {
+  --pico-color: inherit;
+  --pico-background-color: inherit;
+  color: inherit;
+  background: none;
+  text-decoration: none;
+}
+
+/*
+ * The shine's colours. Kept as their own names so the sweep can be retuned in
+ * one place: the site's primary at the leading edge, running through violet
+ * into pink at the trailing one.
+ */
+:root {
+  --search-shine-violet: oklch(0.62 0.23 295);
+  --search-shine-pink: oklch(0.72 0.2 340);
+}
+
+/*
+ * The swell. Only the glow layer carries it: the card keeps its own border
+ * underneath, untouched, so the light can only ever be added to the outline —
+ * a dimmer glow is a fainter highlight, never a dimmer border.
+ */
+@keyframes search-result-breathe {
+  from {
+    filter: brightness(0.9)
+      drop-shadow(0 0 3px color-mix(in oklab, var(--search-shine-violet), transparent 60%));
+  }
+
+  to {
+    filter: brightness(1.4)
+      drop-shadow(0 0 10px color-mix(in oklab, var(--search-shine-violet), transparent 20%));
+  }
+}
+
+/*
+ * The shine crossing the card. A single point orbiting the outline spends
+ * most of a lap on one edge and turns each corner on its own, which reads as
+ * something crawling around the card. A band swept across the whole thing
+ * lights every edge it crosses at once — left and right together, top and
+ * bottom together — so it reads as the outline catching the light.
+ *
+ * The range is only as wide as it needs to be for the bright part of the band
+ * to enter at one side and leave at the other: travelling further just spends
+ * seconds with the light parked off the card, doing nothing.
+ */
+@keyframes search-result-shine {
+  from {
+    background-position:
+      110% 0,
+      110% 0;
+  }
+
+  to {
+    background-position:
+      -10% 0,
+      -10% 0;
+  }
+}
+
+/*
+ * The light itself: a narrow bright band inside a wide soft one, both angled
+ * so they cross the card's corners rather than running parallel to an edge,
+ * and both masked to the pseudo-element's 1px padding so they land on the
+ * outline and nowhere else.
+ *
+ * It sits *over* the card's border (`inset: -1px` covers the border band,
+ * hence the radius being the card's plus that pixel), and paints nothing
+ * where it is transparent — so the border it isn't touching is simply the
+ * border, at full strength. Nothing here dims anything.
+ */
+[data-search-result]::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  /* the card's own radius (templates/search.gts), grown by the inset */
+  border-radius: calc(0.45rem + 1px);
+  background:
+    linear-gradient(
+      100deg,
+      transparent 34%,
+      var(--pico-primary) 43%,
+      color-mix(in oklab, var(--search-shine-pink), white 30%) 50%,
+      var(--search-shine-violet) 57%,
+      transparent 66%
+    ),
+    linear-gradient(
+      100deg,
+      transparent 18%,
+      color-mix(in oklab, var(--pico-primary), transparent 55%) 36%,
+      color-mix(in oklab, var(--search-shine-pink), transparent 45%) 50%,
+      color-mix(in oklab, var(--search-shine-violet), transparent 50%) 64%,
+      transparent 82%
+    );
+  /* 200%, so the bright part of the band is a good fraction of the card's
+   * width — a narrower band on a wider image reads as a passing speck */
+  background-size:
+    200% 100%,
+    200% 100%;
+  background-repeat: no-repeat;
+  background-position:
+    110% 0,
+    110% 0;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+/* two paces at once: the shine crossing and returning — `alternate` makes
+ * that an 11s round trip — and a swell that breathes about twice as often.
+ * The two are deliberately not multiples, so the outline is never lit the
+ * same way twice. */
+[data-search-result]:hover::before {
+  opacity: 1;
+  animation:
+    search-result-shine 5.5s ease-in-out infinite alternate,
+    search-result-breathe 3.5s ease-in-out infinite alternate;
+}
+
+/*
+ * Reduced motion asks for no movement, not for no feedback: the whole outline
+ * lights at once and holds still — and it arrives at once too, since the fade
+ * is motion as well.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-search-result]::before {
+    transition: none;
+  }
+
+  [data-search-result]:hover::before {
+    animation: none;
+    filter: none;
+    /* the same three colours, held still across the outline */
+    background: linear-gradient(
+      100deg,
+      var(--pico-primary),
+      var(--search-shine-pink) 50%,
+      var(--search-shine-violet)
+    );
+    background-size: 100% 100%;
+    background-position: 0 0;
+  }
+}
+
 nav a .link-entry-icon {
   width: 0.7em;
   height: 0.7em;
@@ -48,22 +217,26 @@ html {
  * Prose typography per group. Each group's whole design is owned by its
  * route template (templates/runtime/page.gjs, templates/typedoc/page.gjs);
  * the rules here reach into the rendered markdown, which scoped styles
- * can't, keyed by each template's unique root class. Derived from the
- * pico tokens the site already uses.
+ * can't — a scoped block only reaches elements the template itself wrote,
+ * and the markdown is compiled at runtime. So they key on each design's
+ * `data-design` (and `data-prose`) attributes: ember-scoped-css renames
+ * class names, attributes it leaves alone. Derived from the pico tokens
+ * the site already uses.
  */
 
 /* Runtime (templates/runtime/page.gjs): guide mode — quiet, typographic */
-.runtime-doc {
+[data-design="runtime"] {
   line-height: 1.75;
 }
 
 /* the sheet spans the full content column; the text keeps a reading
- * measure inside it (code blocks and tables may span) */
-.runtime-doc :where(h1, h2, h3, h4, p, ul, ol, blockquote, .guide-eyebrow) {
+ * measure inside it (code blocks and tables may span) — the eyebrow is
+ * the template's own element, so it holds the measure in the scoped block */
+[data-design="runtime"] :where(h1, h2, h3, h4, p, ul, ol, blockquote) {
   max-width: 75ch;
 }
 
-.runtime-doc h1 {
+[data-design="runtime"] h1 {
   margin-bottom: 2rem;
   font-size: 2.5rem;
   letter-spacing: -0.02em;
@@ -71,7 +244,7 @@ html {
 }
 
 /* the accent lives under the title, not around it */
-.runtime-doc h1::after {
+[data-design="runtime"] h1::after {
   content: "";
   display: block;
   width: 3.5rem;
@@ -82,16 +255,16 @@ html {
 }
 
 /* headings keep their type — no grey code chips inside titles */
-.runtime-doc h1 code,
-.runtime-doc h2 code,
-.runtime-doc h3 code {
+[data-design="runtime"] h1 code,
+[data-design="runtime"] h2 code,
+[data-design="runtime"] h3 code {
   background: none;
   padding: 0;
   color: inherit;
   font-size: 0.95em;
 }
 
-.runtime-doc h2 {
+[data-design="runtime"] h2 {
   margin-top: 3rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--pico-muted-border-color);
@@ -99,23 +272,23 @@ html {
   letter-spacing: -0.01em;
 }
 
-.runtime-doc h3 {
+[data-design="runtime"] h3 {
   margin-top: 2.25rem;
   font-size: 1.2rem;
 }
 
-.runtime-doc a {
+[data-design="runtime"] a {
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
-.runtime-doc blockquote {
+[data-design="runtime"] blockquote {
   border-left: 0.25rem solid var(--pico-primary);
   background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 6%);
   border-radius: 0 0.5rem 0.5rem 0;
 }
 
-.runtime-doc pre.shiki {
+[data-design="runtime"] pre.shiki {
   margin-block: 1.5rem;
   padding: 1rem 1.25rem;
   border: 1px solid var(--pico-muted-border-color);
@@ -123,56 +296,56 @@ html {
 }
 
 /* TypeDoc (templates/typedoc/page.gjs): the terminal — dense, monospace */
-.typedoc-doc .term__body {
+[data-design="typedoc"] [data-prose] {
   font-family: var(--pico-font-family-monospace, ui-monospace, "SFMono-Regular", Menlo, monospace);
   font-size: 0.92rem;
   line-height: 1.55;
 }
 
-.typedoc-doc .term__body h1,
-.typedoc-doc .term__body h2,
-.typedoc-doc .term__body h3 {
+[data-design="typedoc"] [data-prose] h1,
+[data-design="typedoc"] [data-prose] h2,
+[data-design="typedoc"] [data-prose] h3 {
   font-family: inherit;
   line-height: 1.2;
 }
 
-.typedoc-doc .term__body h1 {
+[data-design="typedoc"] [data-prose] h1 {
   font-size: 1.6rem;
   margin-bottom: 1rem;
 }
 
-.typedoc-doc .term__body h2 {
+[data-design="typedoc"] [data-prose] h2 {
   font-size: 1.25rem;
   margin-top: 2rem;
 }
 
-.typedoc-doc .term__body h3 {
+[data-design="typedoc"] [data-prose] h3 {
   font-size: 1.05rem;
 }
 
 /* the markdown-source aesthetic: headings show their fence */
-.typedoc-doc .term__body h1::before {
+[data-design="typedoc"] [data-prose] h1::before {
   content: "# ";
   color: var(--pico-muted-color);
 }
 
-.typedoc-doc .term__body h2::before {
+[data-design="typedoc"] [data-prose] h2::before {
   content: "## ";
   color: var(--pico-muted-color);
 }
 
-.typedoc-doc .term__body h3::before {
+[data-design="typedoc"] [data-prose] h3::before {
   content: "### ";
   color: var(--pico-muted-color);
 }
 
-.typedoc-doc .term__body pre.shiki {
+[data-design="typedoc"] [data-prose] pre.shiki {
   border: 1px solid var(--pico-muted-border-color);
   border-left: 3px solid var(--pico-primary);
   border-radius: 0.25rem;
   padding: 0.75rem 1rem;
 }
 
-.typedoc-doc .term__body :not(pre) > code {
+[data-design="typedoc"] [data-prose] :not(pre) > code {
   background: color-mix(in oklab, var(--pico-code-background-color), var(--pico-color) 8%);
 }

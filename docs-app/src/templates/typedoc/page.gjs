@@ -22,18 +22,21 @@ function hasReason(error) {
  * window dots, prompt-style loading, dense monospace-forward body.
  * Nothing here is shared with the other groups' templates — each owns
  * its whole design.
- * (Prose typography that must reach the rendered markdown is in
- *  app.css under `.typedoc-doc`.)
+ * (Prose typography that must reach the rendered markdown is in app.css,
+ *  under `[data-design="typedoc"] [data-prose]` — the classes below are
+ *  scoped to this file, so they can't name the compiled markdown.)
  */
 <template>
   <section class="typedoc-doc" data-design="typedoc">
     <div class="term">
       <header class="term__bar">
-        <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="term__dots" aria-hidden="true"><i class="term__dot--red"></i><i
+            class="term__dot--blue"
+          ></i><i class="term__dot--green"></i></span>
         <code class="term__title">kolay :: api reference — rendered from library types</code>
       </header>
 
-      <div class="term__body">
+      <div class="term__body" data-prose>
         <Page>
           <:pending>
             <pre class="term__loading" role="status">$ typedoc --render<span
@@ -98,17 +101,17 @@ exit code 1</pre>
       background: var(--pico-muted-border-color);
     }
 
-    .term__dots i:first-child {
+    .term__dot--red {
       background: var(--pico-del-color, #d32f2f);
       opacity: 0.66;
     }
 
-    .term__dots i:nth-child(2) {
+    .term__dot--blue {
       background: var(--pico-primary);
       opacity: 0.66;
     }
 
-    .term__dots i:last-child {
+    .term__dot--green {
       background: var(--pico-ins-color, #2e7d32);
       opacity: 0.66;
     }
