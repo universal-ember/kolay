@@ -3,21 +3,10 @@ import { groupNamesIn } from '../nav.js';
 import type { Group, NavEntry, NavNode, PageTree } from '../types.ts';
 
 /**
- * A group may collect other groups — `docs('data', { collection: [...] })` —
- * and the tree that describes rides the metamanifest onto `Manifest.nav`.
- * This module turns that tree into the navigation's shape: one entry per
- * top-level group, each with the page tree to render for it.
- *
- * Nothing here touches routing. A collected group keeps its own pages,
- * URLs, and scoped mount; collecting is a navigation-level merge only.
+ * Turns `Manifest.nav` into what the navigation renders. Nothing here
+ * touches routing: a collected group keeps its own pages, URLs, and mount.
  */
 
-/**
- * The group whose landing page an entry for this node should link to: its
- * own, or — for a group with no pages of its own — the first group it
- * collects, however deep. Always resolves: a group with no pages of its own
- * collects at least one group, which `NavCollection` states.
- */
 function landingGroup(node: NavNode): string {
   if (node.hasOwnPages) return node.name;
 
@@ -25,14 +14,9 @@ function landingGroup(node: NavNode): string {
 }
 
 /**
- * The page tree for a nav node: the group's own tree when it collects
- * nothing — or its own pages (when it has any) followed by a section per
- * group it collects, nesting for a group that collects others.
- *
- * The tree is located where the entry links: at the landing group's pages,
- * whose `first` is the page a visitor arrives on. A group's own tree is
- * already named after the group (the build names it), so a section needs no
- * renaming — `PageNav` renders it like any other folder in a tree.
+ * A group's own tree, or — when it collects others — its own pages followed
+ * by a section per collected group. The build already names each group's
+ * tree after the group, so a section needs no renaming.
  */
 export function treeFor(node: NavNode, groupFor: (name: string) => Group): PageTree {
   const own = node.hasOwnPages ? groupFor(node.name).tree : undefined;
@@ -48,13 +32,8 @@ export function treeFor(node: NavNode, groupFor: (name: string) => Group): PageT
 }
 
 /**
- * The top-level navigation: one entry per node of `Manifest.nav`, which is
- * one per group that no other group collects. A group that collects others
- * stands in for everything beneath it, and links where its own pages are
- * (or, with no pages of its own, where the first group it collects is).
- *
- * `hrefForGroup` supplies a group's URL — the docs service passes its
- * `groupHrefFor`, which knows about scoped mounts.
+ * `hrefForGroup` is the docs service's `groupHrefFor`, which knows about
+ * scoped mounts.
  */
 export function navEntriesFor(
   nav: NavNode[],
@@ -70,23 +49,17 @@ export function navEntriesFor(
   }));
 }
 
-/**
- * The nav entry the named group is presented by: the entry of the group
- * that collects it (however deep), or its own. `undefined` when the group
- * isn't in the navigation.
- */
+/** The entry presenting this group: the one collecting it, or its own. */
 export function navEntryFor(entries: NavEntry[], groupName: string): NavEntry | undefined {
   return entries.find((entry) => entry.groups.some((group) => group.name === groupName));
 }
 
 /**
- * The entry with this name — its own name, rather than a group it presents.
- * A collection group with no `src` of its own is only ever named here, so
- * this is the only way to resolve it. Case-insensitive, like group names.
+ * By the entry's own name rather than a group it presents, which is the only
+ * way to resolve a collection group with no `src`.
  *
- * The comparison is inline rather than `equalsIgnoreCase` from
- * `browser/utils.ts`: this module's unit tests run in node, and that file
- * imports `@ember/debug`.
+ * Compared inline rather than with `equalsIgnoreCase`: this module's tests
+ * run in node, and `browser/utils.ts` imports `@ember/debug`.
  */
 export function navEntryNamed(entries: NavEntry[], name: string): NavEntry | undefined {
   return entries.find((entry) => entry.name.toLowerCase() === name.toLowerCase());

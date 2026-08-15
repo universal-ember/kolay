@@ -89,10 +89,8 @@ function lastSegment(path) {
  * - `docs('data', { src, collection: [{ name, src }, ...] })` — a group that
  *   collects other groups into its nav entry (see `collection` below)
  *
- * Returns one normalized usage per group the call contributes — usually
- * one, `{ ...options, groups: [] | [{ name, src }] }`; a `collection`
- * contributes a usage per group in its tree, so every group keeps its own
- * markdown options, and the first of them has the `nav` tree.
+ * A `collection` contributes a usage per group in its tree, so every group
+ * keeps its own markdown options, and the first of them has the `nav` tree.
  *
  * @param {string | DocsOptions} [groupName]
  * @param {DocsOptions} [options]
@@ -282,14 +280,10 @@ function usagesFor(node, rootOptions, isRoot = true) {
   return [...own, ...node.children.flatMap((child) => usagesFor(child, rootOptions, false))];
 }
 
-/**
- * The tree as the manifest has it: a node per group, `group` naming
- * the group whose pages it contributes (null when it has none of its own).
- */
+/** The tree as the manifest has it: a node per group. */
 function navNode(node) {
   return {
     name: node.name,
-    // false when the group has no src: it contributes no pages of its own
     hasOwnPages: Boolean(node.src),
     children: node.children.map(navNode),
   };

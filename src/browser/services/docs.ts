@@ -20,7 +20,7 @@ import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
-import type { Group, LoadTypedoc, Manifest, NavEntry, Page } from '../../types.ts';
+import type { LoadTypedoc, Manifest, NavEntry, Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type Transition from '@ember/routing/transition';
 import type { ComponentLike } from '@glint/template';
@@ -510,21 +510,26 @@ class DocsService {
   };
 
   /**
-   * The group whose first page a visit to `name` should land on: the group
-   * of that name, or the landing group of the entry of that name.
+   * The page a visit to this URL segment should land on: the first page of
+   * the group of that name, or of the entry of that name — the second being
+   * a group that collects others and has no `src`, which owns no pages and
+   * so appears in no manifest.
    *
-   * The second case is a group that collects others and has no `src`, which
-   * owns no pages and so appears in no manifest. `handlePotentialIndexVisit`
-   * asks for this rather than resolving the two separately, so routing needs
-   * to know only that some group answers for a URL segment.
+   * Sibling of `landingForPageTree`, which answers the same question for a
+   * path that names a tree.
    */
-  groupToLandOn = (name: string): Group | undefined => {
+  landingForSegment = (name: string): Page | undefined => {
     const canonical = this.canonicalGroupName(name);
-
-    if (canonical) return this.groupFor(canonical);
-
     // an entry presents its landing group first — see `navEntriesFor`
-    return this.navEntryNamed(name)?.groups[0];
+    const group = canonical ? this.groupFor(canonical) : this.navEntryNamed(name)?.groups[0];
+
+    if (!group) return;
+
+    if (!group.list[0]) {
+      console.warn(`Could not determine first page in group: ${group.name}`);
+    }
+
+    return group.list[0];
   };
 
   /**

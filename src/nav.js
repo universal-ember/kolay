@@ -3,12 +3,6 @@
  * that reads it — like `rebase-links.js`, plain JS so the build plugins can
  * import it unbuilt.
  *
- * A node is `{ name, group, children }`: one group in the navigation, with
- * the groups it collects (`collection: [...]` on its `docs()` usage)
- * beneath it. `group` is the group whose pages the node contributes, or
- * `null` for a group with no `src` of its own, which exists to collect the
- * others.
- *
  * @typedef {import('#types').NavNode} NavNode
  */
 
@@ -20,9 +14,7 @@
 export const HOME_GROUP = 'Home';
 
 /**
- * Every group name in the node's subtree, its own first, depth first in
- * declaration order. The build uses it to know which groups a collection
- * has already placed; the browser, to know which groups an entry presents.
+ * Every group name in the node's subtree, its own first, depth first.
  *
  * @param {NavNode} node
  * @returns {string[]}

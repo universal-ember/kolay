@@ -114,27 +114,19 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
           parent?.localName,
         ];
 
-  const group = candidates
-    .map((candidate) => (typeof candidate === 'string' ? docs.groupToLandOn(candidate) : undefined))
+  const first = candidates
+    .map((candidate) =>
+      typeof candidate === 'string' ? docs.landingForSegment(candidate) : undefined
+    )
     .find((match) => match !== undefined);
 
-  if (!group) return;
-
-  const first = group.list[0];
-
-  if (!first) {
-    console.warn(`Could not determine first page in group: ${group.name}`);
-
-    return;
-  }
+  if (!first) return;
 
   const router = getOwner(context)?.lookup('service:router');
 
   assert(`Expected to find the router service, but did not`, router);
 
-  // `transitionTo` prepends the rootURL itself, so use the app-relative
-  // path (`first.path` includes the rootURL and would double the prefix).
-  // For scoped mounts, the mount-space URL differs from the manifest path —
-  // the docs service knows both.
+  // `transitionTo` prepends the rootURL itself, and for a scoped mount the
+  // mount-space URL differs from the manifest path.
   router.transitionTo(docs.appRelativeHrefFor(first));
 }
