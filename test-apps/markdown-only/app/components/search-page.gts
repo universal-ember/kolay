@@ -4,7 +4,7 @@ import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 
-import { docsManager } from "kolay";
+import { searcher } from "kolay";
 import { getPromiseState } from "reactiveweb/get-promise-state";
 
 import type RouterService from "@ember/routing/router-service";
@@ -25,7 +25,7 @@ export default class SearchPage extends Component<Signature> {
 
   @cached
   get search(): Promise<SearchResult[]> {
-    return docsManager(this).search(this.args.model.query);
+    return searcher(this).search(this.args.model.query);
   }
 
   get results() {

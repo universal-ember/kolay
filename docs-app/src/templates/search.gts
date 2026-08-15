@@ -4,7 +4,7 @@ import { service } from '@ember/service';
 
 import { modifier } from 'ember-modifier';
 import { Form } from 'ember-primitives/components/form';
-import { docsManager } from 'kolay';
+import { highlightSearch, searcher, stripFormatting } from 'kolay';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 import { getTabsterAttribute, MoverDirections } from 'tabster';
 
@@ -15,31 +15,6 @@ interface Signature {
   Args: {
     model: { query: string };
   };
-}
-
-/**
- * NOTE: this is bonkers, but *way* faster than parsing markdown and printing HTML
- *
- * The excerpt's own source, stripped of the syntax that would read as noise.
- *
- * An excerpt is two lines of prose, which is worth no more than a pass of
- * replacements: compiling each one as markdown cost a few milliseconds per
- * result, serialized, and rendered nothing a reader could tell apart.
- */
-function rawExcerpt(text: string | null, range: { start: number; end: number }): string {
-  return (text ?? '')
-    .slice(range.start, range.end)
-    .replaceAll(/^\s*(?:[-*+]|\d+[.)])\s+/gm, '') // list markers
-    .replaceAll(/^\s*>\s?/gm, '') // blockquote markers
-    .replaceAll(/^\s*\[\^[^\]]+\]:\s*/gm, '') // the label a footnote is defined under
-    .replaceAll(/\[\^[^\]]+\]/g, '') // and the references to it
-    .replaceAll(/!?\[([^\]]*)\]\([^)]*\)/g, '$1') // links and images: their text
-    .replaceAll(/!?\[([^\]]*)\]\[[^\]]*\]/g, '$1') // and the same for reference links
-    .replaceAll(/\s*\|\s*/g, ' ') // table cell walls
-    .replaceAll(/:?-{3,}:?/g, ' ') // and the rule under its header row
-    .replaceAll(/[`*_~]/g, '') // emphasis and code marks
-    .replaceAll(/\s+/g, ' ')
-    .trim();
 }
 
 /**
@@ -63,47 +38,6 @@ const autofocus = modifier((element: HTMLElement) => {
   element.focus({ preventScroll: true });
 });
 
-/**
- * Every result's ranges live in this one highlight: `::highlight(name)` picks
- * a registered name, so a highlight per element would need a CSS rule per
- * element. It is a live Set — adding to it after registering is enough.
- */
-const found = new Highlight();
-
-CSS.highlights.set('search-query', found);
-
-const highlightSearch = modifier((element: HTMLElement, [query]: [string]) => {
-  if (!('highlights' in CSS) || !query) return;
-
-  const mine: Range[] = [];
-  const terms = query.toLocaleLowerCase().split(/\s+/).filter(Boolean);
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-
-  while (walker.nextNode()) {
-    const node = walker.currentNode as Text;
-    const text = node.data.toLocaleLowerCase();
-
-    for (const term of terms) {
-      let start = text.indexOf(term);
-
-      while (start >= 0) {
-        const range = new Range();
-
-        range.setStart(node, start);
-        range.setEnd(node, start + term.length);
-        found.add(range);
-        mine.push(range);
-
-        start = text.indexOf(term, start + term.length);
-      }
-    }
-  }
-
-  return () => {
-    for (const range of mine) found.delete(range);
-  };
-});
-
 export default class SearchPage extends Component<Signature> {
   @service declare router: RouterService;
 
@@ -120,7 +54,7 @@ export default class SearchPage extends Component<Signature> {
   get search(): Promise<SearchResult[]> {
     if (this.query.length < 3) return Promise.resolve([]);
 
-    return docsManager(this).search(this.query);
+    return searcher(this).search(this.query);
   }
 
   get results() {
@@ -159,7 +93,10 @@ export default class SearchPage extends Component<Signature> {
               <p>{{result.groupName}}</p>
               <h2>{{result.title}}</h2>
               <div class="search-result__excerpt" data-excerpt>
-                <p {{highlightSearch this.query}}>{{rawExcerpt result.text result.excerptRange}}</p>
+                <p {{highlightSearch this.query}}>{{stripFormatting
+                    result.text
+                    result.excerptRange
+                  }}</p>
               </div>
             </a>
           {{/each}}

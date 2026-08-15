@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { rankSearch } from './search.ts';
+import { rankSearch } from './rank-search.ts';
 
 describe('rankSearch', () => {
   test('prioritizes titles and headings over body text', () => {
