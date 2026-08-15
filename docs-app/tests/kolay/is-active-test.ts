@@ -15,7 +15,7 @@ function page(appRelativePath: string, base = '/'): Page {
   };
 }
 
-function collection(appRelativePath: string, pages: (Page | PageTree)[]): PageTree {
+function pageTree(appRelativePath: string, pages: (Page | PageTree)[]): PageTree {
   return { path: appRelativePath, appRelativePath, name: appRelativePath, pages };
 }
 
@@ -57,7 +57,7 @@ module('isActive', function () {
   });
 
   test('an index page is active when visited at its own URL, like any page', function (assert) {
-    // index pages are only servable at their own URL (a collection's bare
+    // index pages are only servable at their own URL (a page tree's bare
     // URL is not a route), so this is the whole story for them
     assert.true(
       isActive(page('/Documentation/sub-folder/index.md'), '/Documentation/sub-folder/index')
@@ -74,10 +74,10 @@ module('isActive', function () {
     assert.false(isActive(page('/Documentation/x.md'), undefined));
   });
 
-  test('a collection is active when any page within it is, recursively', function (assert) {
-    const tree = collection('/Documentation', [
+  test('a page tree is active when any page within it is, recursively', function (assert) {
+    const tree = pageTree('/Documentation', [
       page('/Documentation/a.md'),
-      collection('/Documentation/sub-folder', [page('/Documentation/sub-folder/b.md')]),
+      pageTree('/Documentation/sub-folder', [page('/Documentation/sub-folder/b.md')]),
     ]);
 
     assert.true(isActive(tree, '/Documentation/sub-folder/b.md'));

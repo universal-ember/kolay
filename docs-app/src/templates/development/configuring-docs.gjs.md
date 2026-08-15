@@ -119,6 +119,179 @@ Router.map(function () {
 
 Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` links, active states, and index redirects all use the mount's URL rather than `/GroupName`. And since every mount is its own route, every mount can have its own route template — its own layout and design per group (this site's Runtime and TypeDoc sections do exactly that).
 
+## `collection`
+
+As monorepos grow, authors frequently want to "collect" packages together in groups in their docs. For example, consider a repo publishing `@my-lib/core`, `@my-lib/plugins`, and `@my-lib/utilities`, each documenting itself in its own folder, plus a `guides` folder at the root. By default, this results in four group entries across the top of the site:
+
+```
+Guides   Core   Plugins   Utilities
+```
+
+These entries can be optionally grouped into a "collection group" by moving them to their respective `collection` array. Each package's docs stay collocated with their respective code, and every collected group keeps its own pages, URLs, and routes by default. A collection changes only how they are grouped when rendered. For example:
+
+```js
+// kolay.config.js
+export default defineConfig({
+  docs: [
+    { name: "guides", src: import.meta.resolve("./guides") },
+
+    // one 'Packages' entry, with a section per package
+    {
+      name: "Packages",
+      collection: [
+        { name: "core", src: import.meta.resolve("./packages/core/docs") },
+        { name: "plugins", src: import.meta.resolve("./packages/plugins/docs") },
+        { name: "utilities", src: import.meta.resolve("./packages/utilities/docs") },
+      ],
+    },
+  ],
+});
+```
+
+With this configuration, the "Packages" collection group takes the place of the groups it collects. `Core`, `Plugins`, and `Utilities` no longer appear across the top of the site; `Packages` stands where they were, in its own declared position. The navigation shows its name, formatted however the app already formats group names:
+
+```
+Guides   Packages
+         └─ clicking it lands on /core — the first group it collects
+
+         and its page list is those groups, as sections:
+
+           Core
+             Installation
+             Caching
+           Plugins
+             Writing one
+           Utilities
+             Helpers
+```
+
+Every page in a collected group shows the parent collection group's page list, with a section per collected group in declaration order. In our example, a reader on `/plugins/writing-one.md` still sees `Core` / `Plugins` / `Utilities`, with `Packages` highlighted.
+
+Each collected group is still a group: the same entry shape, taking an `src` and [markdown options](#scope) of its own. A plain string works too, and its last path segment names the group, exactly as it does for a `docs()` usage. `src` is required for each collected group, under the same rule as anywhere else: a group needs one _unless_ it collects other groups.
+
+Markdown options set on the collection group are inherited by the groups inside it, unless one sets its own options. Options never travel between separate `docs()` calls, only down into a `collection`.
+
+Collected groups can be nested: a collected group can itself collect groups that have `collection` configs of their own, and so on, as deep as you need.
+
+The [`docs()`](#docs) plugin takes `collection` the same way, for a project configuring plugins directly rather than through [`kolay.config.js`](/development/config-file.md):
+
+```js
+// vite.config.js
+docs("Packages", {
+  collection: ["./packages/core/docs", "./packages/plugins/docs"],
+}),
+```
+
+`src` is optional for a collection group, and whether it has one determines where its entry links:
+
+- **A collection group needs no `src`.** `Packages` above has none, because it contributes no pages of its own. Give it one and its pages come first in the page list, above the sections, and its entry links to its own URL:
+
+  ```js
+  {
+    name: "Packages",
+    src: import.meta.resolve("./packages/docs"),  // an overview page or two
+    collection: [
+      { name: "core", src: import.meta.resolve("./packages/core/docs") },
+      // …
+    ],
+  }
+  ```
+
+- **Otherwise the entry links at the first group with pages**, its own or the first it collects, however deep. In the example above, clicking `Packages` lands on the `core` group's landing page, so that group's route needs [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) as usual. Reorder the `collection` to land somewhere else.
+
+Either way the collection group's own URL — `/Packages` here — redirects to wherever its entry links, provided the route that catches it calls [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md). Nothing links to that URL, since the entry points at the landing group, but a reader who types it lands somewhere real rather than on a missing page.
+
+The following rules are enforced at buildtime, and breaking either one fails the build with the reason:
+
+- Every entry in the top-level navigation needs its own name. Group names already have to be unique across every `docs()` usage, collections or not; this rule extends that to a collection group with no `src`, which is a name in the navigation without being a group.
+
+  ```
+  Two navigation entries are named 'Packages'. Every entry in the top-level navigation
+  needs its own name.
+  ```
+
+- A group can be collected by only one collection group.
+
+  ```
+  'core' is collected by 'Packages' and by 'Libraries'. A group can be collected by only one
+  group: it has one set of pages, and would otherwise be presented in two places at once.
+  ```
+
+A collected group with no `src` and no `collection` of its own fails the build too, with the same missing-`src` error any group gets when nothing says where its docs live.
+
+### Collections and mounts
+
+A group in a scoped or nested mount ([above](#using-the-plugin-multiple-times)) keeps that mount's URLs even when it is collected, and its section links there rather than at `/GroupName`. Collecting a group and mounting it are independent decisions: a collection is navigation, a mount is routing. kolay's own test app collects two groups that are mounted two different ways:
+
+```js
+// vite.config.js
+docs("Docs", { collection: ["./guides", "./demos"] }),
+```
+
+```js
+// app/router.js
+Router.map(function () {
+  // a scoped mount: the path need not match the group's name
+  this.route("help", function () {
+    addGuidesRoutes(this);
+  });
+
+  // an unscoped nested mount: the path is the group's name
+  this.route("demos", function () {
+    addRoutes(this);
+  });
+});
+```
+
+That gives one `Docs` entry in the top nav, with a `guides` section and a `demos` section, while the pages stay at `/help/…` and `/demos/…` — the URLs their mounts give them, not `/Docs/…`. Reading either keeps the `Docs` entry active and shows the same page list. Because a collection adds no route of its own, `handlePotentialIndexVisit` still belongs in each mount's route, exactly as it would without the collection.
+
+The mounts can share a prefix if you would rather the URLs read that way: nesting both routes inside a `docs` route gives `/docs/guides/…` and `/docs/demos/…`, and the collection is unaffected either way. Both mounts have to be **scoped** for that, though — an unscoped mount takes its group from the first segment of the URL, so it only works while it sits at the top level. A scoped mount is bound to its group by name, so it can nest as deep as you like.
+
+A collection group with no `src` has no mount at all — no pages, and no `virtual:kolay/docs/<name>` module. It exists only as a name in the navigation, which is why its own URL resolves through the navigation rather than through a group, as [above](#collection).
+
+### Collections at runtime
+
+`<GroupNav />` and `<PageNav />` need no changes. `<GroupNav />` renders one link per entry, and `<PageNav />` renders the collection group's page list when the reader is inside one.
+
+A collected group is an ordinary [`PageTree`](/Runtime/utilities/page-tree-utils.md), so it goes through `<PageNav />`'s `<:section>` block. That is the same block a folder of markdown files goes through, which is why the block is named for the nav role rather than the filesystem. A section's label is a link when its group has an `index.md`, and plain text otherwise.
+
+Hand-rolled navigation can read the entries from [`docsManager`](/Runtime/utilities/docs-manager.md):
+
+```js
+const docs = docsManager(this);
+
+docs.navEntries; // the top-level navigation: a group, with what it collects
+docs.activeNavEntry; // the entry the current page belongs to
+docs.collectionOf("plugins"); // 'Packages'
+```
+
+`collectionOf` takes a group name and returns the name of the entry presenting it, which is the collection group's name, or the group's own when nothing collects it.
+
+A top-level nav needs three things from each entry, and `{ name, href, tree }` are them: what to show, where to link, and the page list to render beside it. The active state compares `entry.name` against `activeNavEntry.name`, as in the diff below.
+
+An entry has two more fields, for rarer jobs. `groups` is the flat list of groups whose pages it presents, its own first and then the collected ones, depth first, for a nav that wants to name what is inside an entry. `isCollection` answers whether the entry collects anything at all, which `groups.length` cannot: a group collecting exactly one group presents exactly one group, the same as a plain group does.
+
+A sidebar built on `docs.tree` needs no change to show a collection, because `docs.tree` is already the tree to render — the current group's, or the collection group's when one presents it. `currentGroup.tree` is still the group's own, for a sidebar that wants only the group.
+
+`availableGroups` and `selectedGroup` are deliberately untouched, because they answer which group owns a URL rather than how the navigation is arranged. `selectedGroup` is the group the current URL resolves to, always the group itself and never the entry presenting it, where `activeNavEntry` is that entry. Reading `/plugins/writing-one.md`, `selectedGroup` is `plugins` and `activeNavEntry.name` is `Packages`.
+
+A top-level nav built on `availableGroups` therefore keeps working, and keeps listing every group individually — collections stay invisible to it. Switching that loop to `navEntries` is the one change a hand-rolled nav needs:
+
+```diff
+- {{#each this.docs.availableGroups as |groupName|}}
+-   <a
+-     href={{this.docs.groupHrefFor groupName}}
+-     class={{if (eq groupName this.docs.selectedGroup) "active"}}
+-   >{{groupName}}</a>
+- {{/each}}
++ {{#each this.docs.navEntries as |entry|}}
++   <a
++     href={{entry.href}}
++     class={{if (eq entry.name this.docs.activeNavEntry.name) "active"}}
++   >{{entry.name}}</a>
++ {{/each}}
+```
+
 ## Each group's virtual module
 
 Every `docs()` usage enables a virtual module for its group — `docs('foo')` enables `virtual:kolay/docs/foo`:

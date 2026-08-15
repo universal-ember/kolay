@@ -24,7 +24,7 @@ export { resolveRedirect } from './redirects.ts';
 export { getIndexPage, isIndex, isPageTree } from './utils.ts';
 
 // Types
-export type { Manifest, Page, PageTree } from '../types.ts';
+export type { Group, Manifest, NavEntry, NavNode, Page, PageTree } from '../types.ts';
 export type { DocsGroupModule, DocsSourceMeta, MetaManifest } from './load-compiled-docs.ts';
 export type { DocModule, DocSource } from './services/compiled-doc.ts';
 export type { SetupOptions } from './services/docs.ts';

@@ -49,15 +49,24 @@ function createState(options) {
  *   segment is the group name
  * - `docs()` — no group; only the co-located pages (app/templates, src/templates)
  *
+ * A group may collect other groups — `docs('data', { collection: [...] })` —
+ * and then the call contributes a usage per group in that tree, so each
+ * keeps its own markdown options. They discover each other exactly as
+ * separate `docs()` calls do.
+ *
  * @param {string | DocsOptions} [groupName] - the group's name, or a path/URL whose last segment is the group name (the path then also serves as the group's `src`)
  * @param {DocsOptions} [options]
  */
 export function docsPlugins(groupName, options) {
-  const state = createState(parseDocsArgs(groupName, options));
+  const perUsage = parseDocsArgs(groupName, options).flatMap((usage) => {
+    const state = createState(usage);
 
-  return [setup(state), fixViteForIssue362(), gjsmd(state), docsVirtualGuard(state)].filter(
-    Boolean
-  );
+    return [setup(state), gjsmd(state), docsVirtualGuard(state)];
+  });
+
+  // stateless, and a global patch: one is enough however many groups this
+  // call contributes
+  return [...perUsage, fixViteForIssue362()].filter(Boolean);
 }
 
 /**

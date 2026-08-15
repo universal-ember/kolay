@@ -8,6 +8,7 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { navEntriesFor, navEntryFor, navEntryNamed } from '../nav-entries.ts';
 import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
@@ -19,7 +20,7 @@ import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { selected } from './selected.ts';
 
-import type { LoadTypedoc, Manifest, Page } from '../../types.ts';
+import type { LoadTypedoc, Manifest, NavEntry, Page } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type Transition from '@ember/routing/transition';
 import type { ComponentLike } from '@glint/template';
@@ -301,10 +302,16 @@ class DocsService {
   }
 
   /**
-   * The full page hierachy for the current group.
+   * The full page hierachy to render for the current page: the current
+   * group's — or, when another group collects it, that group's, whose
+   * top-level entries are the groups it collects, as sections.
+   *
+   * When nothing collects the current group this is exactly its own
+   * `tree`, so navigation built on it keeps working and picks up a
+   * `collection` for free. `currentGroup.tree` is always the group's own.
    */
   get tree() {
-    return this.currentGroup?.tree ?? {};
+    return this.activeNavEntry?.tree ?? this.currentGroup?.tree ?? {};
   }
 
   /**
@@ -471,12 +478,85 @@ class DocsService {
   };
 
   /**
-   * Every group's name, in manifest order.
+   * Every group's name, in manifest order — including the members of a
+   * collection, which are groups like any other (they keep their own
+   * pages and URLs). For what the navigation should show, see
+   * `navEntries`.
    */
   get availableGroups() {
     const groups = this.manifest?.groups ?? [];
 
     return groups.map((group) => group.name);
+  }
+
+  /**
+   * The group whose nav entry presents the named one: the group that
+   * collects it (`collection: [...]` on that group's `docs()` usage),
+   * however deep the nesting — or the group's own name, when nothing
+   * collects it.
+   * `undefined` when the group isn't in the navigation.
+   */
+  collectionOf = (groupName: string): string | undefined => {
+    return navEntryFor(this.navEntries, groupName)?.name;
+  };
+
+  /**
+   * The nav entry with this name, rather than the entry presenting this
+   * group. A collection group with no `src` is only ever named in the
+   * navigation, so nothing in `availableGroups` resolves it.
+   */
+  navEntryNamed = (name: string): NavEntry | undefined => {
+    return navEntryNamed(this.navEntries, name);
+  };
+
+  /**
+   * The page a visit to this URL segment should land on: the first page of
+   * the group of that name, or of the entry of that name — the second being
+   * a group that collects others and has no `src`, which owns no pages and
+   * so appears in no manifest.
+   *
+   * Sibling of `landingForPageTree`, which answers the same question for a
+   * path that names a tree.
+   */
+  landingForSegment = (name: string): Page | undefined => {
+    const canonical = this.canonicalGroupName(name);
+    // an entry presents its landing group first — see `navEntriesFor`
+    const group = canonical ? this.groupFor(canonical) : this.navEntryNamed(name)?.groups[0];
+
+    if (!group) return;
+
+    if (!group.list[0]) {
+      console.warn(`Could not determine first page in group: ${group.name}`);
+    }
+
+    return group.list[0];
+  };
+
+  /**
+   * The top-level navigation: one entry per group that no other group
+   * collects. A group that collects others stands in for the whole tree
+   * beneath it, and those groups do not appear on their own. Nav
+   * components render these instead of `availableGroups`, which is the
+   * full list of groups.
+   */
+  @cached
+  get navEntries(): NavEntry[] {
+    return navEntriesFor(this.manifest?.nav ?? [], this.groupFor, this.groupHrefFor);
+  }
+
+  /**
+   * The nav entry the current page is presented by: the entry of the group
+   * that collects the current one, or the current group's own. Nav
+   * components read this for the active entry — a collected group's page
+   * keeps the collection group's entry active.
+   */
+  @cached
+  get activeNavEntry(): NavEntry | undefined {
+    const selected = this.selectedGroup;
+
+    if (!selected) return undefined;
+
+    return navEntryFor(this.navEntries, selected);
   }
 
   /**
