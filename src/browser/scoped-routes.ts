@@ -1,3 +1,6 @@
+import type RouteInfo from '@ember/routing/route-info';
+import type { RouteInfoWithAttributes } from '@ember/routing/route-info';
+
 /**
  * `addRoutes(context, groupName)` binds the wildcard route it creates to a
  * group — the mount then serves that group's docs regardless of the mount's
@@ -45,6 +48,50 @@ export function routeNameForGroup(groupName: string): string | undefined {
   }
 
   return undefined;
+}
+
+export interface MountLocation {
+  /** The wildcard segment below the mount, trailing slashes stripped. */
+  wildcardParam: string | undefined;
+  /**
+   * Names that may identify the group this mount serves, most specific
+   * first. Raw — canonicalize at the callsite, which has the docs service.
+   */
+  mountGroupNames: string[];
+}
+
+/**
+ * Where an index arrival sits relative to its mount.
+ *
+ * Index routes are reached two ways, and the parent differs: at the mount's
+ * own URL (`/guides`) the parent is the mount route and the wildcard is its
+ * sibling, while below it (`/guides/foo`) the parent is the wildcard route.
+ * Both shapes resolve here so that callers don't each carry a copy of the
+ * topology.
+ *
+ * Note for callers: a group name coming back does not license a redirect.
+ * A page visit resolves to the wildcard's index too, so the mount's group is
+ * the right destination only when nothing was requested — see
+ * `handlePotentialIndexVisit`.
+ */
+export function mountLocationFor(
+  to: RouteInfo | RouteInfoWithAttributes | null | undefined
+): MountLocation {
+  const parent = to?.parent;
+  const raw = parent?.params?.['page'];
+  const atWildcard = typeof raw === 'string';
+  const wildcardParam = atWildcard ? raw.replace(/\/+$/, '') || undefined : undefined;
+
+  const names = parent
+    ? atWildcard
+      ? [groupNameForRoute(parent.name), parent.parent?.localName]
+      : [groupNameForRoute(`${parent.name}.page`), parent.localName]
+    : [];
+
+  return {
+    wildcardParam,
+    mountGroupNames: names.filter((name): name is string => typeof name === 'string'),
+  };
 }
 
 /**

@@ -9,7 +9,12 @@ import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
 import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
-import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
+import {
+  groupNameForRoute,
+  indexRouteNameFor,
+  mountLocationFor,
+  routeNameForGroup,
+} from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
@@ -220,19 +225,15 @@ class DocsService {
   #landingForRouteInfo(to: Transition['to'] | RouterService['currentRoute']): Page | undefined {
     if (to?.localName !== 'index') return;
 
-    const parent = to.parent;
-    const raw = parent?.params?.page;
-    const wildcardParam = typeof raw === 'string' ? raw.replace(/\/+$/, '') : undefined;
+    const { wildcardParam, mountGroupNames } = mountLocationFor(to);
 
     if (!wildcardParam) return;
 
-    // Three mount shapes: a scoped mount names its group in the binding, an
-    // unscoped nested mount as its path, a top-level mount not at all — the
-    // group is already in its wildcard. The name goes through
-    // `canonicalGroupName` because `addRoutes` stores it verbatim, unchecked.
-    const mountGroup = this.canonicalGroupName(
-      (parent ? groupNameForRoute(parent.name) : undefined) ?? parent?.parent?.localName ?? ''
-    );
+    // Empty for a top-level mount, whose wildcard already includes the group.
+    // Through `canonicalGroupName` because `addRoutes` stores whatever the app
+    // author passed, unchecked.
+    const [name] = mountGroupNames;
+    const mountGroup = name ? this.canonicalGroupName(name) : undefined;
 
     if (!mountGroup) return this.landingForPageTree(`/${wildcardParam}`);
 
