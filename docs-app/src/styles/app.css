@@ -49,12 +49,11 @@ a[data-search-result]:is(:hover, :focus, :active) {
  */
 @keyframes search-result-breathe {
   from {
-    filter: brightness(0.9)
-      drop-shadow(0 0 3px color-mix(in oklab, var(--search-shine-violet), transparent 60%));
+    filter: brightness(0.9) drop-shadow(0 0 3px color-mix(in oklab, var(--search-shine-violet), transparent 60%));
   }
+
   to {
-    filter: brightness(1.4)
-      drop-shadow(0 0 10px color-mix(in oklab, var(--search-shine-violet), transparent 20%));
+    filter: brightness(1.4) drop-shadow(0 0 10px color-mix(in oklab, var(--search-shine-violet), transparent 20%));
   }
 }
 
@@ -75,6 +74,7 @@ a[data-search-result]:is(:hover, :focus, :active) {
       110% 0,
       110% 0;
   }
+
   to {
     background-position:
       -10% 0,
@@ -101,22 +101,18 @@ a[data-search-result]:is(:hover, :focus, :active) {
   /* the card's own radius (templates/search.gts), grown by the inset */
   border-radius: calc(0.45rem + 1px);
   background:
-    linear-gradient(
-      100deg,
+    linear-gradient(100deg,
       transparent 34%,
       var(--pico-primary) 43%,
       color-mix(in oklab, var(--search-shine-pink), white 30%) 50%,
       var(--search-shine-violet) 57%,
-      transparent 66%
-    ),
-    linear-gradient(
-      100deg,
+      transparent 66%),
+    linear-gradient(100deg,
       transparent 18%,
       color-mix(in oklab, var(--pico-primary), transparent 55%) 36%,
       color-mix(in oklab, var(--search-shine-pink), transparent 45%) 50%,
       color-mix(in oklab, var(--search-shine-violet), transparent 50%) 64%,
-      transparent 82%
-    );
+      transparent 82%);
   /* 200%, so the bright part of the band is a good fraction of the card's
    * width — a narrower band on a wider image reads as a passing speck */
   background-size:
@@ -160,12 +156,10 @@ a[data-search-result]:is(:hover, :focus, :active) {
     animation: none;
     filter: none;
     /* the same three colours, held still across the outline */
-    background: linear-gradient(
-      100deg,
-      var(--pico-primary),
-      var(--search-shine-pink) 50%,
-      var(--search-shine-violet)
-    );
+    background: linear-gradient(100deg,
+        var(--pico-primary),
+        var(--search-shine-pink) 50%,
+        var(--search-shine-violet));
     background-size: 100% 100%;
     background-position: 0 0;
   }
@@ -183,7 +177,7 @@ pre.shiki {
   /* overflow: hidden; */
 }
 
-pre.shiki > code {
+pre.shiki>code {
   /* padding-right: 1rem; */
   /* overflow: auto; */
 }
@@ -203,6 +197,7 @@ fieldset summary {
 * WIP migration to nvp.ui styles
 */
 html {
+
   &:root,
   body.theme-light,
   body.theme-dark {
@@ -344,6 +339,6 @@ html {
   padding: 0.75rem 1rem;
 }
 
-[data-design="typedoc"] [data-prose] :not(pre) > code {
+[data-design="typedoc"] [data-prose] :not(pre)>code {
   background: color-mix(in oklab, var(--pico-code-background-color), var(--pico-color) 8%);
 }

@@ -215,14 +215,6 @@ export default class SearchPage extends Component<Signature> {
           margin: 0;
         }
       }
-      ::highlight(search-query) {
-        background: color-mix(in oklab, var(--pico-primary), transparent 65%);
-        color: var(--pico-color);
-        text-decoration: underline;
-        text-decoration-color: var(--pico-primary);
-        text-decoration-thickness: 0.12em;
-        text-underline-offset: 0.14em;
-      }
     </style>
   </template>
 }
