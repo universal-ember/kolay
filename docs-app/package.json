@@ -47,7 +47,7 @@
     "@embroider/vite": "^1.7.9",
     "@glimmer/component": "^2.1.1",
     "@glint/ember-tsc": "1.10.0",
-    "@glint/template": "1.7.8",
+    "@glint/template": "1.8.0",
     "@glint/tsserver-plugin": "2.7.0",
     "@nullvoxpopuli/eslint-configs": "^6.0.0",
     "@rollup/plugin-babel": "^7.1.0",
