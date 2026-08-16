@@ -273,7 +273,7 @@ When a user visits \`/Runtime\` and the \`Runtime\` group has pages, they'll be 
       import { APIDocs, CommentQuery, ComponentSignature, HelperSignature, ModifierSignature } from 'kolay';
       import { Shadowed } from 'ember-primitives/components/shadowed';
       import { InViewport } from 'ember-primitives/viewport';
-      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="handle-potential-index-visit"><code>handlePotentialIndexVisit</code></h1>
+      export default template_fd9b2463e5f141cfb5666b64daa1f11a(\`<h1 id="handlepotentialindexvisit"><code>handlePotentialIndexVisit</code></h1>
       <p>When using <code>addRoutes()</code>, navigating to a group URL (e.g. <code>/Runtime</code>) lands on an index route. If that group doesn't have an explicit index page, the user sees a blank page. <code>handlePotentialIndexVisit</code> solves this by automatically redirecting to the first page in the group.</p>
       <h2 id="usage">Usage</h2>
       <p>Call it in the <code>beforeModel</code> hook of your page route:</p>
