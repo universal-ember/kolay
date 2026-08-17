@@ -35,9 +35,9 @@ export function betterSort(property) {
     const aFull = property ? a[property] : a;
     const bFull = property ? b[property] : b;
 
-    // A folder's index page sorts to the top of it. On name, not path:
-    // `build()` strips `.gjs.md` / `.gts.md` off `path`, so a path test caught
-    // only plain `.md`. Folders sort here too, so one named `index` hoists.
+    // An index sorts to the top of its folder, matched on name like
+    // `applyPredestinedOrder` below. Folders sort here too, so one named
+    // `index` hoists.
     if (aFull === 'index' && bFull === 'index') return 0;
     if (aFull === 'index') return -1;
     if (bFull === 'index') return 1;

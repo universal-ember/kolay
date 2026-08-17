@@ -68,11 +68,6 @@ export interface MountLocation {
  * sibling, while below it (`/guides/foo`) the parent is the wildcard route.
  * Both shapes resolve here so that callers don't each carry a copy of the
  * topology.
- *
- * Note for callers: a group name coming back does not license a redirect.
- * A page visit resolves to the wildcard's index too, so the mount's group is
- * the right destination only when nothing was requested — see
- * `handlePotentialIndexVisit`.
  */
 export function mountLocationFor(
   to: RouteInfo | RouteInfoWithAttributes | null | undefined
