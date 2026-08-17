@@ -1,6 +1,7 @@
 import { ember, extensions } from '@embroider/vite';
 
 import { babel } from '@rollup/plugin-babel';
+import { scopedCSS } from 'ember-scoped-css/vite';
 import { kolay } from 'kolay/vite';
 import info from 'unplugin-info/vite';
 import { defineConfig } from 'vite';
@@ -11,6 +12,7 @@ export default defineConfig(async ({ mode }) => {
 
   return {
     plugins: [
+      scopedCSS(),
       inspect(),
       info(),
       ember(),

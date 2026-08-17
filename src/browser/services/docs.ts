@@ -22,9 +22,10 @@ import { ModifierSignature } from '../typedoc/signature/modifier.gts';
 import { equalsIgnoreCase, findPageTree, firstPageIn, samePagePath } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
+import { searcher } from './search.ts';
 import { selected } from './selected.ts';
 
-import type { LoadTypedoc, Manifest, Page } from '../../types.ts';
+import type { LoadTypedoc, Manifest, Page, SearchEntry } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type Transition from '@ember/routing/transition';
 import type { ComponentLike } from '@glint/template';
@@ -111,6 +112,10 @@ class DocsService {
     return selected(this);
   }
 
+  get #search() {
+    return searcher(this);
+  }
+
   private _docs: Manifest | undefined;
 
   /**
@@ -131,6 +136,7 @@ class DocsService {
     compiledDocs?: {
       manifest: Manifest;
       pages: Record<string, () => Promise<{ default: string | ComponentLike }>>;
+      loadSearchData: () => Promise<SearchEntry[]>;
     };
 
     /**
@@ -196,6 +202,7 @@ class DocsService {
       | {
           manifest: Manifest;
           pages: Record<string, () => Promise<{ default: string | ComponentLike }>>;
+          loadSearchData: () => Promise<SearchEntry[]>;
         }
       | undefined
   ) {
@@ -210,7 +217,7 @@ class DocsService {
 
     if (compiledDocs?.manifest) {
       this._docs = compiledDocs.manifest;
-
+      this.#search._loadSearchData = compiledDocs.loadSearchData;
       this.#setupRedirects(compiledDocs.manifest);
       this.#setupPageTreeRedirects();
     }

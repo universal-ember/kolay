@@ -21,7 +21,10 @@
     "rootDir": "./src",
     "allowJs": true,
     "checkJs": false, // too hard right -- revisit later
-    "lib": ["es2023", "dom"],
+    // dom.iterable is where `Highlight extends Set` and
+    // `HighlightRegistry extends Map` are declared — without it, the CSS
+    // Custom Highlight API has no add/delete/set (src/browser/services/search)
+    "lib": ["es2023", "dom", "dom.iterable"],
     "allowImportingTsExtensions": true,
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,

@@ -16,17 +16,21 @@ export { typedocLoader } from './services/api-docs.ts';
 export { CompiledDoc, compiledDoc } from './services/compiled-doc.ts';
 export { Compiled } from './services/compiler/reactive.ts';
 export { docsManager } from './services/docs.ts';
+export { searcher } from './services/search.ts';
 export { selected } from './services/selected.ts';
 
 // Utilities
 export { isActive } from './is-active.ts';
 export { resolveRedirect } from './redirects.ts';
+export { highlightSearch } from './services/search/highlight.ts';
+export { stripFormatting } from './services/search/strip-formatting.ts';
 export { getIndexPage, isIndex, isPageTree } from './utils.ts';
 
 // Types
-export type { Manifest, Page, PageTree } from '../types.ts';
+export type { Manifest, Page, PageTree, SearchResult } from '../types.ts';
 export type { DocsGroupModule, DocsSourceMeta, MetaManifest } from './load-compiled-docs.ts';
 export type { DocModule, DocSource } from './services/compiled-doc.ts';
 export type { SetupOptions } from './services/docs.ts';
 export type { DocsService } from './services/docs.ts';
+export type { SearchService } from './services/search.ts';
 export type { Selected } from './services/selected.ts';

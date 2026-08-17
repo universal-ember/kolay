@@ -21,12 +21,15 @@ function hasReason(error) {
  * No card, no box — the whole site shifts into a reading mode while
  * this route is active: a soft primary wash over the page, the side
  * nav restyled into a chapter list, and a centered measure for the
- * prose. The plain <style> below is intentionally unscoped — it only
- * exists in the document while this route is rendered, which is what
- * lets one route restyle the entire site.
+ * prose. The second, plain <style> below is intentionally unscoped — it
+ * only exists in the document while this route is rendered, which is what
+ * lets one route restyle the entire site. It has to come second:
+ * ember-scoped-css only looks at the template's first <style> for the
+ * `scoped` attribute, and silently drops any later scoped block.
  *
- * (Prose typography that must reach the rendered markdown is in
- *  app.css under `.runtime-doc`.)
+ * (Prose typography that must reach the rendered markdown is in app.css,
+ *  under `[data-design="runtime"]` — the classes below are scoped to this
+ *  file, so they can't name the compiled markdown.)
  */
 <template>
   <article class="runtime-doc" data-design="runtime">
@@ -63,71 +66,13 @@ function hasReason(error) {
     </Page>
   </article>
 
-  {{! route-wide guide mode: active only while a Runtime page renders }}
-  {{!-- prettier-ignore --}}
-  <style>
-    /* guide mode washes the whole page — a continuous tint, stronger at
-     * the top, never returning to plain background (no hard band) */
-    body:has(.runtime-doc) {
-      background:
-        linear-gradient(
-          to bottom,
-          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 7%),
-          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 3%) 22rem
-        )
-        fixed;
-    }
-
-    .mobile-menu-wrapper__content.container {
-      background: none;
-    }
-
-    /* the side nav becomes a chapter list */
-    .big-layout aside nav {
-      font-size: 0.9rem;
-
-      & > ul > li {
-        margin-bottom: 1.25rem;
-        color: var(--pico-muted-color);
-        font-size: 0.72rem;
-        font-weight: bold;
-        letter-spacing: 0.28em;
-        text-transform: uppercase;
-      }
-
-      ul ul {
-        margin-top: 0.35rem;
-        font-size: 0.9rem;
-        letter-spacing: normal;
-        text-transform: none;
-      }
-
-      a {
-        display: block;
-        padding: 0.2rem 0.6rem;
-        border-radius: 0.4rem;
-        font-weight: normal;
-      }
-
-      a:hover {
-        background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 8%);
-        text-decoration: none;
-      }
-
-      a.active {
-        background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 14%);
-        font-weight: bold;
-      }
-    }
-  </style>
-
   <style scoped>
     .runtime-doc {
       flex: 1;
       width: 100%;
       /* the content region fills the space next to the nav, same as
        * every other group — the reading measure is handled inside
-       * (see .runtime-doc rules in app.css) */
+       * (see the [data-design="runtime"] rules in app.css) */
       margin: clamp(0.25rem, 1.5vw, 1.5rem) 0 clamp(1.5rem, 3vw, 3rem);
       padding: clamp(1rem, 2.5vw, 2.5rem) clamp(0.7rem, 3.5vw, 3rem) clamp(2.5rem, 4vw, 4rem);
       /* the paper: an elevated sheet on the washed page */
@@ -141,6 +86,8 @@ function hasReason(error) {
       display: flex;
       align-items: center;
       gap: 1rem;
+      /* the same reading measure app.css gives the prose */
+      max-width: 75ch;
       margin: 0 0 1.5rem;
       color: var(--pico-primary);
       font-size: 0.72rem;
@@ -200,6 +147,64 @@ function hasReason(error) {
       border-left: 0.35rem solid var(--pico-del-color, #d32f2f);
       border-radius: 0.5rem;
       background: var(--pico-card-background-color);
+    }
+  </style>
+
+  {{! route-wide guide mode: active only while a Runtime page renders }}
+  {{!-- prettier-ignore --}}
+  <style>
+    /* guide mode washes the whole page — a continuous tint, stronger at
+     * the top, never returning to plain background (no hard band) */
+    body:has([data-design="runtime"]) {
+      background:
+        linear-gradient(
+          to bottom,
+          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 7%),
+          color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 3%) 22rem
+        )
+        fixed;
+    }
+
+    .mobile-menu-wrapper__content.container {
+      background: none;
+    }
+
+    /* the side nav becomes a chapter list */
+    .big-layout aside nav {
+      font-size: 0.9rem;
+
+      & > ul > li {
+        margin-bottom: 1.25rem;
+        color: var(--pico-muted-color);
+        font-size: 0.72rem;
+        font-weight: bold;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+      }
+
+      ul ul {
+        margin-top: 0.35rem;
+        font-size: 0.9rem;
+        letter-spacing: normal;
+        text-transform: none;
+      }
+
+      a {
+        display: block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 0.4rem;
+        font-weight: normal;
+      }
+
+      a:hover {
+        background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 8%);
+        text-decoration: none;
+      }
+
+      a.active {
+        background: color-mix(in oklab, var(--pico-background-color), var(--pico-primary) 14%);
+        font-weight: bold;
+      }
     }
   </style>
 </template>
