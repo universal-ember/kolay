@@ -90,10 +90,6 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  // `name` is the basename `build()` derives from `path`, and it strips
-  // `.gjs.md` / `.gts.md` on the way — so those pages arrive as `/c/index`.
-  // A fixture whose `name` and `path` disagree pins a shape the build never
-  // emits.
   test('an index page must be first', () => {
     const list: Entry[] = [
       { name: 'b', path: '/c/b.md' },
@@ -120,8 +116,9 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  // The case the old path-based hoist missed: it tested `path` for
-  // `index.md`, which a stripped path never ends in.
+  // `build()` strips `.gjs.md` / `.gts.md`, so an index page's path arrives
+  // without an extension. The old hoist tested `path` for `index.md` and
+  // missed these.
   test('an index page must be first when its extension was stripped', () => {
     const list: Entry[] = [
       { name: 'apple', path: '/c/apple' },

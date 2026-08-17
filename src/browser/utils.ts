@@ -48,22 +48,6 @@ export function findPageTree(root: PageTree, appRelativePath: string): PageTree 
 }
 
 /**
- * The first page in a tree, descending into sub-trees. `PageTree.first` is
- * the build's copy of this as a path string; keep the two in step.
- */
-export function firstPageIn(tree: PageTree): Page | undefined {
-  for (const child of tree.pages) {
-    if (!isPageTree(child)) return child;
-
-    const nested = firstPageIn(child);
-
-    if (nested) return nested;
-  }
-
-  return undefined;
-}
-
-/**
  * URLs are conventionally case-insensitive; path/route matching in this
  * library follows that convention rather than treating paths as opaque,
  * case-sensitive strings.

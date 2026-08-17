@@ -19,7 +19,7 @@ import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
-import { equalsIgnoreCase, findPageTree, firstPageIn, samePagePath } from '../utils.ts';
+import { equalsIgnoreCase, findPageTree, samePagePath } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { searcher } from './search.ts';
@@ -638,14 +638,18 @@ class DocsService {
     }
 
     for (const group of groups) {
+      // `tree.first` is the build's own answer (`addInTheFirstPage`), as a
+      // base-prefixed path; `group.list` is flattened from the same tree, so
+      // the page is in there.
       const tree = findPageTree(group.tree, appRelativePath);
+      const first = tree?.first;
 
-      if (!tree) continue;
+      if (!first) continue;
 
-      const first = firstPageIn(tree);
+      const page = group.list.find((candidate) => candidate.path === first);
 
       // A tree with no pages shouldn't end the search for a group that has one.
-      if (first) return first;
+      if (page) return page;
     }
 
     return undefined;
