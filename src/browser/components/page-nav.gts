@@ -118,6 +118,17 @@ export class PageNav extends Component<{
             Blocks: { default: [page: Page, isActive: boolean] };
           }>;
         };
+        /**
+         * Where the folder's own URL goes: its index page when it has one,
+         * its first page otherwise. Absent only for a folder with no pages.
+         */
+        link?: {
+          page: Page;
+          Link: ComponentLike<{
+            Element: HTMLAnchorElement;
+            Blocks: { default: [page: Page, isActive: boolean] };
+          }>;
+        };
       },
     ];
   };
@@ -125,6 +136,14 @@ export class PageNav extends Component<{
   private get docs() {
     return docsManager(this);
   }
+
+  /**
+   * Where a folder's own URL goes, which is what the redirect would do. The
+   * current group scopes it: two groups can hold one manifest path.
+   */
+  private landingFor = (tree: PageTree) => {
+    return this.docs.landingForPageTree(tree.appRelativePath, this.docs.currentGroup?.name);
+  };
 
   /**
    * Ember doesn't yet have a way to forward blocks,
@@ -136,7 +155,7 @@ export class PageNav extends Component<{
     {{!log this.docs}}
     {{#if (has-block 'collection')}}{{blockWasRenamed}}{{/if}}
     <nav aria-label='Selected Group' ...attributes>
-      <Pages @item={{this.docs.tree}}>
+      <Pages @item={{this.docs.tree}} @landingFor={{this.landingFor}}>
 
         <:page as |p|>
           {{#if (has-block 'page')}}
@@ -152,10 +171,10 @@ export class PageNav extends Component<{
           {{#if (has-block 'section')}}
             {{yield c to='section'}}
           {{else}}
-            {{#if c.index}}
-              <c.index.Link>
-                {{c.index.page.name}}
-              </c.index.Link>
+            {{#if c.link}}
+              <c.link.Link>
+                {{c.section.name}}
+              </c.link.Link>
             {{else}}
               {{c.section.name}}
             {{/if}}
@@ -172,6 +191,7 @@ const Pages: TOC<{
   Args: {
     item: Page | PageTree;
     activeClass?: string;
+    landingFor: (tree: PageTree) => Page | undefined;
   };
   Blocks: {
     page: [InternalPageYield];
@@ -179,6 +199,7 @@ const Pages: TOC<{
       {
         section: PageTree;
         index?: InternalPageYield;
+        link?: InternalPageYield;
       },
     ];
   };
@@ -190,26 +211,31 @@ const Pages: TOC<{
           <li>
             {{#if (isPageTree page)}}
 
-              {{! index.md pages can make the whole section clickable }}
-              {{#let (getIndexPage page) as |indexPage|}}
-                {{#if indexPage}}
-                  {{yield
-                    (hash
-                      section=page
-                      index=(hash
+              {{! `link` goes where the folder's own URL goes, index or not }}
+              {{#let (getIndexPage page) (@landingFor page) as |indexPage landing|}}
+                {{yield
+                  (hash
+                    section=page
+                    index=(if
+                      indexPage
+                      (hash
                         page=indexPage
                         Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
-                    to='section'
-                  }}
-                {{else}}
-                  {{yield (hash section=page) to='section'}}
-                {{/if}}
+                    link=(if
+                      landing
+                      (hash
+                        page=landing Link=(component PageLink item=landing activeClass=@activeClass)
+                      )
+                    )
+                  )
+                  to='section'
+                }}
               {{/let}}
             {{/if}}
 
-            <Pages @item={{page}}>
+            <Pages @item={{page}} @landingFor={{@landingFor}}>
               <:page as |p|>{{yield p to='page'}}</:page>
               <:section as |c|>{{yield c to='section'}}</:section>
             </Pages>

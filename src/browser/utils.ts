@@ -16,10 +16,14 @@ export function isPageTree(x: Page | PageTree): x is PageTree {
   return 'pages' in x;
 }
 
+/**
+ * On the name, matching how sorting hoists one (`betterSort`). A page whose
+ * name merely ends in `index`, like `api-index.md`, is an ordinary page.
+ */
 export function isIndex(x: Page | PageTree) {
   if (isPageTree(x)) return false;
 
-  return x.path.replace(/\.md$/, '').endsWith('index');
+  return x.name === 'index';
 }
 
 export function getIndexPage(x: PageTree): Page | undefined {

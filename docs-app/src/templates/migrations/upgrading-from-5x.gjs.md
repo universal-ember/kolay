@@ -139,6 +139,26 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
+## `isIndex` matches on name, and `<PageNav />` yields `link`
+
+`isIndex` tested the path (`path.replace(/\.md$/, '').endsWith('index')`), so `api-index.md` counted as a folder's index page. It now tests `name === 'index'`, matching how sorting hoists one. Two knock-on effects for a folder holding such a file: `getIndexPage` no longer returns it, and `<PageNav />` no longer hides it from the page list.
+
+`<PageNav />`'s `:section` block gains a `link`, alongside the existing `index`:
+
+```hbs
+<:section as |x|>
+  {{#if x.link}}
+    <x.link.Link>{{x.section.name}}</x.link.Link>
+  {{else}}
+    {{x.section.name}}
+  {{/if}}
+</:section>
+```
+
+`link` goes wherever the folder's own URL goes — its index page when it has one, its first page otherwise — so it is present for every folder that has pages at all. `index` is unchanged and still absent when the folder has no index page; keep using it if you specifically want "does this folder have an index page".
+
+The default rendering (when you pass no `:section` block) now uses `link`, so a folder without an index page is a link rather than dead text, and the label is the folder's name rather than the index page's.
+
 ## Removed types
 
 `Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
