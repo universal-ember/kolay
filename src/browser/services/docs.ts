@@ -234,13 +234,23 @@ class DocsService {
 
     const { wildcardParam, mountGroupNames } = mountLocationFor(to);
 
-    if (!wildcardParam) return;
-
-    // Empty for a top-level mount, whose wildcard already includes the group.
     // Through `canonicalGroupName` because `addRoutes` stores whatever the app
-    // author passed, unchecked.
-    const [name] = mountGroupNames;
-    const mountGroup = name ? this.canonicalGroupName(name) : undefined;
+    // author passed, unchecked. A top-level mount's candidates are the routes
+    // above its wildcard, which name no group, so it falls through.
+    const mountGroup = mountGroupNames
+      .map((name) => this.canonicalGroupName(name))
+      .find((name) => name !== undefined);
+
+    // The mount's own URL (`/guides`), which carries no wildcard to resolve:
+    // the mount's group root is the destination. Ember does not re-enter a
+    // mount route that is already active, so `handlePotentialIndexVisit` on it
+    // only fires on the way in — a reader clicking the group's own nav link
+    // from inside the mount would otherwise land on a blank index.
+    if (!wildcardParam) {
+      if (!mountGroup) return;
+
+      return this.landingForPageTree(this.groupFor(mountGroup).tree.appRelativePath, mountGroup);
+    }
 
     if (!mountGroup) return this.landingForPageTree(`/${wildcardParam}`);
 

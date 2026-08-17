@@ -85,8 +85,6 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   if (transition.to?.localName !== 'index') return;
 
-  const parent = transition.to.parent;
-
   /**
    * With a top-level addRoutes() mount, visiting `/GroupName` lands on
    * `page.index` with the group name as the wildcard segment.
@@ -111,7 +109,6 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
           // those must not be redirected.
           ...(wildcardParam ? [] : mountGroupNames),
           wildcardParam,
-          parent?.localName,
         ];
 
   const groupName = candidates
@@ -122,9 +119,9 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   if (!groupName) return;
 
-  const group = docs.groupFor(groupName);
-
-  const first = group.list[0];
+  // One rule for what a tree's URL lands on, shared with the page-tree
+  // redirect. A group's root is a tree like any other.
+  const first = docs.landingForPageTree(docs.groupFor(groupName).tree.appRelativePath, groupName);
 
   if (!first) {
     console.warn(`Could not determine first page in group: ${groupName}`);

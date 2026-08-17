@@ -217,6 +217,21 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("[data-page-error]").doesNotExist();
   });
 
+  // The mount's own URL, which carries no wildcard param. Ember does not
+  // re-enter an active mount route, so a hook on it never fires for these —
+  // and the group's own nav link points here from every page inside the mount.
+  test("a mount's own URL redirects when reached from inside the mount", async function (assert) {
+    await visit("/help/getting-started/intro.md");
+    await visit("/help");
+
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md", "scoped mount");
+
+    await visit("/demos/components/buttons");
+    await visit("/demos");
+
+    assert.strictEqual(currentURL(), "/demos/components/buttons", "unscoped nested mount");
+  });
+
   test("visiting a mount's index with a trailing slash also redirects", async function (assert) {
     await visit("/help/");
 

@@ -116,17 +116,14 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  // `build()` strips `.gjs.md` / `.gts.md`, so an index page's path arrives
-  // without an extension. The old hoist tested `path` for `index.md` and
-  // missed these.
-  test('an index page must be first when its extension was stripped', () => {
+  test('a page whose name merely ends in index is not hoisted', () => {
     const list: Entry[] = [
-      { name: 'apple', path: '/c/apple' },
-      { name: 'index', path: '/c/index' },
+      { name: 'apple', path: '/c/apple.md' },
+      { name: 'api-index', path: '/c/api-index.md' },
     ];
     const sorted = list.sort(betterSort('name'));
 
-    expect(sorted.map((x) => x.name)).toEqual(['index', 'apple']);
+    expect(sorted.map((x) => x.name)).toEqual(['apple', 'api-index']);
   });
 
   describe('From the Tutorial', () => {

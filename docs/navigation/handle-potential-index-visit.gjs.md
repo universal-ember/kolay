@@ -1,6 +1,8 @@
 # `handlePotentialIndexVisit`
 
-When using `addRoutes()`, navigating to a group URL (e.g. `/Runtime`) lands on an index route. If that group doesn't have an explicit index page, the user sees a blank page. `handlePotentialIndexVisit` solves this by automatically redirecting to the first page in the group.
+Navigating to the app's root (`/`) lands on an index route that names no group, so there is nothing to render. `handlePotentialIndexVisit` redirects to the first page of the default (first) group instead.
+
+Group URLs and folder URLs no longer need it — `setupKolay` wires those to the router itself. See [a page tree's own URL needs no wiring](#a-page-trees-own-url-needs-no-wiring) below.
 
 ## Usage
 
@@ -32,17 +34,15 @@ Router.map(function () {
 });
 ```
 
-When a user visits `/Runtime` and the `Runtime` group has pages, they'll be redirected to the first page (e.g. `/Runtime/rendering/page.md`) instead of seeing a blank index.
-
-It also handles the app's root: on a visit to `/`, there is no group in the URL, so the user is redirected to the first page of the default (first) group. Give your top-level `index` route the same `beforeModel` (e.g. in `routes/index.ts`) to enable this.
+On a visit to `/`, the user is redirected to the first page of the default (first) group. Give your top-level `index` route the same `beforeModel` (e.g. in `routes/index.ts`) to enable this.
 
 ## A page tree's own URL needs no wiring
 
 A folder inside a group — say `/Runtime/rendering` — is a real place in the docs, but has no document of its own. Visiting it redirects to that folder's first page, and you call nothing to make it happen: `setupKolay` wires it to the router. Sorting puts a folder's index page at the top of it, so a folder with one goes there; a folder without goes to its first ordered page.
 
-A group's own URL behaves the same way, wherever the group's name appears in the URL — as it does for a top-level mount.
+A group's own URL behaves the same way, whether the group's name is in the URL (a top-level mount, `/Runtime`) or the mount has a path of its own (`/guides`). That holds however you arrive — including a click on the group's nav link from a page already inside the mount, which no route hook can serve, because Ember does not re-enter a mount route that is already active.
 
-`handlePotentialIndexVisit` is still needed where the URL has no wildcard param for a transition to resolve: the app root (`/`), and a nested mount's own URL (`/guides`).
+`handlePotentialIndexVisit` is still needed for the app's root (`/`), which names no group for a transition to resolve.
 
 ## Nested mounts
 

@@ -85,12 +85,15 @@ export function mountLocationFor(
   const names = parent
     ? atWildcard
       ? [groupNameForRoute(parent.name), parent.parent?.localName]
-      : [groupNameForRoute(`${parent.name}.page`), parent.localName]
+      : [groupNameForRoute(scopedRouteNameFor(parent.name)), parent.localName]
     : [];
 
   return {
     wildcardParam,
-    mountGroupNames: names.filter((name): name is string => typeof name === 'string'),
+    // `application` is ember's root route, never a mount, so it names no group.
+    mountGroupNames: names.filter(
+      (name): name is string => typeof name === 'string' && name !== 'application'
+    ),
   };
 }
 

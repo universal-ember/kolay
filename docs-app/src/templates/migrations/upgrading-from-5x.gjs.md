@@ -154,7 +154,12 @@ Two things move on any folder with a `.gjs.md` or `.gts.md` index and no `meta.j
 
 A folder with a `meta.json` `order` is unaffected, because `applyPredestinedOrder` already hoisted `index` on its own.
 
-To keep the old placement, give that folder a `meta.json` `order`. The match also moved from path to name, so a folder named `index` now sorts first among its siblings.
+To keep the old placement, give that folder a `meta.json` `order`.
+
+The match also moved from the node's path to its name, which changes two more things:
+
+- A **folder** named `index` now sorts first among its siblings. Folders were never matched before, because a folder's path is a bare segment.
+- A page whose basename merely _ends_ in `index` no longer hoists. `api-index.md` used to, because `/foo/api-index.md` satisfies `path.endsWith('index.md')`; now only a page actually named `index` is hoisted. Rename it, or give the folder a `meta.json` `order`.
 
 ## A page tree's URL resolves to its first page, without wiring
 
@@ -163,6 +168,6 @@ To keep the old placement, give that folder a `meta.json` `order`. The match als
 Two consequences:
 
 - A URL that used to error now navigates. Anything asserting on the error page for a folder URL will need updating.
-- A group root resolves this way too, wherever the group's name is in the URL — so on a top-level mount, `/Group` no longer depends on `handlePotentialIndexVisit`. An app that never called it gets those redirects anyway.
+- A group root resolves this way too, on every mount shape — so `/Group` on a top-level mount and `/guides` on a nested one no longer depend on `handlePotentialIndexVisit`. An app that never called it gets those redirects anyway. This also fixes the case no route hook could serve: arriving at a mount's own URL from a page already inside that mount, which is where the group's own nav link points.
 
-Keep calling `handlePotentialIndexVisit` where the URL has no wildcard param for a transition to resolve: the app root (`/`), and a nested mount's own URL (`/guides`). Calling it elsewhere is harmless.
+Keep calling `handlePotentialIndexVisit` for the app root (`/`), which names no group for a transition to resolve. Calling it elsewhere is harmless.
