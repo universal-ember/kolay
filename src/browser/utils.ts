@@ -2,6 +2,7 @@ import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
 import { isIndexName } from '../index-page.js';
+import { stripMarkdownExtension } from '../paths.js';
 
 import type { Page, PageTree } from '../types.ts';
 import type Owner from '@ember/owner';
@@ -18,18 +19,21 @@ export function isPageTree(x: Page | PageTree): x is PageTree {
   return 'pages' in x;
 }
 
-export function isIndex(x: Page | PageTree) {
+/**
+ * An *explicit* index: a page named `index`, which is a folder's own page.
+ * Distinct from a folder's landing page, which is wherever its URL goes and
+ * is an ordinary page when no explicit index exists.
+ *
+ * Sorting always hoists an explicit index to the front of its folder, both
+ * through `betterSort` and through a `meta.json` order (`applyPredestinedOrder`
+ * pulls it out before applying the author's order). So the first child is the
+ * explicit index whenever there is one, and a folder named `index` cannot sit
+ * beside a page named `index` — `preAddCheck` rejects that at build time.
+ */
+export function isIndex(x: Page | PageTree): x is Page {
   if (isPageTree(x)) return false;
 
   return isIndexName(x.name);
-}
-
-export function getIndexPage(x: PageTree): Page | undefined {
-  const page = x.pages.find(isIndex);
-
-  if (page && isPageTree(page)) return;
-
-  return page;
 }
 
 /**
@@ -63,7 +67,7 @@ export function equalsIgnoreCase(a: string, b: string): boolean {
  * `.md` extension are the same page (both are visitable).
  */
 export function samePagePath(a: string, b: string): boolean {
-  return equalsIgnoreCase(a.replace(/\.md$/i, ''), b.replace(/\.md$/i, ''));
+  return equalsIgnoreCase(stripMarkdownExtension(a), stripMarkdownExtension(b));
 }
 
 /////////////////////////////////

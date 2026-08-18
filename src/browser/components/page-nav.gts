@@ -5,7 +5,7 @@ import { service } from '@ember/service';
 
 import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
-import { isIndex, isPageTree } from '../utils.ts';
+import { isIndex, isPageTree, samePagePath } from '../utils.ts';
 
 import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -76,8 +76,8 @@ export class PageNav extends Component<{
     ];
     /**
      * If provided, this block will yield back the section for customizing the
-     * name. By default the `name` property will be used or a link will be
-     * rendered if an index page is present..
+     * name. By default the folder's name is rendered, as a link to its
+     * landing page when it has one.
      *
      * A section is a `PageTree`: the pages under one folder of markdown
      * files, plus any sections nested within it.
@@ -91,10 +91,10 @@ export class PageNav extends Component<{
      *   <PageNav>
      *     <:section as |x|>
      *       <pre>{{JSON.stringify x null 3}}</pre>
-     *       {{#if x.index}}
-     *         <x.index.Link>
+     *       {{#if x.landing}}
+     *         <x.landing.Link>
      *           {{sentenceCase x.section.name}}
-     *         </x.index.Link>
+     *         </x.landing.Link>
      *       {{else}}
      *         {{sentenceCase x.section.name}}
      *       {{/if}}
@@ -108,15 +108,16 @@ export class PageNav extends Component<{
       {
         section: PageTree;
         /**
-         * Where this folder's own URL goes, which is where a link on its
-         * heading should go: its `index` page when it has one, its first page
-         * otherwise. Absent only for a folder holding no pages at all.
+         * The folder's **landing page**: where its own URL goes, and so where
+         * a link on its heading should go. That is its explicit `index` page
+         * when it has one, and its first page otherwise. Absent only for a
+         * folder holding no pages at all.
          *
-         * An actual index page is also omitted from the `:page` block, since
-         * the heading already represents it. A first page standing in for one
-         * is not — it is a page in its own right and stays in the list.
+         * An explicit index is also omitted from the `:page` block, since the
+         * heading stands in for it. A first page serving as the landing is
+         * not — it is a page in its own right and stays in the list.
          */
-        index?: {
+        landing?: {
           page: Page;
           Link: ComponentLike<{
             Element: HTMLAnchorElement;
@@ -163,10 +164,10 @@ export class PageNav extends Component<{
           {{#if (has-block 'section')}}
             {{yield c to='section'}}
           {{else}}
-            {{#if c.index}}
-              <c.index.Link>
+            {{#if c.landing}}
+              <c.landing.Link>
                 {{c.section.name}}
-              </c.index.Link>
+              </c.landing.Link>
             {{else}}
               {{c.section.name}}
             {{/if}}
@@ -190,7 +191,7 @@ const Pages: TOC<{
     section: [
       {
         section: PageTree;
-        index?: InternalPageYield;
+        landing?: InternalPageYield;
       },
     ];
   };
@@ -206,7 +207,7 @@ const Pages: TOC<{
                 {{yield
                   (hash
                     section=page
-                    index=(if
+                    landing=(if
                       landing
                       (hash
                         page=landing Link=(component PageLink item=landing activeClass=@activeClass)
@@ -270,7 +271,7 @@ class PageLink extends Component<{
     // scoped mount: compare in the mount's URL space
     const [current = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
 
-    return current.replace(/\.md$/, '') === appRelative.replace(/\.md$/, '');
+    return samePagePath(current, appRelative);
   }
 
   <template>

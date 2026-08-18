@@ -162,14 +162,13 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
         </x.Link>
       </:page>
       <:section as |x|>
-        {{#if x.index}}
-          <x.index.Link>
-            {{#if x.index.page.title}}
-              {{x.index.page.title}}
-            {{else}}
-              {{sentenceCase x.section.name}}
-            {{/if}}
-          </x.index.Link>
+        {{! The folder's own name, not the landing page's title: for a folder
+            with no explicit index the landing is an ordinary page, and its
+            title is not what this heading names. }}
+        {{#if x.landing}}
+          <x.landing.Link>
+            {{sentenceCase x.section.name}}
+          </x.landing.Link>
         {{else}}
           {{sentenceCase x.section.name}}
         {{/if}}

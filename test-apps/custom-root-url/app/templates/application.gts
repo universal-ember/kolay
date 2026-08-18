@@ -24,10 +24,10 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
         </x.Link>
       </:page>
       <:section as |x|>
-        {{#if x.index}}
-          <x.index.Link>
+        {{#if x.landing}}
+          <x.landing.Link>
             {{x.section.name}}
-          </x.index.Link>
+          </x.landing.Link>
         {{else}}
           {{x.section.name}}
         {{/if}}

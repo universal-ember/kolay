@@ -139,15 +139,45 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## `isIndex` matches on name, and `x.index` covers every folder
+## An index page and a landing page are now different things
 
-`isIndex` tested the path (`path.replace(/\.md$/, '').endsWith('index')`), so `api-index.md` counted as a folder's index page. It now tests `name === 'index'` through a shared `isIndexName`, which sorting uses too — the two disagreed, and a page could end up neither listed nor linked. For a folder holding such a file: `getIndexPage` no longer returns it, and `<PageNav />` no longer hides it from the page list.
+Two words were doing one job, which is where a folder could end up with a heading pointing at one page while its URL went to another. They are now distinct throughout:
 
-`<PageNav />`'s `:section` block keeps yielding `index`, and it is now present for **every** folder that has pages, not only ones holding an `index` page. It goes wherever the folder's own URL goes: the index page when there is one, the first page otherwise. No consumer change is needed — `{{#if x.index}}` blocks keep working and simply light up for more folders.
+- an **index page** is a page explicitly named `index`. It is a folder's own page.
+- a **landing page** is wherever a folder's URL goes: its index page when it has one, its first page otherwise.
 
-An actual index page is still omitted from the `:page` block, since the heading represents it. A first page standing in for one is not: it is a page in its own right and stays in the list.
+`isIndex` answers the first question and tested the path (`path.replace(/\.md$/, '').endsWith('index')`), so `api-index.md` counted. It now tests the name, through a shared `isIndexName` that sorting uses too — the two disagreed. It is also a type guard now (`x is Page`), so it narrows a `(Page | PageTree)[]` entry for you.
 
-The default rendering (when you pass no `:section` block) labels the heading with the folder's name rather than the index page's.
+`getIndexPage` is **removed**. It was misnamed for what it did, and its own documentation recommended it for the other question: "useful for making folder names in navigation link to an index page" — which left folders without an index page unlinked. Replace it with whichever question you meant:
+
+```diff
+  // "does this folder have its own page?"
+- const index = getIndexPage(node);
++ const first = node.pages.at(0);
++ const index = first && isIndex(first) ? first : undefined;
+```
+
+Sorting always hoists an explicit index to the front of its folder, so the first child is it whenever there is one. For "where should this folder's heading link", use the nav's landing page instead — see below.
+
+`<PageNav />`'s `:section` block yields `landing` where it used to yield `index`, because that is what it always was once a folder had no index page to offer. It is present for **every** folder with pages:
+
+```diff
+  <:section as |x|>
+-   {{#if x.index}}
+-     <x.index.Link>{{x.section.name}}</x.index.Link>
++   {{#if x.landing}}
++     <x.landing.Link>{{x.section.name}}</x.landing.Link>
+    {{else}}
+      {{x.section.name}}
+    {{/if}}
+  </:section>
+```
+
+Renaming rather than redefining is deliberate: `x.index` kept working would have meant every existing template silently pointing somewhere new.
+
+An explicit index is still omitted from the `:page` block, since the heading stands in for it. A first page serving as the landing is not — it is a page in its own right and stays in the list.
+
+On the docs service, `landingForTree(tree)` answers the landing question for a tree you already hold, and `landingForPageTree(path, group?)` resolves a path to a tree and delegates.
 
 ## Removed types
 
