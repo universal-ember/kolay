@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
+import { reshape } from './hydrate.js';
 import { build, parse } from './parse.js';
 
 import type { Page, PageTree } from '#types';
@@ -222,5 +223,33 @@ describe('index hoisting through parse()', () => {
     const [folder] = tree.pages;
 
     expect(namesIn(folder)).toEqual(['apple', 'api-index']);
+  });
+});
+
+describe('folder titles', () => {
+  test('a folder titles itself from its meta.json', async () => {
+    const { tree } = await reshape({
+      paths: ['foo/apple.md'],
+      configs: [{ path: 'foo/meta.json', config: { title: 'Fancy Name' } }],
+      cwd: '.',
+      prefix: '/',
+      base: '/',
+    });
+    const [folder] = (tree as PageTree).pages;
+
+    expect((folder as PageTree).title).toEqual('Fancy Name');
+  });
+
+  test('otherwise a folder is titled by its cleaned name, sentence-cased', async () => {
+    const { tree } = await reshape({
+      paths: ['sub-folder/apple.md'],
+      configs: [],
+      cwd: '.',
+      prefix: '/',
+      base: '/',
+    });
+    const [folder] = (tree as PageTree).pages;
+
+    expect((folder as PageTree).title).toEqual('Sub folder');
   });
 });

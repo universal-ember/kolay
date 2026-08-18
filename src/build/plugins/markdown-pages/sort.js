@@ -139,6 +139,12 @@ export function sortTree(tree, configs, parents = []) {
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;
 
+    // A folder may title itself, the way a page's sidecar `.json` does. Set
+    // before the order check, since a folder can name itself without ordering.
+    if (typeof config?.title === 'string') {
+      tree.title = config.title;
+    }
+
     if (!config?.order) {
       return tree;
     }

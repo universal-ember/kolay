@@ -1,13 +1,14 @@
 import { join } from 'node:path';
 
 import { isIndexName } from '../../../index-page.js';
+import { titleFor } from '../../../title.js';
 import { parse } from './parse.js';
 import { sortTree } from './sort.js';
 
 /**
  * @typedef {object} ReshapeOptions
  * @property {string[]} paths
- * @property {string[]} configs
+ * @property {Array<{ path: string, config: object }>} configs already-read configs, keyed by their path
  * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
  * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
@@ -124,14 +125,6 @@ export function getList(tree) {
 }
 
 /**
- * @param {string} name
- * @returns {string}
- */
-function sentenceCase(name) {
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
-
-/**
  * A folder's display title, resolved once here rather than in every consumer.
  *
  * A folder with its own `index` page is titled by that page: it is the folder's
@@ -142,8 +135,8 @@ function sentenceCase(name) {
  * Sorting has already run, so an explicit index is the first child when there
  * is one.
  *
- * `cleanedName` normalizes separators but not case, so the capital comes from
- * here. It used to come from a `sentenceCase` call in each consumer template.
+ * A folder's own `meta.json` `title` wins over both, the way a page's sidecar
+ * `.json` `title` wins for a page.
  *
  * @param {import('./types.ts').Node} tree
  */
@@ -153,7 +146,9 @@ export function addTitles(tree) {
   const [first] = tree.pages;
   const ownPage = first && !('pages' in first) && isIndexName(first.name) ? first : undefined;
 
-  tree.title = ownPage?.title ?? sentenceCase(tree.cleanedName ?? tree.name);
+  tree.title =
+    tree.title ??
+    titleFor({ title: ownPage?.title, cleanedName: tree.cleanedName, name: tree.name });
 
   tree.pages.forEach(addTitles);
 }
