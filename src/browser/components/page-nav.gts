@@ -5,7 +5,7 @@ import { service } from '@ember/service';
 
 import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isIndex, isPageTree } from '../utils.ts';
+import { isIndex, isPageTree } from '../utils.ts';
 
 import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -108,21 +108,15 @@ export class PageNav extends Component<{
       {
         section: PageTree;
         /**
-         * If there is an index page, it'll be provided here,
-         * and omitted from the :page block.
+         * Where this folder's own URL goes, which is where a link on its
+         * heading should go: its `index` page when it has one, its first page
+         * otherwise. Absent only for a folder holding no pages at all.
+         *
+         * An actual index page is also omitted from the `:page` block, since
+         * the heading already represents it. A first page standing in for one
+         * is not — it is a page in its own right and stays in the list.
          */
         index?: {
-          page: Page;
-          Link: ComponentLike<{
-            Element: HTMLAnchorElement;
-            Blocks: { default: [page: Page, isActive: boolean] };
-          }>;
-        };
-        /**
-         * Where the folder's own URL goes: its index page when it has one,
-         * its first page otherwise. Absent only for a folder with no pages.
-         */
-        link?: {
           page: Page;
           Link: ComponentLike<{
             Element: HTMLAnchorElement;
@@ -171,10 +165,10 @@ export class PageNav extends Component<{
           {{#if (has-block 'section')}}
             {{yield c to='section'}}
           {{else}}
-            {{#if c.link}}
-              <c.link.Link>
+            {{#if c.index}}
+              <c.index.Link>
                 {{c.section.name}}
-              </c.link.Link>
+              </c.index.Link>
             {{else}}
               {{c.section.name}}
             {{/if}}
@@ -199,7 +193,6 @@ const Pages: TOC<{
       {
         section: PageTree;
         index?: InternalPageYield;
-        link?: InternalPageYield;
       },
     ];
   };
@@ -211,19 +204,11 @@ const Pages: TOC<{
           <li>
             {{#if (isPageTree page)}}
 
-              {{! `link` goes where the folder's own URL goes, index or not }}
-              {{#let (getIndexPage page) (@landingFor page) as |indexPage landing|}}
+              {{#let (@landingFor page) as |landing|}}
                 {{yield
                   (hash
                     section=page
                     index=(if
-                      indexPage
-                      (hash
-                        page=indexPage
-                        Link=(component PageLink item=indexPage activeClass=@activeClass)
-                      )
-                    )
-                    link=(if
                       landing
                       (hash
                         page=landing Link=(component PageLink item=landing activeClass=@activeClass)

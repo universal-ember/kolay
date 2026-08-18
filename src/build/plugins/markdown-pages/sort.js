@@ -1,3 +1,5 @@
+import { isIndexName } from '../../../index-page.js';
+
 /**
  * @param {unknown[]} arr
  * @returns {unknown[]}
@@ -35,12 +37,10 @@ export function betterSort(property) {
     const aFull = property ? a[property] : a;
     const bFull = property ? b[property] : b;
 
-    // An index sorts to the top of its folder, matched on name like
-    // `applyPredestinedOrder` below. Folders sort here too, so one named
-    // `index` hoists.
-    if (aFull === 'index' && bFull === 'index') return 0;
-    if (aFull === 'index') return -1;
-    if (bFull === 'index') return 1;
+    // Folders sort here too, so one named `index` hoists.
+    if (isIndexName(aFull) && isIndexName(bFull)) return 0;
+    if (isIndexName(aFull)) return -1;
+    if (isIndexName(bFull)) return 1;
 
     const [aNumStr, ...aRest] = aFull.split('-');
     const [bNumStr, ...bRest] = bFull.split('-');
@@ -71,7 +71,7 @@ export function betterSort(property) {
  * @returns {Item[]}
  */
 export function applyPredestinedOrder(list, order, find = (x) => x) {
-  const indexPage = list.find((x) => find(x) === 'index');
+  const indexPage = list.find((x) => isIndexName(find(x)));
   const result = indexPage ? [indexPage] : [];
 
   list = list.filter((a) => a !== indexPage);

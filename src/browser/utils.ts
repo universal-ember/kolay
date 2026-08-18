@@ -1,6 +1,8 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
+import { isIndexName } from '../index-page.js';
+
 import type { Page, PageTree } from '../types.ts';
 import type Owner from '@ember/owner';
 
@@ -16,14 +18,10 @@ export function isPageTree(x: Page | PageTree): x is PageTree {
   return 'pages' in x;
 }
 
-/**
- * On the name, matching how sorting hoists one (`betterSort`). A page whose
- * name merely ends in `index`, like `api-index.md`, is an ordinary page.
- */
 export function isIndex(x: Page | PageTree) {
   if (isPageTree(x)) return false;
 
-  return x.name === 'index';
+  return isIndexName(x.name);
 }
 
 export function getIndexPage(x: PageTree): Page | undefined {
