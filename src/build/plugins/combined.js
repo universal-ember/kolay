@@ -9,7 +9,7 @@ import {
   importEntrypoints as importEntrypointsPlugin,
   parseImportEntrypointsArgs,
 } from './import-entrypoints.js';
-import { docsVirtualGuard, setup } from './setup.js';
+import { setup, virtualGuard } from './setup.js';
 import { fixViteForIssue362 } from './vite-issue-362.js';
 
 /**
@@ -55,9 +55,7 @@ function createState(options) {
 export function docsPlugins(groupName, options) {
   const state = createState(parseDocsArgs(groupName, options));
 
-  return [setup(state), fixViteForIssue362(), gjsmd(state), docsVirtualGuard(state)].filter(
-    Boolean
-  );
+  return [setup(state), fixViteForIssue362(), gjsmd(state), virtualGuard(state)].filter(Boolean);
 }
 
 /**
