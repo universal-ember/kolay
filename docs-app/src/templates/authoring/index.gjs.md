@@ -61,12 +61,12 @@ Some prose here.
 
 ## Which format to choose
 
-| Scenario                                                    | Recommendation                                  |
-| ----------------------------------------------------------- | ----------------------------------------------- |
-| Large doc site with many pages                              | `.md` — flat build cost                         |
-| Pages with complex live demos that need build-time checking | `.gjs.md`                                       |
-| Co-located component docs in a library                      | `.md` — no build overhead                       |
-| Small doc site where build time is not a concern            | Either works. `.gjs.md` loads pages faster.     |
+| Scenario                                                    | Recommendation                              |
+| ----------------------------------------------------------- | ------------------------------------------- |
+| Large doc site with many pages                              | `.md` — flat build cost                     |
+| Pages with complex live demos that need build-time checking | `.gjs.md`                                   |
+| Co-located component docs in a library                      | `.md` — no build overhead                   |
+| Small doc site where build time is not a concern            | Either works. `.gjs.md` loads pages faster. |
 
 You can use both formats in the same project. Use `.gjs.md` for a page where build-time compilation is important, for example your landing page, or a page with many demos. Use `.md` for the other pages.
 
