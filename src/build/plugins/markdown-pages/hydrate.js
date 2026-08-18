@@ -1,5 +1,6 @@
 import { join } from 'node:path';
 
+import { isIndexName } from '../../../index-page.js';
 import { parse } from './parse.js';
 import { sortTree } from './sort.js';
 
@@ -20,6 +21,7 @@ export async function reshape({ paths, configs, cwd, prefix, base }) {
   tree = addPaths(tree, prefix, base);
 
   addInTheFirstPage(tree);
+  addTitles(tree);
 
   const list = getList(tree);
 
@@ -119,6 +121,30 @@ export function getList(tree) {
   flatList.push(flatPages(tree));
 
   return flatList.flat();
+}
+
+/**
+ * A folder's display title, resolved once here rather than in every consumer.
+ *
+ * A folder with its own `index` page is titled by that page: it is the folder's
+ * page, so its frontmatter `title` names the folder. Otherwise the folder is
+ * titled by its cleaned name — a first page standing in as the landing titles
+ * itself, not its folder.
+ *
+ * Sorting has already run, so an explicit index is the first child when there
+ * is one.
+ *
+ * @param {import('./types.ts').Node} tree
+ */
+export function addTitles(tree) {
+  if (!('pages' in tree)) return;
+
+  const [first] = tree.pages;
+  const ownPage = first && !('pages' in first) && isIndexName(first.name) ? first : undefined;
+
+  tree.title = ownPage?.title ?? tree.cleanedName ?? tree.name;
+
+  tree.pages.forEach(addTitles);
 }
 
 /**

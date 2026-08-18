@@ -61,6 +61,12 @@ export interface PageTree {
    */
   appRelativePath: string;
   name: string;
+  /**
+   * The folder's display title: its `index` page's title when it has one,
+   * and its `cleanedName` otherwise. Resolved at build time so navigation
+   * does not have to decide.
+   */
+  title?: string;
   first?: string;
   pages: (PageTree | Page)[];
   groupName?: never;

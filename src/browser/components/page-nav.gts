@@ -166,10 +166,10 @@ export class PageNav extends Component<{
           {{else}}
             {{#if c.landing}}
               <c.landing.Link>
-                {{c.section.name}}
+                {{c.section.title}}
               </c.landing.Link>
             {{else}}
-              {{c.section.name}}
+              {{c.section.title}}
             {{/if}}
           {{/if}}
         </:section>

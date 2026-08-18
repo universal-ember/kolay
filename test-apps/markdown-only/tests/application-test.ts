@@ -9,13 +9,13 @@ const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? ski
 module("PageNav", function (hooks) {
   setupApplicationTest(hooks);
 
-  // This asserts the heading's text, which is the folder's name. Rename the
-  // `:section` block and every heading silently vanishes while the crawl
-  // below stays green.
+  // The heading renders the folder's resolved title, which is its cleaned
+  // name (dashes become spaces). Rename the `:section` block and every
+  // heading silently vanishes while the crawl below stays green.
   test("renders a heading for each section", async function (assert) {
     await visit("/Docs/sub-folder/ember-primitives.md");
 
-    assert.dom('nav[aria-label="Selected Group"]').includesText("sub-folder");
+    assert.dom('nav[aria-label="Selected Group"]').includesText("sub folder");
   });
 });
 
