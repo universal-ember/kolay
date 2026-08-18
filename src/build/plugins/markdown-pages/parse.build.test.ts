@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { reshape } from './hydrate.js';
+import { addTitles, reshape } from './hydrate.js';
 import { build, parse } from './parse.js';
 
 import type { Page, PageTree } from '#types';
@@ -235,6 +235,9 @@ describe('folder titles', () => {
       prefix: '/',
       base: '/',
     });
+
+    addTitles(tree);
+
     const [folder] = (tree as PageTree).pages;
 
     expect((folder as PageTree).title).toEqual('Fancy Name');
@@ -248,6 +251,9 @@ describe('folder titles', () => {
       prefix: '/',
       base: '/',
     });
+
+    addTitles(tree);
+
     const [folder] = (tree as PageTree).pages;
 
     expect((folder as PageTree).title).toEqual('Sub folder');

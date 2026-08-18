@@ -22,7 +22,6 @@ export async function reshape({ paths, configs, cwd, prefix, base }) {
   tree = addPaths(tree, prefix, base);
 
   addInTheFirstPage(tree);
-  addTitles(tree);
 
   const list = getList(tree);
 
@@ -133,7 +132,8 @@ export function getList(tree) {
  * itself, not its folder.
  *
  * Sorting has already run, so an explicit index is the first child when there
- * is one.
+ * is one. Called after page titles are resolved, so a folder inherits its
+ * index page's resolved title rather than only its authored one.
  *
  * A folder's own `meta.json` `title` wins over both, the way a page's sidecar
  * `.json` `title` wins for a page.

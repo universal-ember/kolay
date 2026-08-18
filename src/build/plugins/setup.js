@@ -11,7 +11,7 @@ import send from 'send';
 import { headingsIn, titleFor } from '../../title.js';
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
-import { reshape } from './markdown-pages/hydrate.js';
+import { addTitles, reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
 import { sourceMeta } from './source-meta.js';
 import { normalizePath } from './utils.js';
@@ -154,6 +154,18 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     base: baseUrl,
   });
 
+  // Resolve every page's title where the source is in hand, so the first
+  // heading can stand in for a missing one. `found.list` holds the same
+  // objects as the tree, so the tree sees these too — and folder titles are
+  // resolved after, from the results.
+  for (const page of found.list) {
+    const source = sources.get(page.path) ?? sources.get(`${page.path}.md`);
+
+    page.title = titleFor(page, source ? headingsIn(source.source) : []);
+  }
+
+  addTitles(found.tree);
+
   const search = found.list.flatMap((page) => {
     const source = sources.get(page.path) ?? sources.get(`${page.path}.md`);
 
@@ -169,7 +181,7 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
           path: page.path,
           appRelativePath: page.appRelativePath,
           groupName: displayName,
-          title: titleFor(page),
+          title: page.title,
           headings: [],
           text: '',
         },
@@ -183,7 +195,7 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
         path: page.path,
         appRelativePath: page.appRelativePath,
         groupName: displayName,
-        title: titleFor(page, headings),
+        title: page.title,
         headings,
         text: source.source,
       },
