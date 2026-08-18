@@ -48,10 +48,6 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides, demos"
     `);
   });
@@ -64,10 +60,6 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
   });
@@ -80,15 +72,11 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
   });
 
-  test('suggests the non-prefixed module when one matches', () => {
+  test('suggests the public module when one matches', () => {
     expect(errorFor('virtual:kolay/setup', 'guides')).toMatchInlineSnapshot(`
       "'virtual:kolay/setup' does not exist: kolay provides no 'setup' virtual imports. Did you mean 'kolay/setup'?
 
@@ -96,23 +84,34 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
+  });
+
+  test(`never mentions setupKolay's internal virtual modules`, () => {
+    // they are implementation details of setupKolay — neither suggested
+    // nor listed, so nothing invites a user to import them
+    const messages = [
+      errorFor('virtual:kolay/api-docs', 'guides'),
+      errorFor('virtual:kolay/compiled-docs', 'guides'),
+      errorFor('virtual:kolay/demos', 'guides'),
+      errorFor('virtual:kolay/import-entrypoints', 'guides'),
+      errorFor('virtual:kolay/docs/nope', 'guides'),
+      errorFor('virtual:kolay', 'guides'),
+    ];
+
+    for (const message of messages) {
+      expect(message).not.toContain(':virtual');
+      expect(message).not.toContain('Did you mean');
+    }
+
     expect(errorFor('virtual:kolay/api-docs', 'guides')).toMatchInlineSnapshot(`
-      "'virtual:kolay/api-docs' does not exist: kolay provides no 'api-docs' virtual imports. Did you mean 'kolay/api-docs:virtual'?
+      "'virtual:kolay/api-docs' does not exist: kolay provides no 'api-docs' virtual imports.
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
   });
@@ -125,10 +124,6 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
     expect(errorFor('virtual:kolay/', 'guides')).toMatchInlineSnapshot(`
@@ -138,10 +133,6 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
   });
@@ -154,10 +145,6 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
   });
@@ -171,10 +158,6 @@ describe('virtualGuard', () => {
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
         virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
-        kolay/compiled-docs:virtual
-        kolay/api-docs:virtual
-        kolay/demos:virtual
-        kolay/import-entrypoints:virtual
       Declared groups: Home, guides"
     `);
   });

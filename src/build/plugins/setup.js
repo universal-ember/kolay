@@ -262,17 +262,16 @@ const GROUP_NAMESPACES = [
 ];
 
 /**
- * The virtual modules kolay provides outside the `virtual:kolay/`
- * namespace — a typo'd `virtual:kolay/setup` should point at 'kolay/setup'
- * rather than at the list of per-group modules.
+ * The virtual modules users are meant to import that live outside the
+ * `virtual:kolay/` namespace — a typo'd `virtual:kolay/setup` should point
+ * at 'kolay/setup' rather than at the list of per-group modules.
+ *
+ * The `kolay/*:virtual` modules setupKolay imports (compiled-docs,
+ * api-docs, demos, import-entrypoints) are deliberately absent: they're
+ * implementation details of setupKolay, so neither the suggestions nor the
+ * known-imports list should invite anyone to import them.
  */
-const NON_PREFIXED_MODULES = [
-  'kolay/setup',
-  'kolay/compiled-docs:virtual',
-  'kolay/api-docs:virtual',
-  'kolay/demos:virtual',
-  'kolay/import-entrypoints:virtual',
-];
+const PUBLIC_MODULES = ['kolay/setup'];
 
 function docsModuleId(groupName) {
   return `${DOCS_MODULE_PREFIX}${groupName}`;
@@ -288,7 +287,7 @@ function knownImports(groups) {
 
   return (
     `Known virtual imports:\n${namespaces}\n` +
-    `  ${NON_PREFIXED_MODULES.join('\n  ')}\n` +
+    `  ${PUBLIC_MODULES.join('\n  ')}\n` +
     `Declared groups: ${groups.join(', ')}`
   );
 }
@@ -338,12 +337,8 @@ export function virtualGuard(state) {
       }
 
       if (!GROUP_NAMESPACES.some((candidate) => candidate.name === namespace)) {
-        // `virtual:kolay/setup` for 'kolay/setup', `virtual:kolay/demos`
-        // for 'kolay/demos:virtual', and so on.
-        const suggestion = NON_PREFIXED_MODULES.find(
-          (candidate) =>
-            candidate === `kolay/${subPath}` || candidate === `kolay/${subPath}:virtual`
-        );
+        // `virtual:kolay/setup` for 'kolay/setup'
+        const suggestion = PUBLIC_MODULES.find((candidate) => candidate === `kolay/${subPath}`);
 
         throw guardError(
           `'${id}' does not exist: kolay provides no '${namespace}' virtual imports.` +
