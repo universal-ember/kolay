@@ -5,11 +5,13 @@ import { isIndex } from 'kolay';
 import type { Page, PageTree } from 'kolay';
 
 /**
- * `name` is the basename through `stripExt`, the way `build()` derives it.
- * A fixture that puts the whole path there pins a shape the build never emits.
+ * `name` is the basename with `stripExt` applied, which strips an extension
+ * twice (`parse.js`), so `index.gjs.md` becomes `index`. A fixture that puts
+ * the whole path there pins a shape the build never emits.
  */
 function page(path: string): Page {
-  const name = (path.split('/').pop() ?? '').replace(/(\.g(j|t)s)?\.md$/, '');
+  const stripExt = (x: string) => x.replace(/\.[^.]+$/, '');
+  const name = stripExt(stripExt(path.split('/').pop() ?? ''));
 
   return {
     path,
@@ -20,7 +22,7 @@ function page(path: string): Page {
   };
 }
 
-function collection(path: string, pages: (Page | PageTree)[]): PageTree {
+function pageTree(path: string, pages: (Page | PageTree)[]): PageTree {
   return { path, appRelativePath: path, name: path.split('/').pop() ?? '', pages };
 }
 
@@ -39,7 +41,7 @@ module('isIndex', function () {
     assert.false(isIndex(page('/Documentation/sub-folder/api-index.md')));
   });
 
-  test('a collection is never an index, regardless of its path', function (assert) {
-    assert.false(isIndex(collection('/Documentation/index', [])));
+  test('a page tree is never an index, regardless of its path', function (assert) {
+    assert.false(isIndex(pageTree('/Documentation/index', [])));
   });
 });
