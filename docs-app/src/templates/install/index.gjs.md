@@ -107,8 +107,8 @@ import { docs, apiDocs } from "kolay/vite";
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      // Your main docs in "this" app: a "Docs" group
-      docs(import.meta.resolve("./docs")),
+      // Your main docs in "this" app: a "my-documentation" group
+      docs(import.meta.resolve("./my-documentation")),
       // Optional: generate API Docs for packages listed here
       apiDocs(["kolay"]),
       // ...
@@ -122,8 +122,8 @@ export default defineConfig(({ mode }) => {
 You can create docs for multiple libraries at once — one `docs()` usage per group:
 
 ```js
-docs(import.meta.resolve('./docs')),
-docs('Runtime', { src: import.meta.resolve('../ui/docs', import.meta.url) }),
+docs(import.meta.resolve('./my-documentation')),
+docs('UI', { src: import.meta.resolve('../ui/ui-guide', import.meta.url) }),
 // Generate API docs from JSDoc
 // NOTE: these must all be declared in your projects package.json
 apiDocs(['kolay', 'ember-primitives', 'ember-resources']),
@@ -139,11 +139,12 @@ If using `@ember/routing/router` or `@embroider/router`
 
 You'll want to also install `ember-primitives`, so that you can use the [`@properLinks`] decorator on the router, giveng you the ability to _just use anchor tags (`<a>`)_ (a requirement for in-browser linking in markdown).
 
-The primary way to add routes is through each group's own virtual module — `docs('docs')` (or `docs(import.meta.resolve('./docs'))`) enables `virtual:kolay/docs/docs`, whose `addRoutes` brings that group's docs into whatever route it's called from:
+The primary way to add routes is through each group's own virtual module — the group name is the last segment of the folder (or the explicit first argument), so `docs(import.meta.resolve('./my-documentation'))` enables `virtual:kolay/docs/my-documentation`, whose `addRoutes` brings that group's docs into whatever route it's called from:
 
 ```js
 import { addRoutes } from "kolay"; // for the co-located pages
-import { addRoutes as addDocsRoutes } from "virtual:kolay/docs/docs";
+import { addRoutes as addMyDocumentationRoutes } from "virtual:kolay/docs/my-documentation";
+import { addRoutes as addUIGuideRoutes } from "virtual:kolay/docs/UI";
 import { properLinks } from "ember-primitives/proper-links";
 
 @properLinks
@@ -159,7 +160,11 @@ Router.map(function () {
   // each group in its own mount — the mount's path is up to you, and
   // each mount can have its own route template (its own design!)
   this.route("docs", function () {
-    addDocsRoutes(this);
+    addMyDocumentationRoutes(this);
+  });
+
+  this.route('ui', function () {
+    addUIGuideRoutes(this);
   });
 });
 ```
