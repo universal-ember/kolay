@@ -132,12 +132,10 @@ export class PageNav extends Component<{
   }
 
   /**
-   * Where a folder's own URL goes, which is what the redirect would do. The
-   * current group scopes it: two groups can hold one manifest path.
+   * Where a folder's own URL goes, which is what the redirect would do.
+   * No group: the tree is in hand, so there is nothing to search for.
    */
-  private landingFor = (tree: PageTree) => {
-    return this.docs.landingForPageTree(tree.appRelativePath, this.docs.currentGroup?.name);
-  };
+  private landingFor = (tree: PageTree) => this.docs.landingForTree(tree);
 
   /**
    * Ember doesn't yet have a way to forward blocks,

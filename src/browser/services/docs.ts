@@ -21,7 +21,7 @@ import { wireRedirects } from './redirect-wiring.ts';
 import { searcher } from './search.ts';
 import { selected } from './selected.ts';
 
-import type { LoadTypedoc, Manifest, Page, SearchEntry } from '../../types.ts';
+import type { LoadTypedoc, Manifest, Page, PageTree, SearchEntry } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
 import type { ComponentLike } from '@glint/template';
 
@@ -525,9 +525,8 @@ class DocsService {
       groups = [this.groupFor(canonical)];
     }
 
-    // Only a group whose prefix contains the path can answer it, and both
-    // passes below walk every group they are given. `Home`'s prefix is the
-    // root, which contains everything.
+    // Only a group whose prefix contains the path can answer it. `Home`'s
+    // prefix is the root, which contains everything.
     groups = groups.filter((group) => {
       const prefix = group.tree.appRelativePath;
 
@@ -547,17 +546,37 @@ class DocsService {
     }
 
     for (const group of groups) {
-      // `tree.first` is the build's own answer (`addInTheFirstPage`), as a
-      // base-prefixed path; `group.list` is flattened from the same tree, so
-      // the page is in there.
       const tree = findPageTree(group.tree, appRelativePath);
-      const first = tree?.first;
+      const landing = tree && this.landingForTree(tree);
 
-      if (!first) continue;
+      // An empty tree shouldn't end the search for a group that has one.
+      if (landing) return landing;
+    }
 
+    return undefined;
+  };
+
+  /**
+   * The page a tree's own URL goes to: its first, which sorting makes its
+   * index page when it has one. `undefined` for a tree holding no pages.
+   *
+   * Takes no group, and needs none. The group parameter on
+   * `landingForPageTree` guards the *search* for a tree at a path, which two
+   * groups can both hold; here the caller already has the tree. `tree.first`
+   * is not unique across groups — a co-located `Guides/foo.md` and a
+   * `docs('Guides')` group's `foo.md` both produce `/Guides/foo.md` — but a
+   * config that does that has one routable page either way, so scoping would
+   * not rescue it.
+   */
+  landingForTree = (tree: PageTree): Page | undefined => {
+    const first = tree.first;
+
+    if (!first) return undefined;
+
+    for (const group of this.manifest?.groups ?? []) {
+      // `tree.first` is a base-prefixed path, which is what `Page.path` is.
       const page = group.list.find((candidate) => candidate.path === first);
 
-      // A tree with no pages shouldn't end the search for a group that has one.
       if (page) return page;
     }
 
