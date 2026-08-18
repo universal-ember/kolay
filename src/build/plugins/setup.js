@@ -8,6 +8,7 @@ import { join, relative } from 'node:path';
 import { stripIndent } from 'common-tags';
 import send from 'send';
 
+import { headingsIn, titleFor } from '../../title.js';
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
 import { reshape } from './markdown-pages/hydrate.js';
@@ -168,29 +169,21 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
           path: page.path,
           appRelativePath: page.appRelativePath,
           groupName: displayName,
-          title: page.title ?? page.cleanedName,
+          title: titleFor(page),
           headings: [],
           text: '',
         },
       ];
     }
 
-    // headings are shown as-is (a page's title is usually its first one),
-    // so the source's inline syntax is stripped: emphasis and code marks,
-    // and the `[^label]` a footnote reference leaves behind
-    const headings = [...source.source.matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)].map(([, heading]) =>
-      heading
-        .replaceAll(/\[\^[^\]]+\]/g, '')
-        .replaceAll(/[`*_]/g, '')
-        .trim()
-    );
+    const headings = headingsIn(source.source);
 
     return [
       {
         path: page.path,
         appRelativePath: page.appRelativePath,
         groupName: displayName,
-        title: page.title ?? headings[0] ?? page.cleanedName,
+        title: titleFor(page, headings),
         headings,
         text: source.source,
       },

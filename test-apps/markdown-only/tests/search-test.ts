@@ -11,7 +11,7 @@ module("Search", function (hooks) {
     // isn't enough — the results render once that fetch resolves
     await waitFor(".search-result a", { timeout: 5000 });
 
-    assert.dom(".search-result a").hasText("ember resources");
+    assert.dom(".search-result a").hasText("Ember resources");
   });
 
   test("puts the query in the URL", async function (assert) {

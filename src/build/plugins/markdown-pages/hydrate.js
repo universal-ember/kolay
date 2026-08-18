@@ -124,6 +124,14 @@ export function getList(tree) {
 }
 
 /**
+ * @param {string} name
+ * @returns {string}
+ */
+function sentenceCase(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/**
  * A folder's display title, resolved once here rather than in every consumer.
  *
  * A folder with its own `index` page is titled by that page: it is the folder's
@@ -134,6 +142,9 @@ export function getList(tree) {
  * Sorting has already run, so an explicit index is the first child when there
  * is one.
  *
+ * `cleanedName` normalizes separators but not case, so the capital comes from
+ * here. It used to come from a `sentenceCase` call in each consumer template.
+ *
  * @param {import('./types.ts').Node} tree
  */
 export function addTitles(tree) {
@@ -142,7 +153,7 @@ export function addTitles(tree) {
   const [first] = tree.pages;
   const ownPage = first && !('pages' in first) && isIndexName(first.name) ? first : undefined;
 
-  tree.title = ownPage?.title ?? tree.cleanedName ?? tree.name;
+  tree.title = ownPage?.title ?? sentenceCase(tree.cleanedName ?? tree.name);
 
   tree.pages.forEach(addTitles);
 }

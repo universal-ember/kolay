@@ -179,6 +179,21 @@ An explicit index is still omitted from the `:page` block, since the heading sta
 
 On the docs service, `landingForTree(tree)` answers the landing question for a tree you already hold, and `landingForPageTree(path, group?)` resolves a path to a tree and delegates.
 
+## `<PageNav />` renders folder headings differently
+
+Only the _default_ `:section` rendering changes — apps passing their own block are unaffected, and the block's shape is covered above.
+
+| folder              | 5.x          | 6.0                    |
+| ------------------- | ------------ | ---------------------- |
+| has an `index` page | `index`      | its index page's title |
+| no `index` page     | `sub-folder` | `Sub folder`           |
+
+The first row was a bug: 5.x rendered the index page's `name`, which is the literal string `index`. It now uses the page's title.
+
+The second uses `cleanedName`, which the build has always computed and which its own comment describes as "the cleaned name, potentially for UI display purposes" — separators normalized, and now sentence-cased. If that does not suit your project, `name` still carries the raw directory segment.
+
+Titles resolve the same way everywhere now, navigation and search alike: an author's `title`, then the page's first heading, then the cleaned name.
+
 ## Removed types
 
 `Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
