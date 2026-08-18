@@ -49,7 +49,7 @@ export class PageTreeRedirectService {
   };
 
   #hrefFor(to: Transition['to'] | RouterService['currentRoute']): string | undefined {
-    const landing = this.#landingFor(to);
+    const landing = this.#landingForRouteInfo(to);
 
     return landing ? this.#docs.appRelativeHrefFor(landing) : undefined;
   }
@@ -58,7 +58,7 @@ export class PageTreeRedirectService {
    * `undefined` unless the URL names a `PageTree`. A page visit also resolves
    * to the wildcard's index, with the page as its param.
    */
-  #landingFor(to: Transition['to'] | RouterService['currentRoute']): Page | undefined {
+  #landingForRouteInfo(to: Transition['to'] | RouterService['currentRoute']): Page | undefined {
     if (to?.localName !== 'index') return;
 
     const docs = this.#docs;

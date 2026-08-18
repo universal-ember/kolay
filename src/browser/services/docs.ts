@@ -6,8 +6,9 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
+import { stripLeadingSlash } from '../../paths.js';
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
-import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
+import { redirectForUrl, redirectTargetFor } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
@@ -244,12 +245,7 @@ class DocsService {
       onArrival: () => {
         const current = this.router.currentURL;
 
-        if (!current) return;
-
-        const [path = ''] = current.split(/[?#]/);
-        const target = resolveRedirect(path.replace(/^\//, ''), redirects);
-
-        return target === undefined ? undefined : '/' + target;
+        return current ? redirectForUrl(current, redirects) : undefined;
       },
     });
   }
@@ -366,7 +362,7 @@ class DocsService {
 
     return page.appRelativePath.startsWith(prefix)
       ? page.appRelativePath.slice(prefix.length)
-      : page.appRelativePath.replace(/^\//, '');
+      : stripLeadingSlash(page.appRelativePath);
   }
 
   /**

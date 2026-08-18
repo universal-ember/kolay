@@ -8,6 +8,7 @@ import { join, relative } from 'node:path';
 import { stripIndent } from 'common-tags';
 import send from 'send';
 
+import { stripGlimmerMarkdownExtension } from '../../paths.js';
 import { headingsIn, titleFor } from '../../title.js';
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
@@ -127,7 +128,7 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     }
 
     const name =
-      baseUrl + (urlPrefix ? urlPrefix + '/' : '') + strip(entry).replace(/\.(gjs|gts)\.md$/, '');
+      baseUrl + (urlPrefix ? urlPrefix + '/' : '') + stripGlimmerMarkdownExtension(strip(entry));
     const full = '/@fs' + join(normalizePath(sourceCwd), entry);
 
     let query = '';

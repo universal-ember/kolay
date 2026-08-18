@@ -4,6 +4,7 @@ import { join, parse as parsePath } from 'node:path';
 
 import JSON5 from 'json5';
 
+import { stripGlimmerMarkdownExtension } from '../../../paths.js';
 import { betterSort } from './sort.js';
 
 /**
@@ -126,7 +127,7 @@ export function build(docs) {
 
     const groupName = cleanSegment(leafestGroupName);
     const cleanedName = cleanSegment(name);
-    const path = '/' + mdPath.replace(/\.g(j|t)s\.md$/, '');
+    const path = '/' + stripGlimmerMarkdownExtension(mdPath);
 
     const pageInfo = {
       ...config,

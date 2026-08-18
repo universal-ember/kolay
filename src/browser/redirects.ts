@@ -1,3 +1,4 @@
+import { stripLeadingSlash } from '../paths.js';
 import { equalsIgnoreCase, samePagePath } from './utils.ts';
 
 import type Transition from '@ember/routing/transition';
@@ -74,8 +75,19 @@ export function redirectTargetFor(
 
   if (typeof intent?.url !== 'string') return undefined;
 
-  const [path = ''] = intent.url.split(/[?#]/);
-  const target = resolveRedirect(path.replace(/^\//, ''), redirects);
+  return redirectForUrl(intent.url, redirects);
+}
+
+/**
+ * The app-relative URL a redirect sends the given URL to, or `undefined` when
+ * no entry matches. Query and hash are not part of the match.
+ */
+export function redirectForUrl(
+  url: string,
+  redirects: { from: string; to: string }[]
+): string | undefined {
+  const [path = ''] = url.split(/[?#]/);
+  const target = resolveRedirect(stripLeadingSlash(path), redirects);
 
   return target === undefined ? undefined : '/' + target;
 }

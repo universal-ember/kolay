@@ -37,7 +37,9 @@ export function betterSort(property) {
     const aFull = property ? a[property] : a;
     const bFull = property ? b[property] : b;
 
-    // Folders sort here too, so one named `index` hoists.
+    // Matched on the node's name, so an index sorts first whatever its
+    // extension — `build()` has already stripped `.gjs.md` / `.gts.md` off
+    // `path` by now. Folders sort here too, so one named `index` hoists.
     if (isIndexName(aFull) && isIndexName(bFull)) return 0;
     if (isIndexName(aFull)) return -1;
     if (isIndexName(bFull)) return 1;
