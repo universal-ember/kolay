@@ -60,13 +60,22 @@ export interface PageTree {
    * e.g. '/Documentation/sub-folder'.
    */
   appRelativePath: string;
+  /**
+   * The folder's directory segment, e.g. 'sub-folder'. Sorting and the
+   * explicit-index check both compare against this.
+   */
   name: string;
   /**
-   * The folder's display title: its `index` page's title when it has one,
-   * and its `cleanedName` otherwise. Resolved at build time so navigation
-   * does not have to decide.
+   * What to display for this folder, resolved at build time so navigation
+   * does not have to decide: the folder's own `title` from its `meta.json`,
+   * then its index page's title, then its `cleanedName` sentence-cased.
    */
   title?: string;
+  /**
+   * The `path` of the first page under this folder, which is where the
+   * folder's own URL goes. An explicit index page sorts first, so that is
+   * this page whenever the folder has one.
+   */
   first?: string;
   pages: (PageTree | Page)[];
   groupName?: never;
@@ -85,13 +94,20 @@ export interface Page {
    * This is the space `router.currentURL` and `transitionTo` operate in.
    */
   appRelativePath: string;
+  /**
+   * The page's basename without its extension, e.g. 'index' or 'x'. A page
+   * named exactly `index` is its folder's explicit index.
+   */
   name: string;
   groupName: string;
+  /**
+   * `name` with digits removed and dashes turned into spaces, for display.
+   */
   cleanedName: string;
   /**
-   * The link text to display for this page in navigation, when the
-   * derived `name` isn't right — set via a json file next to the page:
-   * `{ "title": "selected(...)" }`
+   * What to display for this page, resolved at build time: the `title` from
+   * the json file next to the page (`{ "title": "selected(...)" }`), then the
+   * page's first heading, then its `cleanedName` sentence-cased.
    */
   title?: string;
   /**

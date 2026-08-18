@@ -24,7 +24,7 @@ export { isActive } from './is-active.ts';
 export { resolveRedirect } from './redirects.ts';
 export { highlightSearch } from './services/search/highlight.ts';
 export { stripFormatting } from './services/search/strip-formatting.ts';
-export { isIndex, isPageTree } from './utils.ts';
+export { isPageTree, samePagePath } from './utils.ts';
 
 // Types
 export type { Manifest, Page, PageTree, SearchResult } from '../types.ts';

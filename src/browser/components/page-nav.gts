@@ -5,7 +5,7 @@ import { service } from '@ember/service';
 
 import { isActive } from '../is-active.ts';
 import { docsManager } from '../services/docs.ts';
-import { isIndex, isPageTree, samePagePath } from '../utils.ts';
+import { isPageTree, samePagePath } from '../utils.ts';
 
 import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -178,7 +178,16 @@ export class PageNav extends Component<{
   </template>
 }
 
+/**
+ * A page whose title is its folder's title is that folder's own page: the
+ * section heading already links to it, so listing it again repeats the same
+ * words twice. A page with a title of its own stays in the list, whether or
+ * not it happens to be the folder's landing page.
+ */
 const not = (x: unknown) => !x;
+
+const isFolderOwnPage = (folder: Page | PageTree, page: Page | PageTree) =>
+  !isPageTree(page) && 'title' in folder && Boolean(folder.title) && page.title === folder.title;
 
 const Pages: TOC<{
   Args: {
@@ -199,7 +208,7 @@ const Pages: TOC<{
   {{#if (isPageTree @item)}}
     <ul>
       {{#each @item.pages as |page|}}
-        {{#if (not (isIndex page))}}
+        {{#if (not (isFolderOwnPage @item page))}}
           <li>
             {{#if (isPageTree page)}}
 

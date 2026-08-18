@@ -1,7 +1,6 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
-import { isIndexName } from '../index-page.js';
 import { stripMarkdownExtension } from '../paths.js';
 
 import type { Page, PageTree } from '../types.ts';
@@ -17,23 +16,6 @@ export const HOME_GROUP = 'Home';
 
 export function isPageTree(x: Page | PageTree): x is PageTree {
   return 'pages' in x;
-}
-
-/**
- * An *explicit* index: a page named `index`, which is a folder's own page.
- * Distinct from a folder's landing page, which is wherever its URL goes and
- * is an ordinary page when no explicit index exists.
- *
- * Sorting always hoists an explicit index to the front of its folder, both
- * through `betterSort` and through a `meta.json` order (`applyPredestinedOrder`
- * pulls it out before applying the author's order). So the first child is the
- * explicit index whenever there is one, and a folder named `index` cannot sit
- * beside a page named `index` — `preAddCheck` rejects that at build time.
- */
-export function isIndex(x: Page | PageTree): x is Page {
-  if (isPageTree(x)) return false;
-
-  return isIndexName(x.name);
 }
 
 /**

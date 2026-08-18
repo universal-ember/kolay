@@ -2,12 +2,16 @@
 
 Utility functions for working with the page manifest. Useful when building custom navigation that needs to distinguish between leaf pages and nested page trees.
 
-Two words that are easy to conflate, and which mean different things here:
+Every folder has a **landing page**: where its own URL goes. That is the page the author named `index` when there is one, and the folder's first page otherwise. Navigation almost always wants this, because every folder with pages has one.
 
-- an **index page** is a page explicitly named `index`. It is a folder's own page.
-- a **landing page** is wherever a folder's URL goes: its index page when it has one, its first page otherwise.
+A folder's landing page is an **explicit index** when the author named it `index`. Build-time sorting puts an explicit index first in its folder, so `folder.pages.at(0)` is it whenever there is one, and `page.name === 'index'` is the check:
 
-Most navigation wants the landing page — every folder has one, so every folder heading can be a link.
+```js
+const first = folder.pages.at(0);
+const hasOwnPage = first && !isPageTree(first) && first.name === 'index';
+```
+
+That only matters if you are rendering the list yourself: `<PageNav />` leaves an explicit index out of the page list, because the section heading already links to it.
 
 ## `isPageTree`
 
@@ -25,24 +29,6 @@ for (const node of tree.pages) {
 }
 ```
 
-## `isIndex`
-
-Type guard that returns `true` if the given node is a page explicitly named `index`. It answers "does this folder have a page of its own", not "where should this folder link".
-
-Sorting always puts an explicit index first in its folder, so the first child is it whenever there is one:
-
-```js
-import { isIndex } from 'kolay';
-
-const first = folder.pages.at(0);
-
-if (first && isIndex(first)) {
-  // `first` is a Page, and it is this folder's own page
-}
-```
-
-That holds however the folder is ordered. A `meta.json` `order` cannot place an index second — it is hoisted before the order is applied.
-
 ## Where a folder links
 
 For "where should this folder's heading go", ask the docs service rather than the tree, because the answer falls back to the first page when there is no index:
@@ -59,4 +45,4 @@ Inside [`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) this is already done
 
 <APIDocs @module="declarations/browser" @name="isPageTree" @package="kolay" />
 
-<APIDocs @module="declarations/browser" @name="isIndex" @package="kolay" />
+

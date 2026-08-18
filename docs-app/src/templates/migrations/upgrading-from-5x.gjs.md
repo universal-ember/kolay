@@ -139,34 +139,25 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## Index pages and landing pages
+## Landing pages, and what `<PageNav />` yields
 
-A folder now has two distinct things, where 5.x conflated them:
-
-- its **index page** — a page named `index`. The folder's own page. It may not have one.
-- its **landing page** — where the folder's URL goes: its index page if it has one, its first page otherwise. Every folder with pages has one.
-
-Most navigation wants the landing page, because it always exists.
+Every folder now has a **landing page**: where its own URL goes. That is the page named `index` when the author wrote one — its **explicit index** — and the folder's first page otherwise. 5.x had no name for the second case, which is why folders without an `index` page had no heading link.
 
 ### `getIndexPage` is removed
 
-It returned the index page but was documented for the landing question — "useful for making folder names in navigation link to an index page" — so folders without an index page went unlinked.
+It returned the explicit index but was documented for the landing question — "useful for making folder names in navigation link to an index page" — so folders without an explicit index page would not be linked.
 
-For a folder heading, use `<PageNav />`'s `landing`, or `landingForTree(tree)` on the docs service. For the narrow "does this folder have its own page" question, `isIndex` still answers it:
+For a folder heading, use `<PageNav />`'s `landing`, or `landingForTree(tree)` on the docs service. If you render the list yourself and need to know whether a folder has its own page, build-time sorting puts an explicit index first, so its name is the check:
 
 ```diff
 - const index = getIndexPage(folder);
 + const first = folder.pages.at(0);
-+ const index = first && isIndex(first) ? first : undefined;
++ const index = first && !isPageTree(first) && first.name === 'index' ? first : undefined;
 ```
 
-Sorting puts an explicit index first in its folder, so checking the first child is enough.
+`isIndex` is no longer exported, for the same reason: it answered the narrow question while reading like the general one.
 
-### `isIndex` matches the name
-
-It tested the path, so `api-index.md` counted as an index page. It tests the name now, so only a page actually named `index` does. It is also a type guard (`x is Page`), which narrows an entry from `folder.pages`.
-
-### `<PageNav />`'s `:section` yields `landing`, not `index`
+### `:section` yields `landing`, not `index`
 
 ```diff
   <:section as |x|>
@@ -180,44 +171,48 @@ It tested the path, so `api-index.md` counted as an index page. It tests the nam
   </:section>
 ```
 
-`landing` is present for every folder with pages, where `index` was only present for folders holding an `index` page. An index page is still left out of the `:page` block, since the section heading stands in for it; a first page acting as the landing stays in the list, because it is a page in its own right.
+`landing` is present for every folder with pages; `index` was present only for folders holding an `index` page. The name changed rather than the meaning, so a 5.x template fails to compile instead of pointing somewhere new.
 
-### Folder titles
+An explicit index is still left out of the `:page` block, since the section heading stands in for it. A first page acting as the landing stays in the list — it is a page in its own right.
 
-`PageTree` carries a `title`, so a section heading no longer has to be derived by the app. It resolves as: the folder's own `title` from its `meta.json`, then its index page's title, then its cleaned directory name.
+### Folder and page titles
 
-Page titles resolve the same way everywhere, navigation and search alike: the author's `title`, then the page's first heading, then the cleaned name.
+`PageTree` carries a `title`, so an app no longer derives section headings itself. Titles resolve the same way for pages and folders, in navigation and in search:
+
+|          | resolves to                                                                             |
+| -------- | --------------------------------------------------------------------------------------- |
+| a folder | its `meta.json` `title`, then its landing page's title, then its cleaned directory name |
+| a page   | its json `title`, then its first heading, then its cleaned filename                     |
+
+Cleaned names have digits removed, dashes turned into spaces, and are sentence-cased.
 
 If you pass no `:section` block, the default rendering changes:
 
-| folder              | 5.x          | 6.0          |
-| ------------------- | ------------ | ------------ |
-| has an `index` page | `index`      | its title    |
-| no `index` page     | `sub-folder` | `Sub folder` |
+| folder                                  | 5.x                        | 6.0          |
+| --------------------------------------- | -------------------------- | ------------ |
+| `meta.json` sets a `title`              | `index` or the raw segment | that title   |
+| has an `index` page with a `title`      | `index`                    | that title   |
+| has an `index` page with only an `# H1` | `index`                    | that heading |
+| no `index` page                         | `sub-folder`               | `Sub folder` |
 
-5.x rendered the index page's `name` — the literal string `index`. Set `title` in the folder's `meta.json` if the resolved one is not what you want.
+5.x rendered the index page's `name` — the literal string `index`.
 
-## Removed types
+## A folder's index page sorts first regardless of extension
 
-`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
-
-## A folder's index page now sorts first regardless of extension
-
-`index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not, even though `betterSort` appeared to test for them: the build strips those extensions off `path` before sorting runs, so the test never matched. They now sort first too.
+`index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not: the build strips those extensions before sorting runs, so the test never matched. They now sort first too.
 
 Two things move on any folder with a `.gjs.md` or `.gts.md` index and no `meta.json` `order`:
 
 - The nav lists the index page first, where it used to appear in alphabetical position.
 - `group.list[0]` becomes that index page, and with it the page a group's own URL resolves to.
 
-A folder with a `meta.json` `order` is unaffected, because `applyPredestinedOrder` already hoisted `index` on its own.
+A folder with a `meta.json` `order` is unaffected — an explicit index is hoisted before the order is applied, so it cannot be placed second.
 
-To keep the old placement, give that folder a `meta.json` `order`.
+To keep the old placement, give that folder a `meta.json` `order`. Build-time sorting also matches the node's name rather than its path now, so a **folder** named `index` sorts first among its siblings.
 
-The match also moved from the node's path to its name, which changes two more things:
+## Removed types
 
-- A **folder** named `index` now sorts first among its siblings. Folders were never matched before, because a folder's path is a bare segment.
-- A page whose basename merely _ends_ in `index` no longer hoists. `api-index.md` used to, because `/foo/api-index.md` satisfies `path.endsWith('index.md')`; now only a page actually named `index` is hoisted. Rename it, or give the folder a `meta.json` `order`.
+`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
 
 ## A page tree's URL resolves to its first page, without wiring
 
