@@ -163,7 +163,7 @@ Router.map(function () {
     addMyDocumentationRoutes(this);
   });
 
-  this.route('ui', function () {
+  this.route("ui", function () {
     addUIGuideRoutes(this);
   });
 });
