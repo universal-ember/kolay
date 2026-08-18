@@ -4,31 +4,39 @@ import { isIndex } from 'kolay';
 
 import type { Page, PageTree } from 'kolay';
 
+/**
+ * `name` is the basename through `stripExt`, the way `build()` derives it.
+ * A fixture that puts the whole path there pins a shape the build never emits.
+ */
 function page(path: string): Page {
+  const name = (path.split('/').pop() ?? '').replace(/(\.g(j|t)s)?\.md$/, '');
+
   return {
     path,
     appRelativePath: path,
-    name: path,
+    name,
     groupName: 'Documentation',
-    cleanedName: path,
+    cleanedName: name,
   };
 }
 
 function collection(path: string, pages: (Page | PageTree)[]): PageTree {
-  return { path, appRelativePath: path, name: path, pages };
+  return { path, appRelativePath: path, name: path.split('/').pop() ?? '', pages };
 }
 
 module('isIndex', function () {
-  test('matches an extension-less index path', function (assert) {
-    assert.true(isIndex(page('/Documentation/sub-folder/index')));
-  });
-
-  test('matches an index.md path', function (assert) {
-    assert.true(isIndex(page('/Documentation/sub-folder/index.md')));
+  test('matches a page named index, whatever its path looks like', function (assert) {
+    assert.true(isIndex(page('/Documentation/sub-folder/index')), 'extension already stripped');
+    assert.true(isIndex(page('/Documentation/sub-folder/index.md')), 'plain .md');
+    assert.true(isIndex(page('/Documentation/sub-folder/index.gjs.md')), 'gjs');
   });
 
   test('does not match a non-index page', function (assert) {
     assert.false(isIndex(page('/Documentation/sub-folder/x.md')));
+  });
+
+  test('does not match a page whose name merely ends in index', function (assert) {
+    assert.false(isIndex(page('/Documentation/sub-folder/api-index.md')));
   });
 
   test('a collection is never an index, regardless of its path', function (assert) {

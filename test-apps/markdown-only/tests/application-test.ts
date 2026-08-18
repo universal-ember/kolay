@@ -9,9 +9,9 @@ const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? ski
 module("PageNav", function (hooks) {
   setupApplicationTest(hooks);
 
-  // The `:section` block renders headings, not links, so the all-links crawl
-  // below cannot see them: rename the block and every heading silently
-  // vanishes while the crawl stays green.
+  // This asserts the heading's text, which is the folder's name. Rename the
+  // `:section` block and every heading silently vanishes while the crawl
+  // below stays green.
   test("renders a heading for each section", async function (assert) {
     await visit("/Docs/sub-folder/ember-primitives.md");
 

@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest';
 
-import { build } from './parse.js';
+import { build, parse } from './parse.js';
+
+import type { Page, PageTree } from '#types';
 
 describe('build', () => {
   test('shallow path', () => {
@@ -197,5 +199,28 @@ describe('build', () => {
         'Cannot have a group that matches the name of an individual page. Please move another.md into the "/top/deep/another" folder. If you want this to be the first page, rename the file to top/deep/another/index.md'
       );
     });
+  });
+});
+
+function namesIn(node: Page | PageTree | undefined): string[] {
+  return node && 'pages' in node ? node.pages.map((page) => page.name) : [];
+}
+
+describe('index hoisting through parse()', () => {
+  // `betterSort` can't cover this on its own: `build()` strips `.gjs.md` /
+  // `.gts.md` from `path` before sorting runs, so extension handling is only
+  // observable once the two are composed.
+  test.each(['md', 'gjs.md', 'gts.md'])('an index.%s sorts first', async (ext) => {
+    const tree = (await parse(['foo/apple.md', `foo/index.${ext}`], '.', [])) as PageTree;
+    const [folder] = tree.pages;
+
+    expect(namesIn(folder)).toEqual(['index', 'apple']);
+  });
+
+  test('a page whose name merely ends in index does not sort first', async () => {
+    const tree = (await parse(['foo/apple.md', 'foo/api-index.md'], '.', [])) as PageTree;
+    const [folder] = tree.pages;
+
+    expect(namesIn(folder)).toEqual(['apple', 'api-index']);
   });
 });
