@@ -282,26 +282,35 @@ function docsModuleId(groupName) {
 }
 
 /**
- * The known-imports blurb every guard error ends with.
+ * The known-imports blurb every guard error ends with — everything the
+ * *current config* makes importable, so a wrong import can be compared
+ * against the real list.
+ *
+ * @param {{ groups: string[], demoAliases: string[] }} available
  */
-function knownImports(groups) {
-  const namespaces = GROUP_NAMESPACES.filter(({ hidden }) => !hidden)
-    .map(({ name, describe }) => `  virtual:kolay/${name}/<group> — ${describe}`)
-    .join('\n');
+function knownImports({ groups, demoAliases }) {
+  const lines = [
+    ...GROUP_NAMESPACES.filter(({ hidden }) => !hidden).map(
+      ({ name, describe }) => `  virtual:kolay/${name}/<group> — ${describe}`
+    ),
+    ...PUBLIC_MODULES.map((module) => `  ${module}`),
+    // `demos(src, { as: '#demos/foo' })` makes '#demos/foo/<demo>'
+    // importable from codefences — configured, so only listed when present
+    ...demoAliases.map((alias) => `  ${alias}/<demo> — a demo from a demos() source`),
+  ];
 
-  return (
-    `Known virtual imports:\n${namespaces}\n` +
-    `  ${PUBLIC_MODULES.join('\n  ')}\n` +
-    `Declared groups: ${groups.join(', ')}`
-  );
+  return `Known virtual imports:\n${lines.join('\n')}\n` + `Declared groups: ${groups.join(', ')}`;
 }
 
 /**
  * A guard error: what went wrong (and how to fix it), then the list of
  * what kolay does provide.
+ *
+ * @param {string} explanation
+ * @param {{ groups: string[], demoAliases: string[] }} available
  */
-function guardError(explanation, groups) {
-  return new Error(`${explanation}\n\n${knownImports(groups)}`);
+function guardError(explanation, available) {
+  return new Error(`${explanation}\n\n${knownImports(available)}`);
 }
 
 /**
@@ -317,8 +326,26 @@ function guardError(explanation, groups) {
  * @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions}
  */
 export function virtualGuard(state) {
+  /**
+   * The specifiers demos() usages make importable. Discovered from the
+   * config, so the error lists what this project actually has — empty
+   * under bundlers where vite's configResolved doesn't run, which only
+   * costs the list a line.
+   *
+   * @type {string[]}
+   */
+  let demoAliases = [];
+
   return {
     name: 'kolay:virtual-guard',
+    vite: {
+      configResolved(resolvedConfig) {
+        demoAliases = resolvedConfig.plugins
+          .filter((plugin) => plugin.name === 'kolay:demos')
+          .map((plugin) => plugin.api?.kolay?.options?.alias)
+          .filter(Boolean);
+      },
+    },
     resolveId(id) {
       const [withoutQuery = ''] = id.split('?');
 
@@ -331,12 +358,13 @@ export function virtualGuard(state) {
       const namespace = slash === -1 ? subPath : subPath.slice(0, slash);
       const groupName = slash === -1 ? '' : subPath.slice(slash + 1);
       const groups = ['Home', ...allGroups(state).map((group) => group.name)];
+      const available = { groups, demoAliases };
 
       if (!namespace) {
         throw guardError(
           `'${id}' does not exist: every kolay virtual import names a namespace ` +
             `and a group, as in 'virtual:kolay/docs/${groups[1] ?? 'Home'}'.`,
-          groups
+          available
         );
       }
 
@@ -347,7 +375,7 @@ export function virtualGuard(state) {
         throw guardError(
           `'${id}' does not exist: kolay provides no '${namespace}' virtual imports.` +
             (suggestion ? ` Did you mean '${suggestion}'?` : ''),
-          groups
+          available
         );
       }
 
@@ -356,7 +384,7 @@ export function virtualGuard(state) {
           `'${id}' does not exist, because it names no group — ` +
             `'virtual:kolay/${namespace}' imports are per-group, as in ` +
             `'virtual:kolay/${namespace}/${groups[1] ?? 'Home'}'.`,
-          groups
+          available
         );
       }
 
@@ -366,7 +394,7 @@ export function virtualGuard(state) {
         `'${id}' does not exist, because no docs() usage declares a group named '${groupName}'. ` +
           `Add docs('${groupName}', { src: ... }) — or docs(<a path or URL ending in '${groupName}'>) — ` +
           `to your plugins.`,
-        groups
+        available
       );
     },
   };

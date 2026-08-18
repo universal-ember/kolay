@@ -2,7 +2,10 @@ import { describe, expect, test } from 'vitest';
 
 import { virtualGuard } from './setup.js';
 
-type Guard = { resolveId: (id: string) => unknown };
+type Guard = {
+  resolveId: (id: string) => unknown;
+  vite: { configResolved: (config: unknown) => void };
+};
 
 function guardFor(...groupNames: string[]) {
   return virtualGuard({
@@ -12,14 +15,33 @@ function guardFor(...groupNames: string[]) {
   }) as unknown as Guard;
 }
 
-function errorFor(id: string, ...groupNames: string[]) {
+/**
+ * What the guard sees in a config that also has demos() usages — the
+ * aliases come from their plugin api, as they do in vite.
+ */
+function withDemos(guard: Guard, ...aliases: string[]) {
+  guard.vite.configResolved({
+    plugins: aliases.map((alias) => ({
+      name: 'kolay:demos',
+      api: { kolay: { options: { alias, src: `/abs/${alias}` } } },
+    })),
+  });
+
+  return guard;
+}
+
+function messageFrom(guard: Guard, id: string) {
   try {
-    guardFor(...groupNames).resolveId(id);
+    guard.resolveId(id);
   } catch (error) {
     return (error as Error).message.replaceAll(process.cwd(), '<cwd>');
   }
 
   throw new Error(`Expected resolveId('${id}') to throw, but it did not`);
+}
+
+function errorFor(id: string, ...groupNames: string[]) {
+  return messageFrom(guardFor(...groupNames), id);
 }
 
 describe('virtualGuard', () => {
@@ -113,6 +135,36 @@ describe('virtualGuard', () => {
         kolay/setup
       Declared groups: Home, guides"
     `);
+  });
+
+  test('lists the demos() aliases the config configures', () => {
+    const guard = withDemos(guardFor('guides'), '#demos/foo', '@scope/demos');
+
+    expect(messageFrom(guard, 'virtual:kolay/docs/nope')).toMatchInlineSnapshot(`
+      "'virtual:kolay/docs/nope' does not exist, because no docs() usage declares a group named 'nope'. Add docs('nope', { src: ... }) — or docs(<a path or URL ending in 'nope'>) — to your plugins.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+        #demos/foo/<demo> — a demo from a demos() source
+        @scope/demos/<demo> — a demo from a demos() source
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('lists no demos when none are configured', () => {
+    // configResolved ran, there just were no demos() usages
+    const guard = withDemos(guardFor('guides'));
+
+    expect(messageFrom(guard, 'virtual:kolay/docs/nope')).not.toContain('demos()');
+  });
+
+  test('lists demos in every guard error, not just the docs ones', () => {
+    const guard = withDemos(guardFor('guides'), '#demos/foo');
+
+    for (const id of ['virtual:kolay', 'virtual:kolay/docs', 'virtual:kolay/pages/x']) {
+      expect(messageFrom(guard, id)).toContain('#demos/foo/<demo>');
+    }
   });
 
   test('throws helpfully for a bare virtual:kolay import', () => {
