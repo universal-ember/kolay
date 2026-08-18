@@ -248,17 +248,63 @@ function groupSource(group) {
   };
 }
 
-const DOCS_MODULE_PREFIX = 'virtual:kolay/docs/';
-const SEARCH_MODULE_PREFIX = 'virtual:kolay/search/';
+const VIRTUAL_PREFIX = 'virtual:kolay/';
+const DOCS_MODULE_PREFIX = `${VIRTUAL_PREFIX}docs/`;
+const SEARCH_MODULE_PREFIX = `${VIRTUAL_PREFIX}search/`;
+
+/**
+ * Every namespace under `virtual:kolay/`. Each one is per-group: the
+ * module id is `virtual:kolay/<namespace>/<groupName>`.
+ */
+const GROUP_NAMESPACES = [
+  { name: 'docs', describe: `a group's manifest, pages, meta, and addRoutes` },
+  { name: 'search', describe: `a group's search entries (a default export)` },
+];
+
+/**
+ * The virtual modules users are meant to import that live outside the
+ * `virtual:kolay/` namespace — a typo'd `virtual:kolay/setup` should point
+ * at 'kolay/setup' rather than at the list of per-group modules.
+ *
+ * The `kolay/*:virtual` modules setupKolay imports (compiled-docs,
+ * api-docs, demos, import-entrypoints) are deliberately absent: they're
+ * implementation details of setupKolay, so neither the suggestions nor the
+ * known-imports list should invite anyone to import them.
+ */
+const PUBLIC_MODULES = ['kolay/setup'];
 
 function docsModuleId(groupName) {
   return `${DOCS_MODULE_PREFIX}${groupName}`;
 }
 
 /**
- * When 'virtual:kolay/docs/<group>' is imported for a group no docs()
- * usage declares, fail with an actionable error instead of the bundler's
- * generic "failed to resolve import".
+ * The known-imports blurb every guard error ends with.
+ */
+function knownImports(groups) {
+  const namespaces = GROUP_NAMESPACES.map(
+    ({ name, describe }) => `  virtual:kolay/${name}/<group> — ${describe}`
+  ).join('\n');
+
+  return (
+    `Known virtual imports:\n${namespaces}\n` +
+    `  ${PUBLIC_MODULES.join('\n  ')}\n` +
+    `Declared groups: ${groups.join(', ')}`
+  );
+}
+
+/**
+ * A guard error: what went wrong (and how to fix it), then the list of
+ * what kolay does provide.
+ */
+function guardError(explanation, groups) {
+  return new Error(`${explanation}\n\n${knownImports(groups)}`);
+}
+
+/**
+ * When an import under `virtual:kolay/` isn't one kolay provides — an
+ * unknown namespace, or a group no docs() usage declares — fail with an
+ * actionable error instead of the bundler's generic "failed to resolve
+ * import".
  *
  * (Runs after this usage's own modules have had their chance to resolve;
  *  known groups from other usages are left alone so their instances can
@@ -266,21 +312,57 @@ function docsModuleId(groupName) {
  *
  * @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions}
  */
-export function docsVirtualGuard(state) {
+export function virtualGuard(state) {
   return {
-    name: 'kolay:docs-virtual-guard',
+    name: 'kolay:virtual-guard',
     resolveId(id) {
-      if (!id.startsWith(DOCS_MODULE_PREFIX)) return;
+      const [withoutQuery = ''] = id.split('?');
 
-      const [groupName = ''] = id.slice(DOCS_MODULE_PREFIX.length).split('?');
-      const known = ['Home', ...allGroups(state).map((group) => group.name)];
+      // `virtual:kolay` itself is caught too — it isn't a module either
+      if (withoutQuery !== VIRTUAL_PREFIX.slice(0, -1) && !withoutQuery.startsWith(VIRTUAL_PREFIX))
+        return;
 
-      if (known.includes(groupName)) return;
+      const subPath = withoutQuery.slice(VIRTUAL_PREFIX.length);
+      const slash = subPath.indexOf('/');
+      const namespace = slash === -1 ? subPath : subPath.slice(0, slash);
+      const groupName = slash === -1 ? '' : subPath.slice(slash + 1);
+      const groups = ['Home', ...allGroups(state).map((group) => group.name)];
 
-      throw new Error(
+      if (!namespace) {
+        throw guardError(
+          `'${id}' does not exist: every kolay virtual import names a namespace ` +
+            `and a group, as in 'virtual:kolay/docs/${groups[1] ?? 'Home'}'.`,
+          groups
+        );
+      }
+
+      if (!GROUP_NAMESPACES.some((candidate) => candidate.name === namespace)) {
+        // `virtual:kolay/setup` for 'kolay/setup'
+        const suggestion = PUBLIC_MODULES.find((candidate) => candidate === `kolay/${subPath}`);
+
+        throw guardError(
+          `'${id}' does not exist: kolay provides no '${namespace}' virtual imports.` +
+            (suggestion ? ` Did you mean '${suggestion}'?` : ''),
+          groups
+        );
+      }
+
+      if (!groupName) {
+        throw guardError(
+          `'${id}' does not exist, because it names no group — ` +
+            `'virtual:kolay/${namespace}' imports are per-group, as in ` +
+            `'virtual:kolay/${namespace}/${groups[1] ?? 'Home'}'.`,
+          groups
+        );
+      }
+
+      if (groups.includes(groupName)) return;
+
+      throw guardError(
         `'${id}' does not exist, because no docs() usage declares a group named '${groupName}'. ` +
           `Add docs('${groupName}', { src: ... }) — or docs(<a path or URL ending in '${groupName}'>) — ` +
-          `to your plugins. Declared groups: ${known.join(', ')}`
+          `to your plugins.`,
+        groups
       );
     },
   };
