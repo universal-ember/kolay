@@ -10,7 +10,7 @@
 
 ## API Reference
 
-API Reference generated via:
+This api reference comes from:
 
 ```hbs live no-shadow preview below
 <APIDocs

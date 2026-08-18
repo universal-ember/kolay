@@ -1,11 +1,11 @@
 # Helper utilities
 
-These utilities can be imported and used within your own projects, as they are already used within `kolay`.
-This should allow users to build their own specific set of outputs using the same underlying tools that `kolay` uses.
+You can import these utilities into your own project. `kolay` uses them too.
+With these tools you can build your own output, with the same tools that `kolay` uses.
 
 ## `gitRef`
 
-Returns the short git SHA of the current commit. Useful for displaying the deployed version somewhere in your app.
+This function returns the short git SHA of the current commit. Use it to show the deployed version in your app.
 
 In an ESM environment:
 
@@ -16,7 +16,7 @@ import { gitRef } from "kolay/build";
 version: gitRef();
 ```
 
-In a CJS environment (e.g. `ember-cli-build.js`):
+In a CJS environment, for example `ember-cli-build.js`:
 
 ```js
 const { gitRef } = require("kolay/build/legacy");

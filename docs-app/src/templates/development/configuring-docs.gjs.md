@@ -1,8 +1,8 @@
 # `docs(...)`
 
-Kolay requires some build-time static analysis to function.
+Kolay needs some static analysis at build time.
 
-`docs(...)` is the only required plugin. This generates the navigation and information about how Kolay's runtime code will fetch the markdown documents deployed with the app's static assets. To also generate api docs from your libraries' type declarations, add the [`apiDocs(...)`][plugin-typedoc] plugin.
+`docs(...)` is the only necessary plugin. It generates the navigation. It also generates the information that the runtime code of kolay uses to get the markdown documents from the static assets of the app. To generate api docs from the type declarations of your libraries, add the [`apiDocs(...)`][plugin-typedoc] plugin.
 
 [plugin-docs]: /development/configuring-docs.md
 [plugin-typedoc]: /TypeDoc/plugin/api-docs.md
@@ -32,13 +32,13 @@ export default defineConfig({
 });
 ```
 
-The second argument holds the group's markdown options (`src`, `remarkPlugins`, `rehypePlugins`, `scope`).
+The second argument holds the markdown options for the group: `src`, `remarkPlugins`, `rehypePlugins`, and `scope`.
 
 ## `scope`
 
-The `scope` option lets you make components, helpers, or other values available inside `.gjs.md` live codefences _at build time_, without needing to import them in each codefence.
+The `scope` option makes components, helpers, and other values available in a `.gjs.md` live code fence _at build time_. You do not import them in each code fence.
 
-This is a string of import statements that gets prepended to every `.gjs.md` file during compilation. Anything imported via `scope` can be used directly in `hbs` and `gjs` live codefences.
+It is a string of import statements. The compiler puts the string at the top of every `.gjs.md` file. You can use everything that `scope` imports directly in an `hbs` or `gjs` live code fence.
 
 ```js
 // vite.config.js
@@ -59,7 +59,7 @@ export default defineConfig({
 });
 ```
 
-With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `<MyCustomComponent />` in live codefences without an explicit import:
+With this config, every `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `<MyCustomComponent />` in a live code fence with no explicit import:
 
 ````md
 # My Page
@@ -71,18 +71,18 @@ With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `
 ```
 ````
 
-> **Note:** `scope` only applies to `.gjs.md` files (build-time compiled). For `.md` files (runtime compiled), use the `topLevelScope` option in `setupKolay()` instead.
+> **Note:** `scope` applies only to a `.gjs.md` file, which compiles at build time. For a `.md` file, which compiles at runtime, use the `topLevelScope` option of `setupKolay()`.
 
 ## Conventions
 
-There are a few ways you can collect docs:
+You can collect the docs in two ways:
 
-- co-located pages: anything in `app/templates` / `src/templates` is picked up automatically (no group, served from the root URL space) — even with zero-argument `docs()`.
-- a group per `docs()` usage: the `src` can point at a `docs` folder anywhere in (or outside) your project — including another package's `components` folder, picking up all markdown found there. This is useful for co-locating docs with their implementations.
+- Co-located pages. Kolay finds every page in `app/templates` and `src/templates` for you. These pages have no group, and they are served from the root URL space. This also happens when `docs()` gets no arguments.
+- One group for each `docs()` usage. The `src` can point at a `docs` folder inside or outside your project. It can also point at the `components` folder of another package, and kolay finds all of the markdown there. This lets you keep the docs next to the code.
 
 ## Using the plugin multiple times
 
-`docs()` is used once per group — so multiple groups means multiple usages, each with its own markdown processing (`remarkPlugins`, `rehypePlugins`, `scope`) if needed:
+Use `docs()` one time for each group. Each usage can have its own markdown options: `remarkPlugins`, `rehypePlugins`, and `scope`:
 
 ```js
 // vite.config.js
@@ -98,11 +98,11 @@ export default defineConfig({
 });
 ```
 
-All usages contribute to _one_ manifest: every group shows up in `docsManager`, `<GroupNav />`, etc, exactly as if they had been passed to a single `docs()` call. Each usage's markdown options apply to the `.gjs.md` files under that usage's `groups` — so the `api` group above gets `<APIDocs />` in scope while `guides` does not.
+All of the usages contribute to _one_ manifest. Every group appears in `docsManager` and `<GroupNav />`, as if one `docs()` call received them. The markdown options of a usage apply only to the `.gjs.md` files of that usage. So the `api` group above has `<APIDocs />` in scope, and the `guides` group does not.
 
-Group names must be unique across all usages.
+A group name must be unique across all of the usages.
 
-Each group is then mounted as its own route — primarily through its virtual module's `addRoutes`, which is pre-scoped to the group and brings all of its docs into the route it was called from, no matter what the route's path is:
+Then each group is mounted as its own route. Use the `addRoutes` of its virtual module. That function is scoped to the group. It brings all of the docs of the group into the route that calls it, whatever the path of that route is:
 
 ```js
 // app/router.js
@@ -115,19 +115,19 @@ Router.map(function () {
 });
 ```
 
-(The equivalent lower-level form is `addRoutes(this, "guides")` from `kolay`; an unscoped `addRoutes(this)` inside a route serves whichever group the URL names, so its path must match the group's name.)
+The same thing at a lower level is `addRoutes(this, "guides")` from `kolay`. An `addRoutes(this)` with no group serves the group that the URL names. The path of the route must then be the same as the name of the group.
 
-Scoped mounts get mount-space URLs everywhere: `<PageNav />` / `<GroupNav />` links, active states, and index redirects all use the mount's URL rather than `/GroupName`. And since every mount is its own route, every mount can have its own route template — its own layout and design per group (this site's Runtime and TypeDoc sections do exactly that).
+A scoped mount gets mount-space URLs everywhere. The links in `<PageNav />` and `<GroupNav />`, the active states, and the index redirects all use the URL of the mount, and not `/GroupName`. Every mount is its own route, so every mount can have its own route template. Each group can then have its own layout and design. The Runtime and TypeDoc sections of this site do this.
 
 ## Each group's virtual module
 
-Every `docs()` usage enables a virtual module for its group — `docs('foo')` enables `virtual:kolay/docs/foo`:
+Every `docs()` usage enables a virtual module for its group. `docs('foo')` enables `virtual:kolay/docs/foo`:
 
 ```js
 import { addRoutes as addFooRoutes, manifest } from "virtual:kolay/docs/foo";
 ```
 
-- `addRoutes(context)` — pre-scoped route registration: it brings the group's docs into whatever route it's called from, so the router example above can also be written as:
+- `addRoutes(context)` registers the routes of the group. It brings the docs of the group into the route that calls it. You can also write the router example above like this:
 
   ```js
   // app/router.js
@@ -140,9 +140,9 @@ import { addRoutes as addFooRoutes, manifest } from "virtual:kolay/docs/foo";
   });
   ```
 
-- `manifest` — the group's own manifest (`{ name, list, tree }`)
-- `pages` — the group's page loaders, like `import.meta.glob`
-- `meta` — where the source lives:
+- `manifest` is the manifest of the group (`{ name, list, tree }`).
+- `pages` holds the page loaders of the group, like `import.meta.glob`.
+- `meta` tells you where the source is:
 
   ```js
   import { meta } from "virtual:kolay/docs/foo";
@@ -151,16 +151,16 @@ import { addRoutes as addFooRoutes, manifest } from "virtual:kolay/docs/foo";
   meta.docsPath; // the repo-relative path to this source's docs, e.g. 'docs'
   ```
 
-  `url` comes from the `repository` field of the package.json at the repository root; `docsPath` is where the `docs()` source sits inside that repository — together they can build "edit this page" links.
+  `url` comes from the `repository` field of the `package.json` at the root of the repository. `docsPath` is the location of the `docs()` source in that repository. Together they can build an "edit this page" link.
 
-  A `meta.jsonc` (or `meta.json`) at the root of the source mixes its content in — put anything you want alongside the derived fields (its keys win over them). This is the same file that can hold the source's top-level [`order`](/development/ordering-pages.md), so that key comes along when present.
+  A `meta.jsonc` or `meta.json` file at the root of the source adds its content to `meta`. You can put any keys there, next to the derived fields. A key in the file replaces a derived field with the same name. This file can also hold the top-level [`order`](/development/ordering-pages.md) of the source, so that key comes with the others.
 
-The co-located pages have one too: `virtual:kolay/docs/Home` (its source is the templates directory, so that is what `docsPath` and `meta.jsonc` refer to).
+The co-located pages also have a virtual module: `virtual:kolay/docs/Home`. Its source is the templates directory, so `docsPath` and `meta.jsonc` refer to that directory.
 
-Group info across _all_ groups comes from the metamanifest, `kolay/compiled-docs:virtual` — it lists every group and how to load its module. `setupKolay()` loads all of them in parallel behind the scenes (via `loadCompiledDocs` from `kolay`), so by default the whole site's navigation is available up front.
+Information about _all_ of the groups comes from the metamanifest, `kolay/compiled-docs:virtual`. It lists every group, and how to load the module of each group. `setupKolay()` loads all of the modules in parallel with `loadCompiledDocs` from `kolay`. By default, the navigation for the whole site is available immediately.
 
-Types for these modules ship in `kolay/virtual` (add it to your tsconfig's `types`).
+The types for these modules are in `kolay/virtual`. Add that entry to the `types` array of your tsconfig.
 
-Pair each mount with [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) in the mount's route (e.g. `routes/help.js`) so that visiting `/help` redirects to the first page in the group.
+Add [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) to the route of each mount, for example `routes/help.js`. Then a visit to `/help` redirects to the first page in the group.
 
-> **Note:** multiple usages are only supported with Vite (the usages discover each other while vite resolves its config). The same applies to [`apiDocs()`](/TypeDoc/plugin/api-docs.md), whose usages merge their packages.
+> **Note:** more than one usage works only with Vite. The usages find each other while vite resolves its config. The same applies to [`apiDocs()`](/TypeDoc/plugin/api-docs.md), where the usages merge their packages.

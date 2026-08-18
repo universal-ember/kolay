@@ -1,15 +1,15 @@
 # kolay
 
-Documentation system for the the `@universal-ember` family of projects.
+Documentation system for the `@universal-ember` family of projects.
 
 
 ## Features
 
 ### Use Markdown
 
-- from any folder, any project (good for monorepos)
-- scales infinitely with your project size, as compiling the pages is done on-demand, rather than on-deploy
-- any codefence can become a live demo with the `live` tag
+- Write pages in any folder, in any project. This works well for a monorepo.
+- The build time does not grow with the number of pages. The browser compiles each page when a reader opens it.
+- Any code fence can become a live demo. Add the `live` tag.
   ~~~md
   Some prose here about the demo
 
@@ -22,13 +22,13 @@ Documentation system for the the `@universal-ember` family of projects.
 
 ### Use JSDoc
 
-- JSDoc / TypeDoc is renderable via the `<APIDocs />` component
+- The `<APIDocs />` component shows the docs that JSDoc and TypeDoc generate.
   ~~~md
   ## API Reference
 
   <APIDocs @package="my-library" @module="..." @name="theExport" />
   ~~~
-- render examples from your jsdoc for interactive demonstration of concepts using 
+- The examples in your JSDoc can be live demos:
   ~~~
   text here
 
@@ -39,4 +39,4 @@ Documentation system for the the `@universal-ember` family of projects.
 
 ### Navigation 
 
-- generate navigation based on convention based file layout
+- Kolay generates the navigation from the layout of your files.

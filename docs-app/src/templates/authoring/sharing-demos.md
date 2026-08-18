@@ -1,6 +1,6 @@
 # Sharing demos
 
-Live codefences are great for small examples, but real demos outgrow them: you want the same demo on several pages, editor tooling while writing it, and room for more than one component. The `demos()` plugin gives a directory of components an import alias every live fence understands:
+A live code fence works well for a small example. A real demo needs more: the same demo on several pages, editor support while you write it, and space for more than one component. The `demos()` plugin gives a directory of components an import alias that every live fence understands:
 
 ```js
 // vite.config.js
@@ -11,7 +11,7 @@ export default {
 };
 ```
 
-Every file in the directory becomes importable under the `as` specifier, used verbatim — `demos/counter.gjs` is `#demos/site/counter`:
+Every file in the directory becomes importable under the `as` specifier, exactly as you wrote it. So `demos/counter.gjs` is `#demos/site/counter`:
 
 ````md
 ```gjs live
@@ -29,13 +29,13 @@ import Counter from "#demos/site/counter";
 <template><Counter /></template>
 ```
 
-This page is a `.md` file, so the fence above compiles in the browser — the import resolves through the runtime compiler with no [`modules` configuration](/install/index.md): `setupKolay` learns every `demos()` alias automatically. In `.gjs.md` files the same import compiles through the build, like any other module.
+This page is a `.md` file, so the fence above compiles in the browser. The import resolves through the runtime compiler with no [`modules` configuration](/install/index.md), because `setupKolay` gets every `demos()` alias for you. In a `.gjs.md` file, the same import compiles through the build, like any other module.
 
 ## Conventions
 
-- File extensions are dropped: `counter.gjs`, `counter.gts`, `counter.js`, and `counter.ts` are all imported as `…/counter`
-- `as` may be any valid import URI; the `#` prefix (Node's [subpath-import](https://nodejs.org/api/packages.html#subpath-imports) convention) makes it unmistakably not-an-npm-package
-- An `index` file provides its directory: `demos/index.gjs` is `#demos/site`, and `demos/forms/index.gjs` is `#demos/site/forms`
-- Use the plugin once per directory, each usage with its own `as`
+- The file extension is removed. You import `counter.gjs`, `counter.gts`, `counter.js`, and `counter.ts` all as `…/counter`.
+- `as` can be any valid import URI. The `#` prefix is the [subpath-import](https://nodejs.org/api/packages.html#subpath-imports) convention of Node. It shows clearly that the specifier is not an npm package.
+- An `index` file supplies its directory. `demos/index.gjs` is `#demos/site`, and `demos/forms/index.gjs` is `#demos/site/forms`.
+- Use the plugin one time for each directory. Give each usage its own `as`.
 
-For letting fences import an entire npm package (rather than your own demo files), see [`importEntrypoints()`](/development/configuring-import-entrypoints.md).
+To let a fence import a complete npm package, and not your own demo files, read [`importEntrypoints()`](/development/configuring-import-entrypoints.md).

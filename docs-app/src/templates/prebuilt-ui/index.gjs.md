@@ -2,14 +2,18 @@
 
 [GitHub](https://github.com/universal-ember/ember-primitives/tree/main/packages/docs-support) · [npm](https://www.npmjs.com/package/@universal-ember/docs-support)
 
-kolay ships headless building blocks — this site assembles its own UI from them (that's what the [Development](/development/rendering-pages) section walks through). If you'd rather start from a finished docs UI, `@universal-ember/docs-support` is the prebuilt one: it is what [ember-primitives](https://ember-primitives.pages.dev), [universal-ember/form](https://github.com/universal-ember/form), and the other universal-ember projects use for their kolay-powered docs sites.
+kolay supplies headless building blocks. This site builds its own UI from them, which the [Development](/development/rendering-pages) section explains. To start from a finished docs UI, use `@universal-ember/docs-support`. [ember-primitives](https://ember-primitives.pages.dev), [universal-ember/form](https://github.com/universal-ember/form), and the other universal-ember projects use it for their kolay docs sites.
 
-Two components carry the whole site:
+Two components make the complete site:
 
-- `<Shell>` wraps the app. It pulls in the full site CSS — prose typography, shiki code-fence themes, header and nav chrome — and keeps the light/dark body classes in sync with `ember-primitives/color-scheme`.
-- `<PageLayout>` is the whole docs page: a sticky header with `:logoLink` and `:topRight` blocks, a responsive side nav (a drawer on small screens) rendering your kolay manifest, and kolay's `<Page>` fully wired — a shimmer loader while a page loads and compiles, your `:error` block when something fails, the rendered prose (with scroll reset) on success, and an optional `:editLink` block.
+- `<Shell>` wraps the app. It brings in all of the site CSS: the prose typography, the shiki code-fence themes, and the header and nav styles. It also keeps the light and dark body classes in step with `ember-primitives/color-scheme`.
+- `<PageLayout>` is the complete docs page. It has a sticky header with the `:logoLink` and `:topRight` blocks. It has a side nav that renders your kolay manifest, and that becomes a drawer on a small screen. It also has the `<Page>` of kolay, with all of its parts:
+  - a shimmer loader while a page loads and compiles
+  - your `:error` block after a failure
+  - the prose on success, with the scroll at the top
+  - an optional `:editLink` block
 
-Alongside them: `<IndexPage>` for a landing page, `<Callout>` for asides in your markdown, `<ThemeToggle>`, `<Article>`, link components, and the standalone error/loader pieces (`<OopsError>`, `<PageError>`, `<PageLoader>`).
+There are more components. `<IndexPage>` makes a landing page, and `<Callout>` makes a note in your markdown. There are also `<ThemeToggle>`, `<Article>`, the link components, and the separate error and loader components (`<OopsError>`, `<PageError>`, `<PageLoader>`).
 
 ## Wiring it up
 
@@ -26,7 +30,7 @@ import { Shell } from "@universal-ember/docs-support";
 </template>
 ```
 
-and the docs route template is one `<PageLayout>`:
+The docs route template is one `<PageLayout>`:
 
 ```gts
 // app/templates/page.gts
@@ -63,6 +67,6 @@ export default class DocsPage extends Component {
 }
 ```
 
-(The edit link builds from the group's [`meta`](/development/configuring-docs) — the repository URL and the repo-relative docs path come from your repository's own package.json.)
+The edit link comes from the [`meta`](/development/configuring-docs) of the group. The repository URL and the docs path in the repository come from the `package.json` of your repository.
 
-Everything else is regular kolay: `docs()` in the vite config, `setupKolay` in the application route, `addRoutes` in the router — [Install](/install/index) covers that part.
+Everything else is normal kolay: `docs()` in the vite config, `setupKolay` in the application route, and `addRoutes` in the router. [Install](/install/index) covers that part.

@@ -1,8 +1,8 @@
 # Testing
 
-Testing will require a setup phase so that only your tests that actually need the kolay behavior will cause the kolay behavior to be used.
+A test needs a setup step. Then only the tests that need the kolay behavior use it.
 
-If using qunit,
+With qunit:
 
 ```js
 import { setupKolay } from "kolay/test-support";
@@ -17,12 +17,12 @@ module("my test group", function (hooks) {
 });
 ```
 
-In ember application tests, the `setup` method from the docs service
-will have already been called from the application route, so this isn't needed.
+In an ember application test, the application route already called the `setup` method
+of the docs service. There you do not need this.
 
 ## `selectGroup`
 
-If your docs have multiple groups (one `docs()` build-plugin usage per group), you can switch the active group in tests using `selectGroup`. This is useful when you need to test content or behavior that lives under a specific docs group.
+Your docs can have more than one group, with one `docs()` usage for each group. `selectGroup` changes the active group in a test. Use it to test the content or the behavior of one group.
 
 ```js
 import { setupKolay, selectGroup } from "kolay/test-support";
@@ -39,4 +39,4 @@ module("my test group", function (hooks) {
 });
 ```
 
-The first argument can be the `owner` or any object that has had `setOwner` applied to it (such as `this` inside a test). The second argument is the group name — it defaults to `'root'` if omitted.
+The first argument is the `owner`, or any object that received an owner from `setOwner`, for example `this` in a test. The second argument is the group name. If you omit it, the name is `'root'`.

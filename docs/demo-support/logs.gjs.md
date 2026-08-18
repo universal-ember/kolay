@@ -1,12 +1,12 @@
 # `<Logs />`
 
-This component is useful for demos which would log things to the browser console, and displays the log in the viewport so that users don't need to actully open their dev tools, allowing the invocation site to keep its layout.
+Use this component in a demo that writes to the browser console. It shows the log in the page, so a reader does not open the dev tools. The layout of the demo stays as it is.
 
-Messages are still logged to the console as to not break the expected behavior of `console` apis.
+The component also writes each message to the console, so the `console` APIs behave as you expect.
 
-This component has a max-height,and will auto-scroll as new messages are printed.
+The component has a maximum height. It scrolls down as each new message arrives.
 
-In this demo, a `console` message is printed every character entry in the input.
+In this demo, the input writes a `console` message for each character that you type.
 
 ```gjs live no-shadow preview
 import { Form } from 'ember-primitives';

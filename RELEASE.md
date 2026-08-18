@@ -1,27 +1,27 @@
 # Release Process
 
-Releases in this repo are mostly automated using [release-plan](https://github.com/embroider-build/release-plan/). Once you label all your PRs correctly (see below) you will have an automatically generated PR that updates your CHANGELOG.md file and a `.release-plan.json` that is used to prepare the release once the PR is merged.
+[release-plan](https://github.com/embroider-build/release-plan/) does most of the release work in this repository. First, label all of your pull requests correctly, as shown below. Then release-plan opens a pull request for you. That pull request updates `CHANGELOG.md` and `.release-plan.json`. The merge of that pull request prepares the release.
 
 ## Preparation
 
-Since the majority of the actual release process is automated, the remaining tasks before releasing are:
+Two tasks are left for you before a release:
 
-- correctly labeling **all** pull requests that have been merged since the last release
-- updating pull request titles so they make sense to our users
+- Label **all** pull requests that were merged after the last release.
+- Update the pull request titles, so that our users understand them.
 
-Some great information on why this is important can be found at [keepachangelog.com](https://keepachangelog.com/en/1.1.0/), but the overall
-guiding principle here is that changelogs are for humans, not machines.
+[keepachangelog.com](https://keepachangelog.com/en/1.1.0/) explains why this is important.
+The principle is this: a changelog is for humans, not for machines.
 
-When reviewing merged PR's the labels to be used are:
+Use one of these labels on each merged pull request:
 
-- breaking - Used when the PR is considered a breaking change.
-- enhancement - Used when the PR adds a new feature or enhancement.
-- bug - Used when the PR fixes a bug included in a previous release.
-- documentation - Used when the PR adds or updates documentation.
-- internal - Internal changes or things that don't fit in any other category.
+- `breaking` — the pull request is a breaking change.
+- `enhancement` — the pull request adds a feature.
+- `bug` — the pull request corrects a fault from an earlier release.
+- `documentation` — the pull request adds or updates documentation.
+- `internal` — an internal change, or a change that fits no other category.
 
-**Note:** `release-plan` requires that **all** PRs are labeled. If a PR doesn't fit in a category it's fine to label it as `internal`
+**Note:** `release-plan` needs a label on **all** pull requests. If a pull request fits no other category, label it `internal`.
 
 ## Release
 
-Once the prep work is completed, the actual release is straight forward: you just need to merge the open [Plan Release](https://github.com/universal-ember/kolay/pulls?q=is%3Apr+is%3Aopen+%22Prepare+Release%22+in%3Atitle) PR
+After the preparation, the release is one step. Merge the open [Plan Release](https://github.com/universal-ember/kolay/pulls?q=is%3Apr+is%3Aopen+%22Prepare+Release%22+in%3Atitle) pull request.

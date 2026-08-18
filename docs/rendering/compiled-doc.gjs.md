@@ -1,12 +1,12 @@
 # `compiledDoc`
 
-Reactive load + compile + error state for a single document that you load yourself.
+This resource gives you the load state, the compile state, and the error state of one document that you load yourself.
 
-This is the same machinery that [`selected`](/Runtime/utilities/selected.md) (and therefore `<Page />`) uses for rendering the current page — extracted so that documents fetched any other way (`fetch`, `import()`, an API, inline strings, etc.) get the same behavior:
+[`selected`](/Runtime/utilities/selected.md), and therefore `<Page />`, uses the same code to render the current page. Kolay exports that code, so a document from any other source gets the same behavior. The source can be `fetch`, `import()`, an API, or a string in your code:
 
-- markdown strings are compiled with your site-wide compiler configuration (remark / rehype plugins, top-level scope, extra modules)
-- while a re-load is happening, the previously rendered document is kept — no flash of emptiness
-- `settled()` in tests waits for the fetching and compiling to finish
+- A markdown string compiles with your site-wide compiler configuration: the remark plugins, the rehype plugins, the top-level scope, and the extra modules.
+- During a new load, the previous document stays on screen. The page does not become empty.
+- In a test, `settled()` waits for the fetch and the compile to finish.
 
 ```gjs
 import Component from '@glimmer/component';
@@ -31,19 +31,19 @@ export default class MyDocPage extends Component {
 }
 ```
 
-The compiler is configured app-wide via [`setupKolay`](/install/index.md) (or `setupCompiler` from `ember-repl/test-support` in tests), so that must have run before a document loads — there is nothing to pass, link, or destroy per call site.
+You configure the compiler for the whole app with [`setupKolay`](/install/index.md). In a test, use `setupCompiler` from `ember-repl/test-support`. This must happen before a document loads. At each call site, you pass nothing, you link nothing, and you destroy nothing.
 
 ## The `load` function
 
-The argument is a function that returns the document, in whichever of these shapes is convenient:
+The argument is a function that returns the document. The return value can have any of these shapes:
 
-- a string of markdown (compiled in the browser)
-- an already-compiled component
-- a module whose `default` export is either of the above (e.g.: the result of `import('...')`)
-- a `Promise` resolving to any of the above
-- `undefined`, while there is nothing to load yet (the state stays pending)
+- A string of markdown, which compiles in the browser.
+- A component that is already compiled.
+- A module with one of the two shapes above as its `default` export, for example the result of `import('...')`.
+- A `Promise` that resolves to any of the shapes above.
+- `undefined`, while there is nothing to load. The state then stays pending.
 
-The function is reactive: any tracked data read _synchronously_ (before the first `await`) will cause the document to re-load when that data changes — e.g. reading `this.args.slug` in the example above re-fetches when the slug changes.
+The function is reactive. It reads the tracked data _synchronously_, before the first `await`. The document then loads again each time that data changes. For example, the code above reads `this.args.slug`, so it fetches again when the slug changes.
 
 ## Example
 
@@ -75,7 +75,7 @@ const doc = compiledDoc(() =>
 </template>
 ```
 
-If you already have the markdown synchronously and don't need the keep-latest behavior, the smaller [`Compiled`](/Runtime/rendering/compiled.md) helper may be all you need.
+You can have the markdown already, and you can also not need the keep-latest behavior. Then use the smaller [`Compiled`](/Runtime/rendering/compiled.md) helper.
 
 ## API Reference
 

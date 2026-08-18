@@ -1,6 +1,6 @@
 # kolay.config.js
 
-One config file describes your whole kolay setup. The `kolay` vite plugin reads it and generates the [`docs()`](/development/configuring-docs.md), [`apiDocs()`](/development/configuring-api-docs.md), [`demos()`](/authoring/sharing-demos.md), and [`importEntrypoints()`](/development/configuring-import-entrypoints.md) plugins it describes:
+One config file describes your complete kolay setup. The `kolay` vite plugin reads the file. It then generates the [`docs()`](/development/configuring-docs.md), [`apiDocs()`](/development/configuring-api-docs.md), [`demos()`](/authoring/sharing-demos.md), and [`importEntrypoints()`](/development/configuring-import-entrypoints.md) plugins that the file describes:
 
 ```js
 // vite.config.js
@@ -34,11 +34,11 @@ export default defineConfig({
 });
 ```
 
-`defineConfig` types the config and validates it as the file is evaluated. This site's own [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) and [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) use this form.
+`defineConfig` gives the config its types. It also validates the config while the file is evaluated. The [vite.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/vite.config.js) and [kolay.config.js](https://github.com/universal-ember/kolay/blob/main/docs-app/kolay.config.js) of this site use this form.
 
 ## Keys
 
-Every key is optional. If a key isn't specified, the plugin for it is not included in your app. Relative paths resolve from the config file's directory, and `redirects` has its own page: [Redirects](/development/redirects.md).
+Every key is optional. If you do not give a key, your app does not include the plugin for it. A relative path resolves from the directory of the config file. `redirects` has its own page: [Redirects](/development/redirects.md).
 
 ### `KolayConfigInput`
 
@@ -66,6 +66,6 @@ Every key is optional. If a key isn't specified, the plugin for it is not includ
 
 ## Config file forms
 
-The file is discovered with [lilconfig](https://github.com/antonk52/lilconfig): `kolay.config.js` (or `.cjs` / `.mjs`), `.kolayrc` (JSON) or `.kolayrc.json` / `.js` / `.cjs` / `.mjs`, or a `"kolay"` key in `package.json`, each also inside a `.config/` or `config/` directory. `markdownOptions` usually contains plugin functions, so it needs a JS form; JSON forms can hold everything else.
+[lilconfig](https://github.com/antonk52/lilconfig) finds the file. It looks for `kolay.config.js` (or `.cjs` or `.mjs`), `.kolayrc` (JSON), `.kolayrc.json` (or `.js`, `.cjs`, `.mjs`), or a `"kolay"` key in `package.json`. Each of these can also be in a `.config/` or `config/` directory. `markdownOptions` usually holds plugin functions, so it needs a JS form. A JSON form can hold all of the other keys.
 
-The individual plugins keep working, alone or alongside `kolay()`.
+Each plugin also works on its own, or together with `kolay()`.

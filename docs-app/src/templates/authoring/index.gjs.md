@@ -1,23 +1,23 @@
 # Authoring
 
-Docs are written in markdown. This section covers the two file formats, the [supported markdown features](/authoring/markdown-features.md), [live code fences](/authoring/code-fences.md) for interactive demos, [links and images](/authoring/links-and-images.md), and [extending markdown with plugins](/authoring/extending-markdown.md).
+You write the docs in markdown. This section covers the two file formats. It also covers the [markdown features](/authoring/markdown-features.md), the [live code fences](/authoring/code-fences.md) for demos, the [links and images](/authoring/links-and-images.md), and [how to extend markdown with plugins](/authoring/extending-markdown.md).
 
-Kolay supports two markdown file formats: `.md` and `.gjs.md`. Both can contain prose, code snippets, and live demos, but they differ in _when_ and _how_ they are compiled.
+Kolay supports two markdown file formats: `.md` and `.gjs.md`. Each format can hold prose, code snippets, and live demos. They differ in _when_ and _how_ they compile.
 
 ## `.md` — Runtime compiled
 
-Plain `.md` files are shipped as raw text with your app's static assets. When a user navigates to a page backed by a `.md` file, kolay fetches the text and compiles it in the browser using `ember-repl`.
+A plain `.md` file goes out as raw text with the static assets of your app. When a reader opens a page that comes from a `.md` file, kolay gets the text and compiles it in the browser with `ember-repl`.
 
 **Pros:**
 
-- No build cost — adding more `.md` pages does not slow down your build
-- Scales to any number of pages with a flat build time
-- Great for large doc sites or monorepos with many packages
+- No build cost. More `.md` pages do not make the build slower.
+- The build time stays the same for any number of pages.
+- This helps a large docs site, or a monorepo with many packages.
 
 **Cons:**
 
-- Slightly slower page transitions (compilation happens on each visit, though results are cached in an LRU)
-- Demo imports are not resolved by the build. The runtime compiler resolves imports only from what `setupKolay()` provides: every library your `.md` demos import — at any depth, including anything those libraries lead the demos to import — must be declared in `modules` (values can also be handed to the scope directly via `topLevelScope`). An import the map doesn't declare fails to resolve, even though the library sits installed in `node_modules`. The Setup section of [Install](/install/index.md) shows the map being configured; [`importEntrypoints()`](/development/configuring-import-entrypoints.md) maintains it for whole packages automatically.
+- Page transitions are a little slower. The page compiles on each visit, but an LRU cache holds the results.
+- The build does not resolve the imports of a demo. The runtime compiler resolves an import only from what `setupKolay()` gives it. Declare in `modules` every library that your `.md` demos import, at any depth. This includes the libraries that those libraries make the demos import. You can also give values to the scope with `topLevelScope`. An import that the map does not declare fails to resolve, even when the library is installed in `node_modules`. The Setup section of [Install](/install/index.md) shows the configuration of the map. [`importEntrypoints()`](/development/configuring-import-entrypoints.md) keeps the map correct for a complete package.
 
 ### Example
 
@@ -33,19 +33,19 @@ Some prose here.
 
 ## `.gjs.md` — Build-time compiled
 
-Files ending in `.gjs.md` are compiled during the build (by the `docs()` plugin). The markdown is converted to a GJS component at build time, much like a regular `.gjs` file. Live codefences become real component invocations in the output.
+The `docs()` plugin compiles a `.gjs.md` file during the build. The build converts the markdown into a GJS component, like a normal `.gjs` file. A live code fence becomes a real component invocation in the output.
 
 **Pros:**
 
-- Instant page transitions — the compiled component is code-split and loaded like any other module
-- Live demos are real GJS components, so you get full build-time error checking
-- Demo imports resolve through the build, like any source file — anything installed works, at any depth, with no registration
-- You can use the `scope` build option to make components/helpers available inside live codefences without any runtime setup
+- Page transitions are immediate. The compiled component is code-split, and it loads like any other module.
+- A live demo is a real GJS component, so the build finds the errors in it.
+- The imports of a demo resolve through the build, like any source file. Every installed package works, at any depth, with no registration.
+- The `scope` build option makes components and helpers available in a live code fence. No runtime setup is necessary.
 
 **Cons:**
 
-- Every `.gjs.md` file adds compile work to the build — build time grows with your page count, where `.md` stays flat no matter how many pages exist
-- Requires a build step; raw markdown content is not available at runtime
+- Each `.gjs.md` file adds work to the build. The build time grows with the number of pages. With `.md`, the build time stays the same.
+- The format needs a build step. The raw markdown is not available at runtime.
 
 ### Example
 
@@ -59,23 +59,23 @@ Some prose here.
 ```
 ````
 
-## Which should I use?
+## Which format to choose
 
 | Scenario                                                    | Recommendation                                  |
 | ----------------------------------------------------------- | ----------------------------------------------- |
 | Large doc site with many pages                              | `.md` — flat build cost                         |
 | Pages with complex live demos that need build-time checking | `.gjs.md`                                       |
 | Co-located component docs in a library                      | `.md` — no build overhead                       |
-| Small doc site where build time isn't a concern             | Either works; `.gjs.md` gives faster page loads |
+| Small doc site where build time is not a concern            | Either works. `.gjs.md` loads pages faster.     |
 
-You can mix both formats in the same project. Use `.gjs.md` for pages where build-time compilation matters (e.g. your landing page or pages with many interactive demos) and `.md` for everything else.
+You can use both formats in the same project. Use `.gjs.md` for a page where build-time compilation is important, for example your landing page, or a page with many demos. Use `.md` for the other pages.
 
 ## Mixing formats in the same group
 
-Both `.md` and `.gjs.md` files can live side-by-side in the same `src` directory. Kolay handles them differently based on file extension:
+A `.md` file and a `.gjs.md` file can be together in the same `src` directory. Kolay uses the file extension to decide what to do:
 
-- `.md` files are loaded as raw text and compiled at runtime in the browser
-- `.gjs.md` files are compiled to GJS components at build time
+- A `.md` file loads as raw text, and it compiles in the browser at runtime.
+- A `.gjs.md` file compiles to a GJS component at build time.
 
 ```js
 // This directory can contain a mix of .md and .gjs.md files.
@@ -83,4 +83,4 @@ Both `.md` and `.gjs.md` files can live side-by-side in the same `src` directory
 docs("Guides", { src: import.meta.resolve("./docs/guides") });
 ```
 
-This means you can choose the format per-page based on what makes sense: use `.gjs.md` for pages where you want build-time compilation, and `.md` for pages where you'd rather keep the build fast and defer to the browser.
+You can choose the format for each page. Use `.gjs.md` when you want build-time compilation. Use `.md` when you want a fast build, and the browser does the compile.

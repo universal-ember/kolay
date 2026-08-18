@@ -1,10 +1,10 @@
 # Customizing rendering
 
-Everything the api-docs components render is plain HTML with stable `typedoc__*` class names, colored through a small set of CSS variables. Restyling is entirely your app's CSS — there is no kolay configuration involved.
+The api docs components render plain HTML with stable `typedoc__*` class names. A small set of CSS variables gives the colors. All of the styles are in the CSS of your app, and kolay has no configuration for them.
 
 ## Colors
 
-Names, types, parameters, and structure each get their own color, so a signature scans like highlighted code. Each is a CSS variable — set them on `:root` (or any ancestor of the rendered docs) to retheme:
+The names, the types, the parameters, and the structure each have their own color. A signature then reads like code with highlighting. Each color is a CSS variable. To change the theme, set the variables on `:root`, or on any parent of the rendered docs:
 
 | variable | colors | default (light · dark) |
 | --- | --- | --- |
@@ -15,9 +15,9 @@ Names, types, parameters, and structure each get their own color, so a signature
 | `--kolay-typedoc-punctuation` | structure — `:` `( ) =>` `\|` `< >` | `#59636e` · `#9198a1` |
 | `--kolay-typedoc-comment` | doc comments inside type shapes | your `--pico-muted-color`, else muted text |
 
-The defaults are `light-dark()` aware, following your page's `color-scheme`. Chip borders and backgrounds derive from `currentColor`, so they tint along with whatever colors you choose.
+The default colors use `light-dark()`, so they follow the `color-scheme` of your page. The chip borders and the chip backgrounds come from `currentColor`, so they change with the colors that you choose.
 
-Variables scope like any CSS — set them inline to retheme one rendering (here, `isActive` from this site's own api docs):
+The variables have the same scope rules as any CSS. Set them inline to change the theme of one rendering. The example below uses `isActive` from the api docs of this site:
 
 ```html
 <div style="--kolay-typedoc-name: mediumvioletred; --kolay-typedoc-param: rebeccapurple; --kolay-typedoc-builtin: teal">
@@ -31,12 +31,12 @@ Variables scope like any CSS — set them inline to retheme one rendering (here,
 
 ## Beyond colors
 
-The markup itself is fair game — every element carries a `typedoc__*` class. The layout follows one reading model:
+You can also style the markup. Every element has a `typedoc__*` class. The layout follows one model:
 
-- **Member rows** (a class's members, a signature's args): name on the left, type on the right, comment beneath. Below `40rem` they stack.
-- **Type positions** (everything right of a `:`): code-like flow — `Name<Arg>`, `a | b`, `(name: Type) => Return`, object shapes as indented `name: type` lines.
+- A **member row** holds the members of a class, or the args of a signature. The name is at the left, the type is at the right, and the comment is below them. Below `40rem`, they stack.
+- A **type position** is everything at the right of a `:`. It flows like code: `Name<Arg>`, `a | b`, `(name: Type) => Return`. An object shape becomes indented `name: type` lines.
 
-A few useful hooks:
+Two useful hooks:
 
 ```css
 /* the root declaration's name (rendered as a heading line) */

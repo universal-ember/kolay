@@ -2,15 +2,15 @@
 
 [Documentation](https://limber.glimdown.com/docs/ember-repl) · [GitHub](https://github.com/NullVoxPopuli/limber) — repl-sdk: [Documentation](https://limber.glimdown.com/docs/repl-sdk)
 
-ember-repl (with repl-sdk underneath) is the compiler behind everything kolay renders:
+ember-repl, with repl-sdk below it, is the compiler for everything that kolay renders:
 
-- **`.md` pages** compile in the browser: `setupKolay()` configures an ember-repl compiler per application (your `remarkPlugins` / `rehypePlugins` / `topLevelScope` / `modules` feed straight into it), and [`selected`](/Runtime/utilities/selected.md) / [`compiledDoc`](/Runtime/rendering/compiled-doc.md) / [`Compiled`](/Runtime/rendering/compiled.md) all compile through it.
-- **`.gjs.md` pages** compile at build time: the `docs()` plugin runs repl-sdk's markdown pipeline (the same one) in vite, so live codefences become real components in your bundle.
-- **[Live codefences](/authoring/code-fences.md)** — the `live` / `preview` / `below` flags and the [render targets](/authoring/code-fences.md#render-targets) (gjs, hbs, jsx, svelte, vue, mermaid, …) are ember-repl / repl-sdk features; kolay configures which are allowed per compile mode.
+- A **`.md` page** compiles in the browser. `setupKolay()` configures one ember-repl compiler for each application. Your `remarkPlugins`, `rehypePlugins`, `topLevelScope`, and `modules` go into that compiler. [`selected`](/Runtime/utilities/selected.md), [`compiledDoc`](/Runtime/rendering/compiled-doc.md), and [`Compiled`](/Runtime/rendering/compiled.md) all compile through it.
+- A **`.gjs.md` page** compiles at build time. The `docs()` plugin operates the same markdown pipeline of repl-sdk inside vite, so a live code fence becomes a real component in your bundle.
+- A **[live code fence](/authoring/code-fences.md)** uses features of ember-repl and repl-sdk. These are the `live`, `preview`, and `below` flags, and the [render targets](/authoring/code-fences.md#render-targets): gjs, hbs, jsx, svelte, vue, and mermaid. Kolay decides which targets each compile mode permits.
 
 ## In tests
 
-`setupKolay` from `kolay/test-support` wires the compiler up with `setupCompiler` from `ember-repl/test-support`, so rendering tests can compile markdown the same way the app does:
+`setupKolay` from `kolay/test-support` configures the compiler with `setupCompiler` from `ember-repl/test-support`. A rendering test then compiles markdown in the same way as the app:
 
 ```js
 import { setupKolay } from "kolay/test-support";

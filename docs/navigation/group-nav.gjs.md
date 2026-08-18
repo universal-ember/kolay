@@ -1,6 +1,6 @@
 # `<GroupNav />`
 
-This components provides a `<nav>` for the configured `groups` from your build config passed to [`kolay`][kolay-plugin]. On this docs site it's used as the horizontal navigation at the top of the page.
+This component supplies a `<nav>` for the `groups` in your build config, which you give to the [`kolay`][kolay-plugin] plugin. On this docs site, it is the horizontal navigation at the top of the page.
 
 [kolay-plugin]: /development/configuring-docs.md
 

@@ -1,6 +1,6 @@
 # `handlePotentialIndexVisit`
 
-When using `addRoutes()`, navigating to a group URL (e.g. `/Runtime`) lands on an index route. If that group doesn't have an explicit index page, the user sees a blank page. `handlePotentialIndexVisit` solves this by automatically redirecting to the first page in the group.
+With `addRoutes()`, a visit to a group URL, for example `/Runtime`, goes to an index route. If that group has no index page, the reader sees an empty page. `handlePotentialIndexVisit` corrects this. It redirects to the first page in the group.
 
 ## Usage
 
@@ -22,7 +22,7 @@ export default class PageRoute extends Route {
 }
 ```
 
-This pairs with `addRoutes()` in your router:
+Use it with `addRoutes()` in your router:
 
 ```js
 import { addRoutes } from 'kolay';
@@ -32,13 +32,13 @@ Router.map(function () {
 });
 ```
 
-When a user visits `/Runtime` and the `Runtime` group has pages, they'll be redirected to the first page (e.g. `/Runtime/rendering/page.md`) instead of seeing a blank index.
+A reader opens `/Runtime`, and the `Runtime` group has pages. Kolay then redirects to the first page, for example `/Runtime/rendering/page.md`, and not to an empty index.
 
-It also handles the app's root: on a visit to `/`, there is no group in the URL, so the user is redirected to the first page of the default (first) group. Give your top-level `index` route the same `beforeModel` (e.g. in `routes/index.ts`) to enable this.
+The function also covers the root of the app. A visit to `/` has no group in the URL, so kolay redirects to the first page of the first group. To enable this, give your top-level `index` route the same `beforeModel`, for example in `routes/index.ts`.
 
 ## Nested mounts
 
-`addRoutes()` may also be called inside nested routes, mounting each group as its own route (see [using the docs plugin multiple times](/development/configuring-docs.md)) — optionally scoped to a group via `addRoutes(this, 'group-name')`, in which case the mount's path is free to differ from the group's name. Either way, call `handlePotentialIndexVisit` in the mount route's `beforeModel` — visiting the mount's URL (e.g. `/guides`) lands on the mount's own index:
+You can also call `addRoutes()` inside a nested route. Each group is then its own route. Read [how to use the docs plugin more than one time](/development/configuring-docs.md). You can scope the call to a group with `addRoutes(this, 'group-name')`. The path of the mount can then be different from the name of the group. In both cases, call `handlePotentialIndexVisit` in the `beforeModel` of the mount route. A visit to the URL of the mount, for example `/guides`, goes to the index of the mount:
 
 ```ts
 // routes/guides.ts
@@ -54,7 +54,7 @@ export default class GuidesRoute extends Route {
 }
 ```
 
-paired with:
+with this router:
 
 ```js
 import { addRoutes as addGuidesRoutes } from 'virtual:kolay/docs/guides';
@@ -66,7 +66,7 @@ Router.map(function () {
 });
 ```
 
-The virtual module's `addRoutes` is scoped to its group, so the mount may live anywhere. (An unscoped `addRoutes(this)` from `kolay` works too — its mount's path must then match the group's name.)
+The `addRoutes` of the virtual module is scoped to its group, so the mount can be anywhere. An `addRoutes(this)` from `kolay` with no group also works. The path of its mount must then be the same as the name of the group.
 
 ## API Reference
 

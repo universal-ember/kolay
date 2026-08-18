@@ -1,8 +1,8 @@
 ## Ordering
 
-At build time, the order of both pages and folders can be configured by providing a `meta.json` or `meta.jsonc` file as a sibling to the list of paths you want to sort.
+You can set the order of the pages and the folders at build time. Put a `meta.json` or `meta.jsonc` file next to the paths that you want to sort.
 
-### Sorting folders
+### Sort the folders
 
 For example, in this project, the docs are in folders in `public/docs`:
 
@@ -13,9 +13,9 @@ public/
     usage/
 ```
 
-But we want `usage` to come before `plugins`, even though alphabetically, `plugins` comes before `usage`.
+We want `usage` before `plugins`. But in alphabetical order, `plugins` comes before `usage`.
 
-We can create a `meta.jsonc` file at `public/docs/meta.jsonc`:
+Create a `meta.jsonc` file at `public/docs/meta.jsonc`:
 
 ```jsonc
 {
@@ -25,9 +25,9 @@ We can create a `meta.jsonc` file at `public/docs/meta.jsonc`:
 }
 ```
 
-With `jsonc`, we can have comments to explain our reasoning for having configuration at all, and now when rendering the navigation at runtime, we can have `Usage` rendered above `Plugins` without needing to implement any runtime code to do this for us.
+A `jsonc` file can hold comments, so you can explain why the configuration is there. The navigation now shows `Usage` above `Plugins`, and you write no runtime code for this.
 
-### Sorting pages
+### Sort the pages
 
 For example, in this project, the pages under `usage` appear alphabetically in the filesystem like this:
 
@@ -40,9 +40,9 @@ public/
       setup.md
 ```
 
-Alphabetical ordering in this case is backwards from how it is _useful_ to read about the information contained within these documents.
+Here the alphabetical order is the opposite of the _useful_ reading order.
 
-To sort these pages, we can create a `meta.json` file at `public/docs/usage/meta.jsonc` with the following contents:
+To sort these pages, create a `meta.jsonc` file at `public/docs/usage/meta.jsonc` with this content:
 
 ```jsonc
 {
@@ -51,4 +51,4 @@ To sort these pages, we can create a `meta.json` file at `public/docs/usage/meta
 }
 ```
 
-And then the order of these pages is adjusted so that at runtime, there is nothing to do! 🥳
+The order of the pages is now correct, and there is nothing to do at runtime! 🥳

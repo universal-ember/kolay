@@ -1,8 +1,8 @@
 # `apiDocs(...)`
 
-Generates api docs (typedoc JSON) from your libraries' type declarations, and teaches the runtime how to fetch them. Rendering these api docs uses the [Signature Components][ui-signature] or [`APIDocs`][ui-apiDocs] components.
+This plugin generates api docs, as typedoc JSON, from the type declarations of your libraries. It also tells the runtime how to get them. To render these api docs, use the [Signature Components][ui-signature] or the [`APIDocs`][ui-apiDocs] component.
 
-Requires the [`docs(...)`][plugin-docs] plugin to also be present.
+The [`docs(...)`][plugin-docs] plugin must also be present.
 
 [plugin-docs]: /development/configuring-docs.md
 [ui-signature]: /TypeDoc/components/component-signature.md
@@ -26,17 +26,17 @@ export default defineConfig({
 
 ## Input
 
-The plugin receives a string, or an array of strings, where each entry is either
+The plugin takes a string, or an array of strings. Each entry is one of these:
 
-- a package name — it must be resolvable from your project (i.e.: actually installed), or
-- a relative path — it must exist on disk (resolved from your project's root)
+- A package name. The name must resolve from your project, so the package must be installed.
+- A relative path. The path must exist on disk, and it resolves from the root of your project.
 
-Type entry points are discovered from each package's `package.json#exports` (its `types` entries), so entries always name a whole package:
+Kolay finds the type entry points in the `package.json#exports` of each package, from its `types` entries. So an entry always names a complete package:
 
-- paths _within_ packages (`my-library/dist/whatever`) are rejected — use the package name and let `#exports` decide the entry points
-- absolute paths are rejected — they are not portable between environments
-- a relative path should point at a package directory (its `package.json#exports` is used, the same as for package names)
+- A path _inside_ a package (`my-library/dist/whatever`) is not permitted. Use the package name, and let `#exports` decide the entry points.
+- An absolute path is not permitted, because it does not move between environments.
+- A relative path must point at a package directory. Kolay uses its `package.json#exports`, as it does for a package name.
 
-Every entry is validated when the config is loaded, and all problems are reported at once — including a hint to run your package manager's install when a package can't be found.
+Kolay validates every entry when the config loads. It reports all of the problems together. If a package is missing, the message tells you to install your dependencies again.
 
-In dev, the JSON is generated on demand when requested; in production builds, it is emitted into the app's dist.
+In development, kolay generates the JSON when a page asks for it. In a production build, kolay writes the JSON into the dist folder of the app.

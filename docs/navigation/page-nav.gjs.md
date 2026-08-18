@@ -1,6 +1,6 @@
 # `<PageNav />`
 
-This components provides a `<nav>` for the currently selected `group` (or the default `group` from your build config passed to [`kolay`][kolay-plugin]. On this docs site it's used as the vertical navigation at the left of the page.
+This component supplies a `<nav>` for the selected `group`. With no selection, it uses the default `group` from the build config that you give to the [`kolay`][kolay-plugin] plugin. On this docs site, it is the vertical navigation at the left of the page.
 
 [kolay-plugin]: /development/configuring-docs.md
 

@@ -1,8 +1,8 @@
 # Wrapping demos
 
-The opt-in `wrapDemos` plugin wraps every rendered demo (live code fence) in a component of your choosing, resolved from scope like any other component — so all your demos can share chrome (style isolation, a border, a "demo" label). The component is named by the required `componentName` option and receives the demo as its default block. The examples below use `<Shadowed>` from ember-primitives, which renders its content in a shadow DOM.
+The `wrapDemos` plugin is optional. It puts every demo, which is a live code fence, inside a component that you choose. The plugin resolves that component from the scope, like any other component. All of your demos can then share the same markup: style isolation, a border, or a "demo" label. The necessary `componentName` option names the component. The component receives the demo as its default block. The examples below use `<Shadowed>` from ember-primitives, which renders its content in a shadow DOM.
 
-For runtime-compiled `.md` pages, pass the plugin to `setupKolay` and bind the component in `topLevelScope` — binding it explicitly is what lets you supply your own implementation, or pre-configure the wrapper's arguments:
+A `.md` page compiles at runtime. Give the plugin to `setupKolay`, and put the component in `topLevelScope`. This explicit step lets you supply your own implementation, or set the arguments of the wrapper first:
 
 ```gjs
 import { Shadowed } from "ember-primitives/components/shadowed";
@@ -20,9 +20,9 @@ await setupKolay(this, {
 });
 ```
 
-(`.md` pages are compiled as glimdown, so `topLevelScope` applies to them. Any component you bind in `topLevelScope` can be named instead.)
+A `.md` page compiles as glimdown, so `topLevelScope` applies to it. You can name any component that you put in `topLevelScope`.
 
-For build-time-compiled `.gjs.md` pages, pass the plugin to the `docs()` usage and bind the component in its `scope`:
+A `.gjs.md` page compiles at build time. Give the plugin to the `docs()` usage, and put the component in its `scope`:
 
 ```js
 // vite.config.js
@@ -38,7 +38,7 @@ docs("MyDocs", {
 
 ## Choosing which demos are wrapped
 
-The `eachDemo` option controls this, via words in the code fence meta (e.g. ```` ```gjs live shadow ````):
+The `eachDemo` option controls this with words in the meta of the code fence, for example ```` ```gjs live shadow ````:
 
 ```js
 [wrapDemos, {
@@ -55,4 +55,4 @@ The `eachDemo` option controls this, via words in the code fence meta (e.g. ````
 }],
 ```
 
-Without the plugin, nothing is wrapped.
+Without the plugin, kolay wraps no demo.

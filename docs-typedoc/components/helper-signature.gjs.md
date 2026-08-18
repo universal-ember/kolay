@@ -1,8 +1,8 @@
 # `<HelperSignature />`
 
-Render the docs generated from Comments, [JSDoc](https://jsdoc.app/), etc, specialized specifically for helpers and plain functions, which have a known signature format, consisting of `Args`, and `Return`.
+This component shows the docs that come from your comments and your [JSDoc](https://jsdoc.app/). It is for a helper or a plain function, which has a known signature format of `Args` and `Return`.
 
-This, along with the other API doc-related components, are powered by [TypeDoc](https://typedoc.org/) and generated from declarations.
+This component, and the other api docs components, use [TypeDoc](https://typedoc.org/). TypeDoc reads your type declarations.
 
 ## API Reference
 

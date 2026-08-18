@@ -2,11 +2,11 @@
 
 [Documentation](https://ember-primitives.pages.dev) · [GitHub](https://github.com/universal-ember/ember-primitives)
 
-ember-primitives supplies several of the pieces kolay builds on — and one it requires:
+kolay uses several parts of ember-primitives, and it needs one of them:
 
 ## `@properLinks` (required)
 
-Markdown renders plain `<a>` tags. The `@properLinks` decorator on your router turns same-app anchor clicks into router transitions, which is what makes links between docs pages work:
+Markdown renders plain `<a>` tags. The `@properLinks` decorator on your router makes a click on an anchor in the same app a router transition. This makes the links between docs pages work:
 
 ```js
 import { properLinks } from "ember-primitives/proper-links";
@@ -19,7 +19,7 @@ export default class Router extends EmberRouter {
 
 ## `<Shadowed>`
 
-Available in every live codefence by default (via the runtime scope): renders its content inside shadow DOM, giving demos a clean style sandbox so page styles and demo styles can't leak into each other.
+This component is in every live code fence by default, through the runtime scope. It renders its content in a shadow DOM. A demo then gets a clean style sandbox, so the page styles and the demo styles stay apart.
 
 ```hbs
 <Shadowed>
@@ -29,8 +29,8 @@ Available in every live codefence by default (via the runtime scope): renders it
 
 ## `createStore`
 
-Kolay's browser state — [`docsManager(...)`](/Runtime/utilities/docs-manager.md) and [`selected(...)`](/Runtime/utilities/selected.md) — is built on `ember-primitives/store`: owner-linked singletons you reach from any component, no service files required.
+The browser state of kolay is [`docsManager(...)`](/Runtime/utilities/docs-manager.md) and [`selected(...)`](/Runtime/utilities/selected.md). Both use `ember-primitives/store`. They are singletons that link to the owner, and you can reach them from any component. You write no service files.
 
 ## Color scheme
 
-This site's light/dark handling uses `ember-primitives/color-scheme` (`sync()` + `colorScheme.current`), e.g. for giving shiki the right theme at runtime.
+This site uses `ember-primitives/color-scheme` for its light and dark modes, with `sync()` and `colorScheme.current`. For example, it gives shiki the correct theme at runtime.

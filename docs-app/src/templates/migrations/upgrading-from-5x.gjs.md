@@ -1,10 +1,10 @@
 # Upgrading from 5.x
 
-The plugin API was reworked for composability ([#323](https://github.com/universal-ember/kolay/issues/323)). This page covers every breaking change.
+The plugin API changed, so that the plugins compose better ([#323](https://github.com/universal-ember/kolay/issues/323)). This page lists every breaking change.
 
 ## `kolay()` is split into `docs()` + `apiDocs()`
 
-The combined plugin is gone. Markdown docs and api docs are configured separately:
+The combined plugin is removed. You now configure the markdown docs and the api docs separately:
 
 ```diff
 - import { kolay } from "kolay/vite";
@@ -26,13 +26,13 @@ The combined plugin is gone. Markdown docs and api docs are configured separatel
   });
 ```
 
-(`typedoc()` was a brief intermediate name for `apiDocs()` — if you're on a 5.5+ version that had it, it's the same rename.)
+`typedoc()` was a temporary name for `apiDocs()`. If your version is 5.5 or later and it has `typedoc()`, this is the same rename.
 
-`kolay/webpack` is gone with it — the plugins are Vite-only.
+`kolay/webpack` is also removed. The plugins work only with Vite.
 
 ## `docs()` takes `(groupName, options)` — one usage per group
 
-The `groups: []` array is gone. Call `docs()` once per group:
+The `groups: []` array is removed. Call `docs()` one time for each group:
 
 ```diff
 - docs({
@@ -45,28 +45,28 @@ The `groups: []` array is gone. Call `docs()` once per group:
 + docs("api", { src: import.meta.resolve("./api-docs") }),
 ```
 
-When the first argument is a path or URL, its last segment becomes the group name (and it serves as the `src`):
+If the first argument is a path or a URL, its last segment becomes the group name. The argument is also the `src`:
 
 ```js
 docs(import.meta.resolve("./guides")); // group: "guides"
 ```
 
-With no arguments, only the co-located pages (`app/templates`, `src/templates`) are served. Each usage's markdown options (`remarkPlugins`, `rehypePlugins`, `scope`) apply to that group's `.gjs.md` files only.
+With no arguments, `docs()` serves only the co-located pages, in `app/templates` and `src/templates`. The markdown options of a usage (`remarkPlugins`, `rehypePlugins`, `scope`) apply only to the `.gjs.md` files of that group.
 
 ## `apiDocs()` takes an array of strings
 
-No options object, and the `dest` option is gone (JSON always lives under `docs/`):
+There is no options object, and the `dest` option is removed. The JSON is always under `docs/`:
 
 ```diff
 - typedoc({ packages: ["my-library"], dest: "api" }),
 + apiDocs(["my-library", "./packages/my-other-library"]),
 ```
 
-Entries are validated when the config loads: package names must be installed, relative paths must exist, and paths _within_ packages are rejected (entry points come from `package.json#exports`).
+Kolay validates the entries when the config loads. A package name must be installed, and a relative path must exist. A path _inside_ a package is not permitted, because the entry points come from `package.json#exports`.
 
 ## Routing: per-group virtual modules
 
-The primary way to mount a group's routes is now its virtual module:
+Mount the routes of a group with its virtual module:
 
 ```diff
 - import { addRoutes } from "kolay";
@@ -80,11 +80,11 @@ The primary way to mount a group's routes is now its virtual module:
   });
 ```
 
-The top-level `addRoutes(this)` is now optional — it serves the co-located pages (and any group named by the URL) from the root URL space, so keep it if you have `app/templates` pages or want 5.x-style URLs. An app can also mount only its groups' routes and keep the root for itself. Per-group mounts unlock per-group route templates (and with them, [per-group designs](/development/configuring-docs.md)).
+The top-level `addRoutes(this)` is now optional. It serves the co-located pages, and any group that the URL names, from the root URL space. Keep it if you have pages in `app/templates`, or if you want the URLs of 5.x. An app can also mount only the routes of its groups, and keep the root for itself. One mount for each group gives you one route template for each group, and with it a [design for each group](/development/configuring-docs.md).
 
 ## `kolay/compiled-docs:virtual` is now the metamanifest
 
-If you imported it directly (rather than through `setupKolay()`), its shape changed — it lists the groups and how to load each group's module, instead of carrying one combined manifest:
+If you import it directly, and not through `setupKolay()`, its shape is different. It now lists the groups, and how to load the module of each group. It no longer holds one combined manifest:
 
 ```diff
 - const { manifest, pages } = await import("kolay/compiled-docs:virtual");
@@ -94,11 +94,11 @@ If you imported it directly (rather than through `setupKolay()`), its shape chan
 + const { manifest, pages } = await loadCompiledDocs(meta);
 ```
 
-`setupKolay()` and `setupKolay` from `kolay/test-support` do this for you (loading every group in parallel).
+`setupKolay()`, and `setupKolay` from `kolay/test-support`, do this for you. They load every group in parallel.
 
 ## `Collection` is now `PageTree`/`section`
 
-A node in a page tree (the object built from a directory of markdown files) was previously called a `Collection`. It is now called a **`PageTree`** in order to free up the word "collection" for the navigation-level concept of one group "collecting" others.
+A node in a page tree is the object that kolay builds from a directory of markdown files. Its earlier name was `Collection`. Its name is now **`PageTree`**. This frees the word "collection" for the navigation, where one group can "collect" other groups.
 
 For the type and type guard, this is a direct rename:
 
@@ -112,7 +112,7 @@ For the type and type guard, this is a direct rename:
 + if (isPageTree(node)) { … }
 ```
 
-Similarly, `<PageNav />`'s `<:collection>` named block is now called `<:section>`:
+The `<:collection>` named block of `<PageNav />` is now `<:section>`:
 
 ```diff
   <PageNav>
@@ -133,12 +133,12 @@ Similarly, `<PageNav />`'s `<:collection>` named block is now called `<:section>
   </PageNav>
 ```
 
-This block is named after what you are rendering — a "section" of the nav — while the type names the data itself, a `PageTree`. They differ on purpose: a section is usually a folder of markdown files, but once we merge a feature allowing groups to "collect" other groups, the section will be made up of this collection. In the example above, `x.section` is a `PageTree` either way.
+The name of the block comes from what you render, a "section" of the nav. The name of the type comes from the data, a `PageTree`. The two names are different for a reason. A section is usually a folder of markdown files. But after we merge the feature that lets a group "collect" other groups, a section can also be that collection. In the example above, `x.section` is a `PageTree` in both cases.
 
-To assist in this migration, `<PageNav />` will `assert` in development when it is still given a `:collection` block to remind you to migrate to `:section`. The assertion is stripped from production builds.
+To help with this migration, `<PageNav />` calls `assert` in development when it still receives a `:collection` block. The message reminds you to change to `:section`. A production build removes the assertion.
 
-`getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
+`getIndexPage` keeps its name, and it now takes a `PageTree`. `Node` is `Page | PageTree`. The page `Runtime/utilities/collection-utils` is now `page-tree-utils`, with a redirect from the old URL.
 
 ## Removed types
 
-`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
+`Options`, `MarkdownPagesOptions`, and `APIDocsOptions`, from `kolay/build` and `kolay/types`, described the old options shapes. They are removed. `kolay/build` exports `DocsOptions`.

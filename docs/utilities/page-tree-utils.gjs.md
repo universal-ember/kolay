@@ -1,10 +1,10 @@
 # Page Tree Utils
 
-Utility functions for working with the page manifest. Useful when building custom navigation that needs to distinguish between leaf pages and nested page trees.
+These functions work with the page manifest. Use them in your own navigation, where you must know the difference between a page and a page tree.
 
 ## `isPageTree`
 
-Type guard that returns `true` if the given node is a `PageTree` (a folder of pages) rather than a `Page`.
+This type guard returns `true` when the node is a `PageTree`, which is a folder of pages. It returns `false` for a `Page`.
 
 ```js
 import { isPageTree } from 'kolay';
@@ -20,7 +20,7 @@ for (const node of tree.pages) {
 
 ## `getIndexPage`
 
-Given a `PageTree`, returns the `Page` whose path ends with `index`, if one exists. This is useful for making folder names in navigation link to an index page.
+This function takes a `PageTree`. It returns the `Page` with a path that ends with `index`, if that page exists. Use it to make a folder name in the navigation a link to its index page.
 
 ```js
 import { getIndexPage, isPageTree } from 'kolay';

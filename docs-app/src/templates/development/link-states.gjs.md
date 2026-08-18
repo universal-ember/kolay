@@ -1,29 +1,29 @@
 # Link states
 
-Kolay docs sites navigate with plain `<a>` elements: [`properLinks`](https://ember-primitives.pages.dev/4-routing/proper-links.md) (from ember-primitives) intercepts clicks on any anchor whose `href` the router recognizes and turns them into route transitions. Markdown links, hand-written anchors in your site chrome, anchors inside shadow roots — they are all router links already.
+A kolay docs site navigates with plain `<a>` elements. [`properLinks`](https://ember-primitives.pages.dev/4-routing/proper-links.md), from ember-primitives, catches a click on an anchor when the router recognizes its `href`. It then makes the click a route transition. A markdown link, an anchor that you write in your site chrome, and an anchor inside a shadow root are all router links.
 
-What plain anchors don't get is `<LinkTo>`'s state classes (`active`, `ember-transitioning-in`, `ember-transitioning-out`). Both states are still derivable — _active_ from the router service, _loading_ from kolay's [`selected`](/Runtime/utilities/selected.md) store — and this page shows the wiring.
+A plain anchor does not get the state classes of `<LinkTo>`: `active`, `ember-transitioning-in`, and `ember-transitioning-out`. You can still get both states. The _active_ state comes from the router service. The _loading_ state comes from the [`selected`](/Runtime/utilities/selected.md) store of kolay. This page shows the code for both.
 
 ## Active links
 
-Kolay's nav components mark the active link for you: `<PageNav>` and `<GroupNav>` accept [`@activeClass`](/Runtime/navigation/page-nav.md), and the comparison they use is exported as [`isActive`](/Runtime/navigation/is-active.md) for custom navs built from manifest items.
+The nav components of kolay mark the active link for you. `<PageNav>` and `<GroupNav>` accept [`@activeClass`](/Runtime/navigation/page-nav.md). They compare the paths with [`isActive`](/Runtime/navigation/is-active.md), which kolay exports for your own nav from the manifest items.
 
-For anchors whose `href` you write yourself, the question is: does the anchor point at `router.currentURL`'s page? Two details make "page" the operative word:
+For an anchor with an `href` that you write yourself, ask one question. Does the anchor point at the page of `router.currentURL`? Two details make the word "page" important:
 
-- pages are visitable with and without the `.md` extension, so compare with the extension stripped
-- query params and the hash are not part of a page's identity, so compare `pathname`s only
+- A page opens with and without the `.md` extension, so remove the extension before you compare.
+- The query params and the hash are not part of the identity of a page, so compare only the `pathname`.
 
-And prefer `aria-current="page"` over a class: it means exactly "this link points at the page we are on", screen readers announce it, and CSS can style it directly.
+Use `aria-current="page"`, and not a class. It means that this link points at the current page. A screen reader announces it, and your CSS can style it directly.
 
 ## The loading phase
 
-`<LinkTo>`'s transitioning classes mark links while a route transition runs. In a kolay app, the transition is not where time is spent — route hooks don't await content, so transitions settle almost immediately. The wait users actually see comes after: the new page's document loading and compiling. That state lives on the [`selected`](/Runtime/utilities/selected.md) store, as `isPending`.
+The transitioning classes of `<LinkTo>` mark the links while a route transition operates. In a kolay app, the transition takes very little time. The route hooks do not await the content, so a transition settles almost immediately. The wait that a reader sees comes after the transition, while the new document loads and compiles. That state is on the [`selected`](/Runtime/utilities/selected.md) store, as `isPending`.
 
-The two states compose well. `router.currentURL` updates as soon as the transition settles, so the clicked anchor becomes active while the old page is still on screen (kolay keeps the previous document rendered while the next one compiles, so navigation doesn't flash an empty page). Styling "active _and_ pending" marks the clicked link as busy — exactly where the user is looking.
+The two states work well together. `router.currentURL` updates when the transition settles, so the anchor becomes active while the old page is still on screen. Kolay keeps the previous document on screen while the next one compiles, so the navigation does not show an empty page. A style for "active _and_ pending" marks the clicked link as busy, where the reader is looking.
 
 ## Demo
 
-The current page is highlighted below via `aria-current`. Click a sibling: it highlights immediately, and pulses until that page finishes compiling.
+The demo below highlights the current page with `aria-current`. Click one of the other links. It highlights immediately, then it pulses until that page compiles.
 
 ```gjs live preview
 import Component from "@glimmer/component";
@@ -115,14 +115,14 @@ export default class MiniNav extends Component {
 }
 ```
 
-Two things worth noticing:
+Note two things:
 
-- The `rootURL` is applied only when rendering the `href`; comparisons happen in app-relative space, where `router.currentURL` lives. Hardcoding root-absolute `href`s would break under a deploy with a `rootURL` (a PR preview at `/pr-1234/`, say). Markdown links don't have this concern — the compiler rebases those for you (see [Links and images](/authoring/links-and-images.md)) — it only arises for `href`s built in component code.
-- The demo is wrapped in `<Shadowed>` so its styles stay contained. `properLinks` handles anchors inside shadow roots too — it finds the anchor through the event's `composedPath()`.
+- The code applies the `rootURL` only when it renders the `href`. The comparisons are in app-relative space, where `router.currentURL` is. A fixed root-absolute `href` fails under a deploy with a `rootURL`, for example a pull request preview at `/pr-1234/`. A markdown link does not have this problem, because the compiler rebases it for you. Read [Links and images](/authoring/links-and-images.md). The problem occurs only for an `href` that you build in component code.
+- The demo is inside `<Shadowed>`, so its styles stay in the demo. `properLinks` also works with an anchor inside a shadow root. It finds the anchor with the `composedPath()` of the event.
 
 ## Site-wide state
 
-The same idea, inverted: instead of each link deriving its own state, set the state once on a wrapper and let CSS reach whatever should respond — the issue isn't limited to links. A CSS variable works well for this:
+This is the same idea in reverse. Do not give each link its own state. Set the state one time on a wrapper, then let the CSS style every element that must respond. The problem is not limited to links. A CSS variable works well for this:
 
 ```gjs
 import Component from "@glimmer/component";
@@ -164,6 +164,6 @@ export default class SiteChrome extends Component {
 }
 ```
 
-(For a wrapper that can be torn down, remove the listeners in a destructor. Application-level chrome lives as long as the app, so there's nothing to clean up.)
+If your wrapper can be destroyed, remove the listeners in a destructor. Application chrome exists as long as the app, so there is nothing to remove.
 
-`routeWillChange` / `routeDidChange` only cover the router's part; they matter when your route hooks do real async work. For the document load + compile phase, drive the same kind of attribute (or variable) from `selected(this).isPending`, like the demo above does.
+`routeWillChange` and `routeDidChange` cover only the work of the router. They are important when your route hooks do async work. For the load and compile phase, set the same attribute or variable from `selected(this).isPending`, as the demo above does.

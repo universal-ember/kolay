@@ -1,13 +1,13 @@
 # `<APIDocs />`
 
-Render the docs generated from Comments, [JSDoc](https://jsdoc.app/), etc.
-This, along with the other API doc-related components, are powered by [TypeDoc](https://typedoc.org/) and generated from declarations.
+This component shows the docs that come from your comments and your [JSDoc](https://jsdoc.app/).
+This component, and the other api docs components, use [TypeDoc](https://typedoc.org/). TypeDoc reads your type declarations.
 
-`APIDocs` will include the same content as `CommentQuery`, but also recursively include sub-types and their documentation.
+`APIDocs` shows the same content as `CommentQuery`. It also shows each sub-type and the docs of that sub-type, at any depth.
 
 ## API Reference
 
-API Reference generated via:
+This api reference comes from:
 
 ```hbs live no-shadow preview below
 <APIDocs 
@@ -18,7 +18,7 @@ API Reference generated via:
 
 <hr />
 
-and for reference, the above with `ComponentSignature` would look like:
+The same component with `ComponentSignature` looks like this:
 
 
 ```hbs live no-shadow preview below

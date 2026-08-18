@@ -1,6 +1,6 @@
 # Configuring `importEntrypoints(...)`
 
-Runtime-compiled `.md` fences resolve imports only from what `setupKolay()` provides — normally that means hand-maintaining a [`modules` map](/install/index.md). For whole packages, `importEntrypoints()` does it for you: it enumerates the package's `package.json#exports` and teaches the runtime compiler every entrypoint.
+A fence in a `.md` file compiles at runtime. It resolves an import only from what `setupKolay()` gives it, so you usually maintain a [`modules` map](/install/index.md) by hand. For a complete package, `importEntrypoints()` does this work for you. It reads the `package.json#exports` of the package, and it gives every entrypoint to the runtime compiler.
 
 ```js
 // vite.config.js
@@ -11,7 +11,7 @@ export default {
 };
 ```
 
-Now any `.md` live fence can import from any of the package's entrypoints, with no `modules` configuration. This page is itself a runtime-compiled `.md` file, and this site's `setupKolay` passes no entry for ember-primitives — the fence below resolves purely through `importEntrypoints`:
+Now every `.md` live fence can import from each entrypoint of the package, with no `modules` configuration. This page is a `.md` file that compiles at runtime. The `setupKolay` of this site gives no entry for ember-primitives, so the fence below resolves only through `importEntrypoints`:
 
 ```gjs live preview
 import { ExternalLink } from "ember-primitives";
@@ -23,22 +23,22 @@ import { ExternalLink } from "ember-primitives";
 </template>
 ```
 
-The argument is a package name (resolved from your project, exactly like the bundler will) or a path to a directory containing a `package.json` — useful for unpublished packages in a monorepo. Use the plugin once per package — the usages' entrypoints merge into one map.
+The argument is a package name, which resolves from your project in the same way as the bundler resolves it. The argument can also be a path to a directory that holds a `package.json`. This helps with a package in a monorepo that is not published. Use the plugin one time for each package. The entrypoints of all of the usages merge into one map.
 
 ## What counts as an entrypoint
 
-Every key of the package's `exports` becomes an import specifier — `.` is the package name, `./components` becomes `<name>/components`. A package without `exports` provides just its name.
+Every key of the `exports` of the package becomes an import specifier. The key `.` is the package name, and `./components` becomes `<name>/components`. A package with no `exports` supplies only its name.
 
-**Wildcard keys** (`./*`) are expanded: their target patterns (`./dist/*.js`) are matched against the package's files, and every candidate is verified through [resolve.exports](https://github.com/lukeed/resolve.exports) — the same library repl-sdk resolves with at runtime — so conditions, key specificity, and blocked entries behave exactly like the real resolution.
+A **wildcard key** (`./*`) is expanded. Kolay matches its target pattern (`./dist/*.js`) against the files of the package. It then checks every candidate with [resolve.exports](https://github.com/lukeed/resolve.exports), the same library that repl-sdk uses at runtime. The conditions, the key specificity, and the blocked entries behave the same as in the real resolution.
 
-Skipped automatically:
+Kolay skips these for you:
 
-- **types-only entries** (nothing to import at runtime) and **blocked entries** (`null`)
-- `./package.json` and the addon-main tooling entries
+- A **types-only entry**, because there is nothing to import at runtime, and a **blocked entry** (`null`).
+- `./package.json` and the addon-main tooling entries.
 
 ## Excluding entrypoints
 
-Everything in the map gets bundled (lazily, code-split) — so entrypoints that can't run in the browser must be left out. `exclude` takes subpath keys, exact or ending in `*`:
+The bundler includes everything in the map, code-split and loaded when necessary. So you must leave out an entrypoint that cannot operate in the browser. `exclude` takes subpath keys, either exact or with a `*` at the end:
 
 ```js
 importEntrypoints("kolay", {
@@ -46,7 +46,7 @@ importEntrypoints("kolay", {
 });
 ```
 
-## When to reach for it
+## When to use it
 
-- A package the demos use _pervasively_ — the component library the docs are for, most likely. For your own demo components, [`demos()`](/authoring/sharing-demos.md) is the sharper tool; for one-off values, `topLevelScope`.
-- Only `.md` (runtime-compiled) fences need any of this — `.gjs.md` fences resolve imports through the build already.
+- Use it for a package that the demos import often, usually the component library that the docs are about. For your own demo components, use [`demos()`](/authoring/sharing-demos.md). For a single value, use `topLevelScope`.
+- Only a `.md` fence, which compiles at runtime, needs this. A `.gjs.md` fence resolves its imports through the build.

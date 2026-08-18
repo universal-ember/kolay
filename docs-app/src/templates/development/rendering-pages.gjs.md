@@ -1,6 +1,6 @@
 ## Rendering Pages
 
-The way this the docs app for Kolay renders pages looks like this:
+The docs app for Kolay renders its pages like this:
 
 ```gjs
 // templates/page.gjs
@@ -34,9 +34,9 @@ export default Route(
 );
 ```
 
-### Rendering the current page yourself
+### Render the current page yourself
 
-`<Page />` is a thin wrapper around the [`selected`](/Runtime/utilities/selected.md) store. If its blocks don't give you enough control (custom loading UI, combining states, extra chrome around the prose), you can use the store directly:
+`<Page />` is a thin wrapper around the [`selected`](/Runtime/utilities/selected.md) store. Its blocks can give you too little control: your own loading UI, a combination of states, or more markup around the prose. Then use the store directly:
 
 ```gjs
 import Component from "@glimmer/component";
@@ -61,9 +61,16 @@ export default class MyPage extends Component {
 }
 ```
 
-### Rendering documents you fetch yourself
+### Render a document that you get yourself
 
-The current-page behaviors (async loading, compiling with your site-wide config, keeping the previous document while a new one loads, test-`settled()` integration) are available for _any_ document via [`compiledDoc`](/Runtime/rendering/compiled-doc.md) — useful when your content comes from an API, a CMS, or a dynamic `import()`:
+The behaviors of the current page are available for _any_ document through [`compiledDoc`](/Runtime/rendering/compiled-doc.md). These are the behaviors:
+
+- the async load
+- the compile with your site-wide config
+- the previous document that stays on screen while a new one loads
+- the `settled()` support in tests
+
+Use `compiledDoc` when your content comes from an API, a CMS, or a dynamic `import()`:
 
 ```gjs
 import Component from "@glimmer/component";
@@ -82,9 +89,9 @@ export default class MyDocPage extends Component {
 }
 ```
 
-### Rendering a page within a page
+### Render a page inside a page
 
-If you want to render a page within a page, you can do that with the [`Compiled`](/Runtime/rendering/compiled.md) helper. This will use your site-wide configuration so all the remark plugins, rehype plugins, extra modules, etc will all be used when you use `Compiled`.
+To render a page inside a page, use the [`Compiled`](/Runtime/rendering/compiled.md) helper. It uses your site-wide configuration, so `Compiled` applies all of your remark plugins, rehype plugins, and extra modules.
 
 ```gjs live preview no-shadow
 import { Compiled } from "kolay";

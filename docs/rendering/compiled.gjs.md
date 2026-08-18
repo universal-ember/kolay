@@ -1,8 +1,8 @@
 # `Compiled`
 
-A reactive resource that compiles a string of markdown you already have — using your site-wide compiler configuration (remark / rehype plugins, top-level scope, extra modules) — and gives back the compile state.
+This reactive resource compiles a string of markdown that you have. It uses your site-wide compiler configuration: the remark plugins, the rehype plugins, the top-level scope, and the extra modules. It returns the compile state.
 
-Where [`compiledDoc`](/Runtime/rendering/compiled-doc.md) manages a whole document lifecycle (async loading, keeping the previous document while a new one loads), `Compiled` is the smaller building block: string in, compile state out.
+[`compiledDoc`](/Runtime/rendering/compiled-doc.md) manages the complete life of a document, with the async load and the previous document that stays on screen. `Compiled` is the smaller building block. A string goes in, and a compile state comes out.
 
 ```js
 import { Compiled } from 'kolay';
@@ -17,11 +17,11 @@ class Demo {
 // this.doc.reason     — a human-readable message for that error
 ```
 
-The argument may be the string itself, or a function returning one — a function is reactive: tracked data it reads causes re-compilation when that data changes.
+The argument is the string, or a function that returns the string. A function is reactive. The resource compiles again each time the tracked data in that function changes.
 
 ## In templates
 
-`Compiled` also works directly in templates:
+`Compiled` also works in a template:
 
 ```gjs live preview no-shadow
 import { Compiled } from 'kolay';
@@ -45,6 +45,6 @@ const doc = `Hello from **a string**!`;
 
 <APIDocs @module="declarations/browser" @name="Compiled" @package="kolay" />
 
-The state `Compiled` gives back is defined by [ember-repl](/ecosystem/ember-repl):
+[ember-repl](/ecosystem/ember-repl) defines the state that `Compiled` returns:
 
 <APIDocs @module="declarations" @name="CompileState" @package="ember-repl" />

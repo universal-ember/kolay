@@ -18,7 +18,7 @@
 
 <hr>
 
-Documentation system for the the `@universal-ember` family of projects.
+Documentation system for the `@universal-ember` family of projects.
 
 ## Install[^type-module]
 
@@ -26,18 +26,18 @@ Documentation system for the the `@universal-ember` family of projects.
 pnpm add kolay
 ```
 
-[^type-module]: this library sets `type: module` in its `package.json`, which for ember projects means that it requires vite.
+[^type-module]: this library sets `type: module` in its `package.json`. An ember project with this setting must use vite.
 
 <details>
 <summary>Trying unreleased changes (the <code>dist</code> branch)</summary>
 
-Every push to `main` publishes the built package contents to the [`dist` branch](https://github.com/universal-ember/kolay/tree/dist), so unreleased changes can be tried without waiting for a release:
+Every push to `main` publishes the built package to the [`dist` branch](https://github.com/universal-ember/kolay/tree/dist). Install from that branch to try unreleased changes:
 
 ```bash
 pnpm add kolay@github:universal-ember/kolay#dist
 ```
 
-In a workspace where other packages also depend on `kolay` (or to keep your declared semver range untouched), use an override instead, in the root `package.json`:
+If other packages in the workspace also depend on `kolay`, use an override instead. An override also keeps your declared semver range as it is. Put the override in the root `package.json`:
 
 ```jsonc
 {
@@ -49,15 +49,15 @@ In a workspace where other packages also depend on `kolay` (or to keep your decl
 }
 ```
 
-The install resolves the branch to its current commit and pins that in your lockfile — to pick up newer changes later, run `pnpm update kolay` (or re-run the install after removing the lockfile entry).
+The install resolves the branch to its current commit, then pins that commit in your lockfile. To get newer changes later, run `pnpm update kolay`. You can also remove the lockfile entry and install again.
 
 </details>
 
 ### Use Markdown
 
-- from any folder, any project (good for monorepos)
-- scales infinitely with your project size, as compiling the pages is done on-demand, rather than on-deploy
-- any codefence can become a live demo with the `live` tag (supports Ember, Mermaid, React, Svelte, Vue, [and more](https://limber.glimdown.com/docs/repl-sdk/))
+- Write pages in any folder, in any project. This works well for a monorepo.
+- The build time does not grow with the number of pages. The browser compiles each page when a reader opens it.
+- Any code fence can become a live demo. Add the `live` tag. Ember, Mermaid, React, Svelte, Vue, [and more](https://limber.glimdown.com/docs/repl-sdk/) are supported.
 
   ````markdown
   Some prose here about the demo
@@ -69,7 +69,7 @@ The install resolves the branch to its current commit and pins that in your lock
 
 ### Use JSDoc
 
-- JSDoc / TypeDoc is renderable via the `<APIDocs />` component
+- The `<APIDocs />` component shows the docs that JSDoc and TypeDoc generate.
 
   ```markdown
   ## API Reference
@@ -77,7 +77,7 @@ The install resolves the branch to its current commit and pins that in your lock
   <APIDocs @package="my-library" @module="..." @name="theExport" />
   ```
 
-- render examples from your jsdoc for interactive demonstration of concepts using
+- The examples in your JSDoc can be live demos:
 
   ````
   text here
@@ -89,13 +89,13 @@ The install resolves the branch to its current commit and pins that in your lock
 
 ### Navigation
 
-- generate navigation based on convention based file layout
+- Kolay generates the navigation from the layout of your files.
 
 ## Setup
 
-There are two areas of configuration needed: buildtime, and runtime[^runtime-optional].
+Kolay needs configuration in two places: the build, and the runtime[^runtime-optional].
 
-[^runtime-optional]: The runtime components are optional and if you don't import them, they will not be included in your app. However, since links generated from markdown use vanilla `<a>` tags, you'll probably want at least `@properLinks` from `ember-primitives`.
+[^runtime-optional]: The runtime components are optional. If you do not import them, your app does not include them. But markdown generates plain `<a>` tags, so most apps need at least `@properLinks` from `ember-primitives`.
 
 ### Build: Vite
 
@@ -119,7 +119,7 @@ export default defineConfig(({ mode }) => {
 // ...
 ```
 
-You can create docs for multiple libraries at once — one `docs()` usage per group:
+You can create docs for more than one library. Use `docs()` one time per group:
 
 ```js
 docs(import.meta.resolve('./my-documentation')),
@@ -129,17 +129,17 @@ docs('UI', { src: import.meta.resolve('../ui/ui-guide', import.meta.url) }),
 apiDocs(['kolay', 'ember-primitives', 'ember-resources']),
 ```
 
-This is useful for monorepos where they may be scaling to large teams and many packages could end up being added quickly. In a traditionally compiled app, this may cause build times to slow down over time. Since many docs' sites are deployed continuously, that is wasted time and money spent on building things that may not be looked at all that often (we all wish folks looked at docs more!).
+This helps a monorepo with a large team, where new packages arrive quickly. A traditional app compiles every page, so the build gets slower as the pages increase. Many docs sites deploy continuously. That build time costs time and money for pages that few readers open.
 
-By distributing the rendering of pages to the browesr, we only pay for "build" when somenoe views the page.
+Kolay moves the render of a page to the browser. You pay for the compile of a page only when a reader opens it.
 
 ### Runtime: Routing
 
-If using `@ember/routing/router` or `@embroider/router`
+This applies to both `@ember/routing/router` and `@embroider/router`.
 
-You'll want to also install `ember-primitives`, so that you can use the [`@properLinks`] decorator on the router, giveng you the ability to _just use anchor tags (`<a>`)_ (a requirement for in-browser linking in markdown).
+Install `ember-primitives`, then add the `@properLinks` decorator to your router. The decorator makes plain anchor tags (`<a>`) work as router links. Markdown links need this.
 
-The primary way to add routes is through each group's own virtual module — the group name is the last segment of the folder (or the explicit first argument), so `docs(import.meta.resolve('./my-documentation'))` enables `virtual:kolay/docs/my-documentation`, whose `addRoutes` brings that group's docs into whatever route it's called from:
+Add the routes through each group's own virtual module. The group name is the last segment of the folder, or the explicit first argument. So `docs(import.meta.resolve('./my-documentation'))` enables the module `virtual:kolay/docs/my-documentation`. Its `addRoutes` brings that group's docs into the route that calls it:
 
 ```js
 import { addRoutes } from "kolay"; // for the co-located pages
@@ -169,19 +169,19 @@ Router.map(function () {
 });
 ```
 
-Each mount adds a `*wildcard` route that matches all paths beneath it and derives which file to load from there. (`addRoutes(this)` at the top level also serves _every_ group from the root URL space, if you don't need per-group mounts.)
+Each mount adds a `*wildcard` route. The route matches every path below the mount, and it gets the file to load from that path. A top-level `addRoutes(this)` serves _every_ group from the root URL space, if you do not need one mount per group.
 
-Deploying under a custom `rootURL` (e.g. a PR preview at `/pr-1234/`) is fully supported: navigation, redirects, and root-absolute links and images in authored markdown are all rebased onto the `rootURL` automatically. See [Links and images](/authoring/links-and-images.md) for how to write paths in your content.
+A deploy under a custom `rootURL` works, for example a pull request preview at `/pr-1234/`. Kolay rebases the navigation, the redirects, and the root-absolute links and images in your markdown onto the `rootURL`. To learn how to write paths in your content, read [Links and images](/authoring/links-and-images.md).
 
 ### Runtime: Rendering and Highlighting
 
-Here is what this site does
+This site does the following:
 
-- setup shiki for highlighting
-  - installed as a rehype plugin
-  - custom set of initially loaded syntaxes, for best experience
-- mandatory setup (`apiDocs` and `manifest`)
-- additional `resolve` entries for code blocks to pull from
+- It sets up shiki for the highlighting.
+  - shiki is installed as a rehype plugin.
+  - It loads a chosen set of syntaxes at the start.
+- It does the necessary setup (`apiDocs` and `manifest`).
+- It adds more `resolve` entries for the code blocks to import from.
 
 ```ts
 // routes/application.ts
@@ -243,7 +243,7 @@ export default class ApplicationRoute extends Route {
 
 ### TypeScript
 
-Relevant typescript types can be installed via your tsconfig.json's compilerOptions.types,.
+Add the TypeScript types to the `compilerOptions.types` array of your `tsconfig.json`.
 
 ```js
 {

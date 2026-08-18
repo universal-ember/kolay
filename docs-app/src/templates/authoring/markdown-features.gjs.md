@@ -1,10 +1,10 @@
 # Markdown features
 
-Pages are standard [CommonMark](https://commonmark.org/), plus the extensions below — available in both `.md` and `.gjs.md` files. For interactive demos, see [Code fences](/authoring/code-fences.md); for extending this list, see [Extending markdown](/authoring/extending-markdown.md).
+A page is standard [CommonMark](https://commonmark.org/), with the extensions below. Both `.md` and `.gjs.md` files have them. For demos, read [Code fences](/authoring/code-fences.md). To add to this list, read [Extending markdown](/authoring/extending-markdown.md).
 
 ## GitHub Flavored Markdown
 
-[GFM](https://github.github.com/gfm/) is enabled by default.
+[GFM](https://github.github.com/gfm/) is on by default.
 
 ### Tables
 
@@ -22,7 +22,7 @@ Pages are standard [CommonMark](https://commonmark.org/), plus the extensions be
 
 ### Strikethrough
 
-Both `~~double~~` and `~single~` tildes work: ~~double~~, ~~single~~.
+A double tilde (`~~double~~`) and a single tilde (`~single~`) both work: ~~double~~, ~~single~~.
 
 ### Task lists
 
@@ -47,16 +47,16 @@ Bare URLs become links: https://github.com/universal-ember/kolay
 ```md
 Kolay is easy[^definition].
 
-[^definition]: it's in the name — "kolay" is Turkish for "easy".
+[^definition]: the name says it. "kolay" is Turkish for "easy".
 ```
 
 Kolay is easy[^definition].
 
-[^definition]: it's in the name — "kolay" is Turkish for "easy".
+[^definition]: the name says it. "kolay" is Turkish for "easy".
 
 ## Heading anchors
 
-Every heading gets an id derived from its text, so headings are linkable with `#fragment` URLs. To choose the id yourself, add `{#custom-id}` at the end of the heading:
+Every heading gets an id from its text, so you can link to a heading with a `#fragment` URL. To choose the id, add `{#custom-id}` at the end of the heading:
 
 ```md
 ## A very long heading nobody wants to link to verbatim {#short-id}
@@ -64,7 +64,7 @@ Every heading gets an id derived from its text, so headings are linkable with `#
 
 ## Components in prose
 
-Anything capitalized (PascalCase) in your prose is invoked as a component — no code fence needed. Which components are available is controlled by [scope](/authoring/code-fences.md#whats-in-scope): the `topLevelScope` passed to `setupKolay()` for `.md` files, or imports (including the `scope` build option) for `.gjs.md` files.
+A word in your prose that starts with a capital letter (PascalCase) is a component invocation. No code fence is necessary. [Scope](/authoring/code-fences.md#what-is-in-scope) controls which components are available. For a `.md` file, this is the `topLevelScope` that you give to `setupKolay()`. For a `.gjs.md` file, these are the imports, and the `scope` build option.
 
 ```md
 ## API Reference
@@ -76,7 +76,7 @@ This is how every "API Reference" section on this site works.
 
 ## Raw HTML
 
-Inline HTML passes through, including attributes and styles — the [Install](/install/index.md) page's header is plain HTML in markdown:
+Inline HTML passes through, with its attributes and styles. The header of the [Install](/install/index.md) page is plain HTML in markdown:
 
 ```md
 <small><code>adjective</code></small>
@@ -84,4 +84,4 @@ Inline HTML passes through, including attributes and styles — the [Install](/i
 
 ---
 
-> **Want more?** This page is only what's built in. Syntax highlighting, callouts, custom transforms — anything from the remark/rehype ecosystems can be added: see [Extending markdown](/authoring/extending-markdown.md) (including the shiki setup this site uses).
+> **Want more?** This page shows only the built-in features. You can add syntax highlighting, callouts, and custom transforms from the remark and rehype ecosystems. Read [Extending markdown](/authoring/extending-markdown.md), which includes the shiki setup that this site uses.

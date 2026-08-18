@@ -1,8 +1,8 @@
 # `searcher`
 
-Rank every page in the docs against a query.
+This store ranks every page in the docs against a query.
 
-The index needs no configuration. The `docs()` plugin writes each page's title, headings, and prose into the compiled docs, and `setupKolay` gives that to this store.
+The index needs no configuration. The `docs()` plugin writes the title, the headings, and the prose of each page into the compiled docs. `setupKolay` then gives that data to this store.
 
 ```js
 import { searcher } from 'kolay';
@@ -14,11 +14,11 @@ await search.search('rootURL'); // ranked SearchResult[], best first
 await search.loadSearchData(); // the raw index, to rank it yourself
 ```
 
-`search` is async because the index is. The manifest loads once, and so does the text of any page the build could not inline. Only the first search waits.
+`search` is async, because the index is async. The manifest loads one time. The text of a page that the build cannot inline also loads one time. Only the first search waits.
 
-## Wiring up a search page
+## Build a search page
 
-1. Keep the query in the URL, so a search survives a reload and can be linked to.
+1. Keep the query in the URL. A search then survives a reload, and you can link to it.
 
 ```js
 // app/routes/search.js
@@ -29,7 +29,7 @@ export default class SearchRoute extends Route {
 }
 ```
 
-2. Register the route above `addRoutes`, so the docs catch-all does not claim the path.
+2. Register the route before `addRoutes`, so that the docs wildcard route does not take the path.
 
 ```js
 Router.map(function () {
@@ -74,24 +74,24 @@ export default class SearchPage extends Component {
 }
 ```
 
-Keep the `@cached`. `getPromiseState` keys its state off the promise it receives, so a new promise per access gives a new pending state per access.
+Keep the `@cached`. `getPromiseState` keys its state on the promise that it receives. A new promise on each access gives a new pending state on each access.
 
 ## What a result carries
 
-A result is the page's manifest entry, plus how it matched.
+A result is the manifest entry of the page, and the details of the match.
 
-- `path` and `appRelativePath`: the two path spaces from [`docsManager`](/Runtime/utilities/docs-manager.md). Link with `path`.
-- `title`, `groupName`, `headings`: what to show for the result.
-- `score`: a term in the title scores 100, in a heading 25, in the prose 1.
-- `excerptRange`: offsets into `text` for the passage that matched.
+- `path` and `appRelativePath` are the two path spaces from [`docsManager`](/Runtime/utilities/docs-manager.md). Use `path` for a link.
+- `title`, `groupName`, and `headings` are what you show for the result.
+- `score` ranks the page. A term in the title scores 100, a term in a heading scores 25, and a term in the prose scores 1.
+- `excerptRange` gives the offsets in `text` for the passage that matched.
 
-Results come back sorted by score, ties broken by title. A page that scores zero never appears.
+The results come back in order of score. The title breaks a tie. A page with a score of zero never appears.
 
 ## Excerpts
 
-`excerptRange` covers one passage of prose: the paragraph, list item, or footnote that holds the first matching term. The range skips code fences and HTML blocks, so an excerpt reads as the sentence about a thing rather than a sample of it.
+`excerptRange` covers one passage of prose. That passage is the paragraph, the list item, or the footnote with the first term of the match. The range skips a code fence and an HTML block. So an excerpt reads as a sentence about the subject, and not as an example of it.
 
-`stripFormatting` turns that range into a line worth reading.
+`stripFormatting` makes that range into a line that reads well.
 
 ```gjs
 import { stripFormatting } from 'kolay';
@@ -101,7 +101,7 @@ import { stripFormatting } from 'kolay';
 </template>
 ```
 
-It removes the markdown syntax and collapses the whitespace. It does not compile the markdown, which keeps a page of results cheap.
+It removes the markdown syntax, and it collapses the whitespace. It does not compile the markdown, so a page of results stays fast.
 
 ## Highlighting the query
 
@@ -117,7 +117,7 @@ import { highlightSearch, stripFormatting } from 'kolay';
 </template>
 ```
 
-Style the marks under the name `search-query`.
+Style the marks with the name `search-query`.
 
 ```css
 ::highlight(search-query) {
@@ -126,13 +126,13 @@ Style the marks under the name `search-query`.
 }
 ```
 
-Nothing appears until that rule exists. The modifier uses the [CSS Custom Highlight API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API), so it adds no wrapper elements and the text stays selectable as written. A browser without the API renders the excerpt plainly.
+Nothing appears before that rule exists. The modifier uses the [CSS Custom Highlight API](https://developer.mozilla.org/en-US/docs/Web/API/CSS_Custom_Highlight_API). It adds no wrapper elements, and the reader can select the text as you wrote it. A browser without the API shows the excerpt with no marks.
 
-## Pages the build could not inline
+## Pages that the build cannot inline
 
-A `.gjs.md` page compiles at build time, so its source is already in the manifest. A plain `.md` page loads on demand: from your bundle first, then from the page's own URL.
+A `.gjs.md` page compiles at build time, so its source is in the manifest. A plain `.md` page loads when the search needs it: first from your bundle, then from the URL of the page.
 
-A page that cannot be read indexes as empty. Check that first when a page never appears in results.
+A page that kolay cannot read indexes as empty. If a page never appears in the results, look at this first.
 
 ## API Reference
 

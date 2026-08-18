@@ -2,7 +2,7 @@
 
 ## `isActive`
 
-Whether a manifest item (`Page` or `PageTree`) is the currently visited page. Kolay's own `PageNav` uses this for its active-link styling; it is exported for consumers building custom navigation.
+This function tells you if a manifest item (`Page` or `PageTree`) is the current page. The `PageNav` of kolay uses it to style the active link. Kolay exports it for your own navigation.
 
 ```gjs
 import { isActive } from 'kolay';
@@ -11,12 +11,12 @@ import { isActive } from 'kolay';
 isActive(item, this.router.currentURL);
 ```
 
-Behavior notes:
+Notes on the behavior:
 
-- rootURL-aware: the item's `appRelativePath` (computed into the manifest at build time) is compared against the app-relative `router.currentURL`, so it works under custom `rootURL` deploys (e.g. a PR preview at `/pr-1234/`) without any conversion.
-- Pages are visitable with and without the `.md` extension, so both forms match.
-- Query params and the hash on the current URL are ignored.
-- A `PageTree` is active when any page within it (recursively) is — useful for highlighting or expanding the branch of a nav tree that contains the current page.
+- The function knows about the `rootURL`. It compares the `appRelativePath` of the item, which the build wrote into the manifest, with the app-relative `router.currentURL`. So it works under a custom `rootURL` deploy, for example a pull request preview at `/pr-1234/`, with no conversion.
+- A page opens with and without the `.md` extension, so both forms match.
+- The function ignores the query params and the hash of the current URL.
+- A `PageTree` is active when one of its pages is active, at any depth. Use this to highlight or to open the branch of a nav tree that holds the current page.
 - The app root (`/`) is never active.
 
 ## API Reference

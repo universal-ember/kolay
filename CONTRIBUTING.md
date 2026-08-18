@@ -10,7 +10,7 @@ pnpm install
 
 ## Project structure
 
-This is a pnpm workspace monorepo:
+This repository is a pnpm workspace monorepo:
 
 | Path | Description |
 |---|---|
@@ -25,24 +25,24 @@ pnpm lint
 pnpm lint:fix
 ```
 
-## Building the addon
+## Build the addon
 
 ```bash
 pnpm build
 ```
 
-## Running tests
+## Run the tests
 
 ```bash
 cd test-apps/markdown-only   # or any test-app
 pnpm test
 ```
 
-## Running the docs site
+## Run the docs site
 
 ```bash
 cd docs-app
 pnpm start
 ```
 
-Then visit [http://localhost:4200](http://localhost:4200).
+Then open [http://localhost:4200](http://localhost:4200).

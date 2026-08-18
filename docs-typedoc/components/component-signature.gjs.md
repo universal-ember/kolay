@@ -1,11 +1,11 @@
 # `<ComponentSignature />`
 
-Render the docs generated from Comments, [JSDoc](https://jsdoc.app/), etc, specialized specifically for components, which have a known signature format, consisting of `Args`, `Element` and `Blocks`.
+This component shows the docs that come from your comments and your [JSDoc](https://jsdoc.app/). It is for a component, which has a known signature format of `Args`, `Element`, and `Blocks`.
 
-This, along with the other API doc-related components, are powered by [TypeDoc](https://typedoc.org/) and generated from declarations.
+This component, and the other api docs components, use [TypeDoc](https://typedoc.org/). TypeDoc reads your type declarations.
 
 
-All codeblocks in the in-source documentation support the same meta flags as [ember-repl](https://limber.glimdown.com/docs/ember-repl) / [repl-sdk](https://limber.glimdown.com/docs/repl-sdk) -- which means you can render not only snippets of code with examples, but live demos in Ember, Mermaid, React, Svelte, and Vue (and likely more in the future, whatever ember-repl / repl-sdk supports). See [the docs for Page nav](/Runtime/navigation/page-nav.md) for an example of this in action.
+Every code block in your source documentation accepts the same meta flags as [ember-repl](https://limber.glimdown.com/docs/ember-repl) and [repl-sdk](https://limber.glimdown.com/docs/repl-sdk). So a code block can be a snippet, or a live demo in Ember, Mermaid, React, Svelte, or Vue. ember-repl and repl-sdk can add more targets later. For an example, read [the docs for Page nav](/Runtime/navigation/page-nav.md).
 
 ## API Reference
 
@@ -136,7 +136,7 @@ export const TemplateOnlyD: TOC<{
 <fieldset>
   <summary>Yielded components (`WithBoundArgs`)</summary>
 
-`WithBoundArgs` names the args a consumer *cannot* pass, so the bound component renders as its own signature, minus those args. One that leads back to the signature it appears in is marked `recursive`.
+`WithBoundArgs` names the args that a consumer *cannot* pass. The bound component then renders with its own signature, without those args. A bound component that points back to the signature that holds it is marked `recursive`.
 
 ```gts
 export type ClassC = ComponentLike<SignatureC>;
@@ -163,7 +163,7 @@ export interface SignatureC {
 <fieldset>
   <summary>Yielded modifiers and helpers</summary>
 
-Anything yielded is labelled with what it *is* -- component, modifier, helper, or function. Modifiers and helpers can be bound too, and render in their own shape.
+Each yielded value has a label with its kind: component, modifier, helper, or function. A modifier and a helper can also be bound, and each renders in its own shape.
 
 ```gts
 export interface YieldsInvokables {
@@ -192,7 +192,7 @@ export interface YieldsInvokables {
 <fieldset>
   <summary>Union Type (Discriminated Union)</summary>
 
-A component signature can be a discriminated union to express multiple usage modes. Each variant is rendered separately.
+A component signature can be a discriminated union, which gives the component more than one usage mode. Kolay renders each variant separately.
 
 ```gts
 export type UnionSignature =

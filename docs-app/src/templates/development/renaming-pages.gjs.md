@@ -1,6 +1,6 @@
 # Renaming pages
 
-By default, a page's nav entry is derived from its file name. To display something else, place a json file next to the page, named after it:
+By default, the nav entry of a page comes from its file name. To show a different name, put a json file next to the page, with the same name:
 
 ```
 docs/
@@ -9,14 +9,14 @@ docs/
     selected.json
 ```
 
-Any keys in that file are merged into the page's manifest entry. The link text is `title`:
+Kolay merges the keys of that file into the manifest entry of the page. The `title` key gives the link text:
 
 ```jsonc
 // selected.json
 { "title": "selected(...)" }
 ```
 
-Your nav decides how to use it — this site's `nameFor` helper, passed to [`<PageNav />`](/Runtime/navigation/page-nav.md), looks like:
+Your nav decides how to use the key. This site gives a `nameFor` helper to [`<PageNav />`](/Runtime/navigation/page-nav.md):
 
 ```js
 export function nameFor(page) {
@@ -28,13 +28,13 @@ export function nameFor(page) {
 }
 ```
 
-That is how the [Runtime](/Runtime/rendering/page.md) and [TypeDoc](/TypeDoc/components/api-docs.md) sections show invocation-style names like `selected(...)` and `<APIDocs />`.
+This is how the [Runtime](/Runtime/rendering/page.md) and [TypeDoc](/TypeDoc/components/api-docs.md) sections show names in invocation style, for example `selected(...)` and `<APIDocs />`.
 
-(For _ordering_ pages, see [Ordering pages](/development/ordering-pages.md) — that's a `meta.json` per folder, not a per-page file.)
+To set the _order_ of the pages, read [Ordering pages](/development/ordering-pages.md). That is one `meta.json` for each folder, and not one file for each page.
 
 ## Nav-only links
 
-A json file with an `href` — and no markdown file of its own — becomes a nav entry that is just a link. It participates in naming and ordering like any page, but points wherever the `href` says, e.g. a page in another group:
+A json file with an `href`, and with no markdown file, becomes a nav entry that is only a link. It gets its name and its order like any page. But it points to the `href`, for example a page in another group:
 
 ```jsonc
 // development/configuring-api-docs.json
@@ -44,11 +44,11 @@ A json file with an `href` — and no markdown file of its own — becomes a nav
 }
 ```
 
-That file produces the "Configuring apiDocs(...)" entry in this very section — it links over to the TypeDoc group.
+That file makes the "Configuring apiDocs(...)" entry in this section. The entry links to the TypeDoc group.
 
-The `href` is written app-relative (as if the app were deployed at `/`); the app's `rootURL` is applied automatically, the same as for authored links.
+Write the `href` app-relative, as if the app were deployed at `/`. Kolay applies the `rootURL` of the app for you, as it does for the links that you author.
 
-Since these entries take the reader somewhere else — a different group, or a different site entirely — you may want to mark them visually. Everything from the page's json is on the manifest entry your nav blocks receive, so the presence of `href` is the signal: render an icon in the link when it's set. This site's `<PageNav />` `:page` block:
+These entries take the reader to a different group, or to a different site. You can mark them for the reader. The nav blocks receive every key of the page json on the manifest entry, so `href` is the signal. Render an icon in the link when `href` is set. This is the `:page` block of `<PageNav />` on this site:
 
 ```gjs
 <x.Link>
@@ -59,10 +59,10 @@ Since these entries take the reader somewhere else — a different group, or a d
 </x.Link>
 ```
 
-`<LinkEntryIcon />` here is a small inline `<svg>` — the same arrow this site's other external links show. Any icon component works.
+`<LinkEntryIcon />` is a small inline `<svg>`. It is the same arrow that the other external links on this site show. Any icon component works.
 
 <details>
-<summary>Prefer to keep templates untouched? The marker can be CSS alone</summary>
+<summary>Do you want to keep your templates as they are? The marker can be CSS only</summary>
 
 Set an attribute from the same signal:
 
@@ -72,7 +72,7 @@ Set an attribute from the same signal:
 </x.Link>
 ```
 
-and draw the icon from a stylesheet (a literal `↗` character renders as an emoji on some platforms, so prefer an SVG `mask`):
+Then draw the icon from a stylesheet. A literal `↗` character shows as an emoji on some platforms, so use an SVG `mask`:
 
 ```css
 nav a[data-link-entry]::after {
