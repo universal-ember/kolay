@@ -255,10 +255,14 @@ const SEARCH_MODULE_PREFIX = `${VIRTUAL_PREFIX}search/`;
 /**
  * Every namespace under `virtual:kolay/`. Each one is per-group: the
  * module id is `virtual:kolay/<namespace>/<groupName>`.
+ *
+ * `hidden` namespaces still resolve — they're just left out of the
+ * known-imports list, because they're loaded for you (`search` is what a
+ * docs module's `search()` export imports) rather than imported by hand.
  */
 const GROUP_NAMESPACES = [
   { name: 'docs', describe: `a group's manifest, pages, meta, and addRoutes` },
-  { name: 'search', describe: `a group's search entries (a default export)` },
+  { name: 'search', hidden: true },
 ];
 
 /**
@@ -281,9 +285,9 @@ function docsModuleId(groupName) {
  * The known-imports blurb every guard error ends with.
  */
 function knownImports(groups) {
-  const namespaces = GROUP_NAMESPACES.map(
-    ({ name, describe }) => `  virtual:kolay/${name}/<group> — ${describe}`
-  ).join('\n');
+  const namespaces = GROUP_NAMESPACES.filter(({ hidden }) => !hidden)
+    .map(({ name, describe }) => `  virtual:kolay/${name}/<group> — ${describe}`)
+    .join('\n');
 
   return (
     `Known virtual imports:\n${namespaces}\n` +

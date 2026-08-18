@@ -46,7 +46,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides, demos"
     `);
@@ -58,7 +57,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
@@ -70,7 +68,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
@@ -82,27 +79,30 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
   });
 
-  test(`never mentions setupKolay's internal virtual modules`, () => {
-    // they are implementation details of setupKolay — neither suggested
-    // nor listed, so nothing invites a user to import them
+  test(`never mentions kolay's internal virtual modules`, () => {
+    // they are implementation details — the `kolay/*:virtual` modules
+    // setupKolay imports, and the search module a docs module's `search()`
+    // loads — so nothing in the messages invites importing them by hand
     const messages = [
       errorFor('virtual:kolay/api-docs', 'guides'),
       errorFor('virtual:kolay/compiled-docs', 'guides'),
       errorFor('virtual:kolay/demos', 'guides'),
       errorFor('virtual:kolay/import-entrypoints', 'guides'),
       errorFor('virtual:kolay/docs/nope', 'guides'),
+      errorFor('virtual:kolay/search/nope', 'guides'),
       errorFor('virtual:kolay', 'guides'),
     ];
 
     for (const message of messages) {
       expect(message).not.toContain(':virtual');
       expect(message).not.toContain('Did you mean');
+      // the id the user wrote is echoed, but the list never advertises it
+      expect(message).not.toContain('virtual:kolay/search/<group>');
     }
 
     expect(errorFor('virtual:kolay/api-docs', 'guides')).toMatchInlineSnapshot(`
@@ -110,7 +110,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
@@ -122,7 +121,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
@@ -131,7 +129,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
@@ -143,7 +140,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
@@ -156,7 +152,6 @@ describe('virtualGuard', () => {
 
       Known virtual imports:
         virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
-        virtual:kolay/search/<group> — a group's search entries (a default export)
         kolay/setup
       Declared groups: Home, guides"
     `);
