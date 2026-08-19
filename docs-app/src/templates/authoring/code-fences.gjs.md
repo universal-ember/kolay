@@ -1,6 +1,15 @@
 # Code fences
 
-A code fence can stay a plain snippet with highlighting. It can also become a live demo. Kolay uses [ember-repl](https://limber.glimdown.com/docs/ember-repl) and [repl-sdk](https://limber.glimdown.com/docs/repl-sdk) for this. Write the flags below after the language, on the opening line of the fence.
+Kolay provides functionality to display Markdown code fences in one of three ways:
+
+1. Code Block with Code Highlighting
+2. Injected Working Code Example (with no source code block shown)
+3. Injected Working Code Example with visible source Code Block with Code Highlighting
+
+
+Kolay uses [ember-repl](https://limber.glimdown.com/docs/ember-repl) and [repl-sdk](https://limber.glimdown.com/docs/repl-sdk) to inject live code examples.
+
+These modes are toggled by using the following flags after the code block language on the opening line of the fence.
 
 ## `live`
 
