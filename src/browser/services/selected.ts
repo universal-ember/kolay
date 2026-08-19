@@ -4,6 +4,7 @@ import { service } from '@ember/service';
 
 import { createStore } from 'ember-primitives/store';
 
+import { stripMarkdownExtension } from '../../paths.js';
 import { compiledDoc } from './compiled-doc.ts';
 import { docsManager } from './docs.ts';
 import { getKey } from './lazy-load.ts';
@@ -142,7 +143,7 @@ class Selected {
       return;
     }
 
-    return path.replace(/\.md$/i, '');
+    return stripMarkdownExtension(path);
   }
 
   get #matchOrFirstPagePath() {

@@ -3,9 +3,10 @@ import { assert } from '@ember/debug';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { samePagePath } from '../../paths.js';
 import { isActive } from '../is-active.ts';
+import { getIndexPage, isPageTree, isRedundantWithHeading } from '../page-tree.ts';
 import { docsManager } from '../services/docs.ts';
-import { getIndexPage, isIndex, isPageTree } from '../utils.ts';
 
 import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -76,8 +77,8 @@ export class PageNav extends Component<{
     ];
     /**
      * If provided, this block will yield back the section for customizing the
-     * name. By default the `name` property will be used or a link will be
-     * rendered if an index page is present..
+     * name. By default the folder's title is rendered, linked to its index
+     * page.
      *
      * A section is a `PageTree`: the pages under one folder of markdown
      * files, plus any sections nested within it.
@@ -108,8 +109,10 @@ export class PageNav extends Component<{
       {
         section: PageTree;
         /**
-         * If there is an index page, it'll be provided here,
-         * and omitted from the :page block.
+         * The folder's index page: the page named `index` when there is one,
+         * and the folder's first page otherwise. Absent only for a folder
+         * with no pages. A page it links to under the same title is left out
+         * of the `:page` block.
          */
         index?: {
           page: Page;
@@ -143,7 +146,7 @@ export class PageNav extends Component<{
             {{yield p to='page'}}
           {{else}}
             <p.Link>
-              {{p.page.name}}
+              {{p.page.title}}
             </p.Link>
           {{/if}}
         </:page>
@@ -154,10 +157,10 @@ export class PageNav extends Component<{
           {{else}}
             {{#if c.index}}
               <c.index.Link>
-                {{c.index.page.name}}
+                {{c.section.title}}
               </c.index.Link>
             {{else}}
-              {{c.section.name}}
+              {{c.section.title}}
             {{/if}}
           {{/if}}
         </:section>
@@ -186,26 +189,24 @@ const Pages: TOC<{
   {{#if (isPageTree @item)}}
     <ul>
       {{#each @item.pages as |page|}}
-        {{#if (not (isIndex page))}}
+        {{#if (not (isRedundantWithHeading @item page))}}
           <li>
             {{#if (isPageTree page)}}
 
-              {{! index.md pages can make the whole section clickable }}
               {{#let (getIndexPage page) as |indexPage|}}
-                {{#if indexPage}}
-                  {{yield
-                    (hash
-                      section=page
-                      index=(hash
+                {{yield
+                  (hash
+                    section=page
+                    index=(if
+                      indexPage
+                      (hash
                         page=indexPage
                         Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
-                    to='section'
-                  }}
-                {{else}}
-                  {{yield (hash section=page) to='section'}}
-                {{/if}}
+                  )
+                  to='section'
+                }}
               {{/let}}
             {{/if}}
 
@@ -261,7 +262,7 @@ class PageLink extends Component<{
     // scoped mount: compare in the mount's URL space
     const [current = ''] = this.router.currentURL?.split(/[?#]/) ?? [];
 
-    return current.replace(/\.md$/, '') === appRelative.replace(/\.md$/, '');
+    return samePagePath(current, appRelative);
   }
 
   <template>

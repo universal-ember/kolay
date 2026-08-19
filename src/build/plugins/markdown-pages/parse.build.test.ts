@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest';
 
-import { build } from './parse.js';
+import { addTitles, reshape } from './hydrate.js';
+import { build, parse } from './parse.js';
+
+import type { Page, PageTree } from '#types';
 
 describe('build', () => {
   test('shallow path', () => {
@@ -326,5 +329,55 @@ describe('build', () => {
         'Cannot have a group that matches the name of an individual page. Please move guides.md into the "guides" folder. If you want this to be the first page, rename the file to guides/index.md'
       );
     });
+  });
+});
+
+function namesIn(node: Page | PageTree | undefined): string[] {
+  return node && 'pages' in node ? node.pages.map((page) => page.name) : [];
+}
+
+describe('index hoisting through parse()', () => {
+  // `betterSort` can't cover this on its own: `build()` strips `.gjs.md` /
+  // `.gts.md` from `path` before sorting runs, so extension handling is only
+  // observable once the two are composed.
+  test.each(['md', 'gjs.md', 'gts.md'])('an index.%s sorts first', async (ext) => {
+    const tree = (await parse(['foo/apple.md', `foo/index.${ext}`], '.', [])) as PageTree;
+    const [folder] = tree.pages;
+
+    expect(namesIn(folder)).toEqual(['index', 'apple']);
+  });
+});
+
+describe('folder titles', () => {
+  test('a folder titles itself from its meta.json', async () => {
+    const { tree } = await reshape({
+      paths: ['foo/apple.md'],
+      configs: [{ path: 'foo/meta.json', config: { title: 'Fancy Name' } }],
+      cwd: '.',
+      prefix: '/',
+      base: '/',
+    });
+
+    addTitles(tree);
+
+    const [folder] = (tree as PageTree).pages;
+
+    expect((folder as PageTree).title).toEqual('Fancy Name');
+  });
+
+  test('otherwise a folder is titled by its cleaned name, sentence-cased', async () => {
+    const { tree } = await reshape({
+      paths: ['sub-folder/apple.md'],
+      configs: [],
+      cwd: '.',
+      prefix: '/',
+      base: '/',
+    });
+
+    addTitles(tree);
+
+    const [folder] = (tree as PageTree).pages;
+
+    expect((folder as PageTree).title).toEqual('Sub folder');
   });
 });

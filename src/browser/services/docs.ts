@@ -1,6 +1,5 @@
 import { cached } from '@glimmer/tracking';
 import { assert } from '@ember/debug';
-import { registerDestructor } from '@ember/destroyable';
 import { service } from '@ember/service';
 
 import { Shadowed } from 'ember-primitives/components/shadowed';
@@ -8,22 +7,24 @@ import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 import remarkFrontmatter from 'remark-frontmatter';
 
+import { equalsIgnoreCase, samePagePath, trimSlashes } from '../../paths.js';
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
-import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
+import { findPageTree, getIndexPage } from '../page-tree.ts';
+import { redirectForUrl, redirectTargetFor } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
-import { equalsIgnoreCase, samePagePath } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
+import { pageTreeRedirects } from './page-tree-redirects.ts';
+import { wireRedirects } from './redirect-wiring.ts';
 import { searcher } from './search.ts';
 import { selected } from './selected.ts';
 
-import type { LoadTypedoc, Manifest, Page, SearchEntry } from '../../types.ts';
+import type { LoadTypedoc, Manifest, Page, PageTree, SearchEntry } from '../../types.ts';
 import type RouterService from '@ember/routing/router-service';
-import type Transition from '@ember/routing/transition';
 import type { ComponentLike } from '@glint/template';
 
 export type SetupOptions = Parameters<DocsService['setup']>[0];
@@ -115,6 +116,10 @@ class DocsService {
 
   get #search() {
     return searcher(this);
+  }
+
+  get #pageTreeRedirects() {
+    return pageTreeRedirects(this);
   }
 
   private _docs: Manifest | undefined;
@@ -220,23 +225,17 @@ class DocsService {
       this._docs = compiledDocs.manifest;
       this.#search._loadSearchData = compiledDocs.loadSearchData;
       this.#setupRedirects(compiledDocs.manifest);
+      this.#pageTreeRedirects.setup();
     }
   }
 
   #redirectsWired = false;
 
   /**
-   * Serves the manifest's `redirects` (from the project's kolay config
-   * file) automatically: future transitions are checked in
-   * `routeWillChange`, and — because setup runs inside the application
-   * route's model hook, during the initial transition, whose
-   * `routeWillChange` has already fired — the URL the app arrives on is
-   * corrected when that transition lands (with `replaceWith`: the old
-   * URL is already in the history).
+   * Serves the manifest's `redirects`, from the project's kolay config file.
    *
-   * Redirect targets can never themselves redirect (config validation
-   * rejects chains), so the redirecting transitions fire these handlers
-   * harmlessly.
+   * Redirect targets can never themselves redirect (config validation rejects
+   * chains), so the redirecting transitions fire these handlers harmlessly.
    */
   #setupRedirects(manifest: Manifest) {
     if (this.#redirectsWired) return;
@@ -247,47 +246,14 @@ class DocsService {
 
     this.#redirectsWired = true;
 
-    const router = this.router;
+    wireRedirects(this, this.router, {
+      fromTransition: (transition) => redirectTargetFor(transition, redirects),
+      onArrival: () => {
+        const current = this.router.currentURL;
 
-    const onRouteWillChange = (transition: Transition) => {
-      const target = redirectTargetFor(transition, redirects);
-
-      if (target !== undefined) {
-        router.transitionTo(target);
-      }
-    };
-
-    router.on('routeWillChange', onRouteWillChange);
-    registerDestructor(this, () => router.off('routeWillChange', onRouteWillChange));
-
-    const checkArrival = () => {
-      // routeDidChange has fired: the router has arrived somewhere, so
-      // currentURL is set (the null in its type covers pre-arrival)
-      const current = router.currentURL;
-
-      if (!current) return;
-
-      const [path = ''] = current.split(/[?#]/);
-      const target = resolveRedirect(path.replace(/^\//, ''), redirects);
-
-      if (target !== undefined) {
-        router.replaceWith('/' + target);
-      }
-    };
-
-    // During normal boot, setup runs inside the application route's
-    // model hook — mid-initial-transition, so currentURL is still null
-    // and that transition's routeWillChange fired before the listener
-    // above existed. Correct the arrival URL when the transition lands.
-    // (A set currentURL means setup ran after boot — tests — where the
-    // app already arrived: check now, since routeDidChange won't refire.)
-    if (router.currentURL) {
-      checkArrival();
-    } else {
-      // self-removing; the router can't outlive this store (same owner),
-      // so no destructor is needed
-      router.one('routeDidChange', checkArrival);
-    }
+        return current ? redirectForUrl(current, redirects) : undefined;
+      },
+    });
   }
 
   private get docs() {
@@ -402,7 +368,7 @@ class DocsService {
 
     return page.appRelativePath.startsWith(prefix)
       ? page.appRelativePath.slice(prefix.length)
-      : page.appRelativePath.replace(/^\//, '');
+      : trimSlashes(page.appRelativePath, { leading: true });
   }
 
   /**
@@ -543,6 +509,64 @@ class DocsService {
   findByPath = (path: string) => {
     return this.pages.find((page) => samePagePath(page.appRelativePath, path));
   };
+
+  /**
+   * Whether any group serves a page at this manifest-space path. Manifest
+   * wide, not `findByPath`, which searches `currentGroup` — derived from
+   * `router.currentURL`, still the previous page while a transition resolves.
+   */
+  hasPageAt = (appRelativePath: string): boolean =>
+    this.pages.some((page) => samePagePath(page.appRelativePath, appRelativePath));
+
+  /**
+   * The index page of the tree at a manifest-space path, or `undefined` when
+   * no tree is there — because the path names a page, or nothing at all.
+   *
+   * Pass `groupName` when you know which group serves that path: two groups
+   * can hold the same one.
+   */
+  indexPageForPath = (appRelativePath: string, groupName?: string): Page | undefined => {
+    const scoped = groupName === undefined ? undefined : this.canonicalGroupName(groupName);
+
+    if (groupName !== undefined && !scoped) return undefined;
+
+    const searched = scoped ? [this.groupFor(scoped)] : (this.manifest?.groups ?? []);
+    // `Home`'s prefix is the root, which contains everything.
+    const groups = searched.filter((group) => {
+      const prefix = group.tree.appRelativePath;
+
+      if (prefix === '/') return true;
+
+      return (
+        equalsIgnoreCase(prefix, appRelativePath) ||
+        appRelativePath.toLowerCase().startsWith(`${prefix.toLowerCase()}/`)
+      );
+    });
+
+    // A path naming a page must not redirect. Not via `findByPath`: it
+    // searches `currentGroup`, derived from `router.currentURL`, which is
+    // still the previous page while a transition resolves.
+    for (const group of groups) {
+      if (group.list.some((page) => samePagePath(page.appRelativePath, appRelativePath))) return;
+    }
+
+    for (const group of groups) {
+      const tree = findPageTree(group.tree, appRelativePath);
+      const indexPage = tree && this.indexPageFor(tree);
+
+      // An empty tree shouldn't end the search for a group that has one.
+      if (indexPage) return indexPage;
+    }
+
+    return undefined;
+  };
+
+  /**
+   * A tree's index page. Needs no group: the group parameter on
+   * `indexPageForPath` guards the search for a tree at a path, and the caller
+   * already has the tree.
+   */
+  indexPageFor = (tree: PageTree): Page | undefined => getIndexPage(tree);
 }
 
 export type { DocsService };

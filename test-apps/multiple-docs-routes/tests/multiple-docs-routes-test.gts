@@ -190,6 +190,108 @@ module("Multiple docs routes", function (hooks) {
     assert.dom("h1").containsText("Buttons demo");
   });
 
+  // What the page-tree redirect leans on when a mount is scoped: it resolves
+  // a group's prefix from its tree rather than assuming the prefix is the
+  // group's name. That assumption holds for every named group and fails for
+  // the co-located one, which is called Home and lives at the root.
+  test("the co-located group's prefix is the root, not its name", async function (assert) {
+    await visit("/welcome/home.md");
+
+    const docs = docsManager(this.owner);
+
+    assert.strictEqual(docs.groupFor("Home").tree.appRelativePath, "/");
+    assert.strictEqual(docs.groupFor("guides").tree.appRelativePath, "/guides");
+  });
+
+  test("a scoped mount's page-tree URL redirects to its first page", async function (assert) {
+    await visit("/help/getting-started");
+
+    assert.strictEqual(
+      currentURL(),
+      "/help/getting-started/intro.md",
+      "redirects in mount space, not manifest space",
+    );
+    assert.dom("h1").containsText("Guides intro");
+  });
+
+  test("an unscoped nested mount's page-tree URL redirects to its first page", async function (assert) {
+    await visit("/demos/components");
+
+    assert.strictEqual(currentURL(), "/demos/components/buttons");
+  });
+
+  // `addRoutes(context, groupName)` stores whatever the app author passed —
+  // the manifest is not loaded at router-map time, so nothing validates it
+  // there. Every app here mounts through the generated virtual module, where
+  // the name matches by construction, so only a direct call reaches this.
+  test("a scoping group name is matched case-insensitively", async function (assert) {
+    await visit("/welcome/home.md");
+
+    const docs = docsManager(this.owner);
+    const indexPage = docs.indexPageForPath("/guides/getting-started", "GUIDES");
+
+    assert.strictEqual(indexPage?.appRelativePath, "/guides/getting-started/intro.md");
+
+    assert.strictEqual(
+      docs.indexPageForPath("/guides/getting-started", "not-a-group"),
+      undefined,
+      "an unknown group answers nothing rather than widening to every group",
+    );
+  });
+
+  // `app/templates/guides/getting-started/` puts a co-located folder at the
+  // same manifest path the scoped `guides` group occupies, because the
+  // co-located group's pages live at the root. Searching every group would
+  // answer with whichever was enumerated first.
+  test("a scoped mount resolves inside its own group, not a group that shadows it", async function (assert) {
+    await visit("/help/getting-started");
+
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md");
+    assert.dom("h1").containsText("Guides intro");
+  });
+
+  test("a scoped mount's page-tree URL redirects when reached from inside the mount", async function (assert) {
+    await visit("/help/getting-started/intro.md");
+    await visit("/help/getting-started");
+
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md");
+    assert.dom("[data-page-error]").doesNotExist();
+  });
+
+  test("an unscoped nested mount's page-tree URL redirects when reached from inside the mount", async function (assert) {
+    await visit("/demos/components/buttons");
+    await visit("/demos/components");
+
+    assert.strictEqual(currentURL(), "/demos/components/buttons");
+    assert.dom("[data-page-error]").doesNotExist();
+  });
+
+  // The mount's own URL, which carries no wildcard param. Ember does not
+  // re-enter an active mount route, so a hook on it never fires for these —
+  // and the group's own nav link points here from every page inside the mount.
+  test("a mount's own URL redirects when reached from inside the mount", async function (assert) {
+    await visit("/help/getting-started/intro.md");
+    await visit("/help");
+
+    assert.strictEqual(currentURL(), "/help/getting-started/intro.md", "scoped mount");
+
+    await visit("/demos/components/buttons");
+    await visit("/demos");
+
+    assert.strictEqual(currentURL(), "/demos/components/buttons", "unscoped nested mount");
+  });
+
+  // The co-located group's pages live at the root, so nothing is mounted at
+  // `/Home` and no page tree sits there — the path lookup declines it. Only
+  // resolving the wildcard as a *group name* answers, which is what
+  // `handlePotentialIndexVisit` used to be needed for.
+  test("a group whose pages live at the root redirects from its own name", async function (assert) {
+    await visit("/Home");
+
+    assert.strictEqual(currentURL(), "/welcome/home.md");
+    assert.dom("[data-page-error]").doesNotExist();
+  });
+
   test("visiting a mount's index with a trailing slash also redirects", async function (assert) {
     await visit("/help/");
 
