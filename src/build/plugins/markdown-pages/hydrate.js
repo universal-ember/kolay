@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 
-import { isIndexName } from '../../../index-page.js';
 import { titleFor } from '../../../title.js';
+import { isIndexName } from './index-page.js';
 import { parse } from './parse.js';
 import { sortTree } from './sort.js';
 

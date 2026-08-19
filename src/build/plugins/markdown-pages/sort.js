@@ -1,4 +1,4 @@
-import { isIndexName } from '../../../index-page.js';
+import { isIndexName } from './index-page.js';
 
 /**
  * @param {unknown[]} arr

@@ -55,9 +55,11 @@ Every page and folder has a resolved `title`, so navigation does not have to der
 |          | resolves to                                                                            |
 | -------- | -------------------------------------------------------------------------------------- |
 | a page   | its frontmatter `title` OR its first heading OR its cleaned filename                    |
-| a folder | its `meta.json` `title` OR its index page's title OR its cleaned directory name        |
+| a folder | its `meta.json` `title` OR the title of a page named `index` OR its cleaned directory name |
 
 "Cleaned names" have digits removed, dashes turned into spaces, and are sentence-cased.
+
+A folder takes its title from a page *named* `index` only, not from the fallback `getIndexPage` returns — otherwise every index-less folder would be titled by its first page, and `isRedundantWithHeading` would hide that page from the list.
 
 ## API Reference
 
