@@ -53,23 +53,15 @@ export function routeNameForGroup(groupName: string): string | undefined {
 }
 
 export interface MountLocation {
-  /** The wildcard segment below the mount, trailing slashes stripped. */
   wildcardParam: string | undefined;
-  /**
-   * Names that may identify the group this mount serves, most specific
-   * first. Raw — canonicalize at the callsite, which has the docs service.
-   */
+  /** Candidates for the group this mount serves. Canonicalize at the callsite. */
   mountGroupNames: string[];
 }
 
 /**
- * Where an index arrival sits relative to its mount.
- *
- * Index routes are reached two ways, and the parent differs: at the mount's
- * own URL (`/guides`) the parent is the mount route and the wildcard is its
- * sibling, while below it (`/guides/foo`) the parent is the wildcard route.
- * Both shapes resolve here so that callers don't each carry a copy of the
- * topology.
+ * An index arrival's mount and wildcard segment. The parent differs by
+ * arrival: at the mount's own URL (`/guides`) it is the mount route, below it
+ * (`/guides/foo`) it is the wildcard route.
  */
 export function mountLocationFor(
   to: RouteInfo | RouteInfoWithAttributes | null | undefined

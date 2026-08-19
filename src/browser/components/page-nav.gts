@@ -108,16 +108,10 @@ export class PageNav extends Component<{
       {
         section: PageTree;
         /**
-         * The folder's index page: where its own URL goes, and so where a
-         * link on its heading should go. That is the page named `index` when
-         * the author wrote one, and the folder's first page otherwise.
-         * Absent only for a folder holding no pages at all.
-         *
-         * In 5.x this was present only for a folder holding a page named
-         * `index`; it is present for every folder with pages now.
-         *
-         * A page whose `title` equals the folder's is left out of the `:page`
-         * block, since this heading already links to it under the same words.
+         * The folder's index page: the page named `index` when there is one,
+         * and the folder's first page otherwise. Absent only for a folder
+         * with no pages. A page it links to under the same title is left out
+         * of the `:page` block.
          */
         index?: {
           page: Page;
@@ -134,10 +128,6 @@ export class PageNav extends Component<{
     return docsManager(this);
   }
 
-  /**
-   * Where a folder's own URL goes, which is what the redirect would do.
-   * No group: the tree is in hand, so there is nothing to search for.
-   */
   private indexPageFor = (tree: PageTree) => this.docs.indexPageFor(tree);
 
   /**
@@ -180,14 +170,9 @@ export class PageNav extends Component<{
   </template>
 }
 
-/**
- * A page whose title is its folder's title is that folder's own page: the
- * section heading already links to it, so listing it again repeats the same
- * words twice. A page with a title of its own stays in the list, whether or
- * not it is the page the folder's URL goes to.
- */
 const not = (x: unknown) => !x;
 
+/** The section heading already links to it, under the same words. */
 const isFolderOwnPage = (folder: Page | PageTree, page: Page | PageTree) =>
   !isPageTree(page) && 'title' in folder && Boolean(folder.title) && page.title === folder.title;
 

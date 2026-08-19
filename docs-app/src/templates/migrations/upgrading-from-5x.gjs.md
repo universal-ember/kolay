@@ -139,13 +139,11 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## A folder's index page is now whichever page its URL goes to
+## A folder's index page is whichever page its URL goes to
 
-In 5.x a folder only had an index page if the author wrote one named `index`. A folder without one had no page to link its heading to, so it rendered as plain text.
+In 5.x a folder had an index page only if you wrote one named `index`. It is now the page named `index` when there is one and the folder's first page otherwise, so every folder with pages has one.
 
-A folder's index page is now the page its own URL goes to: the page named `index` when there is one, and the folder's first page otherwise. Every folder with pages has one.
-
-### `:section`'s `index` is present for every folder
+`:section` still yields `index`, and it is present for every folder now:
 
 ```diff
   <:section as |x|>
@@ -158,43 +156,11 @@ A folder's index page is now the page its own URL goes to: the page named `index
   </:section>
 ```
 
-**If your heading text comes from the index page, change it to `x.section.title`.** Otherwise a folder without a page named `index` will display its first page's title where 5.x displayed the folder's name. Your `{{else}}` branch is now unreachable for any folder that has pages.
+**Take the heading text from `x.section.title`.** Left as `x.index.page.title`, a folder without a page named `index` shows its first page's title where 5.x showed the folder's name. The `{{else}}` branch is unreachable for any folder with pages.
 
-`x.section.title` is new — see below — and is what the folder heading should say.
+With no `:section` block of your own, headings render `x.section.title` instead of the index page's `name` — which in 5.x was the literal string `index`.
 
-A page whose `title` equals its folder's is left out of the `:page` block, since the heading already links to it under the same words. That replaces 5.x's rule of always hiding a page named `index`, and you can reproduce it yourself:
-
-```js
-const hidden = page.title === folder.title;
-```
-
-### `getIndexPage` and `isIndex` are removed
-
-`getIndexPage` returned only an author-written `index` page, but was documented for the heading-link question — "useful for making folder names in navigation link to an index page" — which is why folders without one went unlinked. Use `<PageNav />`'s `index`, or `indexPageFor(tree)` on the docs service.
-
-`isIndex` is removed for the same reason: it answered "is this page named `index`" while reading like the general question. If you need it, the check is `page.name === 'index'`.
-
-### Folder and page titles
-
-`PageTree` carries a `title`, so an app no longer derives section headings itself. Titles resolve the same way for pages and folders, in navigation and in search:
-
-|          | resolves to                                                                           |
-| -------- | ------------------------------------------------------------------------------------- |
-| a folder | its `meta.json` `title`, then its index page's title, then its cleaned directory name |
-| a page   | its json `title`, then its first heading, then its cleaned filename                   |
-
-Cleaned names have digits removed, dashes turned into spaces, and are sentence-cased.
-
-With no `:section` block of your own, the default rendering changes:
-
-| folder                                   | 5.x                                | 6.0          |
-| ---------------------------------------- | ---------------------------------- | ------------ |
-| `meta.json` sets a `title`               | `index`, or the raw directory name | that title   |
-| a page named `index` with a `title`      | `index`                            | that title   |
-| a page named `index` with only an `# H1` | `index`                            | that heading |
-| no page named `index`                    | `sub-folder`                       | `Sub folder` |
-
-5.x rendered the index page's `name` — the literal string `index`.
+`getIndexPage` and `isIndex` are gone. Use `<PageNav />`'s `index`, or `indexPageFor(tree)` on the docs service. For "is this page named `index`", the check is `page.name === 'index'`.
 
 ## A folder's index page sorts first regardless of extension
 

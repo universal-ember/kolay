@@ -78,10 +78,7 @@ export function redirectTargetFor(
   return redirectForUrl(intent.url, redirects);
 }
 
-/**
- * The app-relative URL a redirect sends the given URL to, or `undefined` when
- * no entry matches. Query and hash are not part of the match.
- */
+/** Where a redirect sends this URL, ignoring its query and hash. */
 export function redirectForUrl(
   url: string,
   redirects: { from: string; to: string }[]

@@ -505,10 +505,9 @@ class DocsService {
   };
 
   /**
-   * The page a tree's own URL should land on: its first. Takes a
-   * manifest-space path, and answers `undefined` when that path names a page,
-   * or nothing. `groupName` scopes the search — two groups can hold one
-   * manifest path — and a name matching no group answers `undefined`.
+   * The index page of the tree at a manifest-space path. `undefined` when the
+   * path names a page, or nothing. Pass `groupName` when you know which group
+   * serves it: two groups can hold one manifest path.
    */
   indexPageForPath = (appRelativePath: string, groupName?: string): Page | undefined => {
     let groups = this.manifest?.groups ?? [];
@@ -521,8 +520,7 @@ class DocsService {
       groups = [this.groupFor(canonical)];
     }
 
-    // Only a group whose prefix contains the path can answer it. `Home`'s
-    // prefix is the root, which contains everything.
+    // `Home`'s prefix is the root, which contains everything.
     groups = groups.filter((group) => {
       const prefix = group.tree.appRelativePath;
 
@@ -553,16 +551,9 @@ class DocsService {
   };
 
   /**
-   * The page a tree's own URL goes to: its first, which sorting makes its
-   * index page when it has one. `undefined` for a tree holding no pages.
-   *
-   * Takes no group, and needs none. The group parameter on
-   * `indexPageForPath` guards the *search* for a tree at a path, which two
-   * groups can both hold; here the caller already has the tree. `tree.first`
-   * is not unique across groups — a co-located `Guides/foo.md` and a
-   * `docs('Guides')` group's `foo.md` both produce `/Guides/foo.md` — but a
-   * config that does that has one routable page either way, so scoping would
-   * not rescue it.
+   * A tree's index page. Needs no group: the group parameter on
+   * `indexPageForPath` guards the search for a tree at a path, and the caller
+   * already has the tree.
    */
   indexPageFor = (tree: PageTree): Page | undefined => {
     const first = tree.first;
