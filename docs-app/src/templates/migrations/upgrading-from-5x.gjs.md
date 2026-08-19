@@ -139,11 +139,11 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## A folder's index page is whichever page its URL goes to
+## A folder's "index" page is now equivalent to its landing page, even with no explicit `index` file
 
-In 5.x a folder had an index page only if you wrote one named `index`. It is now the page named `index` when there is one and the folder's first page otherwise, so every folder with pages has one.
+In 5.x a page was only considered a folder's index page if its file was explicitly named `index`. The index page is now the page named `index` _when there is one_, falling back to the folder's first page otherwise.
 
-`:section` still yields `index`, and it is present for every folder now:
+For example, the `<PageNav>` component's `:section` block still yields `index`, but it is present for every folder now:
 
 ```diff
   <:section as |x|>
@@ -156,11 +156,22 @@ In 5.x a folder had an index page only if you wrote one named `index`. It is now
   </:section>
 ```
 
-**Take the heading text from `x.section.title`.** Left as `x.index.page.title`, a folder without a page named `index` shows its first page's title where 5.x showed the folder's name. The `{{else}}` branch is unreachable for any folder with pages.
+**Note the change from `x.index.page.title` to `x.section.title`.** Left as `x.index.page.title`, a folder without a page named `index` will show its first page's title where in 5.x it showed the folder's name. The `{{else}}` branch is also unreachable for any folder that has pages.
 
 With no `:section` block of your own, headings render `x.section.title` instead of the index page's `name` — which in 5.x was the literal string `index`.
 
-`getIndexPage` and `isIndex` are gone. Use `<PageNav />`'s `index`, or `indexPageFor(tree)` on the docs service. For "is this page named `index`", the check is `page.name === 'index'`.
+`getIndexPage` and `isIndex` are removed. Use `<PageNav />`'s `index`, or `indexPageFor(tree)` on the docs service. For "is this page named `index`", the check is `page.name === 'index'` — case-sensitive, since the build derives `name` from the filename.
+
+## Removed types
+
+`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
+
+## Folder and group URLs redirect instead of erroring
+
+`/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
+
+- Anything asserting on the error page for a folder URL needs updating.
+- `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.
 
 ## A folder's index page sorts first regardless of extension
 
@@ -174,14 +185,3 @@ Two things move on any folder with a `.gjs.md` or `.gts.md` index and no `meta.j
 A folder with a `meta.json` `order` is unaffected — an explicit index is hoisted before the order is applied, so it cannot be placed second.
 
 To keep the old placement, give that folder a `meta.json` `order`. Build-time sorting also matches the node's name rather than its path now, so a **folder** named `index` sorts first among its siblings.
-
-## Removed types
-
-`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
-
-## Folder and group URLs redirect instead of erroring
-
-`/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
-
-- Anything asserting on the error page for a folder URL needs updating.
-- `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.

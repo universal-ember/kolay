@@ -505,23 +505,20 @@ class DocsService {
   };
 
   /**
-   * The index page of the tree at a manifest-space path. `undefined` when the
-   * path names a page, or nothing. Pass `groupName` when you know which group
-   * serves it: two groups can hold one manifest path.
+   * The index page of the tree at a manifest-space path, or `undefined` when
+   * no tree is there — because the path names a page, or nothing at all.
+   *
+   * Pass `groupName` when you know which group serves that path: two groups
+   * can hold the same one.
    */
   indexPageForPath = (appRelativePath: string, groupName?: string): Page | undefined => {
-    let groups = this.manifest?.groups ?? [];
+    const scoped = groupName === undefined ? undefined : this.canonicalGroupName(groupName);
 
-    if (groupName !== undefined) {
-      const canonical = this.canonicalGroupName(groupName);
+    if (groupName !== undefined && !scoped) return undefined;
 
-      if (!canonical) return undefined;
-
-      groups = [this.groupFor(canonical)];
-    }
-
+    const searched = scoped ? [this.groupFor(scoped)] : (this.manifest?.groups ?? []);
     // `Home`'s prefix is the root, which contains everything.
-    groups = groups.filter((group) => {
+    const groups = searched.filter((group) => {
       const prefix = group.tree.appRelativePath;
 
       if (prefix === '/') return true;

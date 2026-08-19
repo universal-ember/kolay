@@ -10,8 +10,8 @@ module("PageNav", function (hooks) {
   setupApplicationTest(hooks);
 
   // The heading renders the folder's resolved title, which is its cleaned
-  // name (dashes become spaces). Rename the `:section` block and every
-  // heading silently vanishes while the crawl below stays green.
+  // name (dashes become spaces). Rename the `:section` block and every heading
+  // disappears with nothing else to catch it — the crawl below follows links.
   test("renders a heading for each section", async function (assert) {
     await visit("/Docs/sub-folder/ember-primitives.md");
 

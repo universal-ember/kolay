@@ -1,46 +1,53 @@
 # Page Tree Utils
 
-Working with the page manifest, when building navigation of your own.
-
-## Titles
-
-Every page and folder has a resolved `title`, so navigation does not have to derive one:
-
-|          | resolves to                                                          |
-| -------- | -------------------------------------------------------------------- |
-| a page   | its json `title`, then its first heading, then its cleaned filename   |
-| a folder | its `meta.json` `title`, then its index page's title, then its cleaned directory name |
-
-Cleaned names have digits removed, dashes turned into spaces, and are sentence-cased.
+Utility functions for working with the page manifest. Useful when building custom navigation that needs to distinguish between leaf pages and nested page trees.
 
 ## `isPageTree`
 
-Type guard: `true` for a `PageTree` (a folder), `false` for a `Page`.
+Type guard that returns `true` if the given node is a `PageTree` (a folder of pages) rather than a `Page`.
 
 ```js
 import { isPageTree } from 'kolay';
 
-for (const node of folder.pages) {
-  console.log(isPageTree(node) ? 'folder:' : 'page:', node.title);
+for (const node of tree.pages) {
+  if (isPageTree(node)) {
+    console.log('folder:', node.name, node.pages.length, 'children');
+  } else {
+    console.log('page:', node.name, node.path);
+  }
 }
 ```
 
-## Where a folder's heading links
+## A folder's index page
 
-A folder's **index page** is the page its own URL goes to: the one named `index` when there is one, and the folder's first page otherwise.
+A folder's index page is where its own URL goes: the page named `index` when there is one, and the folder's first page otherwise. Every folder with pages has one, so a folder heading can always be a link.
 
 ```js
 import { docsManager } from 'kolay';
 
-const indexPage = docsManager(this).indexPageFor(folder);
+// `context` is anything with an owner — a component, route, or service
+const indexPage = docsManager(context).indexPageFor(folder);
 ```
 
-[`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) does this for you and yields it as `index`. It also leaves out any page the heading already links to under the same words:
+[`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) does this for you and yields it as `index`. It also leaves out any page its section heading already links to under the same title:
 
 ```js
 const alreadyInTheHeading = page.title === folder.title;
 ```
 
+## Titles
+
+Every page and folder has a resolved `title`, so navigation does not have to derive one:
+
+|          | resolves to                                                                            |
+| -------- | -------------------------------------------------------------------------------------- |
+| a page   | its frontmatter `title` OR its first heading OR its cleaned filename                    |
+| a folder | its `meta.json` `title` OR its index page's title OR its cleaned directory name        |
+
+"Cleaned names" have digits removed, dashes turned into spaces, and are sentence-cased.
+
 ## API Reference
 
 <APIDocs @module="declarations/browser" @name="isPageTree" @package="kolay" />
+
+
