@@ -164,19 +164,6 @@ With no `:section` block of your own, headings render `x.section.title` instead 
 
 `isIndex` is removed. It asked whether a node was named `index`, which on its own does not answer anything a nav needs. If you were using it to decide what a folder's heading links to, that is `getIndexPage(tree)`; to decide whether listing a page repeats its folder's heading, that is `isRedundantWithHeading(folder, page)`.
 
-## A folder's index page sorts first regardless of extension
-
-`index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not: the build strips those extensions before sorting runs, so the test never matched. They now sort first too.
-
-Two things move on any folder with a `.gjs.md` or `.gts.md` index and no `meta.json` `order`:
-
-- The nav lists the index page first, where it used to appear in alphabetical position.
-- `group.list[0]` becomes that index page, and with it the page a group's own URL resolves to.
-
-A folder with a `meta.json` `order` is unaffected — an explicit index is hoisted before the order is applied, so it cannot be placed second.
-
-To keep the old placement, give that folder a `meta.json` `order`. Build-time sorting also matches the node's name rather than its path now, so a **folder** named `index` sorts first among its siblings.
-
 ## Folder and group URLs redirect instead of erroring
 
 `/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
