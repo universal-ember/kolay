@@ -20,9 +20,12 @@ export function titleFor(node, headings = []) {
  * @returns {string[]}
  */
 export function headingsIn(source) {
+  // an ATX heading: 1-6 hashes, the text, optional closing hashes
   return [...source.matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)].map((match) =>
     (match[1] ?? '')
+      // a footnote reference, `[^label]`
       .replaceAll(/\[\^[^\]]+\]/g, '')
+      // emphasis and code marks
       .replaceAll(/[`*_]/g, '')
       .trim()
   );

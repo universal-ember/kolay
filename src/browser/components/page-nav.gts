@@ -172,8 +172,8 @@ export class PageNav extends Component<{
 
 const not = (x: unknown) => !x;
 
-/** The section heading already links to it, under the same words. */
-const isFolderOwnPage = (folder: Page | PageTree, page: Page | PageTree) =>
+/** The folder's index page: its section heading already links to it. */
+const isIndex = (folder: Page | PageTree, page: Page | PageTree) =>
   !isPageTree(page) && 'title' in folder && Boolean(folder.title) && page.title === folder.title;
 
 const Pages: TOC<{
@@ -195,7 +195,7 @@ const Pages: TOC<{
   {{#if (isPageTree @item)}}
     <ul>
       {{#each @item.pages as |page|}}
-        {{#if (not (isFolderOwnPage @item page))}}
+        {{#if (not (isIndex @item page))}}
           <li>
             {{#if (isPageTree page)}}
 
