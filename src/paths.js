@@ -37,7 +37,10 @@ export function stripGlimmerMarkdownExtension(path) {
  * its leading slash, a config `from` key never has one.
  *
  * @param {string} path
- * @param {{ leading?: boolean, trailing?: boolean }} ends
+ * At least one end is required: trimming neither is a no-op, and a call that
+ * does nothing is a mistake rather than a choice.
+ *
+ * @param {{ leading: true, trailing?: boolean } | { trailing: true, leading?: boolean }} ends
  * @returns {string}
  */
 export function trimSlashes(path, { leading = false, trailing = false }) {
