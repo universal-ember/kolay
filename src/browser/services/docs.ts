@@ -6,6 +6,7 @@ import { service } from '@ember/service';
 import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
+import remarkFrontmatter from 'remark-frontmatter';
 
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
 import { redirectTargetFor, resolveRedirect } from '../redirects.ts';
@@ -55,11 +56,16 @@ export function compilerOptions({
   rehypePlugins?: unknown[];
 } = {}) {
   const md = {
-    // Prepended so authored root-absolute URLs are rebased onto the rootURL
-    // before any consumer plugin serializes mdast nodes to raw HTML. Living
-    // here (not in setup()) means every compiler built from these options —
-    // including the test-support one — gets the same behavior.
-    remarkPlugins: [rebaseAuthoredLinks(rootURL), ...(remarkPlugins ?? [])],
+    /**
+     * remarkFrontmatter handles removing frontmatter from output
+     * rebaseAuthoredLinks handles rewriting urls begining with / to match Ember rootUrl
+     *
+     * Both of these are preprocessed so that consumers do not need to declare these plugins
+     * in their own setup.
+     *
+     * This is common enough to be handled by Kolay directly
+     */
+    remarkPlugins: [remarkFrontmatter, rebaseAuthoredLinks(rootURL), ...(remarkPlugins ?? [])],
     rehypePlugins,
   };
   const scope = {

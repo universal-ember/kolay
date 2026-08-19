@@ -1,23 +1,7 @@
-import type { Manifest, Page, PageTree, SearchEntry } from '../types.ts';
+import type { DocsSourceMeta, Manifest, Page, PageTree, SearchEntry } from '../types.ts';
 import type { ComponentLike } from '@glint/template';
 
-/**
- * A docs source's meta, from `virtual:kolay/docs/<groupName>`:
- * derived from the repository root's package.json, mixed with the
- * content of a `meta.jsonc` at the root of the source (user keys win).
- */
-export interface DocsSourceMeta {
-  /**
-   * The repository URL (GitHub, etc), from the root package.json's
-   * `repository` field.
-   */
-  url?: string;
-  /**
-   * The repo-relative path to this source's docs.
-   */
-  docsPath?: string;
-  [key: string]: unknown;
-}
+export type { DocsSourceMeta } from '../types.ts';
 
 /**
  * What each `virtual:kolay/docs/<groupName>` module provides.
@@ -34,6 +18,7 @@ export interface DocsGroupModule {
   /**
    * The source's meta: repository URL, repo-relative docs path, and
    * anything from the source root's `meta.jsonc`.
+   * Composed at runtime runtime `loadCompiledDocs`.
    */
   meta: DocsSourceMeta;
   /**
@@ -77,7 +62,7 @@ export async function loadCompiledDocs(meta: MetaManifest): Promise<{
     manifest: {
       base: meta.base,
       redirects: meta.redirects,
-      groups: modules.map((mod) => mod.manifest),
+      groups: modules.map((mod) => ({ ...mod.manifest, meta: mod.meta })),
     },
     pages: Object.assign({}, ...modules.map((mod) => mod.pages)) as DocsGroupModule['pages'],
     loadSearchData: async () => {
