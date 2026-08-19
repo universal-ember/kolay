@@ -7,6 +7,7 @@ import {
 import { validateRedirects } from './plugins/kolay-config.js';
 
 export { kolay } from './plugins/from-config.js';
+export { defaultFrontmatterMeta } from './plugins/markdown-pages/frontmatter.js';
 
 /**
  * One redirect: an old path and where it now lives. A trailing `/*`
@@ -25,6 +26,7 @@ export { kolay } from './plugins/from-config.js';
  * @property {unknown[]} [remarkPlugins] - remark plugins for the groups' `.gjs.md` files
  * @property {unknown[]} [rehypePlugins] - rehype plugins for the groups' `.gjs.md` files
  * @property {string} [scope] - import statements made available in the groups' live codefences
+ * @property {import('./plugins/markdown-pages/frontmatter.js').PopulatePageMetadata} [populatePageMetadata] - function to populate `meta` into the documentation manifest. Receives parsed markdown frontmatter and meta.json values; defaults to `defaultFrontmatterMeta`
  */
 
 /**
@@ -37,6 +39,7 @@ export { kolay } from './plugins/from-config.js';
  * @property {unknown[]} [remarkPlugins] - remark plugins for this group's `.gjs.md` files
  * @property {unknown[]} [rehypePlugins] - rehype plugins for this group's `.gjs.md` files
  * @property {string} [scope] - import statements made available in this group's live codefences
+ * @property {import('./plugins/markdown-pages/frontmatter.js').PopulatePageMetadata} [populatePageMetadata] - function to populate `meta` into the documentation manifest. Receives parsed markdown frontmatter and meta.json values; defaults to `defaultFrontmatterMeta`
  */
 
 /**

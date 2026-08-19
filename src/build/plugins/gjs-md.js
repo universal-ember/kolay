@@ -4,6 +4,7 @@ import { sep } from 'node:path';
 
 import * as babel from '@babel/core';
 import { Preprocessor } from 'content-tag';
+import remarkFrontmatter from 'remark-frontmatter';
 import { buildCompiler, parseMarkdown } from 'repl-sdk/markdown/parse';
 import { visit } from 'unist-util-visit';
 
@@ -67,7 +68,8 @@ export function createCompiler(options) {
   const rehypePlugins = [...(options.rehypePlugins ?? []), rehypeInjectComponentInvocation];
 
   const compiler = buildCompiler({
-    remarkPlugins: options.remarkPlugins,
+    // frontmatter is parsed as a yaml node and removed from the output
+    remarkPlugins: [remarkFrontmatter, ...(options.remarkPlugins ?? [])],
     rehypePlugins,
     isLive: (meta) => meta?.includes('live'),
     isPreview: (meta) => meta?.includes('preview'),

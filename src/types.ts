@@ -7,6 +7,24 @@ export interface Secret {
 export type LoadManifest = () => Promise<Manifest>;
 export type LoadTypedoc = Record<string, () => ReturnType<typeof fetch>>;
 
+/**
+ * A docs source's meta, from `virtual:kolay/docs/<groupName>`:
+ * derived from the repository root's package.json, mixed with the
+ * content of a `meta.jsonc` at the root of the source (user keys win).
+ */
+export interface DocsSourceMeta {
+  /**
+   * The repository URL (GitHub, etc), from the root package.json's
+   * `repository` field.
+   */
+  url?: string;
+  /**
+   * The repo-relative path to this source's docs.
+   */
+  docsPath?: string;
+  [key: string]: unknown;
+}
+
 export interface Manifest {
   /**
    * The rootURL / base URL this manifest was generated with.
@@ -27,6 +45,11 @@ export interface Manifest {
     name: string;
     list: Page[];
     tree: PageTree;
+    /**
+     * The group's source meta: repository URL, repo-relative docs path,
+     * and anything from the source root's `meta.jsonc`.
+     */
+    meta: DocsSourceMeta;
   }[];
 }
 
@@ -95,6 +118,14 @@ export interface Page {
    * `path` / `appRelativePath` are derived from it.
    */
   href?: string;
+  /**
+   * Page metadata: the page's YAML frontmatter, deeply merged with the
+   * `meta` key of its sibling json config (frontmatter wins) — the
+   * default `populatePageMetadata` strategy. A custom `populatePageMetadata`
+   * decides the shape of its own output, which is spread onto this
+   * entry (so `meta` may be absent, or shaped differently).
+   */
+  meta?: Record<string, unknown>;
 }
 
 export type Node = Page | PageTree;

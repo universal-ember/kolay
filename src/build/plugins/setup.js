@@ -10,6 +10,7 @@ import send from 'send';
 
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
+import { extractFrontmatter } from './markdown-pages/frontmatter.js';
 import { reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
 import { sourceMeta } from './source-meta.js';
@@ -104,11 +105,17 @@ function removeTemplatesPrefix(path) {
  * @param {AsyncIterable<string>} source.entries - the source's files, relative to sourceCwd
  * @param {(entry: string) => string} source.strip - entry → page path (strips the app/src templates prefix for the co-located root)
  * @param {string} baseUrl
+ * @param {{ populatePageMetadata?: import('./markdown-pages/frontmatter.js').PopulatePageMetadata }} [options]
  */
-async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, strip }, baseUrl) {
+async function enumerateSource(
+  { displayName, urlPrefix, sourceCwd, entries, strip },
+  baseUrl,
+  { populatePageMetadata } = {}
+) {
   const loaders = {};
   const paths = [];
   const configs = [];
+  const frontmatter = [];
   const sources = new Map();
 
   for await (const entry of entries) {
@@ -132,12 +139,20 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     let query = '';
 
     if (entry.endsWith('.md')) {
-      if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
-        query = '?raw';
+      const source = (await readFile(join(sourceCwd, entry))).toString();
+      const { data, content } = extractFrontmatter(source, join(sourceCwd, entry));
+
+      if (data && Object.keys(data).length > 0) {
+        frontmatter.push({ path: strip(entry), data });
       }
 
-      if (entry.endsWith('.gjs.md') || entry.endsWith('.gts.md')) {
-        sources.set(name, { source: (await readFile(join(sourceCwd, entry))).toString() });
+      if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
+        // Compiled files already remove frontmatter; sources does not need to be reset
+        query = '?raw';
+      } else {
+        // the frontmatter-stripped content, so search headings/text below
+        // stay clean
+        sources.set(name, { source: content });
       }
     }
 
@@ -149,6 +164,8 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     cwd: sourceCwd,
     paths,
     configs,
+    frontmatter,
+    populatePageMetadata,
     prefix: join('/', urlPrefix),
     base: baseUrl,
   });
@@ -758,7 +775,9 @@ export const setup = (state) => {
         importPath: docsModuleId('Home'),
         content: async () => {
           const source = homeSource(cwd);
-          const enumerated = await enumerateSource(source, baseUrl);
+          const enumerated = await enumerateSource(source, baseUrl, {
+            populatePageMetadata: state.options.populatePageMetadata,
+          });
           const meta = await sourceMeta(homeMetaCwd(cwd));
 
           return groupModuleContent({
@@ -776,7 +795,9 @@ export const setup = (state) => {
       ...(state.options.groups ?? []).map((group) => ({
         importPath: docsModuleId(group.name),
         content: async () => {
-          const enumerated = await enumerateSource(groupSource(group), baseUrl);
+          const enumerated = await enumerateSource(groupSource(group), baseUrl, {
+            populatePageMetadata: state.options.populatePageMetadata,
+          });
           const meta = await sourceMeta(normalizePath(group.src));
 
           return groupModuleContent(
@@ -792,7 +813,9 @@ export const setup = (state) => {
       {
         importPath: `${SEARCH_MODULE_PREFIX}Home`,
         content: async () => {
-          const enumerated = await enumerateSource(homeSource(cwd), baseUrl);
+          const enumerated = await enumerateSource(homeSource(cwd), baseUrl, {
+            populatePageMetadata: state.options.populatePageMetadata,
+          });
 
           return `export default ${JSON.stringify(enumerated.search)};`;
         },
@@ -800,7 +823,9 @@ export const setup = (state) => {
       ...(state.options.groups ?? []).map((group) => ({
         importPath: `${SEARCH_MODULE_PREFIX}${group.name}`,
         content: async () => {
-          const enumerated = await enumerateSource(groupSource(group), baseUrl);
+          const enumerated = await enumerateSource(groupSource(group), baseUrl, {
+            populatePageMetadata: state.options.populatePageMetadata,
+          });
 
           return `export default ${JSON.stringify(enumerated.search)};`;
         },
