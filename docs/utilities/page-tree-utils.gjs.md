@@ -18,22 +18,35 @@ for (const node of tree.pages) {
 }
 ```
 
-## A folder's index page
+## `getIndexPage`
 
 A folder's index page is where its own URL goes: the page named `index` when there is one, and the folder's first page otherwise. Every folder with pages has one, so a folder heading can always be a link.
 
 ```js
-import { docsManager } from 'kolay';
+import { getIndexPage } from 'kolay';
 
-// `context` is anything with an owner — a component, route, or service
-const indexPage = docsManager(context).indexPageFor(folder);
+const indexPage = getIndexPage(folder);
 ```
 
-[`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) does this for you and yields it as `index`. It also leaves out any page its section heading already links to under the same title:
+The fallback can descend — a folder whose first child is another folder answers with that child's index page. `docsManager(context).indexPageFor(folder)` is the same answer through the service.
+
+## `isRedundantWithHeading`
+
+A nav renders a folder as a heading linking to its index page, then lists that folder's pages. When the heading and one of those pages carry the same title, listing the page repeats the heading:
 
 ```js
-const alreadyInTheHeading = page.title === folder.title;
+import { getIndexPage, isRedundantWithHeading } from 'kolay';
+
+for (const page of folder.pages) {
+  if (isRedundantWithHeading(folder, page)) continue;
+
+  // ...render the page's link
+}
 ```
+
+It compares titles rather than identity, because the question is what the reader sees. A folder titled by its `meta.json` says something its index page does not, and that page is worth listing.
+
+[`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) applies both for you: it yields the index page as `index` and omits the redundant page from the `:page` block. These are the pieces to reach for when replacing it with a nav of your own.
 
 ## Titles
 
@@ -49,5 +62,9 @@ Every page and folder has a resolved `title`, so navigation does not have to der
 ## API Reference
 
 <APIDocs @module="declarations/browser" @name="isPageTree" @package="kolay" />
+
+<APIDocs @module="declarations/browser" @name="getIndexPage" @package="kolay" />
+
+<APIDocs @module="declarations/browser" @name="isRedundantWithHeading" @package="kolay" />
 
 

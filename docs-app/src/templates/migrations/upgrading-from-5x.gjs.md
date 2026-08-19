@@ -160,7 +160,9 @@ For example, the `<PageNav>` component's `:section` block still yields `index`, 
 
 With no `:section` block of your own, headings render `x.section.title` instead of the index page's `name` — which in 5.x was the literal string `index`.
 
-`getIndexPage` and `isIndex` are removed. Use `<PageNav />`'s `index`, or `indexPageFor(tree)` on the docs service. For "is this page named `index`", the check is `page.name === 'index'` — case-sensitive, since the build derives `name` from the filename.
+`getIndexPage(tree)` follows the same change, so it now answers for every folder with pages where it used to answer `undefined`. Two smaller shifts come with it: it can descend into a first child folder, and it matches the page actually named `index` rather than any path ending in `index` — `api-index.md` no longer counts.
+
+`isIndex` is removed. It asked whether a node was named `index`, which on its own does not answer anything a nav needs. If you were using it to decide what a folder's heading links to, that is `getIndexPage(tree)`; to decide whether listing a page repeats its folder's heading, that is `isRedundantWithHeading(folder, page)`.
 
 ## Removed types
 

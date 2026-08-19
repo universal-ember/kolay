@@ -3,9 +3,10 @@ import { assert } from '@ember/debug';
 import { hash } from '@ember/helper';
 import { service } from '@ember/service';
 
+import { samePagePath } from '../../paths.js';
 import { isActive } from '../is-active.ts';
+import { getIndexPage, isPageTree, isRedundantWithHeading } from '../page-tree.ts';
 import { docsManager } from '../services/docs.ts';
-import { isPageTree, samePagePath } from '../utils.ts';
 
 import type { Page, PageTree } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
@@ -128,8 +129,6 @@ export class PageNav extends Component<{
     return docsManager(this);
   }
 
-  private indexPageFor = (tree: PageTree) => this.docs.indexPageFor(tree);
-
   /**
    * Ember doesn't yet have a way to forward blocks,
    * so we have  to do this weird manualy forwarding ourselves
@@ -140,7 +139,7 @@ export class PageNav extends Component<{
     {{!log this.docs}}
     {{#if (has-block 'collection')}}{{blockWasRenamed}}{{/if}}
     <nav aria-label='Selected Group' ...attributes>
-      <Pages @item={{this.docs.tree}} @indexPageFor={{this.indexPageFor}}>
+      <Pages @item={{this.docs.tree}}>
 
         <:page as |p|>
           {{#if (has-block 'page')}}
@@ -172,15 +171,10 @@ export class PageNav extends Component<{
 
 const not = (x: unknown) => !x;
 
-/** The folder's index page: its section heading already links to it. */
-const isIndex = (folder: Page | PageTree, page: Page | PageTree) =>
-  !isPageTree(page) && 'title' in folder && Boolean(folder.title) && page.title === folder.title;
-
 const Pages: TOC<{
   Args: {
     item: Page | PageTree;
     activeClass?: string;
-    indexPageFor: (tree: PageTree) => Page | undefined;
   };
   Blocks: {
     page: [InternalPageYield];
@@ -195,11 +189,11 @@ const Pages: TOC<{
   {{#if (isPageTree @item)}}
     <ul>
       {{#each @item.pages as |page|}}
-        {{#if (not (isIndex @item page))}}
+        {{#if (not (isRedundantWithHeading @item page))}}
           <li>
             {{#if (isPageTree page)}}
 
-              {{#let (@indexPageFor page) as |indexPage|}}
+              {{#let (getIndexPage page) as |indexPage|}}
                 {{yield
                   (hash
                     section=page
@@ -216,7 +210,7 @@ const Pages: TOC<{
               {{/let}}
             {{/if}}
 
-            <Pages @item={{page}} @indexPageFor={{@indexPageFor}}>
+            <Pages @item={{page}}>
               <:page as |p|>{{yield p to='page'}}</:page>
               <:section as |c|>{{yield c to='section'}}</:section>
             </Pages>

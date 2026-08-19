@@ -6,15 +6,15 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
-import { trimSlashes } from '../../paths.js';
+import { equalsIgnoreCase, samePagePath, trimSlashes } from '../../paths.js';
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
+import { findPageTree, getIndexPage } from '../page-tree.ts';
 import { redirectForUrl, redirectTargetFor } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
 import { APIDocs, CommentQuery } from '../typedoc/renderer.gts';
 import { ComponentSignature } from '../typedoc/signature/component.gts';
 import { HelperSignature } from '../typedoc/signature/helper.gts';
 import { ModifierSignature } from '../typedoc/signature/modifier.gts';
-import { equalsIgnoreCase, findPageTree, samePagePath } from '../utils.ts';
 import { typedocLoader } from './api-docs.ts';
 import { getKey } from './lazy-load.ts';
 import { pageTreeRedirects } from './page-tree-redirects.ts';
@@ -552,20 +552,7 @@ class DocsService {
    * `indexPageForPath` guards the search for a tree at a path, and the caller
    * already has the tree.
    */
-  indexPageFor = (tree: PageTree): Page | undefined => {
-    const first = tree.first;
-
-    if (!first) return undefined;
-
-    for (const group of this.manifest?.groups ?? []) {
-      // `tree.first` is a base-prefixed path, which is what `Page.path` is.
-      const page = group.list.find((candidate) => candidate.path === first);
-
-      if (page) return page;
-    }
-
-    return undefined;
-  };
+  indexPageFor = (tree: PageTree): Page | undefined => getIndexPage(tree);
 }
 
 export type { DocsService };

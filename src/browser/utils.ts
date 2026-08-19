@@ -1,9 +1,6 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
-import { stripMarkdownExtension } from '../paths.js';
-
-import type { Page, PageTree } from '../types.ts';
 import type Owner from '@ember/owner';
 
 /**
@@ -13,44 +10,6 @@ import type Owner from '@ember/owner';
  * its nav link is the app's root.
  */
 export const HOME_GROUP = 'Home';
-
-export function isPageTree(x: Page | PageTree): x is PageTree {
-  return 'pages' in x;
-}
-
-/**
- * The sub-tree at an app-relative path. A group's own tree matches its root.
- */
-export function findPageTree(root: PageTree, appRelativePath: string): PageTree | undefined {
-  if (equalsIgnoreCase(root.appRelativePath, appRelativePath)) return root;
-
-  for (const child of root.pages) {
-    if (!isPageTree(child)) continue;
-
-    const match = findPageTree(child, appRelativePath);
-
-    if (match) return match;
-  }
-
-  return undefined;
-}
-
-/**
- * URLs are conventionally case-insensitive; path/route matching in this
- * library follows that convention rather than treating paths as opaque,
- * case-sensitive strings.
- */
-export function equalsIgnoreCase(a: string, b: string): boolean {
-  return a.toLowerCase() === b.toLowerCase();
-}
-
-/**
- * Whether two paths name the same page: paths with and without the
- * `.md` extension are the same page (both are visitable).
- */
-export function samePagePath(a: string, b: string): boolean {
-  return equalsIgnoreCase(stripMarkdownExtension(a), stripMarkdownExtension(b));
-}
 
 /////////////////////////////////
 // copied from ember-primitives

@@ -40,3 +40,28 @@ export function trimSlashes(path, { leading = false, trailing = false }) {
 
   return trimmed;
 }
+
+/**
+ * URLs are conventionally case-insensitive; path/route matching in this
+ * library follows that convention rather than treating paths as opaque,
+ * case-sensitive strings.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+export function equalsIgnoreCase(a, b) {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+/**
+ * Whether two paths name the same page: paths with and without the
+ * `.md` extension are the same page (both are visitable).
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+export function samePagePath(a, b) {
+  return equalsIgnoreCase(stripMarkdownExtension(a), stripMarkdownExtension(b));
+}

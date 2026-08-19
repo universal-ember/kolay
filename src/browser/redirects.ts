@@ -1,5 +1,4 @@
-import { trimSlashes } from '../paths.js';
-import { equalsIgnoreCase, samePagePath } from './utils.ts';
+import { equalsIgnoreCase, samePagePath, trimSlashes } from '../paths.js';
 
 import type Transition from '@ember/routing/transition';
 

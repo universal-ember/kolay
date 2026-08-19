@@ -1,4 +1,5 @@
-import { isPageTree, samePagePath } from './utils.ts';
+import { samePagePath } from '../paths.js';
+import { isPageTree } from './page-tree.ts';
 
 import type { Page, PageTree } from '../types.ts';
 
