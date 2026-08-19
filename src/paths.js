@@ -42,6 +42,19 @@ export function trimSlashes(path, { leading = false, trailing = false }) {
 }
 
 /**
+ * Two path segments joined by exactly one slash, however either side is
+ * punctuated. Both sides are trimmed rather than one, so a caller never has
+ * to know which of them carries the separator.
+ *
+ * @param {string} left
+ * @param {string} right
+ * @returns {string}
+ */
+export function concatenatePath(left, right) {
+  return `${trimSlashes(left, { trailing: true })}/${trimSlashes(right, { leading: true })}`;
+}
+
+/**
  * URLs are conventionally case-insensitive; path/route matching in this
  * library follows that convention rather than treating paths as opaque,
  * case-sensitive strings.

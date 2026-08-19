@@ -2,7 +2,7 @@ import { service } from '@ember/service';
 
 import { createStore } from 'ember-primitives/store';
 
-import { trimSlashes } from '../../paths.js';
+import { concatenatePath } from '../../paths.js';
 import { mountLocationFor } from '../scoped-routes.ts';
 import { docsManager } from './docs.ts';
 import { getKey } from './lazy-load.ts';
@@ -85,8 +85,8 @@ export class PageTreeRedirectService {
     if (!mountGroup) return docs.indexPageForPath(`/${wildcardParam}`);
 
     // Not always the group's name: `Home`'s prefix is the root.
-    const prefix = trimSlashes(docs.groupFor(mountGroup).tree.appRelativePath, { trailing: true });
+    const prefix = docs.groupFor(mountGroup).tree.appRelativePath;
 
-    return docs.indexPageForPath(`${prefix}/${wildcardParam}`, mountGroup);
+    return docs.indexPageForPath(concatenatePath(prefix, wildcardParam), mountGroup);
   }
 }
