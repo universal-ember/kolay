@@ -2,7 +2,7 @@
 
 Redirects the app's root (`/`) to the first page of your first docs group.
 
-It exists because `/` is your app's URL, not kolay's. A folder or group URL is unambiguously docs, so kolay redirects those itself; `/` might be your landing page, so nothing happens there unless you ask for it.
+It exists because `/` is your app's URL, not kolay's. A folder or group URL is unambiguously docs, so kolay redirects those itself; `/` might be a page of your own, so nothing happens there unless you ask for it.
 
 ## Usage
 

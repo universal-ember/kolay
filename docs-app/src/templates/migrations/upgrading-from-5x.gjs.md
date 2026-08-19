@@ -139,7 +139,7 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## A folder's "index" page is now equivalent to its landing page, even with no explicit `index` file
+## A folder's index page falls back to its first page
 
 In 5.x a page was only considered a folder's index page if its file was explicitly named `index`. The index page is now the page named `index` _when there is one_, falling back to the folder's first page otherwise.
 
