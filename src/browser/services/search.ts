@@ -4,6 +4,7 @@ import { createStore } from 'ember-primitives/store';
 
 import { getKey } from './lazy-load.ts';
 import { rankSearch } from './search/rank-search.ts';
+import { stripFrontmatter } from './search/strip-frontmatter.ts';
 import { selected } from './selected.ts';
 
 import type { SearchEntry, SearchResult } from '../../types.ts';
@@ -97,7 +98,7 @@ export class SearchService {
     if (loader) {
       const module = await loader();
 
-      return typeof module.default === 'string' ? module.default : '';
+      return typeof module.default === 'string' ? stripFrontmatter(module.default) : '';
     }
 
     const response = await fetch(this.#sourceUrlFor(entry));
@@ -108,6 +109,6 @@ export class SearchService {
     if (!response.ok) return '';
     if (response.headers.get('content-type')?.includes('html')) return '';
 
-    return response.text();
+    return stripFrontmatter(await response.text());
   }
 }

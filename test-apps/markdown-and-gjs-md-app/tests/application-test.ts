@@ -1,6 +1,8 @@
-import { currentURL, visit } from "@ember/test-helpers";
+import { currentURL, visit, waitUntil } from "@ember/test-helpers";
 import { module, skip, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
+
+import { docsManager } from "kolay";
 
 import { visitAllLinks } from "@universal-ember/test-support";
 
@@ -17,6 +19,25 @@ module("Group index redirects", function (hooks) {
       "/Docs/sub-folder/ember-primitives.md",
       "the Docs group index redirects to its first page",
     );
+  });
+});
+
+module("Frontmatter", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test("in a .gjs.md: not rendered, and on the page's manifest entry", async function (assert) {
+    await visit("/my-folder-name/foo");
+    // the page module loads outside the run loop, so `visit` settling
+    // isn't enough — the prose renders once that load resolves
+    await waitUntil(() => !document.querySelector(".loading-page"), { timeout: 5000 });
+
+    assert.dom().includesText("this is compiled to gjs");
+    assert.dom().doesNotIncludeText("gjs-frontmatter");
+
+    const home = docsManager(this.owner).manifest.groups.find((group) => group.name === "Home");
+    const foo = home?.list.find((page) => page.appRelativePath === "/my-folder-name/foo");
+
+    assert.deepEqual(foo?.meta, { demo: "gjs-frontmatter" });
   });
 });
 

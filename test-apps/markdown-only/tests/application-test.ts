@@ -1,6 +1,8 @@
-import { currentURL, visit } from "@ember/test-helpers";
+import { currentURL, visit, waitUntil } from "@ember/test-helpers";
 import { module, skip, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
+
+import { docsManager } from "kolay";
 
 import { visitAllLinks } from "@universal-ember/test-support";
 
@@ -30,6 +32,26 @@ module("Group index redirects", function (hooks) {
       "/Docs/sub-folder/ember-primitives.md",
       "the Docs group index redirects to its first page",
     );
+  });
+});
+
+module("Frontmatter", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test("is not rendered, and lands on the page's manifest entry", async function (assert) {
+    await visit("/my-folder-name/bar.md");
+    // the page's text compiles outside the run loop, so `visit` settling
+    // isn't enough — the prose renders once compilation resolves
+    await waitUntil(() => !document.querySelector(".loading-page"), { timeout: 5000 });
+
+    assert.dom().includesText("this is bar");
+    assert.dom().doesNotIncludeText("zebra");
+    assert.dom().doesNotIncludeText("author");
+
+    const home = docsManager(this.owner).manifest.groups.find((group) => group.name === "Home");
+    const bar = home?.list.find((page) => page.appRelativePath === "/my-folder-name/bar.md");
+
+    assert.deepEqual(bar?.meta, { author: "zebra", reviewed: true });
   });
 });
 

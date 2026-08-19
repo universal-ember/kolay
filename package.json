@@ -95,6 +95,7 @@
     "test:node": "vitest --run"
   },
   "dependencies": {
+    "@11ty/gray-matter": "^3.0.0",
     "@ember/test-waiters": "^4.1.2",
     "@embroider/addon-shim": "1.10.3",
     "@glimmer/component": "^2.1.1",
@@ -114,6 +115,7 @@
     "reactiveweb": "1.9.3",
     "rehype-raw": "^7.0.0",
     "rehype-stringify": "^10.0.1",
+    "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",

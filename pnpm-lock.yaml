@@ -18,6 +18,9 @@ importers:
 
   .:
     dependencies:
+      '@11ty/gray-matter':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@ember/test-waiters':
         specifier: ^4.0.0
         version: 4.1.2
@@ -75,6 +78,9 @@ importers:
       rehype-stringify:
         specifier: ^10.0.1
         version: 10.0.1
+      remark-frontmatter:
+        specifier: ^5.0.0
+        version: 5.0.0
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1
@@ -107,7 +113,7 @@ importers:
         version: 5.1.0
       unplugin:
         specifier: ^3.3.0
-        version: 3.3.0(2bcaf34f2946ad27a1ea5746ff858f48)
+        version: 3.3.0(7bea9b67325345ecdaa4c5da97bc2602)
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.18.5
@@ -141,7 +147,7 @@ importers:
         version: 2.7.0(cc8cad6b2644672ec8a53791bfc61df2)
       '@nullvoxpopuli/eslint-configs':
         specifier: ^6.0.0
-        version: 6.0.0(f9ce830858153860498460c073f55162)
+        version: 6.0.0(2623b96bd8796ff1dda85df06e0fbf20)
       '@rollup/plugin-babel':
         specifier: ^7.1.0
         version: 7.1.0(@babel/core@7.29.6)(rollup@4.62.4)
@@ -222,10 +228,10 @@ importers:
         version: 11.0.5
       vite:
         specifier: ^8.2.1
-        version: 8.2.1(f58fd458f9113fad7d7cd427a12c2777)
+        version: 8.2.1(f346081349e9d9bec3a079188f40de5d)
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(0458184e56ee698c03dbd913aa3fd20f)
+        version: 4.1.10(25d100c67c69e508113a54c50d05bf90)
 
   docs-app:
     dependencies:
@@ -981,6 +987,10 @@ importers:
         version: 8.2.1(f58fd458f9113fad7d7cd427a12c2777)
 
 packages:
+
+  '@11ty/gray-matter@3.0.0':
+    resolution: {integrity: sha512-mi6KB36DZCpCfCb9XP3NtDDNXe1N0jKtuFj9mTCZNy5H7vTabODyMgFmmOiGIGJKt+i8mJqEb/REtK+JTEzlpQ==}
+    engines: {node: '>=11'}
 
   '@andrewbranch/untar.js@1.0.4':
     resolution: {integrity: sha512-pVXSwPsLuw8IGLo2Di0EaOfsk+ntVvpkk942J/sHYIkwvtKUakEcPh7HBgZ6tuimgzKSEHgCvO4XgQ05DEbwDw==}
@@ -5179,6 +5189,10 @@ packages:
   exsolve@1.1.1:
     resolution: {integrity: sha512-9U/jZUgjnSGyntRr6y5Muu1MJcwFl6kPu7k8qLF0IMNfLqvw0NZ4nnVDq0RVoZ0RvCyumib4Ez3KYrVfilrw+g==}
 
+  extend-shallow@2.0.1:
+    resolution: {integrity: sha512-zCnTtlxNoAiDc3gqY2aYAWFx7XWWiasuF2K8Me5WbN8otHKTUKBwjPtNpRs/rbUZm7KxWAaNj7P1a/p52GbVug==}
+    engines: {node: '>=0.10.0'}
+
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
@@ -5224,6 +5238,9 @@ packages:
 
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
+
+  fault@2.0.1:
+    resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
 
   faye-websocket@0.11.4:
     resolution: {integrity: sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==}
@@ -5374,6 +5391,10 @@ packages:
   form-data@4.0.6:
     resolution: {integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==}
     engines: {node: '>= 6'}
+
+  format@0.2.2:
+    resolution: {integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww==}
+    engines: {node: '>=0.4.x'}
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -5927,6 +5948,10 @@ packages:
     resolution: {integrity: sha512-+XSoyS05OdBbhFuELhgTCpFNHkpBOJqtsZfUFFpe5QTw+9Sjbh8zitxhQkYAo6wV7e1Vb8cAPvpCk9jGam/82g==}
     engines: {node: '>= 0.4'}
 
+  is-extendable@0.1.1:
+    resolution: {integrity: sha512-5BMULNob1vgFX6EjQw5izWDxrecWK9AM72rugNr0TFldMOi0fj6Jk+zeKIt0xGj4cEfQIJth4w3OKWOJ4f+AFw==}
+    engines: {node: '>=0.10.0'}
+
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
@@ -6141,6 +6166,10 @@ packages:
 
   js-yaml@4.3.1:
     resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
+    hasBin: true
+
+  js-yaml@5.3.0:
+    resolution: {integrity: sha512-muutsYr+e2+d3rTgUGslq5rxbBlUy3cJ61IsHag2QNDQV+7zXWjkUpmALIajhrlLlrgRUiymj6U3zUr/TMK84Q==}
     hasBin: true
 
   jscodeshift@0.15.2:
@@ -6501,6 +6530,9 @@ packages:
   mdast-util-from-markdown@2.0.3:
     resolution: {integrity: sha512-W4mAWTvSlKvf8L6J+VN9yLSqQ9AOAAvHuoDAmPkz4dHf553m5gVj2ejadHJhoJmcmxEnOv6Pa8XJhpxE93kb8Q==}
 
+  mdast-util-frontmatter@2.0.1:
+    resolution: {integrity: sha512-LRqI9+wdgC25P0URIJY9vwocIzCcksduHQ9OF2joxQoyTNVduwLAFUzjoopuRJbJAReaKrNQKAZKL3uCMugWJA==}
+
   mdast-util-gfm-autolink-literal@2.0.1:
     resolution: {integrity: sha512-5HVP2MKaP6L+G6YaxPNjuL0BPrq9orG3TsrZ9YXbA3vDw/ACI4MEsnoDpn6ZNm7GnZgtAcONJyPhOP8tNJQavQ==}
 
@@ -6575,6 +6607,9 @@ packages:
 
   micromark-core-commonmark@2.0.3:
     resolution: {integrity: sha512-RDBrHEMSxVFLg6xvnXmb1Ayr2WzLAWjeSATAoxwKYJV94TeNavgoIdA0a9ytzDSVzBy2YKFK+emCPOEibLeCrg==}
+
+  micromark-extension-frontmatter@2.0.0:
+    resolution: {integrity: sha512-C4AkuM3dA58cgZha7zVnuVxBhDsbttIMiytjgsM2XbHAB2faRVaHRle40558FBN+DJcrLNCoqG5mlrpdU4cRtg==}
 
   micromark-extension-gfm-autolink-literal@2.1.0:
     resolution: {integrity: sha512-oOg7knzhicgQ3t4QCjCWgTmfNhvQbDDnJeVu9v81r7NltNCVmhPy1fJRX27pISafdjL+SVc4d3l48Gb6pbRypw==}
@@ -7542,6 +7577,9 @@ packages:
     engines: {node: 22.* || 24.* || >= 26}
     hasBin: true
 
+  remark-frontmatter@5.0.0:
+    resolution: {integrity: sha512-XTFYvNASMe5iPN0719nPrdItC9aU0ssC4v14mH1BCi1u0n1gAocqcujWUrByftZTbLhRtiKRyjYTSIOcr69UVQ==}
+
   remark-gfm@4.0.1:
     resolution: {integrity: sha512-1quofZ2RQ9EWdeN34S79+KExV1764+wCUGop5CPL1WGdD0ocPpu91lzPGbwWMECpEpd42kJGQwzRfyov9j4yNg==}
 
@@ -7796,6 +7834,10 @@ packages:
   schema-utils@4.3.3:
     resolution: {integrity: sha512-eflK8wEtyOE6+hsaRVPxvUKYCpRgzLqDTb8krvAsRIwOGlHoSgYLgBXoubGgLd2fT41/OUYdb48v4k4WWHQurA==}
     engines: {node: '>= 10.13.0'}
+
+  section-matter@1.0.0:
+    resolution: {integrity: sha512-vfD3pmTzGpufjScBh50YHKzEu2lxBWhVEHsNGoEXmCmn2hKGfeNLYMzCJpe8cD7gqX7TJluOVpBkAequ6dgMmA==}
+    engines: {node: '>=4'}
 
   semver-deprecate@1.1.0:
     resolution: {integrity: sha512-5AcYPbRIw9vs80YkyRxmm3Lbe88STkwNIpTKKX0Kxyy/T0yR05BTZ6JhV9B5pjTyc81SjztcFPY93kDPRFwlyA==}
@@ -9025,6 +9067,11 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@11ty/gray-matter@3.0.0':
+    dependencies:
+      js-yaml: 5.3.0
+      section-matter: 1.0.0
 
   '@andrewbranch/untar.js@1.0.4': {}
 
@@ -11106,6 +11153,32 @@ snapshots:
 
   '@npmcli/redact@4.0.0': {}
 
+  '@nullvoxpopuli/eslint-configs@6.0.0(2623b96bd8796ff1dda85df06e0fbf20)':
+    dependencies:
+      '@babel/core': 7.29.6
+      '@eslint/js': 9.39.5
+      '@typescript-eslint/parser': 8.67.0(a22af7cc2a9b4f923a2a857083e694fc)
+      cosmiconfig: 9.0.2(typescript@5.9.3)
+      ember-eslint: 0.7.0(567c781055764c0d2ffe0fcac674a2ab)
+      eslint: 9.39.2(jiti@2.7.0)
+      eslint-import-resolver-typescript: 4.4.5(c1fa6aa5ee024590b3a7706b3b6c9c93)
+      eslint-plugin-decorator-position: 6.1.1(1ec773deb7e2e87d2c67a69422e3dfea)
+      eslint-plugin-import: 2.32.0(c2ef3f53fd8ace59b3819fe0f037a792)
+      eslint-plugin-json: 4.0.1
+      eslint-plugin-n: 18.3.0(a22af7cc2a9b4f923a2a857083e694fc)
+      eslint-plugin-simple-import-sort: 13.0.0(eslint@9.39.2(jiti@2.7.0))
+      globals: 17.11.0
+      prettier-plugin-ember-template-tag: 2.1.7(prettier@3.9.6)
+    optionalDependencies:
+      '@babel/eslint-parser': 7.29.7(9fedd61231ed2bbbb4b975830aad6a5d)
+      prettier: 3.9.6
+    transitivePeerDependencies:
+      - eslint-import-resolver-webpack
+      - eslint-plugin-import-x
+      - supports-color
+      - ts-declaration-location
+      - typescript
+
   '@nullvoxpopuli/eslint-configs@6.0.0(f9ce830858153860498460c073f55162)':
     dependencies:
       '@babel/core': 7.29.6
@@ -11833,13 +11906,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.10(51f1405c57abfc2aa30268e0bbea060d)':
+  '@vitest/mocker@4.1.10(7f4a007e935d794cd6bc9555a6d64a29)':
     dependencies:
       '@vitest/spy': 4.1.10
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.2.1(f58fd458f9113fad7d7cd427a12c2777)
+      vite: 8.2.1(f346081349e9d9bec3a079188f40de5d)
 
   '@vitest/pretty-format@4.1.10':
     dependencies:
@@ -14444,6 +14517,10 @@ snapshots:
 
   exsolve@1.1.1: {}
 
+  extend-shallow@2.0.1:
+    dependencies:
+      is-extendable: 0.1.1
+
   extend@3.0.2: {}
 
   external-editor@3.1.0:
@@ -14499,6 +14576,10 @@ snapshots:
   fastq@1.20.1:
     dependencies:
       reusify: 1.1.0
+
+  fault@2.0.1:
+    dependencies:
+      format: 0.2.2
 
   faye-websocket@0.11.4:
     dependencies:
@@ -14674,6 +14755,8 @@ snapshots:
       es-set-tostringtag: 2.1.0
       hasown: 2.0.4
       mime-types: 2.1.35
+
+  format@0.2.2: {}
 
   forwarded@0.2.0: {}
 
@@ -15360,6 +15443,8 @@ snapshots:
     dependencies:
       call-bound: 1.0.4
 
+  is-extendable@0.1.1: {}
+
   is-extglob@2.1.1: {}
 
   is-finalizationregistry@1.1.1:
@@ -15537,6 +15622,10 @@ snapshots:
   js-tokens@4.0.0: {}
 
   js-yaml@4.3.1:
+    dependencies:
+      argparse: 2.0.1
+
+  js-yaml@5.3.0:
     dependencies:
       argparse: 2.0.1
 
@@ -15960,6 +16049,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  mdast-util-frontmatter@2.0.1:
+    dependencies:
+      '@types/mdast': 4.0.4
+      devlop: 1.1.0
+      escape-string-regexp: 5.0.0
+      mdast-util-from-markdown: 2.0.3
+      mdast-util-to-markdown: 2.1.2
+      micromark-extension-frontmatter: 2.0.0
+    transitivePeerDependencies:
+      - supports-color
+
   mdast-util-gfm-autolink-literal@2.0.1:
     dependencies:
       '@types/mdast': 4.0.4
@@ -16107,6 +16207,13 @@ snapshots:
       micromark-util-normalize-identifier: 2.0.1
       micromark-util-resolve-all: 2.0.1
       micromark-util-subtokenize: 2.1.0
+      micromark-util-symbol: 2.0.1
+      micromark-util-types: 2.0.2
+
+  micromark-extension-frontmatter@2.0.0:
+    dependencies:
+      fault: 2.0.1
+      micromark-util-character: 2.1.1
       micromark-util-symbol: 2.0.1
       micromark-util-types: 2.0.2
 
@@ -17228,6 +17335,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  remark-frontmatter@5.0.0:
+    dependencies:
+      '@types/mdast': 4.0.4
+      mdast-util-frontmatter: 2.0.1
+      micromark-extension-frontmatter: 2.0.0
+      unified: 11.0.5
+    transitivePeerDependencies:
+      - supports-color
+
   remark-gfm@4.0.1:
     dependencies:
       '@types/mdast': 4.0.4
@@ -17601,6 +17717,11 @@ snapshots:
       ajv: 8.20.0
       ajv-formats: 2.1.1
       ajv-keywords: 5.1.0(ajv@8.20.0)
+
+  section-matter@1.0.0:
+    dependencies:
+      extend-shallow: 2.0.1
+      kind-of: 6.0.3
 
   semver-deprecate@1.1.0:
     dependencies:
@@ -18525,7 +18646,7 @@ snapshots:
       picomatch: 4.0.5
       webpack-virtual-modules: 0.6.2
 
-  unplugin@3.3.0(2bcaf34f2946ad27a1ea5746ff858f48):
+  unplugin@3.3.0(7bea9b67325345ecdaa4c5da97bc2602):
     dependencies:
       '@jridgewell/remapping': 2.3.5
       picomatch: 4.0.5
@@ -18533,7 +18654,7 @@ snapshots:
     optionalDependencies:
       rolldown: 1.2.4
       rollup: 4.62.4
-      vite: 8.2.1(f58fd458f9113fad7d7cd427a12c2777)
+      vite: 8.2.1(f346081349e9d9bec3a079188f40de5d)
 
   unrs-resolver@1.12.2:
     dependencies:
@@ -18630,6 +18751,19 @@ snapshots:
     dependencies:
       vite: 8.2.1(f58fd458f9113fad7d7cd427a12c2777)
 
+  vite@8.2.1(f346081349e9d9bec3a079188f40de5d):
+    dependencies:
+      lightningcss: 1.33.0
+      picomatch: 4.0.5
+      postcss: 8.5.26
+      rolldown: 1.2.4
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 26.2.0
+      fsevents: 2.3.3
+      jiti: 2.7.0
+      yaml: 2.9.0
+
   vite@8.2.1(f58fd458f9113fad7d7cd427a12c2777):
     dependencies:
       lightningcss: 1.33.0
@@ -18644,10 +18778,10 @@ snapshots:
       terser: 5.50.0
       yaml: 2.9.0
 
-  vitest@4.1.10(0458184e56ee698c03dbd913aa3fd20f):
+  vitest@4.1.10(25d100c67c69e508113a54c50d05bf90):
     dependencies:
       '@vitest/expect': 4.1.10
-      '@vitest/mocker': 4.1.10(51f1405c57abfc2aa30268e0bbea060d)
+      '@vitest/mocker': 4.1.10(7f4a007e935d794cd6bc9555a6d64a29)
       '@vitest/pretty-format': 4.1.10
       '@vitest/runner': 4.1.10
       '@vitest/snapshot': 4.1.10
@@ -18664,11 +18798,11 @@ snapshots:
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vite: 8.2.1(f58fd458f9113fad7d7cd427a12c2777)
+      vite: 8.2.1(f346081349e9d9bec3a079188f40de5d)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 26.2.0
-      jsdom: 26.1.0
+      jsdom: 25.0.1
     transitivePeerDependencies:
       - msw
 

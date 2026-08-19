@@ -4,18 +4,26 @@ import { join, parse as parsePath } from 'node:path';
 
 import JSON5 from 'json5';
 
+import { defaultPopulateManifestEntry } from './populate-manifest-entry.js';
 import { betterSort } from './sort.js';
+
+/**
+ * @typedef {object} ParseOptions
+ * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same (possibly prefix-stripped) paths as `paths`
+ * @property {import('./populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry — `defaultPopulateManifestEntry` when not given
+ */
 
 /**
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs; when given, configs are taken from here instead of read from disk (the paths may not be resolvable against cwd, e.g. the stripped app/src/templates prefix)
+ * @param {ParseOptions} [options]
  *
  * @returns {Promise<import('./types.ts').PageTree>}
  */
-export async function parse(paths, cwd, providedConfigs) {
-  const docs = await gather(paths, cwd, providedConfigs);
-  const unsorted = build(docs);
+export async function parse(paths, cwd, providedConfigs, options) {
+  const docs = await gather(paths, cwd, providedConfigs, options);
+  const unsorted = build(docs, options?.populateManifestEntry ?? defaultPopulateManifestEntry);
   const sorted = deepSort(deepSort(unsorted));
 
   return sorted;
@@ -55,12 +63,15 @@ export function cleanSegment(segment) {
 /**
  *
  * @param {import('./types.ts').GatheredDocs} docs
+ * @param {import('./populate-manifest-entry.js').PopulateManifestEntry} [populate] finalizes each page or directories manifest entry; when omitted, entries are the raw structural default (the direct-call path used by tests)
  */
-export function build(docs) {
+export function build(docs, populate) {
   /** @type {import('./types.ts').PageTree} */
   const result = { name: 'root', pages: [], path: 'root' };
 
-  for (let { mdPath, config } of docs) {
+  for (let { mdPath, config, frontmatter } of docs) {
+    const sourcePath = mdPath;
+
     if (!mdPath.includes('/')) {
       console.warn(
         `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
@@ -128,7 +139,7 @@ export function build(docs) {
     const cleanedName = cleanSegment(name);
     const path = '/' + mdPath.replace(/\.g(j|t)s\.md$/, '');
 
-    const pageInfo = {
+    let pageInfo = {
       ...config,
       path,
       // Removes the file extension
@@ -136,6 +147,11 @@ export function build(docs) {
       groupName,
       cleanedName,
     };
+
+    // Every markdown or folder entry entry is finalized popuplated using populateManifestEntry
+    if (populate) {
+      pageInfo = populate(pageInfo, frontmatter ?? {}, { path: sourcePath });
+    }
 
     preAddCheck(mdPath, cleanedName, leafestPageTree);
 
@@ -180,10 +196,11 @@ function preAddCheck(attemptedPath, searchFor, folder) {
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs, keyed by the same (possibly prefix-stripped) paths as `paths`
+ * @param {ParseOptions} [options]
  *
  * @returns { Promise<import('./types.ts').GatheredDocs> }
  */
-async function gather(paths, cwd, providedConfigs) {
+async function gather(paths, cwd, providedConfigs, options) {
   const { join } = await import('node:path');
 
   const markdown = paths.filter((path) => path.endsWith('.md'));
@@ -211,7 +228,14 @@ async function gather(paths, cwd, providedConfigs) {
     return found?.config ?? {};
   }
 
-  /** @type { Array<{ mdPath: string, config: object }> } */
+  /**
+   * @param {string} path
+   */
+  function frontmatterFor(path) {
+    return options?.frontmatter?.find((entry) => entry.path === path)?.data;
+  }
+
+  /** @type {import('./types.ts').GatheredDocs} */
   const docPairs = [];
 
   for (const path of markdown) {
@@ -219,7 +243,7 @@ async function gather(paths, cwd, providedConfigs) {
       continue;
     }
 
-    docPairs.push({ mdPath: path, config: configFor(path) });
+    docPairs.push({ mdPath: path, config: configFor(path), frontmatter: frontmatterFor(path) });
   }
 
   /**
