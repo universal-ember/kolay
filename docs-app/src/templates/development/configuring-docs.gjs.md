@@ -119,6 +119,26 @@ There are a few ways you can collect docs:
 - co-located pages: anything in `app/templates` / `src/templates` is picked up automatically (no group, served from the root URL space) — even with zero-argument `docs()`.
 - a group per `docs()` usage: the `src` can point at a `docs` folder anywhere in (or outside) your project — including another package's `components` folder, picking up all markdown found there. This is useful for co-locating docs with their implementations.
 
+### Pages at the root of a source
+
+Markdown does not have to live in a folder. A file at the root of a source is a page of the group itself, and it sits in `<PageNav />` next to the folders:
+
+```
+docs/
+  intro.md        -> /GroupName/intro.md
+  guides/
+    advanced.md   -> /GroupName/guides/advanced.md
+```
+
+The same is true of the co-located pages: `src/templates/welcome.md` is served at `/welcome.md`.
+
+Two things follow from this:
+
+- Root-level pages take part in the source's `meta.json` [`order`](/development/ordering-pages.md) next to the folder names. An `order` there must list all of them.
+- An `index.md` at the root is the group's first page — where a visit to the group's URL lands. Like a folder's `index.md`, it gets no separate link in `<PageNav />`; the group's own link in `<GroupNav />` points at it.
+
+A page cannot share a name with a sibling folder (`intro.md` next to an `intro/` folder), at the root or anywhere else. The build fails with a message telling you which file to move.
+
 ## Using the plugin multiple times
 
 `docs()` is used once per group — so multiple groups means multiple usages, each with its own markdown processing (`remarkPlugins`, `rehypePlugins`, `scope`) if needed:

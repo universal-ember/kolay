@@ -15,7 +15,7 @@ const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? ski
 // Group index links redirect to the group's first page (via
 // `handlePotentialIndexVisit`), so tell the crawler where each one lands.
 const KNOWN_REDIRECTS = {
-  "/my-github-project/Documentation": "/my-github-project/Documentation/sub-folder/lonely-page.md",
+  "/my-github-project/Documentation": "/my-github-project/Documentation/top.md",
 };
 
 module("All Links", function (hooks) {
@@ -36,6 +36,7 @@ module("All Links", function (hooks) {
       "/my-github-project/Documentation/sub-folder/ember-primitives.md",
       "/my-github-project/Documentation/sub-folder/ember-resources",
       "/my-github-project/Documentation/sub-folder/lonely-page.md",
+      "/my-github-project/Documentation/top.md",
       "/my-github-project/my-folder-name/bar.md",
       "/my-github-project/my-folder-name/baz",
       "/my-github-project/my-folder-name/foo",

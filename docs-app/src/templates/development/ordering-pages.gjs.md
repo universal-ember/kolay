@@ -27,6 +27,17 @@ We can create a `meta.jsonc` file at `public/docs/meta.jsonc`:
 
 With `jsonc`, we can have comments to explain our reasoning for having configuration at all, and now when rendering the navigation at runtime, we can have `Usage` rendered above `Plugins` without needing to implement any runtime code to do this for us.
 
+Markdown files that sit at the root of the source — next to the folders, rather than in one — are sorted by the same `order`. List them by file name without the extension:
+
+```jsonc
+{
+  // intro.md is a page at the root; usage and plugins are folders
+  "order": ["intro", "usage", "plugins"],
+}
+```
+
+An `order` must name every page and folder at that level, so adding a root-level page means adding it here too.
+
 ### Sorting pages
 
 For example, in this project, the pages under `usage` appear alphabetically in the filesystem like this:

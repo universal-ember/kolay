@@ -103,6 +103,11 @@ export interface Page {
    */
   appRelativePath: string;
   name: string;
+  /**
+   * The cleaned name of the folder the page is in, e.g. 'sub folder'.
+   * Empty for a page at the root of its source — there is no folder to
+   * name it after.
+   */
   groupName: string;
   cleanedName: string;
   /**
