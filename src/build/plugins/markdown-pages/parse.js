@@ -72,21 +72,18 @@ export function build(docs, populate) {
   for (let { mdPath, config, frontmatter } of docs) {
     const sourcePath = mdPath;
 
-    if (!mdPath.includes('/')) {
-      console.warn(
-        `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
-      );
-      continue;
-    }
-
     mdPath = mdPath.replace(/^\.\/(src|app)\/templates\//, '');
     mdPath = mdPath.replace(/^\.\.\//, '');
+    mdPath = mdPath.replace(/^\.\//, '');
 
     const parts = mdPath.split('/');
     const [name, ...reversedGroups] = parts.reverse();
+    /**
+     * Empty for a file at the root of the source — the page then belongs
+     * to the source itself rather than to a folder within it.
+     */
     const groups = reversedGroups.reverse();
 
-    if (groups.length === 0) continue;
     if (!name) continue;
 
     /** @type {import('./types.ts').PageTree} */
@@ -130,12 +127,13 @@ export function build(docs, populate) {
       leafestGroupName = group;
     }
 
-    assert(
-      leafestGroupName,
-      'Could not determine group name. A group / folder is required for each file.'
-    );
-
-    const groupName = cleanSegment(leafestGroupName);
+    /**
+     * A page at the root of the source has no containing folder, so it has
+     * no folder name to take a groupName from. The source's own display
+     * name is not known here (it comes from the docs() config), so this is
+     * left empty rather than guessed at.
+     */
+    const groupName = leafestGroupName ? cleanSegment(leafestGroupName) : '';
     const cleanedName = cleanSegment(name);
     const path = '/' + mdPath.replace(/\.g(j|t)s\.md$/, '');
 
@@ -239,10 +237,6 @@ async function gather(paths, cwd, providedConfigs, options) {
   const docPairs = [];
 
   for (const path of markdown) {
-    if (!path.includes('/')) {
-      continue;
-    }
-
     docPairs.push({ mdPath: path, config: configFor(path), frontmatter: frontmatterFor(path) });
   }
 
@@ -253,7 +247,6 @@ async function gather(paths, cwd, providedConfigs, options) {
    * in another group.
    */
   for (const entry of configs) {
-    if (!entry.path.includes('/')) continue;
     if (/(^|\/)meta\.jsonc?$/.test(entry.path)) continue;
     if (typeof entry.config.href !== 'string') continue;
 

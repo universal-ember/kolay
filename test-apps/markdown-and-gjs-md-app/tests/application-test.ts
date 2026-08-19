@@ -16,7 +16,7 @@ module("Group index redirects", function (hooks) {
 
     assert.strictEqual(
       currentURL(),
-      "/Docs/sub-folder/ember-primitives.md",
+      "/Docs/top.md",
       "the Docs group index redirects to its first page",
     );
   });
@@ -55,6 +55,7 @@ module("All Links", function (hooks) {
       "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
       "/Docs/sub-folder/ember-resources",
+      "/Docs/top.md",
       "/my-folder-name/bar.md",
       "/my-folder-name/baz",
       "/my-folder-name/foo",

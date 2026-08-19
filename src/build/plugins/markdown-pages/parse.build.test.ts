@@ -181,6 +181,127 @@ describe('build', () => {
     `);
   });
 
+  describe('pages at the source root', () => {
+    test('a single top-level page', () => {
+      const result = build([{ mdPath: 'intro.md' }]);
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "name": "root",
+          "pages": [
+            {
+              "cleanedName": "intro",
+              "groupName": "",
+              "name": "intro",
+              "path": "/intro.md",
+            },
+          ],
+          "path": "root",
+        }
+      `);
+    });
+
+    test('top-level pages sit alongside folders', () => {
+      const result = build([
+        { mdPath: 'some-folder/nested.md' },
+        { mdPath: 'about.md' },
+        { mdPath: 'index.md' },
+      ]);
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "name": "root",
+          "pages": [
+            {
+              "cleanedName": "some folder",
+              "name": "some-folder",
+              "pages": [
+                {
+                  "cleanedName": "nested",
+                  "groupName": "some folder",
+                  "name": "nested",
+                  "path": "/some-folder/nested.md",
+                },
+              ],
+              "path": "some-folder",
+            },
+            {
+              "cleanedName": "about",
+              "groupName": "",
+              "name": "about",
+              "path": "/about.md",
+            },
+            {
+              "cleanedName": "index",
+              "groupName": "",
+              "name": "index",
+              "path": "/index.md",
+            },
+          ],
+          "path": "root",
+        }
+      `);
+    });
+
+    test('a top-level gjs.md page keeps the double extension out of the path', () => {
+      const result = build([{ mdPath: 'intro.gjs.md' }]);
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "name": "root",
+          "pages": [
+            {
+              "cleanedName": "intro",
+              "groupName": "",
+              "name": "intro",
+              "path": "/intro",
+            },
+          ],
+          "path": "root",
+        }
+      `);
+    });
+
+    test('a top-level page keeps its config', () => {
+      const result = build([{ mdPath: 'intro.md', config: { title: 'Introduction' } }]);
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "name": "root",
+          "pages": [
+            {
+              "cleanedName": "intro",
+              "groupName": "",
+              "name": "intro",
+              "path": "/intro.md",
+              "title": "Introduction",
+            },
+          ],
+          "path": "root",
+        }
+      `);
+    });
+
+    test('a leading ./ does not become a folder', () => {
+      const result = build([{ mdPath: './intro.md' }]);
+
+      expect(result).toMatchInlineSnapshot(`
+        {
+          "name": "root",
+          "pages": [
+            {
+              "cleanedName": "intro",
+              "groupName": "",
+              "name": "intro",
+              "path": "/intro.md",
+            },
+          ],
+          "path": "root",
+        }
+      `);
+    });
+  });
+
   describe('validation', () => {
     test('cannot have named and index at the same time', () => {
       expect(() => {
@@ -195,6 +316,14 @@ describe('build', () => {
         build([{ mdPath: 'top/deep/another.md' }, { mdPath: 'top/deep/another/index.md' }]);
       }).toThrowError(
         'Cannot have a group that matches the name of an individual page. Please move another.md into the "/top/deep/another" folder. If you want this to be the first page, rename the file to top/deep/another/index.md'
+      );
+    });
+
+    test('a top-level page cannot match the name of a top-level folder', () => {
+      expect(() => {
+        build([{ mdPath: 'guides/index.md' }, { mdPath: 'guides.md' }]);
+      }).toThrowError(
+        'Cannot have a group that matches the name of an individual page. Please move guides.md into the "guides" folder. If you want this to be the first page, rename the file to guides/index.md'
       );
     });
   });
