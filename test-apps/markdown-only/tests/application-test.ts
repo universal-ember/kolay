@@ -3,6 +3,7 @@ import { module, skip, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
 
 import { docsManager } from "kolay";
+
 import { visitAllLinks } from "@universal-ember/test-support";
 
 const skippable = new URLSearchParams(location.search).has("skipAllLinks") ? skip : test;

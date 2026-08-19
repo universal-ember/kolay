@@ -85,7 +85,6 @@ The default function `defaultPopulateManifestEntry` is exported from `kolay/vite
 
 In the following example, `populateManifestEntry` is used to add a value for `meta.githubUrl`
 
-
 ```js
 // vite.config.js
 import { docs, defaultPopulateManifestEntry } from "kolay/vite";
