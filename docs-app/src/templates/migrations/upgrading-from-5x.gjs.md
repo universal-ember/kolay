@@ -164,17 +164,6 @@ With no `:section` block of your own, headings render `x.section.title` instead 
 
 `isIndex` is removed. It asked whether a node was named `index`, which on its own does not answer anything a nav needs. If you were using it to decide what a folder's heading links to, that is `getIndexPage(tree)`; to decide whether listing a page repeats its folder's heading, that is `isRedundantWithHeading(folder, page)`.
 
-## Removed types
-
-`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
-
-## Folder and group URLs redirect instead of erroring
-
-`/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
-
-- Anything asserting on the error page for a folder URL needs updating.
-- `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.
-
 ## A folder's index page sorts first regardless of extension
 
 `index.md` has always been hoisted to the top of the folder holding it. `index.gjs.md` and `index.gts.md` were not: the build strips those extensions before sorting runs, so the test never matched. They now sort first too.
@@ -187,3 +176,34 @@ Two things move on any folder with a `.gjs.md` or `.gts.md` index and no `meta.j
 A folder with a `meta.json` `order` is unaffected — an explicit index is hoisted before the order is applied, so it cannot be placed second.
 
 To keep the old placement, give that folder a `meta.json` `order`. Build-time sorting also matches the node's name rather than its path now, so a **folder** named `index` sorts first among its siblings.
+
+## Folder and group URLs redirect instead of erroring
+
+`/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
+
+- Anything asserting on the error page for a folder URL needs updating.
+- `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.
+
+## Page titles honor the page's first heading
+
+A page with no declared `title` was titled by its filename. It is now titled by its first heading, falling back to the filename when it has none — so a page at `ember-resources.md` headed `# cell` reads "cell" in the nav, in search results, and in a folder heading that links to it.
+
+5.x resolved headings only for `.gjs.md` and `.gts.md` pages, whose text the build inlines; plain `.md` pages never got past the filename, and the nav and search disagreed about them. The build now reads every markdown page's headings.
+
+Search scores a page's path as well, so a page stays findable by its filename even when its heading says something else.
+
+Declare `title` in a page's sidecar `.json` to keep the old text.
+
+## `<PageNav />` renders page links by title
+
+The default `:page` block rendered `page.name`, the raw filename, while folder headings render a resolved title. Both are titles now. Pass your own `:page` block to render something else:
+
+```hbs
+<:page as |x|>
+  <x.Link>{{x.page.name}}</x.Link>
+</:page>
+```
+
+## Removed types
+
+`Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.

@@ -31,6 +31,9 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
         {{/if}}
       </:section>
     </PageNav>
+
+    {{! With no blocks of its own, so the default rendering is exercised. }}
+    <PageNav data-test-default-blocks />
   </aside>
 </template>;
 

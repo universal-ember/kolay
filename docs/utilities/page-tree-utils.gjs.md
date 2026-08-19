@@ -54,7 +54,7 @@ Every page and folder has a resolved `title`, so navigation does not have to der
 
 |          | resolves to                                                                            |
 | -------- | -------------------------------------------------------------------------------------- |
-| a page   | its frontmatter `title` OR its first heading OR its cleaned filename                    |
+| a page   | its sidecar `.json` `title` OR its first heading OR its cleaned filename                   |
 | a folder | its `meta.json` `title` OR the title of a page named `index` OR its cleaned directory name |
 
 "Cleaned names" have digits removed, dashes turned into spaces, and are sentence-cased.

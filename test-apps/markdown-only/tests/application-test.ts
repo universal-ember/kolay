@@ -17,6 +17,20 @@ module("PageNav", function (hooks) {
 
     assert.dom('nav[aria-label="Selected Group"]').includesText("Sub folder");
   });
+
+  // Every app here passes its own `:page` block, so the default rendering had
+  // no coverage at all. It renders the page's resolved title, matching what
+  // the section heading does — `ember-primitives.md` is titled `# inIframe`,
+  // so a filename would be plainly visible here.
+  test("with no blocks, page links render resolved titles", async function (assert) {
+    await visit("/Docs/sub-folder/ember-primitives.md");
+
+    assert.dom("[data-test-default-blocks]").includesText("inIframe");
+    assert.dom("[data-test-default-blocks]").includesText("cell");
+    assert
+      .dom("[data-test-default-blocks]")
+      .doesNotIncludeText("ember-primitives", "the filename is not what a reader sees");
+  });
 });
 
 module("Group index redirects", function (hooks) {

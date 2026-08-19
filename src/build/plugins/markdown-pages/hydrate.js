@@ -127,7 +127,7 @@ export function getList(tree) {
  * A folder's display title, resolved once here rather than in every consumer.
  *
  * A folder with its own `index` page is titled by that page: it is the folder's
- * page, so its frontmatter `title` names the folder. Otherwise the folder is
+ * page, so its sidecar `.json` `title` names the folder. Otherwise the folder is
  * titled by its cleaned name — a first page standing in for one titles
  * itself, not its folder.
  *

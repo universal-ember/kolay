@@ -112,6 +112,12 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
   const paths = [];
   const configs = [];
   const sources = new Map();
+  /**
+   * Headings for every markdown page, so a page's first heading can stand in
+   * for a title it does not declare. Separate from `sources`, which is only
+   * the pages whose text is inlined into the manifest.
+   */
+  const headings = new Map();
 
   for await (const entry of entries) {
     if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
@@ -134,13 +140,21 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     let query = '';
 
     if (entry.endsWith('.md')) {
-      if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
+      const isGlimmer = entry.endsWith('.gjs.md') || entry.endsWith('.gts.md');
+      const source = (await readFile(join(sourceCwd, entry))).toString();
+
+      if (!isGlimmer) {
         query = '?raw';
       }
 
-      if (entry.endsWith('.gjs.md') || entry.endsWith('.gts.md')) {
-        sources.set(name, { source: (await readFile(join(sourceCwd, entry))).toString() });
+      // Only glimmer pages are inlined. A plain `.md` page's text is fetched
+      // on demand, and putting it here would ship it twice — but its headings
+      // are wanted at build time either way, to resolve its title.
+      if (isGlimmer) {
+        sources.set(name, { source });
       }
+
+      headings.set(name, headingsIn(source));
     }
 
     loaders[name] = `() => import("${full}${query}")`;
@@ -160,9 +174,7 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
   // objects as the tree, so the tree sees these too — and folder titles are
   // resolved after, from the results.
   for (const page of found.list) {
-    const source = sources.get(page.path) ?? sources.get(`${page.path}.md`);
-
-    page.title = titleFor(page, source ? headingsIn(source.source) : []);
+    page.title = titleFor(page, headings.get(page.path) ?? headings.get(`${page.path}.md`) ?? []);
   }
 
   addTitles(found.tree);
@@ -189,15 +201,13 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
       ];
     }
 
-    const headings = headingsIn(source.source);
-
     return [
       {
         path: page.path,
         appRelativePath: page.appRelativePath,
         groupName: displayName,
         title: page.title,
-        headings,
+        headings: headings.get(page.path) ?? headings.get(`${page.path}.md`) ?? [],
         text: source.source,
       },
     ];

@@ -146,7 +146,7 @@ export class PageNav extends Component<{
             {{yield p to='page'}}
           {{else}}
             <p.Link>
-              {{p.page.name}}
+              {{p.page.title}}
             </p.Link>
           {{/if}}
         </:page>
