@@ -87,7 +87,7 @@ export function redirectForUrl(
   redirects: { from: string; to: string }[]
 ): string | undefined {
   const [path = ''] = url.split(/[?#]/);
-  const target = resolveRedirect(trimSlashes(path, { trailing: false }), redirects);
+  const target = resolveRedirect(trimSlashes(path, { leading: true }), redirects);
 
   return target === undefined ? undefined : '/' + target;
 }

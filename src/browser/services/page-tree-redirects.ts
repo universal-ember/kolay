@@ -85,7 +85,7 @@ export class PageTreeRedirectService {
     if (!mountGroup) return docs.landingForPageTree(`/${wildcardParam}`);
 
     // Not always the group's name: `Home`'s prefix is the root.
-    const prefix = trimSlashes(docs.groupFor(mountGroup).tree.appRelativePath, { leading: false });
+    const prefix = trimSlashes(docs.groupFor(mountGroup).tree.appRelativePath, { trailing: true });
 
     return docs.landingForPageTree(`${prefix}/${wildcardParam}`, mountGroup);
   }

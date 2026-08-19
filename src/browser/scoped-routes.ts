@@ -77,7 +77,7 @@ export function mountLocationFor(
   const parent = to?.parent;
   const raw = parent?.params?.['page'];
   const atWildcard = typeof raw === 'string';
-  const wildcardParam = atWildcard ? trimSlashes(raw, { leading: false }) || undefined : undefined;
+  const wildcardParam = atWildcard ? trimSlashes(raw, { trailing: true }) || undefined : undefined;
 
   const names = parent
     ? atWildcard

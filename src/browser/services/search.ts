@@ -53,7 +53,7 @@ export class SearchService {
    */
   #sourceUrlFor(entry: SearchEntry): string {
     const base = this.router.rootURL ?? '/';
-    const path = trimSlashes(entry.appRelativePath, { trailing: false });
+    const path = trimSlashes(entry.appRelativePath, { leading: true });
     const url = `${base.endsWith('/') ? base : `${base}/`}${path}`;
 
     return url.endsWith('.md') ? url : `${url}.md`;

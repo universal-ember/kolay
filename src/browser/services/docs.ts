@@ -362,7 +362,7 @@ class DocsService {
 
     return page.appRelativePath.startsWith(prefix)
       ? page.appRelativePath.slice(prefix.length)
-      : trimSlashes(page.appRelativePath, { trailing: false });
+      : trimSlashes(page.appRelativePath, { leading: true });
   }
 
   /**
