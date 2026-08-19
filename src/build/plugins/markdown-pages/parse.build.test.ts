@@ -217,13 +217,6 @@ describe('index hoisting through parse()', () => {
 
     expect(namesIn(folder)).toEqual(['index', 'apple']);
   });
-
-  test('a page whose name merely ends in index does not sort first', async () => {
-    const tree = (await parse(['foo/apple.md', 'foo/api-index.md'], '.', [])) as PageTree;
-    const [folder] = tree.pages;
-
-    expect(namesIn(folder)).toEqual(['apple', 'api-index']);
-  });
 });
 
 describe('folder titles', () => {

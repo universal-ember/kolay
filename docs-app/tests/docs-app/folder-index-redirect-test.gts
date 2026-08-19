@@ -14,7 +14,7 @@ import { setupApplicationTest } from 'ember-qunit';
 module('folder index redirects', function (hooks) {
   setupApplicationTest(hooks);
 
-  test("a folder's URL lands on its index page, when it has one", async function (assert) {
+  test("a folder's URL goes to the page named index when there is one", async function (assert) {
     await visit('/authoring');
 
     const router = this.owner.lookup('service:router');
@@ -23,7 +23,7 @@ module('folder index redirects', function (hooks) {
     assert.dom('[data-page-error]').doesNotExist();
   });
 
-  test('a folder with no index page lands on its first page', async function (assert) {
+  test("a folder's URL goes to its first page when no page is named index", async function (assert) {
     await visit('/development');
 
     const router = this.owner.lookup('service:router');
@@ -32,7 +32,7 @@ module('folder index redirects', function (hooks) {
     assert.dom('[data-page-error]').doesNotExist();
   });
 
-  test('a trailing slash lands in the same place', async function (assert) {
+  test('a trailing slash goes to the same place', async function (assert) {
     await visit('/authoring/');
 
     const router = this.owner.lookup('service:router');

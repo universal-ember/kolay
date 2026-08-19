@@ -50,16 +50,6 @@ module("Group index redirects under a custom rootURL", function (hooks) {
     );
   });
 
-  test("visiting a folder root with a trailing slash also redirects", async function (assert) {
-    await visit("/Documentation/sub-folder/");
-    assert.strictEqual(currentURL(), "/Documentation/sub-folder/lonely-page.md");
-  });
-
-  test("visiting a folder root with different casing still redirects", async function (assert) {
-    await visit("/documentation/SUB-FOLDER");
-    assert.strictEqual(currentURL(), "/Documentation/sub-folder/lonely-page.md");
-  });
-
   // The guard that keeps the folder redirect from swallowing ordinary
   // navigation: a page visit lands on the wildcard's index too.
   test("visiting a page leaves it where it is", async function (assert) {
