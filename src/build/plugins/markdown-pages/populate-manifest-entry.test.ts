@@ -36,6 +36,15 @@ describe('defaultPopulateManifestEntry', () => {
     });
   });
 
+  test("frontmatter arrays replace the json config's, rather than merging by index", () => {
+    const entry = { meta: { tags: ['json', 'from', 'config'] } };
+    const frontmatter = { tags: ['frontmatter'] };
+
+    const result = defaultPopulateManifestEntry(entry, frontmatter, { path: 'x' });
+
+    expect(result.meta).toEqual({ tags: ['frontmatter'] });
+  });
+
   test('mutates neither input', () => {
     const entry = { meta: { a: 1 } };
     const frontmatter = { a: 2, b: { c: 3 } };

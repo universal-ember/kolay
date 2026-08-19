@@ -1,7 +1,7 @@
-import matter from 'gray-matter';
+import matter from '@11ty/gray-matter';
 
 /**
- * A *closed* block: `---`, lines, `---`. gray-matter alone would treat an
+ * A *closed* block: `---`, lines, `---`. @11ty/gray-matter alone would treat an
  * unclosed leading `---` as frontmatter-to-EOF and swallow the document,
  * while the render pipelines (micromark) treat it as a plain thematic
  * break and render everything — closed blocks are the only shape the two

@@ -1,4 +1,4 @@
-import { merge } from 'lodash-es';
+import { deepMerge } from './deep-merge.js';
 
 /**
  * Finalizes a page's entry in the documentation manifest.
@@ -16,15 +16,15 @@ import { merge } from 'lodash-es';
 
 /**
  * The default `populateManifestEntry` strategy: the page's frontmatter
- * nests under its `meta` key, deeply merged (lodash merge) with any
- * `meta` the sibling json config already defines — frontmatter wins on
- * collisions. Since it runs for every page (with `{}` when there is no
- * frontmatter), `meta` is always present. Does not mutate its input.
+ * nests under its `meta` key, deeply merged with any `meta` the sibling
+ * json config already defines — frontmatter wins on collisions. Since it
+ * runs for every page (with `{}` when there is no frontmatter), `meta` is
+ * always present. Does not mutate its input.
  *
  * Exported so a custom strategy can fall back to (or build on) it.
  *
  * @type {PopulateManifestEntry}
  */
 export function defaultPopulateManifestEntry(entry, frontmatter) {
-  return { ...entry, meta: merge({}, entry.meta ?? {}, frontmatter) };
+  return { ...entry, meta: deepMerge(entry.meta ?? {}, frontmatter) };
 }
