@@ -121,7 +121,7 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   // One rule for what a tree's URL lands on, shared with the page-tree
   // redirect. A group's root is a tree like any other.
-  const first = docs.landingForPageTree(docs.groupFor(groupName).tree.appRelativePath, groupName);
+  const first = docs.indexPageForPath(docs.groupFor(groupName).tree.appRelativePath, groupName);
 
   if (!first) {
     console.warn(`Could not determine first page in group: ${groupName}`);

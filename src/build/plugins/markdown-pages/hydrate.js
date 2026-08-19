@@ -128,7 +128,7 @@ export function getList(tree) {
  *
  * A folder with its own `index` page is titled by that page: it is the folder's
  * page, so its frontmatter `title` names the folder. Otherwise the folder is
- * titled by its cleaned name — a first page standing in as the landing titles
+ * titled by its cleaned name — a first page standing in for one titles
  * itself, not its folder.
  *
  * Sorting has already run, so an explicit index is the first child when there

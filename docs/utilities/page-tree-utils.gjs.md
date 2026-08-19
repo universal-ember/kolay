@@ -2,16 +2,15 @@
 
 Utility functions for working with the page manifest. Useful when building custom navigation that needs to distinguish between leaf pages and nested page trees.
 
-Every folder has a **landing page**: where its own URL goes. That is the page the author named `index` when there is one, and the folder's first page otherwise. Navigation almost always wants this, because every folder with pages has one.
+Every folder has an **index page**: the page its own URL goes to. That is the page the author named `index` when there is one, and the folder's first page otherwise.
 
-A folder's landing page is an **explicit index** when the author named it `index`. Build-time sorting puts an explicit index first in its folder, so `folder.pages.at(0)` is it whenever there is one, and `page.name === 'index'` is the check:
+If you render the page list yourself, you will want the rule `<PageNav />` uses to avoid listing a page its section heading already links to — compare titles:
 
 ```js
-const first = folder.pages.at(0);
-const hasOwnPage = first && !isPageTree(first) && first.name === 'index';
+const alreadyInTheHeading = page.title === folder.title;
 ```
 
-That only matters if you are rendering the list yourself: `<PageNav />` leaves an explicit index out of the page list, because the section heading already links to it.
+Both titles are resolved at build time, so this is a string comparison rather than a check on how the page was named.
 
 ## `isPageTree`
 
@@ -29,17 +28,17 @@ for (const node of tree.pages) {
 }
 ```
 
-## Where a folder links
+## Where a folder's heading links
 
 For "where should this folder's heading go", ask the docs service rather than the tree, because the answer falls back to the first page when there is no index:
 
 ```js
 import { docsManager } from 'kolay';
 
-const landing = docsManager(this).landingForTree(folder);
+const indexPage = docsManager(this).indexPageFor(folder);
 ```
 
-Inside [`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) this is already done for you — its `:section` block yields `landing`.
+Inside [`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) this is already done for you — its `:section` block yields `index`.
 
 ## API Reference
 

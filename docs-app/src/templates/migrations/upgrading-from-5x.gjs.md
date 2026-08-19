@@ -139,61 +139,60 @@ To assist in this migration, `<PageNav />` will `assert` in development when it 
 
 `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
 
-## Landing pages, and what `<PageNav />` yields
+## A folder's index page is now whichever page its URL goes to
 
-Every folder now has a **landing page**: where its own URL goes. That is the page named `index` when the author wrote one — its **explicit index** — and the folder's first page otherwise. 5.x had no name for the second case, which is why folders without an `index` page had no heading link.
+In 5.x a folder only had an index page if the author wrote one named `index`. A folder without one had no page to link its heading to, so it rendered as plain text.
 
-### `getIndexPage` is removed
+A folder's index page is now the page its own URL goes to: the page named `index` when there is one, and the folder's first page otherwise. Every folder with pages has one.
 
-It returned the explicit index but was documented for the landing question — "useful for making folder names in navigation link to an index page" — so folders without an explicit index page would not be linked.
-
-For a folder heading, use `<PageNav />`'s `landing`, or `landingForTree(tree)` on the docs service. If you render the list yourself and need to know whether a folder has its own page, build-time sorting puts an explicit index first, so its name is the check:
-
-```diff
-- const index = getIndexPage(folder);
-+ const first = folder.pages.at(0);
-+ const index = first && !isPageTree(first) && first.name === 'index' ? first : undefined;
-```
-
-`isIndex` is no longer exported, for the same reason: it answered the narrow question while reading like the general one.
-
-### `:section` yields `landing`, not `index`
+### `:section`'s `index` is present for every folder
 
 ```diff
   <:section as |x|>
--   {{#if x.index}}
--     <x.index.Link>{{x.section.title}}</x.index.Link>
-+   {{#if x.landing}}
-+     <x.landing.Link>{{x.section.title}}</x.landing.Link>
+    {{#if x.index}}
+-     <x.index.Link>{{x.index.page.title}}</x.index.Link>
++     <x.index.Link>{{x.section.title}}</x.index.Link>
     {{else}}
       {{x.section.title}}
     {{/if}}
   </:section>
 ```
 
-`landing` is present for every folder with pages; `index` was present only for folders holding an `index` page. The name changed rather than the meaning, so a 5.x template fails to compile instead of pointing somewhere new.
+**If your heading text comes from the index page, change it to `x.section.title`.** Otherwise a folder without a page named `index` will display its first page's title where 5.x displayed the folder's name. Your `{{else}}` branch is now unreachable for any folder that has pages.
 
-An explicit index is still left out of the `:page` block, since the section heading stands in for it. A first page acting as the landing stays in the list — it is a page in its own right.
+`x.section.title` is new — see below — and is what the folder heading should say.
+
+A page whose `title` equals its folder's is left out of the `:page` block, since the heading already links to it under the same words. That replaces 5.x's rule of always hiding a page named `index`, and you can reproduce it yourself:
+
+```js
+const hidden = page.title === folder.title;
+```
+
+### `getIndexPage` and `isIndex` are removed
+
+`getIndexPage` returned only an author-written `index` page, but was documented for the heading-link question — "useful for making folder names in navigation link to an index page" — which is why folders without one went unlinked. Use `<PageNav />`'s `index`, or `indexPageFor(tree)` on the docs service.
+
+`isIndex` is removed for the same reason: it answered "is this page named `index`" while reading like the general question. If you need it, the check is `page.name === 'index'`.
 
 ### Folder and page titles
 
 `PageTree` carries a `title`, so an app no longer derives section headings itself. Titles resolve the same way for pages and folders, in navigation and in search:
 
-|          | resolves to                                                                             |
-| -------- | --------------------------------------------------------------------------------------- |
-| a folder | its `meta.json` `title`, then its landing page's title, then its cleaned directory name |
-| a page   | its json `title`, then its first heading, then its cleaned filename                     |
+|          | resolves to                                                                           |
+| -------- | ------------------------------------------------------------------------------------- |
+| a folder | its `meta.json` `title`, then its index page's title, then its cleaned directory name |
+| a page   | its json `title`, then its first heading, then its cleaned filename                   |
 
 Cleaned names have digits removed, dashes turned into spaces, and are sentence-cased.
 
-If you pass no `:section` block, the default rendering changes:
+With no `:section` block of your own, the default rendering changes:
 
-| folder                                  | 5.x                        | 6.0          |
-| --------------------------------------- | -------------------------- | ------------ |
-| `meta.json` sets a `title`              | `index` or the raw segment | that title   |
-| has an `index` page with a `title`      | `index`                    | that title   |
-| has an `index` page with only an `# H1` | `index`                    | that heading |
-| no `index` page                         | `sub-folder`               | `Sub folder` |
+| folder                                   | 5.x                                | 6.0          |
+| ---------------------------------------- | ---------------------------------- | ------------ |
+| `meta.json` sets a `title`               | `index`, or the raw directory name | that title   |
+| a page named `index` with a `title`      | `index`                            | that title   |
+| a page named `index` with only an `# H1` | `index`                            | that heading |
+| no page named `index`                    | `sub-folder`                       | `Sub folder` |
 
 5.x rendered the index page's `name` — the literal string `index`.
 
@@ -216,7 +215,7 @@ To keep the old placement, give that folder a `meta.json` `order`. Build-time so
 
 ## Folder and group URLs redirect instead of erroring
 
-`/Group/sub-folder` used to render the error page. It now redirects to that folder's landing page, and you call nothing to get it. A group's own URL redirects the same way.
+`/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
 
 - Anything asserting on the error page for a folder URL needs updating.
 - `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.

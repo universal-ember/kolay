@@ -179,12 +179,12 @@ module("Multiple docs routes", function (hooks) {
     await visit("/welcome/home.md");
 
     const docs = docsManager(this.owner);
-    const landing = docs.landingForPageTree("/guides/getting-started", "GUIDES");
+    const indexPage = docs.indexPageForPath("/guides/getting-started", "GUIDES");
 
-    assert.strictEqual(landing?.appRelativePath, "/guides/getting-started/intro.md");
+    assert.strictEqual(indexPage?.appRelativePath, "/guides/getting-started/intro.md");
 
     assert.strictEqual(
-      docs.landingForPageTree("/guides/getting-started", "not-a-group"),
+      docs.indexPageForPath("/guides/getting-started", "not-a-group"),
       undefined,
       "an unknown group answers nothing rather than widening to every group",
     );

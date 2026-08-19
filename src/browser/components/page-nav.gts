@@ -76,8 +76,8 @@ export class PageNav extends Component<{
     ];
     /**
      * If provided, this block will yield back the section for customizing the
-     * name. By default the folder's name is rendered, as a link to its
-     * landing page when it has one.
+     * name. By default the folder's title is rendered, linked to its index
+     * page.
      *
      * A section is a `PageTree`: the pages under one folder of markdown
      * files, plus any sections nested within it.
@@ -91,10 +91,10 @@ export class PageNav extends Component<{
      *   <PageNav>
      *     <:section as |x|>
      *       <pre>{{JSON.stringify x null 3}}</pre>
-     *       {{#if x.landing}}
-     *         <x.landing.Link>
+     *       {{#if x.index}}
+     *         <x.index.Link>
      *           {{sentenceCase x.section.name}}
-     *         </x.landing.Link>
+     *         </x.index.Link>
      *       {{else}}
      *         {{sentenceCase x.section.name}}
      *       {{/if}}
@@ -108,16 +108,18 @@ export class PageNav extends Component<{
       {
         section: PageTree;
         /**
-         * The folder's **landing page**: where its own URL goes, and so where
-         * a link on its heading should go. That is its explicit `index` page
-         * when it has one, and its first page otherwise. Absent only for a
-         * folder holding no pages at all.
+         * The folder's index page: where its own URL goes, and so where a
+         * link on its heading should go. That is the page named `index` when
+         * the author wrote one, and the folder's first page otherwise.
+         * Absent only for a folder holding no pages at all.
          *
-         * An explicit index is also omitted from the `:page` block, since the
-         * heading stands in for it. A first page serving as the landing is
-         * not — it is a page in its own right and stays in the list.
+         * In 5.x this was present only for a folder holding a page named
+         * `index`; it is present for every folder with pages now.
+         *
+         * A page whose `title` equals the folder's is left out of the `:page`
+         * block, since this heading already links to it under the same words.
          */
-        landing?: {
+        index?: {
           page: Page;
           Link: ComponentLike<{
             Element: HTMLAnchorElement;
@@ -136,7 +138,7 @@ export class PageNav extends Component<{
    * Where a folder's own URL goes, which is what the redirect would do.
    * No group: the tree is in hand, so there is nothing to search for.
    */
-  private landingFor = (tree: PageTree) => this.docs.landingForTree(tree);
+  private indexPageFor = (tree: PageTree) => this.docs.indexPageFor(tree);
 
   /**
    * Ember doesn't yet have a way to forward blocks,
@@ -148,7 +150,7 @@ export class PageNav extends Component<{
     {{!log this.docs}}
     {{#if (has-block 'collection')}}{{blockWasRenamed}}{{/if}}
     <nav aria-label='Selected Group' ...attributes>
-      <Pages @item={{this.docs.tree}} @landingFor={{this.landingFor}}>
+      <Pages @item={{this.docs.tree}} @indexPageFor={{this.indexPageFor}}>
 
         <:page as |p|>
           {{#if (has-block 'page')}}
@@ -164,10 +166,10 @@ export class PageNav extends Component<{
           {{#if (has-block 'section')}}
             {{yield c to='section'}}
           {{else}}
-            {{#if c.landing}}
-              <c.landing.Link>
+            {{#if c.index}}
+              <c.index.Link>
                 {{c.section.title}}
-              </c.landing.Link>
+              </c.index.Link>
             {{else}}
               {{c.section.title}}
             {{/if}}
@@ -182,7 +184,7 @@ export class PageNav extends Component<{
  * A page whose title is its folder's title is that folder's own page: the
  * section heading already links to it, so listing it again repeats the same
  * words twice. A page with a title of its own stays in the list, whether or
- * not it happens to be the folder's landing page.
+ * not it is the page the folder's URL goes to.
  */
 const not = (x: unknown) => !x;
 
@@ -193,14 +195,14 @@ const Pages: TOC<{
   Args: {
     item: Page | PageTree;
     activeClass?: string;
-    landingFor: (tree: PageTree) => Page | undefined;
+    indexPageFor: (tree: PageTree) => Page | undefined;
   };
   Blocks: {
     page: [InternalPageYield];
     section: [
       {
         section: PageTree;
-        landing?: InternalPageYield;
+        index?: InternalPageYield;
       },
     ];
   };
@@ -212,14 +214,15 @@ const Pages: TOC<{
           <li>
             {{#if (isPageTree page)}}
 
-              {{#let (@landingFor page) as |landing|}}
+              {{#let (@indexPageFor page) as |indexPage|}}
                 {{yield
                   (hash
                     section=page
-                    landing=(if
-                      landing
+                    index=(if
+                      indexPage
                       (hash
-                        page=landing Link=(component PageLink item=landing activeClass=@activeClass)
+                        page=indexPage
+                        Link=(component PageLink item=indexPage activeClass=@activeClass)
                       )
                     )
                   )
@@ -228,7 +231,7 @@ const Pages: TOC<{
               {{/let}}
             {{/if}}
 
-            <Pages @item={{page}} @landingFor={{@landingFor}}>
+            <Pages @item={{page}} @indexPageFor={{@indexPageFor}}>
               <:page as |p|>{{yield p to='page'}}</:page>
               <:section as |c|>{{yield c to='section'}}</:section>
             </Pages>

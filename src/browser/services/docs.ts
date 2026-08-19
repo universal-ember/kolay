@@ -510,7 +510,7 @@ class DocsService {
    * or nothing. `groupName` scopes the search — two groups can hold one
    * manifest path — and a name matching no group answers `undefined`.
    */
-  landingForPageTree = (appRelativePath: string, groupName?: string): Page | undefined => {
+  indexPageForPath = (appRelativePath: string, groupName?: string): Page | undefined => {
     let groups = this.manifest?.groups ?? [];
 
     if (groupName !== undefined) {
@@ -543,10 +543,10 @@ class DocsService {
 
     for (const group of groups) {
       const tree = findPageTree(group.tree, appRelativePath);
-      const landing = tree && this.landingForTree(tree);
+      const indexPage = tree && this.indexPageFor(tree);
 
       // An empty tree shouldn't end the search for a group that has one.
-      if (landing) return landing;
+      if (indexPage) return indexPage;
     }
 
     return undefined;
@@ -557,14 +557,14 @@ class DocsService {
    * index page when it has one. `undefined` for a tree holding no pages.
    *
    * Takes no group, and needs none. The group parameter on
-   * `landingForPageTree` guards the *search* for a tree at a path, which two
+   * `indexPageForPath` guards the *search* for a tree at a path, which two
    * groups can both hold; here the caller already has the tree. `tree.first`
    * is not unique across groups — a co-located `Guides/foo.md` and a
    * `docs('Guides')` group's `foo.md` both produce `/Guides/foo.md` — but a
    * config that does that has one routable page either way, so scoping would
    * not rescue it.
    */
-  landingForTree = (tree: PageTree): Page | undefined => {
+  indexPageFor = (tree: PageTree): Page | undefined => {
     const first = tree.first;
 
     if (!first) return undefined;

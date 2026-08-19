@@ -26,7 +26,7 @@ export function pageTreeRedirects(context: unknown) {
  * dynamic segment, so Ember doesn't re-enter it when only the wildcard's
  * param changes — and clicking an authored link (`properLinks` makes it an
  * in-app transition) is how readers arrive. No loop: the destination is a
- * page path, which `landingForPageTree` declines.
+ * page path, which `indexPageForPath` declines.
  */
 export class PageTreeRedirectService {
   @service declare private router: RouterService;
@@ -49,16 +49,16 @@ export class PageTreeRedirectService {
   };
 
   #hrefFor(to: Transition['to'] | RouterService['currentRoute']): string | undefined {
-    const landing = this.#landingForRouteInfo(to);
+    const indexPage = this.#indexPageForRouteInfo(to);
 
-    return landing ? this.#docs.appRelativeHrefFor(landing) : undefined;
+    return indexPage ? this.#docs.appRelativeHrefFor(indexPage) : undefined;
   }
 
   /**
    * `undefined` unless the URL names a `PageTree`. A page visit also resolves
    * to the wildcard's index, with the page as its param.
    */
-  #landingForRouteInfo(to: Transition['to'] | RouterService['currentRoute']): Page | undefined {
+  #indexPageForRouteInfo(to: Transition['to'] | RouterService['currentRoute']): Page | undefined {
     if (to?.localName !== 'index') return;
 
     const docs = this.#docs;
@@ -79,14 +79,14 @@ export class PageTreeRedirectService {
     if (!wildcardParam) {
       if (!mountGroup) return;
 
-      return docs.landingForPageTree(docs.groupFor(mountGroup).tree.appRelativePath, mountGroup);
+      return docs.indexPageForPath(docs.groupFor(mountGroup).tree.appRelativePath, mountGroup);
     }
 
-    if (!mountGroup) return docs.landingForPageTree(`/${wildcardParam}`);
+    if (!mountGroup) return docs.indexPageForPath(`/${wildcardParam}`);
 
     // Not always the group's name: `Home`'s prefix is the root.
     const prefix = trimSlashes(docs.groupFor(mountGroup).tree.appRelativePath, { trailing: true });
 
-    return docs.landingForPageTree(`${prefix}/${wildcardParam}`, mountGroup);
+    return docs.indexPageForPath(`${prefix}/${wildcardParam}`, mountGroup);
   }
 }
