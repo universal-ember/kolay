@@ -505,6 +505,14 @@ class DocsService {
   };
 
   /**
+   * Whether any group serves a page at this manifest-space path. Manifest
+   * wide, not `findByPath`, which searches `currentGroup` — derived from
+   * `router.currentURL`, still the previous page while a transition resolves.
+   */
+  hasPageAt = (appRelativePath: string): boolean =>
+    this.pages.some((page) => samePagePath(page.appRelativePath, appRelativePath));
+
+  /**
    * The index page of the tree at a manifest-space path, or `undefined` when
    * no tree is there — because the path names a page, or nothing at all.
    *

@@ -82,7 +82,24 @@ export class PageTreeRedirectService {
       return docs.indexPageForPath(docs.groupFor(mountGroup).tree.appRelativePath, mountGroup);
     }
 
-    if (!mountGroup) return docs.indexPageForPath(`/${wildcardParam}`);
+    if (!mountGroup) {
+      const path = `/${wildcardParam}`;
+      const byTree = docs.indexPageForPath(path);
+
+      if (byTree) return byTree;
+
+      // A top-level mount serves whichever group the URL names, and a group
+      // whose pages live at the root has no tree at its own name — `/Home` is
+      // a group URL, not a page-tree URL, so the lookup above declines it.
+      // Guarded on pages, which that lookup would otherwise have done.
+      if (docs.hasPageAt(path)) return;
+
+      const named = docs.canonicalGroupName(wildcardParam);
+
+      return named
+        ? docs.indexPageForPath(docs.groupFor(named).tree.appRelativePath, named)
+        : undefined;
+    }
 
     // Not always the group's name: `Home`'s prefix is the root.
     const prefix = docs.groupFor(mountGroup).tree.appRelativePath;

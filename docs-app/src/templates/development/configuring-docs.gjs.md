@@ -161,6 +161,6 @@ Group info across _all_ groups comes from the metamanifest, `kolay/compiled-docs
 
 Types for these modules ship in `kolay/virtual` (add it to your tsconfig's `types`).
 
-Pair each mount with [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) in the mount's route (e.g. `routes/help.js`) so that visiting `/help` redirects to the first page in the group.
+Visiting a mount's own URL (`/help`) redirects to the first page in its group, with nothing to wire up. [`handlePotentialIndexVisit`](/Runtime/navigation/handle-potential-index-visit.md) is only for the app's root (`/`), which names no group.
 
 > **Note:** multiple usages are only supported with Vite (the usages discover each other while vite resolves its config). The same applies to [`apiDocs()`](/TypeDoc/plugin/api-docs.md), whose usages merge their packages.

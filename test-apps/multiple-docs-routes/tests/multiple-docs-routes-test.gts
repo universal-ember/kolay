@@ -232,6 +232,17 @@ module("Multiple docs routes", function (hooks) {
     assert.strictEqual(currentURL(), "/demos/components/buttons", "unscoped nested mount");
   });
 
+  // The co-located group's pages live at the root, so nothing is mounted at
+  // `/Home` and no page tree sits there — the path lookup declines it. Only
+  // resolving the wildcard as a *group name* answers, which is what
+  // `handlePotentialIndexVisit` used to be needed for.
+  test("a group whose pages live at the root redirects from its own name", async function (assert) {
+    await visit("/Home");
+
+    assert.strictEqual(currentURL(), "/welcome/home.md");
+    assert.dom("[data-page-error]").doesNotExist();
+  });
+
   test("visiting a mount's index with a trailing slash also redirects", async function (assert) {
     await visit("/help/");
 
