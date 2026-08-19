@@ -6,7 +6,7 @@ import { Shadowed } from 'ember-primitives/components/shadowed';
 import { createStore } from 'ember-primitives/store';
 import { type ModuleMap, type ScopeMap, setupCompiler } from 'ember-repl';
 
-import { stripLeadingSlash } from '../../paths.js';
+import { trimSlashes } from '../../paths.js';
 import { rebaseAuthoredLinks } from '../../rebase-links.js';
 import { redirectForUrl, redirectTargetFor } from '../redirects.ts';
 import { groupNameForRoute, indexRouteNameFor, routeNameForGroup } from '../scoped-routes.ts';
@@ -362,7 +362,7 @@ class DocsService {
 
     return page.appRelativePath.startsWith(prefix)
       ? page.appRelativePath.slice(prefix.length)
-      : stripLeadingSlash(page.appRelativePath);
+      : trimSlashes(page.appRelativePath, { trailing: false });
   }
 
   /**

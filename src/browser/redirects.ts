@@ -1,4 +1,4 @@
-import { stripLeadingSlash } from '../paths.js';
+import { trimSlashes } from '../paths.js';
 import { equalsIgnoreCase, samePagePath } from './utils.ts';
 
 import type Transition from '@ember/routing/transition';
@@ -87,7 +87,7 @@ export function redirectForUrl(
   redirects: { from: string; to: string }[]
 ): string | undefined {
   const [path = ''] = url.split(/[?#]/);
-  const target = resolveRedirect(stripLeadingSlash(path), redirects);
+  const target = resolveRedirect(trimSlashes(path, { trailing: false }), redirects);
 
   return target === undefined ? undefined : '/' + target;
 }

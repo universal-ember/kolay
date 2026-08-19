@@ -1,4 +1,4 @@
-import { stripTrailingSlash } from '../paths.js';
+import { trimSlashes } from '../paths.js';
 
 import type RouteInfo from '@ember/routing/route-info';
 import type { RouteInfoWithAttributes } from '@ember/routing/route-info';
@@ -77,7 +77,7 @@ export function mountLocationFor(
   const parent = to?.parent;
   const raw = parent?.params?.['page'];
   const atWildcard = typeof raw === 'string';
-  const wildcardParam = atWildcard ? stripTrailingSlash(raw) || undefined : undefined;
+  const wildcardParam = atWildcard ? trimSlashes(raw, { leading: false }) || undefined : undefined;
 
   const names = parent
     ? atWildcard

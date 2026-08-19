@@ -214,13 +214,9 @@ To keep the old placement, give that folder a `meta.json` `order`. Build-time so
 
 `Options`, `MarkdownPagesOptions`, and `APIDocsOptions` (from `kolay/build` / `kolay/types`) described the old options shapes and are gone. `kolay/build` exports `DocsOptions` instead.
 
-## A page tree's URL resolves to its first page, without wiring
+## Folder and group URLs redirect instead of erroring
 
-`/Group/sub-folder` used to render the error page. It now redirects to that tree's first page, wired by `setupKolay` to the router rather than by any hook you call.
+`/Group/sub-folder` used to render the error page. It now redirects to that folder's landing page, and you call nothing to get it. A group's own URL redirects the same way.
 
-Two consequences:
-
-- A URL that used to error now navigates. Anything asserting on the error page for a folder URL will need updating.
-- A group root resolves this way too, on every mount shape — so `/Group` on a top-level mount and `/guides` on a nested one no longer depend on `handlePotentialIndexVisit`. An app that never called it gets those redirects anyway. This also fixes the case no route hook could serve: arriving at a mount's own URL from a page already inside that mount, which is where the group's own nav link points.
-
-Keep calling `handlePotentialIndexVisit` for the app root (`/`), which names no group for a transition to resolve. Calling it elsewhere is harmless.
+- Anything asserting on the error page for a folder URL needs updating.
+- `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.

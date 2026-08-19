@@ -32,17 +32,20 @@ export function stripGlimmerMarkdownExtension(path) {
 }
 
 /**
+ * A path without its leading and/or trailing slashes. Both ends by default,
+ * so a bare call does what the name says; narrow it when only one end is in
+ * the way — `appRelativePath` keeps its leading slash, config `from` keys do
+ * not have one.
+ *
  * @param {string} path
+ * @param {{ leading?: boolean, trailing?: boolean }} [ends]
  * @returns {string}
  */
-export function stripLeadingSlash(path) {
-  return path.replace(/^\/+/, '');
-}
+export function trimSlashes(path, { leading = true, trailing = true } = {}) {
+  let trimmed = path;
 
-/**
- * @param {string} path
- * @returns {string}
- */
-export function stripTrailingSlash(path) {
-  return path.replace(/\/+$/, '');
+  if (leading) trimmed = trimmed.replace(/^\/+/, '');
+  if (trailing) trimmed = trimmed.replace(/\/+$/, '');
+
+  return trimmed;
 }
