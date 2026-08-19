@@ -12,6 +12,9 @@ export default defineConfig({
     docs(import.meta.resolve("./demos", import.meta.url), {
       // only THIS usage's .gjs.md files get <Callout> in scope
       scope: `import { Callout } from '#app/components/callout.gjs';`,
+      // only THIS usage's pages get this shape (frontmatter on a top-level
+      // `frontmatter` key); the guides usage keeps the default (under `meta`)
+      populateManifestEntry: (entry, frontmatter) => ({ ...entry, frontmatter }),
     }),
     // fences (runtime and build-time) import these as '#demos/kit/*'
     demos(import.meta.resolve("./shared-demos", import.meta.url), { as: "#demos/kit" }),

@@ -1,6 +1,8 @@
-import { currentURL, visit } from "@ember/test-helpers";
+import { currentURL, visit, waitUntil } from "@ember/test-helpers";
 import { module, skip, test } from "qunit";
 import { setupApplicationTest } from "ember-qunit";
+
+import { docsManager } from "kolay";
 
 import { visitAllLinks } from "@universal-ember/test-support";
 
@@ -41,7 +43,7 @@ module("Group index redirects", function (hooks) {
 
     assert.strictEqual(
       currentURL(),
-      "/Docs/sub-folder/ember-primitives.md",
+      "/Docs/top.md",
       "the Docs group index redirects to its first page",
     );
   });
@@ -59,6 +61,42 @@ module("Redirect precedence", function (hooks) {
   });
 });
 
+module("Frontmatter", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test("is not rendered, and lands on the page's manifest entry", async function (assert) {
+    await visit("/my-folder-name/bar.md");
+    // the page's text compiles outside the run loop, so `visit` settling
+    // isn't enough — the prose renders once compilation resolves
+    await waitUntil(() => !document.querySelector(".loading-page"), { timeout: 5000 });
+
+    assert.dom().includesText("this is bar");
+    assert.dom().doesNotIncludeText("zebra");
+    assert.dom().doesNotIncludeText("author");
+
+    const home = docsManager(this.owner).manifest.groups.find((group) => group.name === "Home");
+    const bar = home?.list.find((page) => page.appRelativePath === "/my-folder-name/bar.md");
+
+    assert.deepEqual(bar?.meta, { author: "zebra", reviewed: true });
+  });
+});
+
+module("Pages at the root of a docs source", function (hooks) {
+  setupApplicationTest(hooks);
+
+  // docs/top.md has no folder of its own: it belongs to the source itself,
+  // and sits in the nav next to the folders.
+  test("a top-level markdown file is a page", async function (assert) {
+    await visit("/Docs/top.md");
+    await waitUntil(() => !document.querySelector(".loading-page"), { timeout: 5000 });
+
+    assert.dom("h1").hasText("Top level", "the top-level page's content is rendered");
+    assert
+      .dom('nav[aria-label="Selected Group"] a[href="/Docs/top.md"]')
+      .exists("the top-level page is linked from the page nav");
+  });
+});
+
 module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 
@@ -73,6 +111,7 @@ module("All Links", function (hooks) {
       "/Docs",
       "/Docs/sub-folder/ember-primitives.md",
       "/Docs/sub-folder/ember-resources.md",
+      "/Docs/top.md",
       "/my-folder-name/bar.md",
       "/my-folder-name/foo.md",
     ]);

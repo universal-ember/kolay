@@ -32,6 +32,28 @@ That is how the [Runtime](/Runtime/rendering/page.md) and [TypeDoc](/TypeDoc/com
 
 (For _ordering_ pages, see [Ordering pages](/development/ordering-pages.md) — that's a `meta.json` per folder, not a per-page file.)
 
+## Frontmatter
+
+Markdown files can define metadata using a YAML frontmatter block at the top of the file:
+
+```md
+---
+author: NullVoxPopuli
+since: 5.5.0
+---
+
+# My page
+```
+
+The block is read at build time and never rendered. By default the data is populated on the page's manifest entry under a `meta` key, this is deeply merged with any `meta` the page's sibling json defines (frontmatter wins on collisions):
+
+```js
+page.meta.author; // 'NullVoxPopuli'
+page.meta.since; // '5.5.0'
+```
+
+Note that by default, frontmatter does not directly affect the page's nav, however modifying the [`populateManifestEntry`](/development/configuring-docs.md) in the build configuration can be used to modify the root level `title` or other keys on the manifest entry which can be used to modify nav entries.
+
 ## Nav-only links
 
 A json file with an `href` — and no markdown file of its own — becomes a nav entry that is just a link. It participates in naming and ordering like any page, but points wherever the `href` says, e.g. a page in another group:

@@ -1,20 +1,54 @@
 import { describe, expect, test } from 'vitest';
 
-import { docsVirtualGuard } from './setup.js';
+import { virtualGuard } from './setup.js';
 
-type Guard = { resolveId: (id: string) => unknown };
+type Guard = {
+  resolveId: (id: string) => unknown;
+  vite: { configResolved: (config: unknown) => void };
+};
 
 function guardFor(...groupNames: string[]) {
-  return docsVirtualGuard({
+  return virtualGuard({
     options: {},
     usages: groupNames.map((name) => ({ groups: [{ name, src: `./${name}` }] })),
     isPrimary: true,
   }) as unknown as Guard;
 }
 
-describe('docsVirtualGuard', () => {
+/**
+ * What the guard sees in a config that also has demos() usages — the
+ * aliases come from their plugin api, as they do in vite.
+ */
+function withDemos(guard: Guard, ...aliases: string[]) {
+  guard.vite.configResolved({
+    plugins: aliases.map((alias) => ({
+      name: 'kolay:demos',
+      api: { kolay: { options: { alias, src: `/abs/${alias}` } } },
+    })),
+  });
+
+  return guard;
+}
+
+function messageFrom(guard: Guard, id: string) {
+  try {
+    guard.resolveId(id);
+  } catch (error) {
+    return (error as Error).message.replaceAll(process.cwd(), '<cwd>');
+  }
+
+  throw new Error(`Expected resolveId('${id}') to throw, but it did not`);
+}
+
+function errorFor(id: string, ...groupNames: string[]) {
+  return messageFrom(guardFor(...groupNames), id);
+}
+
+describe('virtualGuard', () => {
   test('ignores unrelated ids', () => {
     expect(guardFor('guides').resolveId('kolay')).toBeUndefined();
+    expect(guardFor('guides').resolveId('kolay/setup')).toBeUndefined();
+    expect(guardFor('guides').resolveId('kolay/api-docs:virtual')).toBeUndefined();
     expect(guardFor('guides').resolveId('virtual:something-else')).toBeUndefined();
   });
 
@@ -24,19 +58,154 @@ describe('docsVirtualGuard', () => {
     expect(guard.resolveId('virtual:kolay/docs/guides')).toBeUndefined();
     expect(guard.resolveId('virtual:kolay/docs/demos')).toBeUndefined();
     expect(guard.resolveId('virtual:kolay/docs/Home')).toBeUndefined();
+    expect(guard.resolveId('virtual:kolay/search/guides')).toBeUndefined();
+    expect(guard.resolveId('virtual:kolay/search/Home')).toBeUndefined();
   });
 
   test('throws helpfully for undeclared groups', () => {
-    let message = '';
+    expect(errorFor('virtual:kolay/docs/nope', 'guides', 'demos')).toMatchInlineSnapshot(`
+      "'virtual:kolay/docs/nope' does not exist, because no docs() usage declares a group named 'nope'. Add docs('nope', { src: ... }) — or docs(<a path or URL ending in 'nope'>) — to your plugins.
 
-    try {
-      guardFor('guides', 'demos').resolveId('virtual:kolay/docs/nope');
-    } catch (error) {
-      message = (error as Error).message;
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides, demos"
+    `);
+  });
+
+  test('throws helpfully for an undeclared group in another namespace', () => {
+    expect(errorFor('virtual:kolay/search/nope', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/search/nope' does not exist, because no docs() usage declares a group named 'nope'. Add docs('nope', { src: ... }) — or docs(<a path or URL ending in 'nope'>) — to your plugins.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('throws helpfully for an unknown namespace', () => {
+    expect(errorFor('virtual:kolay/pages/guides', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/pages/guides' does not exist: kolay provides no 'pages' virtual imports.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('suggests the public module when one matches', () => {
+    expect(errorFor('virtual:kolay/setup', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/setup' does not exist: kolay provides no 'setup' virtual imports. Did you mean 'kolay/setup'?
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test(`never mentions kolay's internal virtual modules`, () => {
+    // they are implementation details — the `kolay/*:virtual` modules
+    // setupKolay imports, and the search module a docs module's `search()`
+    // loads — so nothing in the messages invites importing them by hand
+    const messages = [
+      errorFor('virtual:kolay/api-docs', 'guides'),
+      errorFor('virtual:kolay/compiled-docs', 'guides'),
+      errorFor('virtual:kolay/demos', 'guides'),
+      errorFor('virtual:kolay/import-entrypoints', 'guides'),
+      errorFor('virtual:kolay/docs/nope', 'guides'),
+      errorFor('virtual:kolay/search/nope', 'guides'),
+      errorFor('virtual:kolay', 'guides'),
+    ];
+
+    for (const message of messages) {
+      expect(message).not.toContain(':virtual');
+      expect(message).not.toContain('Did you mean');
+      // the id the user wrote is echoed, but the list never advertises it
+      expect(message).not.toContain('virtual:kolay/search/<group>');
     }
 
-    expect(message.replaceAll(process.cwd(), '<cwd>')).toMatchInlineSnapshot(
-      `"'virtual:kolay/docs/nope' does not exist, because no docs() usage declares a group named 'nope'. Add docs('nope', { src: ... }) — or docs(<a path or URL ending in 'nope'>) — to your plugins. Declared groups: Home, guides, demos"`
-    );
+    expect(errorFor('virtual:kolay/api-docs', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/api-docs' does not exist: kolay provides no 'api-docs' virtual imports.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('lists the demos() aliases the config configures', () => {
+    const guard = withDemos(guardFor('guides'), '#demos/foo', '@scope/demos');
+
+    expect(messageFrom(guard, 'virtual:kolay/docs/nope')).toMatchInlineSnapshot(`
+      "'virtual:kolay/docs/nope' does not exist, because no docs() usage declares a group named 'nope'. Add docs('nope', { src: ... }) — or docs(<a path or URL ending in 'nope'>) — to your plugins.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+        #demos/foo/<demo> — a demo from a demos() source
+        @scope/demos/<demo> — a demo from a demos() source
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('lists no demos when none are configured', () => {
+    // configResolved ran, there just were no demos() usages
+    const guard = withDemos(guardFor('guides'));
+
+    expect(messageFrom(guard, 'virtual:kolay/docs/nope')).not.toContain('demos()');
+  });
+
+  test('lists demos in every guard error, not just the docs ones', () => {
+    const guard = withDemos(guardFor('guides'), '#demos/foo');
+
+    for (const id of ['virtual:kolay', 'virtual:kolay/docs', 'virtual:kolay/pages/x']) {
+      expect(messageFrom(guard, id)).toContain('#demos/foo/<demo>');
+    }
+  });
+
+  test('throws helpfully for a bare virtual:kolay import', () => {
+    expect(errorFor('virtual:kolay', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay' does not exist: every kolay virtual import names a namespace and a group, as in 'virtual:kolay/docs/guides'.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+    expect(errorFor('virtual:kolay/', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/' does not exist: every kolay virtual import names a namespace and a group, as in 'virtual:kolay/docs/guides'.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('throws helpfully when a namespace names no group', () => {
+    expect(errorFor('virtual:kolay/docs', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/docs' does not exist, because it names no group — 'virtual:kolay/docs' imports are per-group, as in 'virtual:kolay/docs/guides'.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
+  });
+
+  test('ignores the query when checking the group', () => {
+    expect(guardFor('guides').resolveId('virtual:kolay/docs/guides?v=1')).toBeUndefined();
+    expect(errorFor('virtual:kolay/docs/nope?v=1', 'guides')).toMatchInlineSnapshot(`
+      "'virtual:kolay/docs/nope?v=1' does not exist, because no docs() usage declares a group named 'nope'. Add docs('nope', { src: ... }) — or docs(<a path or URL ending in 'nope'>) — to your plugins.
+
+      Known virtual imports:
+        virtual:kolay/docs/<group> — a group's manifest, pages, meta, and addRoutes
+        kolay/setup
+      Declared groups: Home, guides"
+    `);
   });
 });

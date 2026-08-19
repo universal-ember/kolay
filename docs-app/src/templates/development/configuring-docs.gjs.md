@@ -32,7 +32,7 @@ export default defineConfig({
 });
 ```
 
-The second argument holds the group's markdown options (`src`, `remarkPlugins`, `rehypePlugins`, `scope`).
+The second argument holds the group's markdown options (`src`, `remarkPlugins`, `rehypePlugins`, `scope`, `populateManifestEntry`).
 
 ## `scope`
 
@@ -73,12 +73,71 @@ With this config, any `.gjs.md` file can use `<APIDocs />`, `<Shadowed />`, or `
 
 > **Note:** `scope` only applies to `.gjs.md` files (build-time compiled). For `.md` files (runtime compiled), use the `topLevelScope` option in `setupKolay()` instead.
 
+## `populateManifestEntry`
+
+This option finalizes each page or directories manifest entry. It runs for **every** page and directory (not only pages with [frontmatter](/development/renaming-pages.md)), receiving the default entry kolay built — its derived `path`, `name`, `groupName`, `cleanedName`, plus the page's sibling-json config — and the page's parsed YAML frontmatter (`{}` when it has none). Whatever it returns becomes the entry, so it can add, reshape, or override any key.
+
+When no `populateManifestEntry` is provided, the default behavior is to nest the frontmatter under the page's `meta` key (deeply merged with any `meta` the json defines — frontmatter wins), so every entry ends up with a `meta` object.
+
+The default, exported as `defaultPopulateManifestEntry`, nests the frontmatter under the page's `meta` key (deeply merged with any `meta` the json defines — frontmatter wins), so every entry ends up with a `meta` object.
+
+The default function `defaultPopulateManifestEntry` is exported from `kolay/vite` to allow easy extension.
+
+In the following example, `populateManifestEntry` is used to add a value for `meta.githubUrl`
+
+```js
+// vite.config.js
+import { docs, defaultPopulateManifestEntry } from "kolay/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [
+    docs("Docs", {
+      src: import.meta.resolve("./docs"),
+      // spread frontmatter onto the entry itself, not under `meta`
+      populateManifestEntry: (entry, frontmatter) => {
+        const existing = defaultPopulateManifestEntry(entry, frontmatter);
+
+        return {
+          ...existing,
+          meta: {
+            githubUrl: `https://github.com/universal-ember/kolay/blob/main/docs/${existing.path}.gjs.md`,
+            ...existing.meta,
+          },
+      },
+    }),
+  ],
+});
+```
+
+Frontmatter is automatically stripped before rendering, so consumers have to fetch it from the manifest to use this in docs pages.
+
 ## Conventions
 
 There are a few ways you can collect docs:
 
 - co-located pages: anything in `app/templates` / `src/templates` is picked up automatically (no group, served from the root URL space) — even with zero-argument `docs()`.
 - a group per `docs()` usage: the `src` can point at a `docs` folder anywhere in (or outside) your project — including another package's `components` folder, picking up all markdown found there. This is useful for co-locating docs with their implementations.
+
+### Pages at the root of a source
+
+Markdown does not have to live in a folder. A file at the root of a source is a page of the group itself, and it sits in `<PageNav />` next to the folders:
+
+```
+docs/
+  intro.md        -> /GroupName/intro.md
+  guides/
+    advanced.md   -> /GroupName/guides/advanced.md
+```
+
+The same is true of the co-located pages: `src/templates/welcome.md` is served at `/welcome.md`.
+
+Two things follow from this:
+
+- Root-level pages take part in the source's `meta.json` [`order`](/development/ordering-pages.md) next to the folder names. An `order` there must list all of them.
+- An `index.md` at the root is the group's first page — where a visit to the group's URL lands. Like a folder's `index.md`, it gets no separate link in `<PageNav />`; the group's own link in `<GroupNav />` points at it.
+
+A page cannot share a name with a sibling folder (`intro.md` next to an `intro/` folder), at the root or anywhere else. The build fails with a message telling you which file to move.
 
 ## Using the plugin multiple times
 

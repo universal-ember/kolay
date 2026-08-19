@@ -12,11 +12,21 @@ import { sortTree } from './sort.js';
  * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
  * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
+ * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same paths as `paths`
+ * @property {import('./populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry
  *
  * @param {ReshapeOptions} options
  */
-export async function reshape({ paths, configs, cwd, prefix, base }) {
-  let tree = await parse(paths, cwd, configs);
+export async function reshape({
+  paths,
+  configs,
+  cwd,
+  prefix,
+  base,
+  frontmatter,
+  populateManifestEntry,
+}) {
+  let tree = await parse(paths, cwd, configs, { frontmatter, populateManifestEntry });
 
   tree = sortTree(tree, configs);
   tree = addPaths(tree, prefix, base);

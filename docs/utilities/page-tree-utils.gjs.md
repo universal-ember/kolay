@@ -59,6 +59,8 @@ Every page and folder has a resolved `title`, so navigation does not have to der
 
 A "cleaned name" has its digits removed and its dashes turned into spaces. Where one stands in for a title, its first character is capitalized — the rest is left alone, so `inIframe` keeps its shape.
 
+Frontmatter does not title a page. It lands under the entry's `meta` key, so `title:` in frontmatter is `meta.title` and the page still falls back to its heading or filename. Use a sidecar `.json`, or a custom `populateManifestEntry` that promotes it.
+
 A folder takes its title from a page *named* `index` only, not from the fallback `getIndexPage` returns — otherwise every index-less folder would be titled by its first page, and `isRedundantWithHeading` would hide that page from the list.
 
 ## API Reference

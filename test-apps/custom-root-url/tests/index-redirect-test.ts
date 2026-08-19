@@ -18,7 +18,7 @@ module("Group index redirects under a custom rootURL", function (hooks) {
     await visit("/Documentation");
     assert.strictEqual(
       currentURL(),
-      "/Documentation/sub-folder/lonely-page.md",
+      "/Documentation/top.md",
       "the Documentation group index redirects to its first page (rootURL stripped)",
     );
   });
@@ -34,7 +34,7 @@ module("Group index redirects under a custom rootURL", function (hooks) {
     await visit("/Documentation/");
     assert.strictEqual(
       currentURL(),
-      "/Documentation/sub-folder/lonely-page.md",
+      "/Documentation/top.md",
       "trailing slash doesn't break the redirect",
     );
   });
@@ -68,7 +68,7 @@ module("Group index redirects under a custom rootURL", function (hooks) {
     await visit("/DOCUMENTATION");
     assert.strictEqual(
       currentURL(),
-      "/Documentation/sub-folder/lonely-page.md",
+      "/Documentation/top.md",
       "the group name is matched case-insensitively",
     );
   });

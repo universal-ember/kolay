@@ -1,3 +1,7 @@
+---
+badge: new-demo
+---
+
 # Buttons demo
 
 Build-time compiled `.gjs.md` from the `demos` source directory,

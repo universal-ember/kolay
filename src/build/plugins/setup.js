@@ -12,6 +12,7 @@ import { stripGlimmerMarkdownExtension } from '../../paths.js';
 import { headingsIn, titleFor } from '../../title.js';
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
+import { extractFrontmatter } from './markdown-pages/frontmatter.js';
 import { addTitles, reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
 import { sourceMeta } from './source-meta.js';
@@ -106,11 +107,17 @@ function removeTemplatesPrefix(path) {
  * @param {AsyncIterable<string>} source.entries - the source's files, relative to sourceCwd
  * @param {(entry: string) => string} source.strip - entry → page path (strips the app/src templates prefix for the co-located root)
  * @param {string} baseUrl
+ * @param {{ populateManifestEntry?: import('./markdown-pages/populate-manifest-entry.js').PopulateManifestEntry }} [options]
  */
-async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, strip }, baseUrl) {
+async function enumerateSource(
+  { displayName, urlPrefix, sourceCwd, entries, strip },
+  baseUrl,
+  { populateManifestEntry } = {}
+) {
   const loaders = {};
   const paths = [];
   const configs = [];
+  const frontmatter = [];
   const sources = new Map();
   /**
    * Headings for every markdown page, so a page's first heading can stand in
@@ -140,21 +147,27 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     let query = '';
 
     if (entry.endsWith('.md')) {
-      const isGlimmer = entry.endsWith('.gjs.md') || entry.endsWith('.gts.md');
       const source = (await readFile(join(sourceCwd, entry))).toString();
+      const { data, content } = extractFrontmatter(source, join(sourceCwd, entry));
 
-      if (!isGlimmer) {
+      if (data && Object.keys(data).length > 0) {
+        frontmatter.push({ path: strip(entry), data });
+      }
+
+      if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
+        // Only glimmer pages are inlined. A plain `.md` page's text is fetched
+        // on demand, and putting it here would ship it twice — but every
+        // page's headings are wanted at build time, to resolve its title.
         query = '?raw';
+      } else {
+        // the frontmatter-stripped content, so search headings/text below
+        // stay clean
+        sources.set(name, { source: content });
       }
 
-      // Only glimmer pages are inlined. A plain `.md` page's text is fetched
-      // on demand, and putting it here would ship it twice — but its headings
-      // are wanted at build time either way, to resolve its title.
-      if (isGlimmer) {
-        sources.set(name, { source });
-      }
-
-      headings.set(name, headingsIn(source));
+      // Also the stripped content: a YAML comment line starts with `#`, which
+      // would otherwise read as this page's first heading.
+      headings.set(name, headingsIn(content));
     }
 
     loaders[name] = `() => import("${full}${query}")`;
@@ -165,6 +178,8 @@ async function enumerateSource({ displayName, urlPrefix, sourceCwd, entries, str
     cwd: sourceCwd,
     paths,
     configs,
+    frontmatter,
+    populateManifestEntry,
     prefix: join('/', urlPrefix),
     base: baseUrl,
   });
@@ -264,17 +279,76 @@ function groupSource(group) {
   };
 }
 
-const DOCS_MODULE_PREFIX = 'virtual:kolay/docs/';
-const SEARCH_MODULE_PREFIX = 'virtual:kolay/search/';
+const VIRTUAL_PREFIX = 'virtual:kolay/';
+const DOCS_MODULE_PREFIX = `${VIRTUAL_PREFIX}docs/`;
+const SEARCH_MODULE_PREFIX = `${VIRTUAL_PREFIX}search/`;
+
+/**
+ * Every namespace under `virtual:kolay/`. Each one is per-group: the
+ * module id is `virtual:kolay/<namespace>/<groupName>`.
+ *
+ * `hidden` namespaces still resolve — they're just left out of the
+ * known-imports list, because they're loaded for you (`search` is what a
+ * docs module's `search()` export imports) rather than imported by hand.
+ */
+const GROUP_NAMESPACES = [
+  { name: 'docs', describe: `a group's manifest, pages, meta, and addRoutes` },
+  { name: 'search', hidden: true },
+];
+
+/**
+ * The virtual modules users are meant to import that live outside the
+ * `virtual:kolay/` namespace — a typo'd `virtual:kolay/setup` should point
+ * at 'kolay/setup' rather than at the list of per-group modules.
+ *
+ * The `kolay/*:virtual` modules setupKolay imports (compiled-docs,
+ * api-docs, demos, import-entrypoints) are deliberately absent: they're
+ * implementation details of setupKolay, so neither the suggestions nor the
+ * known-imports list should invite anyone to import them.
+ */
+const PUBLIC_MODULES = ['kolay/setup'];
 
 function docsModuleId(groupName) {
   return `${DOCS_MODULE_PREFIX}${groupName}`;
 }
 
 /**
- * When 'virtual:kolay/docs/<group>' is imported for a group no docs()
- * usage declares, fail with an actionable error instead of the bundler's
- * generic "failed to resolve import".
+ * The known-imports blurb every guard error ends with — everything the
+ * *current config* makes importable, so a wrong import can be compared
+ * against the real list.
+ *
+ * @param {{ groups: string[], demoAliases: string[] }} available
+ */
+function knownImports({ groups, demoAliases }) {
+  const lines = [
+    ...GROUP_NAMESPACES.filter(({ hidden }) => !hidden).map(
+      ({ name, describe }) => `  virtual:kolay/${name}/<group> — ${describe}`
+    ),
+    ...PUBLIC_MODULES.map((module) => `  ${module}`),
+    // `demos(src, { as: '#demos/foo' })` makes '#demos/foo/<demo>'
+    // importable from codefences — configured, so only listed when present
+    ...demoAliases.map((alias) => `  ${alias}/<demo> — a demo from a demos() source`),
+  ];
+
+  return `Known virtual imports:\n${lines.join('\n')}\n` + `Declared groups: ${groups.join(', ')}`;
+}
+
+/**
+ * A guard error: what went wrong (and how to fix it), then the list of
+ * what kolay does provide.
+ *
+ * @param {string} explanation
+ * @param {{ groups: string[], demoAliases: string[] }} available
+ */
+function guardError(explanation, available) {
+  return new Error(`${explanation}\n\n${knownImports(available)}`);
+}
+
+/**
+ * When an import under `virtual:kolay/` isn't one kolay provides — an
+ * unknown namespace, or a group no docs() usage declares — fail with an
+ * actionable error instead of the bundler's generic "failed to resolve
+ * import".
  *
  * (Runs after this usage's own modules have had their chance to resolve;
  *  known groups from other usages are left alone so their instances can
@@ -282,21 +356,76 @@ function docsModuleId(groupName) {
  *
  * @type {(state: { options: object, usages: object[], isPrimary: boolean }) => import('unplugin').UnpluginOptions}
  */
-export function docsVirtualGuard(state) {
+export function virtualGuard(state) {
+  /**
+   * The specifiers demos() usages make importable. Discovered from the
+   * config, so the error lists what this project actually has — empty
+   * under bundlers where vite's configResolved doesn't run, which only
+   * costs the list a line.
+   *
+   * @type {string[]}
+   */
+  let demoAliases = [];
+
   return {
-    name: 'kolay:docs-virtual-guard',
+    name: 'kolay:virtual-guard',
+    vite: {
+      configResolved(resolvedConfig) {
+        demoAliases = resolvedConfig.plugins
+          .filter((plugin) => plugin.name === 'kolay:demos')
+          .map((plugin) => plugin.api?.kolay?.options?.alias)
+          .filter(Boolean);
+      },
+    },
     resolveId(id) {
-      if (!id.startsWith(DOCS_MODULE_PREFIX)) return;
+      const [withoutQuery = ''] = id.split('?');
 
-      const [groupName = ''] = id.slice(DOCS_MODULE_PREFIX.length).split('?');
-      const known = ['Home', ...allGroups(state).map((group) => group.name)];
+      // `virtual:kolay` itself is caught too — it isn't a module either
+      if (withoutQuery !== VIRTUAL_PREFIX.slice(0, -1) && !withoutQuery.startsWith(VIRTUAL_PREFIX))
+        return;
 
-      if (known.includes(groupName)) return;
+      const subPath = withoutQuery.slice(VIRTUAL_PREFIX.length);
+      const slash = subPath.indexOf('/');
+      const namespace = slash === -1 ? subPath : subPath.slice(0, slash);
+      const groupName = slash === -1 ? '' : subPath.slice(slash + 1);
+      const groups = ['Home', ...allGroups(state).map((group) => group.name)];
+      const available = { groups, demoAliases };
 
-      throw new Error(
+      if (!namespace) {
+        throw guardError(
+          `'${id}' does not exist: every kolay virtual import names a namespace ` +
+            `and a group, as in 'virtual:kolay/docs/${groups[1] ?? 'Home'}'.`,
+          available
+        );
+      }
+
+      if (!GROUP_NAMESPACES.some((candidate) => candidate.name === namespace)) {
+        // `virtual:kolay/setup` for 'kolay/setup'
+        const suggestion = PUBLIC_MODULES.find((candidate) => candidate === `kolay/${subPath}`);
+
+        throw guardError(
+          `'${id}' does not exist: kolay provides no '${namespace}' virtual imports.` +
+            (suggestion ? ` Did you mean '${suggestion}'?` : ''),
+          available
+        );
+      }
+
+      if (!groupName) {
+        throw guardError(
+          `'${id}' does not exist, because it names no group — ` +
+            `'virtual:kolay/${namespace}' imports are per-group, as in ` +
+            `'virtual:kolay/${namespace}/${groups[1] ?? 'Home'}'.`,
+          available
+        );
+      }
+
+      if (groups.includes(groupName)) return;
+
+      throw guardError(
         `'${id}' does not exist, because no docs() usage declares a group named '${groupName}'. ` +
           `Add docs('${groupName}', { src: ... }) — or docs(<a path or URL ending in '${groupName}'>) — ` +
-          `to your plugins. Declared groups: ${known.join(', ')}`
+          `to your plugins.`,
+        available
       );
     },
   };
@@ -660,7 +789,9 @@ export const setup = (state) => {
         importPath: docsModuleId('Home'),
         content: async () => {
           const source = homeSource(cwd);
-          const enumerated = await enumerateSource(source, baseUrl);
+          const enumerated = await enumerateSource(source, baseUrl, {
+            populateManifestEntry: state.options.populateManifestEntry,
+          });
           const meta = await sourceMeta(homeMetaCwd(cwd));
 
           return groupModuleContent({
@@ -678,7 +809,9 @@ export const setup = (state) => {
       ...(state.options.groups ?? []).map((group) => ({
         importPath: docsModuleId(group.name),
         content: async () => {
-          const enumerated = await enumerateSource(groupSource(group), baseUrl);
+          const enumerated = await enumerateSource(groupSource(group), baseUrl, {
+            populateManifestEntry: state.options.populateManifestEntry,
+          });
           const meta = await sourceMeta(normalizePath(group.src));
 
           return groupModuleContent(
@@ -694,7 +827,9 @@ export const setup = (state) => {
       {
         importPath: `${SEARCH_MODULE_PREFIX}Home`,
         content: async () => {
-          const enumerated = await enumerateSource(homeSource(cwd), baseUrl);
+          const enumerated = await enumerateSource(homeSource(cwd), baseUrl, {
+            populateManifestEntry: state.options.populateManifestEntry,
+          });
 
           return `export default ${JSON.stringify(enumerated.search)};`;
         },
@@ -702,7 +837,9 @@ export const setup = (state) => {
       ...(state.options.groups ?? []).map((group) => ({
         importPath: `${SEARCH_MODULE_PREFIX}${group.name}`,
         content: async () => {
-          const enumerated = await enumerateSource(groupSource(group), baseUrl);
+          const enumerated = await enumerateSource(groupSource(group), baseUrl, {
+            populateManifestEntry: state.options.populateManifestEntry,
+          });
 
           return `export default ${JSON.stringify(enumerated.search)};`;
         },

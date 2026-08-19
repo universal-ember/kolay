@@ -43,6 +43,55 @@ module("Multiple docs routes", function (hooks) {
     assert.notOk("package" in guidesMeta, "no meta.jsonc, no mixed-in content");
   });
 
+  test("the manifest's groups carry their source's meta", async function (assert) {
+    await visit("/welcome/home.md");
+
+    const groups = docsManager(this.owner).manifest.groups;
+    const demos = groups.find((group) => group.name === "demos");
+    const guides = groups.find((group) => group.name === "guides");
+
+    assert.strictEqual(demos?.meta["package"], "demo-kit", "meta.jsonc content is mixed in");
+    assert.strictEqual(demos?.meta.docsPath, "test-apps/multiple-docs-routes/demos");
+    assert.strictEqual(guides?.meta.docsPath, "test-apps/multiple-docs-routes/guides");
+  });
+
+  test("frontmatter lands on the page's manifest entry, nested under meta by default", async function (assert) {
+    await visit("/welcome/home.md");
+
+    const guides = docsManager(this.owner).manifest.groups.find((group) => group.name === "guides");
+    const intro = guides?.list.find(
+      (page) => page.appRelativePath === "/guides/getting-started/intro.md",
+    );
+
+    assert.deepEqual(intro?.meta, { author: "kolay-test", category: "guide" });
+  });
+
+  test("a custom populateManifestEntry decides the shape for its own usage", async function (assert) {
+    await visit("/welcome/home.md");
+
+    const demos = docsManager(this.owner).manifest.groups.find((group) => group.name === "demos");
+    const buttons = demos?.list.find(
+      (page) => page.appRelativePath === "/demos/components/buttons",
+    ) as (Record<string, unknown> & { meta?: unknown }) | undefined;
+
+    assert.deepEqual(buttons?.["frontmatter"], { badge: "new-demo" });
+    assert.strictEqual(buttons?.meta, undefined, "the default nesting does not apply");
+  });
+
+  test("frontmatter is not rendered — runtime .md or build-time .gjs.md", async function (assert) {
+    await visit("/help/getting-started/intro.md");
+
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.dom("h1").containsText("Guides intro");
+    assert.dom().doesNotIncludeText("kolay-test");
+
+    await visit("/demos/components/buttons");
+
+    assert.dom("[data-page-error]").doesNotExist();
+    assert.dom("h1").containsText("Buttons demo");
+    assert.dom().doesNotIncludeText("new-demo");
+  });
+
   test("a runtime-compiled fence imports a demos() alias, with no modules config", async function (assert) {
     await visit("/help/getting-started/using-demos.md");
 

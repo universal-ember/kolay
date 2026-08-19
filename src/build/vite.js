@@ -7,6 +7,7 @@ import {
 import { validateRedirects } from './plugins/kolay-config.js';
 
 export { kolay } from './plugins/from-config.js';
+export { defaultPopulateManifestEntry } from './plugins/markdown-pages/populate-manifest-entry.js';
 
 /**
  * One redirect: an old path and where it now lives. A trailing `/*`
@@ -25,6 +26,7 @@ export { kolay } from './plugins/from-config.js';
  * @property {unknown[]} [remarkPlugins] - remark plugins for the groups' `.gjs.md` files
  * @property {unknown[]} [rehypePlugins] - rehype plugins for the groups' `.gjs.md` files
  * @property {string} [scope] - import statements made available in the groups' live codefences
+ * @property {import('./plugins/markdown-pages/populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] - finalizes each page or directories manifest entry: receives the default entry and any YAML frontmatter (for pages), and returns the entry to use; defaults to `defaultPopulateManifestEntry`, which nests the frontmatter under `meta`
  */
 
 /**
@@ -37,6 +39,7 @@ export { kolay } from './plugins/from-config.js';
  * @property {unknown[]} [remarkPlugins] - remark plugins for this group's `.gjs.md` files
  * @property {unknown[]} [rehypePlugins] - rehype plugins for this group's `.gjs.md` files
  * @property {string} [scope] - import statements made available in this group's live codefences
+ * @property {import('./plugins/markdown-pages/populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] - finalizes each page or directories manifest entry: receives the default entry and any YAML frontmatter (for pages), and returns the entry to use; defaults to `defaultPopulateManifestEntry`, which nests the frontmatter under `meta`
  */
 
 /**

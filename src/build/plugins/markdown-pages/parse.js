@@ -5,18 +5,26 @@ import { join, parse as parsePath } from 'node:path';
 import JSON5 from 'json5';
 
 import { stripGlimmerMarkdownExtension } from '../../../paths.js';
+import { defaultPopulateManifestEntry } from './populate-manifest-entry.js';
 import { betterSort } from './sort.js';
+
+/**
+ * @typedef {object} ParseOptions
+ * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same (possibly prefix-stripped) paths as `paths`
+ * @property {import('./populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry — `defaultPopulateManifestEntry` when not given
+ */
 
 /**
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs; when given, configs are taken from here instead of read from disk (the paths may not be resolvable against cwd, e.g. the stripped app/src/templates prefix)
+ * @param {ParseOptions} [options]
  *
  * @returns {Promise<import('./types.ts').PageTree>}
  */
-export async function parse(paths, cwd, providedConfigs) {
-  const docs = await gather(paths, cwd, providedConfigs);
-  const unsorted = build(docs);
+export async function parse(paths, cwd, providedConfigs, options) {
+  const docs = await gather(paths, cwd, providedConfigs, options);
+  const unsorted = build(docs, options?.populateManifestEntry ?? defaultPopulateManifestEntry);
   const sorted = deepSort(deepSort(unsorted));
 
   return sorted;
@@ -56,27 +64,27 @@ export function cleanSegment(segment) {
 /**
  *
  * @param {import('./types.ts').GatheredDocs} docs
+ * @param {import('./populate-manifest-entry.js').PopulateManifestEntry} [populate] finalizes each page or directories manifest entry; when omitted, entries are the raw structural default (the direct-call path used by tests)
  */
-export function build(docs) {
+export function build(docs, populate) {
   /** @type {import('./types.ts').PageTree} */
   const result = { name: 'root', pages: [], path: 'root' };
 
-  for (let { mdPath, config } of docs) {
-    if (!mdPath.includes('/')) {
-      console.warn(
-        `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
-      );
-      continue;
-    }
+  for (let { mdPath, config, frontmatter } of docs) {
+    const sourcePath = mdPath;
 
     mdPath = mdPath.replace(/^\.\/(src|app)\/templates\//, '');
     mdPath = mdPath.replace(/^\.\.\//, '');
+    mdPath = mdPath.replace(/^\.\//, '');
 
     const parts = mdPath.split('/');
     const [name, ...reversedGroups] = parts.reverse();
+    /**
+     * Empty for a file at the root of the source — the page then belongs
+     * to the source itself rather than to a folder within it.
+     */
     const groups = reversedGroups.reverse();
 
-    if (groups.length === 0) continue;
     if (!name) continue;
 
     /** @type {import('./types.ts').PageTree} */
@@ -120,16 +128,17 @@ export function build(docs) {
       leafestGroupName = group;
     }
 
-    assert(
-      leafestGroupName,
-      'Could not determine group name. A group / folder is required for each file.'
-    );
-
-    const groupName = cleanSegment(leafestGroupName);
+    /**
+     * A page at the root of the source has no containing folder, so it has
+     * no folder name to take a groupName from. The source's own display
+     * name is not known here (it comes from the docs() config), so this is
+     * left empty rather than guessed at.
+     */
+    const groupName = leafestGroupName ? cleanSegment(leafestGroupName) : '';
     const cleanedName = cleanSegment(name);
     const path = '/' + stripGlimmerMarkdownExtension(mdPath);
 
-    const pageInfo = {
+    let pageInfo = {
       ...config,
       path,
       // Removes the file extension
@@ -137,6 +146,11 @@ export function build(docs) {
       groupName,
       cleanedName,
     };
+
+    // Every markdown or folder entry entry is finalized popuplated using populateManifestEntry
+    if (populate) {
+      pageInfo = populate(pageInfo, frontmatter ?? {}, { path: sourcePath });
+    }
 
     preAddCheck(mdPath, cleanedName, leafestPageTree);
 
@@ -181,10 +195,11 @@ function preAddCheck(attemptedPath, searchFor, folder) {
  * @param {string[]} paths
  * @param {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @param {Array<{ path: string, config: object }>} [providedConfigs] already-read configs, keyed by the same (possibly prefix-stripped) paths as `paths`
+ * @param {ParseOptions} [options]
  *
  * @returns { Promise<import('./types.ts').GatheredDocs> }
  */
-async function gather(paths, cwd, providedConfigs) {
+async function gather(paths, cwd, providedConfigs, options) {
   const { join } = await import('node:path');
 
   const markdown = paths.filter((path) => path.endsWith('.md'));
@@ -212,15 +227,18 @@ async function gather(paths, cwd, providedConfigs) {
     return found?.config ?? {};
   }
 
-  /** @type { Array<{ mdPath: string, config: object }> } */
+  /**
+   * @param {string} path
+   */
+  function frontmatterFor(path) {
+    return options?.frontmatter?.find((entry) => entry.path === path)?.data;
+  }
+
+  /** @type {import('./types.ts').GatheredDocs} */
   const docPairs = [];
 
   for (const path of markdown) {
-    if (!path.includes('/')) {
-      continue;
-    }
-
-    docPairs.push({ mdPath: path, config: configFor(path) });
+    docPairs.push({ mdPath: path, config: configFor(path), frontmatter: frontmatterFor(path) });
   }
 
   /**
@@ -230,7 +248,6 @@ async function gather(paths, cwd, providedConfigs) {
    * in another group.
    */
   for (const entry of configs) {
-    if (!entry.path.includes('/')) continue;
     if (/(^|\/)meta\.jsonc?$/.test(entry.path)) continue;
     if (typeof entry.config.href !== 'string') continue;
 
