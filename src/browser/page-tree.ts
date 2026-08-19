@@ -65,15 +65,18 @@ function findPage(tree: PageTree, path: string): Page | undefined {
  * Whether a folder's heading already says what this page's link would say.
  *
  * A nav renders a folder as a heading linking to its index page, then lists
- * the folder's pages. When the heading and one of those pages carry the same
- * title, listing the page repeats the heading — so skip it.
+ * the folder's pages. Listing the page the heading links to, under the words
+ * the heading already used, says it twice — so skip that one.
  *
- * Titles rather than identity, because the question is what the reader sees.
- * A folder titled by its `meta.json` says something its index page does not,
- * and that page is worth listing.
+ * Both halves are required. The page has to be the one the heading links to,
+ * or a page that merely happens to share the folder's title would be dropped
+ * from a list that is the only place it appears. And the titles have to
+ * match, because a folder titled by its `meta.json` says something its index
+ * page does not, and then both are worth showing.
  */
 export function isRedundantWithHeading(folder: Page | PageTree, page: Page | PageTree): boolean {
-  if (isPageTree(page)) return false;
+  if (isPageTree(page) || !isPageTree(folder)) return false;
+  if (page !== getIndexPage(folder)) return false;
 
   return Boolean(folder.title) && page.title === folder.title;
 }

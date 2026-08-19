@@ -70,23 +70,58 @@ describe('getIndexPage', () => {
 });
 
 describe('isRedundantWithHeading', () => {
-  const page = (title?: string) => ({ title }) as Page;
-  const tree = (title?: string) => ({ title, pages: [] }) as unknown as PageTree;
+  /** A folder holding one page, with that page as its index. */
+  const folderOf = (folderTitle: string | undefined, pageTitle: string | undefined) =>
+    ({
+      name: 'guides',
+      title: folderTitle,
+      first: '/guides/index.md',
+      pages: [{ path: '/guides/index.md', name: 'index', title: pageTitle }],
+    }) as unknown as PageTree;
 
-  test('a page whose title the heading already says', () => {
-    expect(isRedundantWithHeading(tree('Guides'), page('Guides'))).toBe(true);
+  test('the index page, under the words the heading already used', () => {
+    const folder = folderOf('Guides', 'Guides');
+
+    expect(isRedundantWithHeading(folder, folder.pages[0] as Page)).toBe(true);
   });
 
-  test('a page saying something the heading does not', () => {
-    expect(isRedundantWithHeading(tree('Guides'), page('Getting started'))).toBe(false);
+  test('the index page, saying something the heading does not', () => {
+    const folder = folderOf('Guides', 'Getting started');
+
+    expect(isRedundantWithHeading(folder, folder.pages[0] as Page)).toBe(false);
   });
 
   test('an untitled folder never covers a page', () => {
-    expect(isRedundantWithHeading(tree(undefined), page(undefined))).toBe(false);
-    expect(isRedundantWithHeading(tree(''), page(''))).toBe(false);
+    expect(
+      isRedundantWithHeading(folderOf(undefined, undefined), { title: undefined } as Page)
+    ).toBe(false);
+    expect(isRedundantWithHeading(folderOf('', ''), { title: '' } as Page)).toBe(false);
   });
 
   test('a folder is never redundant: it renders as a heading of its own', () => {
-    expect(isRedundantWithHeading(tree('Guides'), tree('Guides'))).toBe(false);
+    const folder = folderOf('Guides', 'Guides');
+
+    expect(isRedundantWithHeading(folder, folder)).toBe(false);
+  });
+
+  test('a page that merely shares the folder title, but is not its index page', () => {
+    // the folder is titled by its own meta.json, so its title matches a page
+    // the heading does not link to
+    const folder = {
+      name: 'guides',
+      title: 'Guides',
+      first: '/guides/index.md',
+      pages: [
+        { path: '/guides/index.md', name: 'index', title: 'Overview' },
+        { path: '/guides/guides.md', name: 'guides', title: 'Guides' },
+      ],
+    } as unknown as PageTree;
+    const notTheIndex = folder.pages[1] as Page;
+
+    expect(getIndexPage(folder)?.path).toBe('/guides/index.md');
+    expect(
+      isRedundantWithHeading(folder, notTheIndex),
+      'the heading links to the index page, so it does not stand in for this one'
+    ).toBe(false);
   });
 });

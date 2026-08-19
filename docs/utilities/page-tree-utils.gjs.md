@@ -44,7 +44,7 @@ for (const page of folder.pages) {
 }
 ```
 
-It compares titles rather than identity, because the question is what the reader sees. A folder titled by its `meta.json` says something its index page does not, and that page is worth listing.
+Both halves matter. The page has to be the one the heading links to — a page that merely happens to share the folder's title would otherwise vanish from the only list it appears in. And the titles have to match, because a folder titled by its `meta.json` says something its index page does not, and then both are worth showing.
 
 [`<PageNav />`](/Runtime/navigation/page-nav.gjs.md) applies both for you: it yields the index page as `index` and omits the redundant page from the `:page` block. These are the pieces to reach for when replacing it with a nav of your own.
 
@@ -57,7 +57,7 @@ Every page and folder has a resolved `title`, so navigation does not have to der
 | a page   | its sidecar `.json` `title` OR its first heading OR its cleaned filename                   |
 | a folder | its `meta.json` `title` OR the title of a page named `index` OR its cleaned directory name |
 
-"Cleaned names" have digits removed, dashes turned into spaces, and are sentence-cased.
+A "cleaned name" has its digits removed and its dashes turned into spaces. Where one stands in for a title, its first character is capitalized — the rest is left alone, so `inIframe` keeps its shape.
 
 A folder takes its title from a page *named* `index` only, not from the fallback `getIndexPage` returns — otherwise every index-less folder would be titled by its first page, and `isRedundantWithHeading` would hide that page from the list.
 
