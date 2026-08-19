@@ -105,7 +105,7 @@ function removeTemplatesPrefix(path) {
  * @param {AsyncIterable<string>} source.entries - the source's files, relative to sourceCwd
  * @param {(entry: string) => string} source.strip - entry → page path (strips the app/src templates prefix for the co-located root)
  * @param {string} baseUrl
- * @param {{ populateManifestEntry?: import('./markdown-pages/frontmatter.js').PopulateManifestEntry }} [options]
+ * @param {{ populateManifestEntry?: import('./markdown-pages/populate-manifest-entry.js').PopulateManifestEntry }} [options]
  */
 async function enumerateSource(
   { displayName, urlPrefix, sourceCwd, entries, strip },

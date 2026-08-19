@@ -11,7 +11,7 @@ import { sortTree } from './sort.js';
  * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
  * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
  * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same paths as `paths`
- * @property {import('./frontmatter.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry
+ * @property {import('./populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry
  *
  * @param {ReshapeOptions} options
  */

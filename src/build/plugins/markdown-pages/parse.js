@@ -4,13 +4,13 @@ import { join, parse as parsePath } from 'node:path';
 
 import JSON5 from 'json5';
 
-import { defaultPopulateManifestEntry } from './frontmatter.js';
+import { defaultPopulateManifestEntry } from './populate-manifest-entry.js';
 import { betterSort } from './sort.js';
 
 /**
  * @typedef {object} ParseOptions
  * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same (possibly prefix-stripped) paths as `paths`
- * @property {import('./frontmatter.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry — `defaultPopulateManifestEntry` when not given
+ * @property {import('./populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry — `defaultPopulateManifestEntry` when not given
  */
 
 /**
@@ -63,7 +63,7 @@ export function cleanSegment(segment) {
 /**
  *
  * @param {import('./types.ts').GatheredDocs} docs
- * @param {import('./frontmatter.js').PopulateManifestEntry} [populate] finalizes each page or directories manifest entry; when omitted, entries are the raw structural default (the direct-call path used by tests)
+ * @param {import('./populate-manifest-entry.js').PopulateManifestEntry} [populate] finalizes each page or directories manifest entry; when omitted, entries are the raw structural default (the direct-call path used by tests)
  */
 export function build(docs, populate) {
   /** @type {import('./types.ts').PageTree} */
