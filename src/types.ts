@@ -120,10 +120,8 @@ export interface Page {
   href?: string;
   /**
    * Page metadata: the page's YAML frontmatter, deeply merged with the
-   * `meta` key of its sibling json config (frontmatter wins) — the
-   * default `populatePageMetadata` strategy. A custom `populatePageMetadata`
-   * decides the shape of its own output, which is spread onto this
-   * entry (so `meta` may be absent, or shaped differently).
+   * `meta` key of its sibling json config (frontmatter wins)
+   * A custom `populateManifestEntry` may be defined to modify this behavior
    */
   meta?: Record<string, unknown>;
 }
@@ -133,4 +131,8 @@ export type Node = Page | PageTree;
 /**
  * @internal
  */
-export type GatheredDocs = Array<{ mdPath: string; config?: object }>;
+export type GatheredDocs = Array<{
+  mdPath: string;
+  config?: object;
+  frontmatter?: Record<string, unknown>;
+}>;

@@ -11,7 +11,7 @@ import { sortTree } from './sort.js';
  * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
  * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
  * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same paths as `paths`
- * @property {import('./frontmatter.js').PopulatePageMetadata} [populatePageMetadata] how a page's frontmatter merges with its sibling-json config
+ * @property {import('./frontmatter.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry
  *
  * @param {ReshapeOptions} options
  */
@@ -22,9 +22,9 @@ export async function reshape({
   prefix,
   base,
   frontmatter,
-  populatePageMetadata,
+  populateManifestEntry,
 }) {
-  let tree = await parse(paths, cwd, configs, { frontmatter, populatePageMetadata });
+  let tree = await parse(paths, cwd, configs, { frontmatter, populateManifestEntry });
 
   tree = sortTree(tree, configs);
   tree = addPaths(tree, prefix, base);

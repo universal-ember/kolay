@@ -4,13 +4,13 @@ import { join, parse as parsePath } from 'node:path';
 
 import JSON5 from 'json5';
 
-import { defaultFrontmatterMeta } from './frontmatter.js';
+import { defaultPopulateManifestEntry } from './frontmatter.js';
 import { betterSort } from './sort.js';
 
 /**
  * @typedef {object} ParseOptions
  * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same (possibly prefix-stripped) paths as `paths`
- * @property {import('./frontmatter.js').PopulatePageMetadata} [populatePageMetadata] how a page's frontmatter merges with its sibling-json config — `defaultFrontmatterMeta` when not given
+ * @property {import('./frontmatter.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry — `defaultPopulateManifestEntry` when not given
  */
 
 /**
@@ -23,7 +23,7 @@ import { betterSort } from './sort.js';
  */
 export async function parse(paths, cwd, providedConfigs, options) {
   const docs = await gather(paths, cwd, providedConfigs, options);
-  const unsorted = build(docs);
+  const unsorted = build(docs, options?.populateManifestEntry ?? defaultPopulateManifestEntry);
   const sorted = deepSort(deepSort(unsorted));
 
   return sorted;
@@ -63,12 +63,15 @@ export function cleanSegment(segment) {
 /**
  *
  * @param {import('./types.ts').GatheredDocs} docs
+ * @param {import('./frontmatter.js').PopulateManifestEntry} [populate] finalizes each page or directories manifest entry; when omitted, entries are the raw structural default (the direct-call path used by tests)
  */
-export function build(docs) {
+export function build(docs, populate) {
   /** @type {import('./types.ts').PageTree} */
   const result = { name: 'root', pages: [], path: 'root' };
 
-  for (let { mdPath, config } of docs) {
+  for (let { mdPath, config, frontmatter } of docs) {
+    const sourcePath = mdPath;
+
     if (!mdPath.includes('/')) {
       console.warn(
         `markdown path, ${mdPath}, is not contained within a folder. It will be skipped.`
@@ -136,7 +139,7 @@ export function build(docs) {
     const cleanedName = cleanSegment(name);
     const path = '/' + mdPath.replace(/\.g(j|t)s\.md$/, '');
 
-    const pageInfo = {
+    let pageInfo = {
       ...config,
       path,
       // Removes the file extension
@@ -144,6 +147,11 @@ export function build(docs) {
       groupName,
       cleanedName,
     };
+
+    // Every markdown or folder entry entry is finalized popuplated using populateManifestEntry
+    if (populate) {
+      pageInfo = populate(pageInfo, frontmatter ?? {}, { path: sourcePath });
+    }
 
     preAddCheck(mdPath, cleanedName, leafestPageTree);
 
@@ -227,7 +235,7 @@ async function gather(paths, cwd, providedConfigs, options) {
     return options?.frontmatter?.find((entry) => entry.path === path)?.data;
   }
 
-  /** @type { Array<{ mdPath: string, config: object }> } */
+  /** @type {import('./types.ts').GatheredDocs} */
   const docPairs = [];
 
   for (const path of markdown) {
@@ -235,16 +243,7 @@ async function gather(paths, cwd, providedConfigs, options) {
       continue;
     }
 
-    let config = configFor(path);
-    const frontmatter = frontmatterFor(path);
-
-    if (frontmatter && Object.keys(frontmatter).length > 0) {
-      config = (options?.populatePageMetadata ?? defaultFrontmatterMeta)(config, frontmatter, {
-        path,
-      });
-    }
-
-    docPairs.push({ mdPath: path, config });
+    docPairs.push({ mdPath: path, config: configFor(path), frontmatter: frontmatterFor(path) });
   }
 
   /**

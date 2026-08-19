@@ -105,12 +105,12 @@ function removeTemplatesPrefix(path) {
  * @param {AsyncIterable<string>} source.entries - the source's files, relative to sourceCwd
  * @param {(entry: string) => string} source.strip - entry → page path (strips the app/src templates prefix for the co-located root)
  * @param {string} baseUrl
- * @param {{ populatePageMetadata?: import('./markdown-pages/frontmatter.js').PopulatePageMetadata }} [options]
+ * @param {{ populateManifestEntry?: import('./markdown-pages/frontmatter.js').PopulateManifestEntry }} [options]
  */
 async function enumerateSource(
   { displayName, urlPrefix, sourceCwd, entries, strip },
   baseUrl,
-  { populatePageMetadata } = {}
+  { populateManifestEntry } = {}
 ) {
   const loaders = {};
   const paths = [];
@@ -165,7 +165,7 @@ async function enumerateSource(
     paths,
     configs,
     frontmatter,
-    populatePageMetadata,
+    populateManifestEntry,
     prefix: join('/', urlPrefix),
     base: baseUrl,
   });
@@ -776,7 +776,7 @@ export const setup = (state) => {
         content: async () => {
           const source = homeSource(cwd);
           const enumerated = await enumerateSource(source, baseUrl, {
-            populatePageMetadata: state.options.populatePageMetadata,
+            populateManifestEntry: state.options.populateManifestEntry,
           });
           const meta = await sourceMeta(homeMetaCwd(cwd));
 
@@ -796,7 +796,7 @@ export const setup = (state) => {
         importPath: docsModuleId(group.name),
         content: async () => {
           const enumerated = await enumerateSource(groupSource(group), baseUrl, {
-            populatePageMetadata: state.options.populatePageMetadata,
+            populateManifestEntry: state.options.populateManifestEntry,
           });
           const meta = await sourceMeta(normalizePath(group.src));
 
@@ -814,7 +814,7 @@ export const setup = (state) => {
         importPath: `${SEARCH_MODULE_PREFIX}Home`,
         content: async () => {
           const enumerated = await enumerateSource(homeSource(cwd), baseUrl, {
-            populatePageMetadata: state.options.populatePageMetadata,
+            populateManifestEntry: state.options.populateManifestEntry,
           });
 
           return `export default ${JSON.stringify(enumerated.search)};`;
@@ -824,7 +824,7 @@ export const setup = (state) => {
         importPath: `${SEARCH_MODULE_PREFIX}${group.name}`,
         content: async () => {
           const enumerated = await enumerateSource(groupSource(group), baseUrl, {
-            populatePageMetadata: state.options.populatePageMetadata,
+            populateManifestEntry: state.options.populateManifestEntry,
           });
 
           return `export default ${JSON.stringify(enumerated.search)};`;

@@ -4,7 +4,7 @@
  * @property {unknown[]} [remarkPlugins] - remark plugins for this usage's `.gjs.md` files
  * @property {unknown[]} [rehypePlugins] - rehype plugins for this usage's `.gjs.md` files
  * @property {string} [scope] - import statements made available in this usage's live codefences
- * @property {import('./markdown-pages/frontmatter.js').PopulatePageMetadata} [populatePageMetadata] - function to populate `meta` into the documentation manifest. Receives parsed markdown frontmatter and meta.json values; defaults to `defaultFrontmatterMeta`
+ * @property {import('./markdown-pages/frontmatter.js').PopulateManifestEntry} [populateManifestEntry] - finalizes each page or directories manifest entry: receives the default entry and any YAML frontmatter (for pages), and returns the entry to use; defaults to `defaultPopulateManifestEntry`, which nests the frontmatter under `meta`
  */
 
 function describe(value) {
