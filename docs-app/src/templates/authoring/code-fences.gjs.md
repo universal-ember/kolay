@@ -6,7 +6,6 @@ Kolay provides functionality to display Markdown code fences in one of three way
 2. Injected Working Code Example (with no source code block shown)
 3. Injected Working Code Example with visible source Code Block with Code Highlighting
 
-
 Kolay uses [ember-repl](https://limber.glimdown.com/docs/ember-repl) and [repl-sdk](https://limber.glimdown.com/docs/repl-sdk) to inject live code examples.
 
 These modes are toggled by using the following flags after the code block language on the opening line of the fence.
