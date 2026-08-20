@@ -1,4 +1,4 @@
-import { GroupNav, PageNav } from "kolay/components";
+import { GroupNav, PageNav, Search } from "kolay/components";
 
 import type { TOC } from "@ember/component/template-only";
 import type { Page } from "kolay";
@@ -39,6 +39,7 @@ const SideNav: TOC<{ Element: HTMLElement }> = <template>
 <template>
   <header style="display: flex; align-items: baseline; gap: 1rem;">
     <GroupNav />
+    <Search />
   </header>
 
   <div class="big-layout">

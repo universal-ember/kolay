@@ -174,7 +174,7 @@ export const ComponentSignature: TOC<{
               <ComponentDeclaration @signature={{variant}} />
             </div>
           {{/each}}
-        {{else}}
+        {{else if info}}
           <ComponentDeclaration @signature={{info}} />
         {{/if}}
       </div>
