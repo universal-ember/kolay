@@ -60,6 +60,7 @@ a.kolay__search__result:is(:hover, :focus, :active) {
  * gives it a box and a bottom margin the palette does not want.
  */
 input.kolay__search__input {
+  height: auto;
   margin: 0;
   padding: 0;
   border: none;
@@ -67,10 +68,22 @@ input.kolay__search__input {
   box-shadow: none;
 }
 
-/* the header's middle column, where the old search form used to sit */
+/* the header's middle column */
 header .kolay__search__trigger {
   flex: 1;
   max-width: 24rem;
+}
+
+@media (width < 1000px) {
+  header .kolay__search__trigger {
+    max-width: 18rem;
+  }
+}
+
+@media (width < 600px) {
+  header .kolay__search__trigger {
+    max-width: none;
+  }
 }
 
 /*

@@ -197,7 +197,9 @@ export class Search extends Component<SearchSignature> {
           <MagnifyingGlass />
           <span>Search docs</span>
           {{#if this.hotkey}}
-            <KeyCombo @keys={{this.hotkeyKeys}} @mac={{this.hotkeyMacKeys}} />
+            <span class='kolay__search__trigger__hint'>
+              <KeyCombo @keys={{this.hotkeyKeys}} @mac={{this.hotkeyMacKeys}} />
+            </span>
           {{/if}}
         </button>
       {{/if}}

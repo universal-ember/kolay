@@ -82,13 +82,15 @@
 .kolay__search__input {
   width: 100%;
   min-width: 0;
+  /* frameworks tend to give an input a fixed height; this one is one line */
+  height: auto;
   margin: 0;
   padding: 0;
   border: none;
   background: none;
-  color: inherit;
   font: inherit;
   font-size: 1.05rem;
+  line-height: 1.4;
   color: var(--_fg);
 }
 
@@ -169,14 +171,45 @@
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
-  padding: 0.4rem 0.7rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.7rem;
   border: 1px solid var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
   border-radius: 0.5rem;
   background: none;
   color: inherit;
   font: inherit;
   font-size: 0.9rem;
+  line-height: 1.4;
   cursor: pointer;
+}
+
+/* the label sits at one end of the button and the shortcut at the other */
+.kolay__search__trigger__hint {
+  display: inline-flex;
+  gap: 0.25em;
+  align-items: center;
+  margin-inline-start: auto;
+  padding-inline-start: 0.75em;
+  font-size: 0.8em;
+}
+
+/*
+ * A key, drawn as a key. Frameworks tend to give `kbd` a filled block in the
+ * body's own colour, which is right for a keystroke named in prose and far
+ * too loud for a hint on a button: it doubles the button's height and reads
+ * as the most important thing in the header.
+ */
+.kolay__search__trigger kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
+  border-radius: 0.3em;
+  background: var(--kolay-search-active, light-dark(#f2f4f7, #23262d));
+  color: inherit;
+  font: inherit;
+  font-size: 1em;
+  line-height: 1.4;
+  text-align: center;
 }
 
 .kolay__search__trigger .kolay__search__icon {
