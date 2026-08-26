@@ -154,7 +154,9 @@ export default Route(
         justify-content: space-between;
         gap: 1rem;
 
-        div:first-child {
+        /* the nav group, not every div under the header: <Search /> puts its
+           <dialog> here too, and a descendant rule reaches inside it */
+        > div:first-child {
           display: flex; gap: 1rem;
           align-items: baseline;
         }

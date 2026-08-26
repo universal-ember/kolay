@@ -26,6 +26,8 @@
   --_border: var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
   --_active: var(--kolay-search-active, light-dark(#f2f4f7, #23262d));
   --_accent: var(--kolay-search-accent, light-dark(#0b5fd0, #79b8ff));
+  /* the left edge every column lines up on: the icon, each result, the status */
+  --_inset: 1.15rem;
 
   width: min(92vw, var(--kolay-search-width, 40rem));
   max-height: min(70vh, 40rem);
@@ -63,12 +65,17 @@
   text-decoration: underline;
 }
 
-.kolay__search__field {
+/*
+ * Qualified by the dialog, not because the class needs it, but because the
+ * `<dialog>` sits wherever it was written -- often inside a header, whose own
+ * descendant rules would otherwise reach in and lay this row out.
+ */
+.kolay__search .kolay__search__field {
   display: flex;
   gap: 0.6rem;
   align-items: center;
   flex: 0 0 auto;
-  padding: 0.85rem 1rem;
+  padding: 0.85rem var(--_inset);
   border-block-end: 1px solid var(--_border);
   color: var(--_muted);
 }
@@ -94,8 +101,16 @@
   color: var(--_fg);
 }
 
-.kolay__search__input:focus-visible {
+/*
+ * No ring on the input. Focus never leaves it while the palette is open, so a
+ * ring is permanent decoration rather than a signal, and the dialog clips it:
+ * the field runs the full width, out to a rounded corner and `overflow:
+ * hidden`. Specific enough to outrank a framework's own input focus styles.
+ */
+.kolay__search input.kolay__search__input:is(:focus, :focus-visible) {
   outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .kolay__search__results {
@@ -108,7 +123,7 @@
 .kolay__search__result {
   display: block;
   position: relative;
-  padding: 0.6rem 0.75rem;
+  padding: 0.6rem calc(var(--_inset) - 0.4rem);
   border-radius: 0.5rem;
   color: inherit;
   text-decoration: none;
@@ -161,7 +176,7 @@
 .kolay__search__status {
   flex: 0 0 auto;
   margin: 0;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem var(--_inset);
   border-block-start: 1px solid var(--_border);
   color: var(--_muted);
   font-size: 0.8rem;
