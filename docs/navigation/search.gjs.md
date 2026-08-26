@@ -25,15 +25,6 @@ Put it in your application template, next to your nav. It renders a button; the 
 
 Excerpts come from `stripFormatting`, and the query is marked inside them with `highlightSearch`. Both are documented under [`searcher`](/Runtime/utilities/search.md).
 
-## Arguments
-
-| argument       | default                                   | what it does                                                                        |
-| :------------- | :---------------------------------------- | :---------------------------------------------------------------------------------- |
-| `@hotkey`      | `"mod+k"`                                 | Opens the palette from anywhere. `mod` is <kbd>⌘</kbd> on macOS, <kbd>Ctrl</kbd> elsewhere. Pass `""` to install no listener. |
-| `@minLength`   | `3`                                       | How much the reader types before the index is consulted.                            |
-| `@limit`       | `20`                                      | How many results to render.                                                          |
-| `@placeholder` | `"Search titles, headings, and prose…"`   | The input's placeholder.                                                             |
-
 ## Your own trigger
 
 The `:trigger` block is yielded `open`, and the modifier that returns focus to your button when the palette closes.
@@ -53,7 +44,7 @@ import { Search } from 'kolay/components';
 </template>
 ```
 
-Leave the block empty to render no trigger at all, and open the palette with the hotkey alone.
+Leave the block empty to render no trigger at all. <kbd>⌘</kbd><kbd>K</kbd> still opens the palette.
 
 ## Your own result
 

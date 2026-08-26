@@ -17,20 +17,16 @@ import type { SearchResult } from '../../types.ts';
 import type { TOC } from '@ember/component/template-only';
 import type { ModifierLike } from '@glint/template';
 
-const DEFAULT_HOTKEY = 'mod+k';
-const DEFAULT_MIN_LENGTH = 3;
-const DEFAULT_LIMIT = 20;
-
-/**
- * The keys of a hotkey, as `<KeyCombo>` wants them. `mod` is a different key
- * on macOS than everywhere else, so it is spelled twice.
- */
-function keysFor(hotkey: string, mod: string) {
-  return hotkey
-    .split('+')
-    .map((key) => key.trim())
-    .map((key) => (key.toLowerCase() === 'mod' ? mod : key.toUpperCase()));
-}
+const HOTKEY = 'mod+k';
+/* the same combination, spelled for each platform's own key */
+const KEYS = ['Ctrl', 'K'];
+const MAC_KEYS = ['⌘', 'K'];
+/* one or two characters match most of a docs site, which is the same as
+   matching none of it */
+const MIN_LENGTH = 3;
+/* ranking puts the answer near the top; rendering every page renders noise */
+const LIMIT = 20;
+const PLACEHOLDER = 'Search titles, headings, and prose…';
 
 const MagnifyingGlass: TOC<{ Element: SVGElement }> = <template>
   <svg
@@ -46,34 +42,6 @@ const MagnifyingGlass: TOC<{ Element: SVGElement }> = <template>
 </template>;
 
 export interface SearchSignature {
-  Args: {
-    /**
-     * The key combination that opens the palette from anywhere on the page.
-     *
-     * Defaults to `"mod+k"` -- <kbd>⌘</kbd><kbd>K</kbd> on macOS and
-     * <kbd>Ctrl</kbd><kbd>K</kbd> everywhere else. Pass an empty string to
-     * install no global listener at all.
-     */
-    hotkey?: string;
-    /**
-     * How much the reader has to type before the index is consulted.
-     *
-     * Defaults to 3. One or two characters match most of a docs site, which
-     * is the same as matching none of it.
-     */
-    minLength?: number;
-    /**
-     * How many results to render.
-     *
-     * Defaults to 20. Ranking already puts the answer near the top, and a
-     * palette that renders every page of a large site renders mostly noise.
-     */
-    limit?: number;
-    /**
-     * The input's placeholder.
-     */
-    placeholder?: string;
-  };
   Blocks: {
     /**
      * Replaces the default "Search docs" button. Yielded `open`, and the
@@ -111,26 +79,6 @@ export interface SearchSignature {
 export class Search extends Component<SearchSignature> {
   @tracked query = '';
 
-  get hotkey() {
-    return this.args.hotkey ?? DEFAULT_HOTKEY;
-  }
-
-  get minLength() {
-    return this.args.minLength ?? DEFAULT_MIN_LENGTH;
-  }
-
-  get limit() {
-    return this.args.limit ?? DEFAULT_LIMIT;
-  }
-
-  get hotkeyKeys() {
-    return keysFor(this.hotkey, 'Ctrl');
-  }
-
-  get hotkeyMacKeys() {
-    return keysFor(this.hotkey, '⌘');
-  }
-
   get trimmed() {
     return this.query.trim();
   }
@@ -142,7 +90,7 @@ export class Search extends Component<SearchSignature> {
    */
   @cached
   get search(): Promise<SearchResult[]> {
-    if (this.trimmed.length < this.minLength) return Promise.resolve([]);
+    if (this.trimmed.length < MIN_LENGTH) return Promise.resolve([]);
 
     return searcher(this).search(this.query);
   }
@@ -156,7 +104,7 @@ export class Search extends Component<SearchSignature> {
   }
 
   get results() {
-    return this.state.resolved?.slice(0, this.limit) ?? [];
+    return this.state.resolved?.slice(0, LIMIT) ?? [];
   }
 
   /**
@@ -166,13 +114,13 @@ export class Search extends Component<SearchSignature> {
   get status() {
     if (!this.trimmed) return 'Search every guide, reference page, heading, and paragraph.';
 
-    if (this.trimmed.length < this.minLength) {
-      return `Type at least ${this.minLength} characters.`;
+    if (this.trimmed.length < MIN_LENGTH) {
+      return `Type at least ${MIN_LENGTH} characters.`;
     }
 
     if (this.state.isLoading) return 'Searching…';
     if (this.total === 0) return `No results for “${this.trimmed}”.`;
-    if (this.total > this.limit) return `Showing ${this.limit} of ${this.total} results.`;
+    if (this.total > LIMIT) return `Showing ${LIMIT} of ${this.total} results.`;
 
     return this.total === 1 ? '1 result.' : `${this.total} results.`;
   }
@@ -196,17 +144,15 @@ export class Search extends Component<SearchSignature> {
         >
           <MagnifyingGlass />
           <span>Search docs</span>
-          {{#if this.hotkey}}
-            <span class='kolay__search__trigger__hint'>
-              <KeyCombo @keys={{this.hotkeyKeys}} @mac={{this.hotkeyMacKeys}} />
-            </span>
-          {{/if}}
+          <span class='kolay__search__trigger__hint'>
+            <KeyCombo @keys={{KEYS}} @mac={{MAC_KEYS}} />
+          </span>
         </button>
       {{/if}}
 
       <m.Dialog class='kolay__search'>
         <CommandPalette
-          @hotkey={{this.hotkey}}
+          @hotkey={{HOTKEY}}
           @onOpen={{m.open}}
           @onSelect={{m.close}}
           @onQueryChange={{this.setQuery}}
@@ -217,7 +163,7 @@ export class Search extends Component<SearchSignature> {
             <c.Input
               class='kolay__search__input'
               aria-label='Search docs'
-              placeholder={{if @placeholder @placeholder 'Search titles, headings, and prose…'}}
+              placeholder={{PLACEHOLDER}}
             />
           </div>
 
