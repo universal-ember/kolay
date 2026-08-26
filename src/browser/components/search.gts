@@ -2,11 +2,12 @@ import './search.css';
 
 import Component from '@glimmer/component';
 import { cached, tracked } from '@glimmer/tracking';
+import { fn } from '@ember/helper';
 import { on } from '@ember/modifier';
 
 import { CommandPalette } from 'ember-primitives/components/command-palette';
 import { Modal } from 'ember-primitives/components/dialog';
-import { KeyCombo } from 'ember-primitives/components/keys';
+import { Key, KeyCombo } from 'ember-primitives/components/keys';
 import { getPromiseState } from 'reactiveweb/get-promise-state';
 
 import { searcher } from '../services/search.ts';
@@ -39,6 +40,19 @@ const MagnifyingGlass: TOC<{ Element: SVGElement }> = <template>
     stroke-linecap='round'
     ...attributes
   ><circle cx='11' cy='11' r='6.5' /><path d='m16 16 5 5' /></svg>
+</template>;
+
+const Cross: TOC<{ Element: SVGElement }> = <template>
+  <svg
+    class='kolay__search__icon'
+    aria-hidden='true'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    stroke-width='2'
+    stroke-linecap='round'
+    ...attributes
+  ><path d='m6 6 12 12M18 6 6 18' /></svg>
 </template>;
 
 export interface SearchSignature {
@@ -131,6 +145,15 @@ export class Search extends Component<SearchSignature> {
 
   excerpt = (result: SearchResult) => stripFormatting(result.text, result.excerptRange);
 
+  /** Clearing is for carrying on typing, so the caret goes back to the input. */
+  clear = (setQuery: (query: string) => void, event: MouseEvent) => {
+    setQuery('');
+
+    const button = event.currentTarget as HTMLElement;
+
+    button.parentElement?.querySelector('input')?.focus();
+  };
+
   <template>
     <Modal as |m|>
       {{#if (has-block 'trigger')}}
@@ -165,6 +188,14 @@ export class Search extends Component<SearchSignature> {
               aria-label='Search docs'
               placeholder={{PLACEHOLDER}}
             />
+            {{#if c.query}}
+              <button
+                type='button'
+                class='kolay__search__clear'
+                aria-label='Clear search'
+                {{on 'click' (fn this.clear c.setQuery)}}
+              ><Cross /></button>
+            {{/if}}
           </div>
 
           <c.List class='kolay__search__results' as |l|>
@@ -184,7 +215,12 @@ export class Search extends Component<SearchSignature> {
             {{/each}}
           </c.List>
 
-          <p class='kolay__search__status' role='status'>{{this.status}}</p>
+          <div class='kolay__search__footer'>
+            <p class='kolay__search__status' role='status'>{{this.status}}</p>
+            <p class='kolay__search__hint'>press
+              <Key>Esc</Key>
+              to close</p>
+          </div>
         </CommandPalette>
       </m.Dialog>
     </Modal>

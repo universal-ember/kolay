@@ -77,6 +77,30 @@ module("<Search />", function (hooks) {
     assert.dom(".kolay__search__status").hasText(/No results/);
   });
 
+  test("the palette says how to leave it", async function (assert) {
+    await visit(START);
+    await click(".kolay__search__trigger");
+
+    assert.dom(".kolay__search__hint").hasText("press Esc to close");
+  });
+
+  test("the clear button empties the query and gives the caret back", async function (assert) {
+    await visit(START);
+    await click(".kolay__search__trigger");
+
+    assert.dom(".kolay__search__clear").doesNotExist();
+
+    await fillIn(".kolay__search__input", "resources");
+    await waitFor(".kolay__search__result", { timeout: 5000 });
+
+    await click(".kolay__search__clear");
+
+    assert.dom(".kolay__search__input").hasValue("");
+    assert.dom(".kolay__search__input").isFocused();
+    assert.dom(".kolay__search__result").doesNotExist();
+    assert.dom(".kolay__search__clear").doesNotExist();
+  });
+
   test("the hotkey opens it from anywhere", async function (assert) {
     await visit(START);
 

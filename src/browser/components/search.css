@@ -173,13 +173,44 @@
   -webkit-line-clamp: 2;
 }
 
-.kolay__search__status {
+.kolay__search__footer {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
   flex: 0 0 auto;
-  margin: 0;
   padding: 0.6rem var(--_inset);
   border-block-start: 1px solid var(--_border);
   color: var(--_muted);
   font-size: 0.8rem;
+}
+
+.kolay__search__status,
+.kolay__search__hint {
+  margin: 0;
+}
+
+/* the way out, said once, quietly */
+.kolay__search__hint {
+  flex: 0 0 auto;
+  font-size: 0.9em;
+}
+
+/* the pointer's way to clear the query; the keyboard already has one */
+.kolay__search__clear {
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 0.2rem;
+  border: none;
+  border-radius: 0.3rem;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.kolay__search__clear:hover {
+  background: var(--_active);
+  color: var(--_fg);
 }
 
 .kolay__search__trigger {
@@ -213,7 +244,8 @@
  * too loud for a hint on a button: it doubles the button's height and reads
  * as the most important thing in the header.
  */
-.kolay__search__trigger kbd {
+.kolay__search__trigger kbd,
+.kolay__search kbd {
   display: inline-block;
   min-width: 1.5em;
   padding: 0.1em 0.4em;
