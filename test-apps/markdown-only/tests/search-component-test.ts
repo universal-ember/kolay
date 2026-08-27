@@ -77,11 +77,35 @@ module("<Search />", function (hooks) {
     assert.dom(".kolay__search__status").hasText(/No results/);
   });
 
-  test("the palette says how to leave it", async function (assert) {
+  test("the pointer can close it, and the button names the key too", async function (assert) {
     await visit(START);
     await click(".kolay__search__trigger");
 
-    assert.dom(".kolay__search__hint").hasText("press Esc to close");
+    assert.dom(".kolay__search__close").hasText("Close Esc");
+    // a click outside is the platform's, off the same attribute
+    assert.dom("dialog.kolay__search").hasAttribute("closedby", "any");
+
+    await click(".kolay__search__close");
+
+    assert.dom("dialog.kolay__search").doesNotHaveAttribute("open");
+    assert.dom(".kolay__search__trigger").isFocused();
+  });
+
+  test("the results collapse when there are none", async function (assert) {
+    await visit(START);
+    await click(".kolay__search__trigger");
+
+    assert.dom(".kolay__search__results").hasAttribute("data-has-results", "false");
+
+    const results = find(".kolay__search__results") as HTMLElement;
+
+    assert.strictEqual(results.getBoundingClientRect().height, 0, "no empty box to scroll");
+
+    await fillIn(".kolay__search__input", "resources");
+    await waitFor(".kolay__search__result", { timeout: 5000 });
+
+    assert.dom(".kolay__search__results").hasAttribute("data-has-results", "true");
+    assert.ok(results.getBoundingClientRect().height > 0, "the results have room");
   });
 
   test("the clear button empties the query and gives the caret back", async function (assert) {

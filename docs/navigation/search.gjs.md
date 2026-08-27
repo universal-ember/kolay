@@ -21,7 +21,7 @@ Put it in your application template, next to your nav. It renders a button; the 
 - The `<dialog>` handles the layer, the focus trap, and returning focus to whatever opened it.
 - `aria-activedescendant` handles the keyboard, so <kbd>ArrowUp</kbd> and <kbd>ArrowDown</kbd> move the selection while the caret stays where the reader is typing.
 - <kbd>Enter</kbd> clicks the active result, which is a real link, so the router navigates and <kbd>⌘</kbd>-click still opens a new tab.
-- <kbd>Esc</kbd>, and a click outside, close it.
+- <kbd>Esc</kbd>, a click outside, and the footer's Close button all close it.
 
 Excerpts come from `stripFormatting`, and the query is marked inside them with `highlightSearch`. Both are documented under [`searcher`](/Runtime/utilities/search.md).
 

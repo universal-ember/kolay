@@ -30,6 +30,13 @@
   --_inset: 1.15rem;
 
   width: min(92vw, var(--kolay-search-width, 40rem));
+  /*
+   * A modal `<dialog>` is anchored top and bottom, so an auto height fills the
+   * viewport rather than the content. Releasing the bottom anchor lets the
+   * palette be as tall as its results and no taller, with the margin holding
+   * it below the top of the page.
+   */
+  inset-block-end: auto;
   max-height: min(70vh, 40rem);
   margin-block-start: 10vh;
   margin-inline: auto;
@@ -119,6 +126,11 @@
   padding: 0.4rem;
 }
 
+/* nothing found, nothing to show: no strip of padding pretending otherwise */
+.kolay__search__results[data-has-results="false"] {
+  padding: 0;
+}
+
 /* the result is the link: one target, and the whole card is it */
 .kolay__search__result {
   display: block;
@@ -185,21 +197,37 @@
   font-size: 0.8rem;
 }
 
-.kolay__search__status,
-.kolay__search__hint {
+.kolay__search__status {
   margin: 0;
 }
 
-/* the way out, said once, quietly */
-.kolay__search__hint {
+/* the way out, for the pointer as well as the key it names */
+.kolay__search__close {
+  display: inline-flex;
+  gap: 0.4em;
+  align-items: center;
   flex: 0 0 auto;
+  margin: 0;
+  padding: 0.15rem 0.4rem;
+  border: none;
+  border-radius: 0.3rem;
+  background: none;
+  color: inherit;
+  font: inherit;
   font-size: 0.9em;
+  cursor: pointer;
+}
+
+.kolay__search__close:hover {
+  background: var(--_active);
+  color: var(--_fg);
 }
 
 /* the pointer's way to clear the query; the keyboard already has one */
 .kolay__search__clear {
   display: inline-flex;
   flex: 0 0 auto;
+  margin: 0;
   padding: 0.2rem;
   border: none;
   border-radius: 0.3rem;
@@ -217,6 +245,7 @@
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
+  margin: 0;
   padding: 0.4rem 0.5rem 0.4rem 0.7rem;
   border: 1px solid var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
   border-radius: 0.5rem;

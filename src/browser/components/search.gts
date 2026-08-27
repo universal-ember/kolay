@@ -173,7 +173,7 @@ export class Search extends Component<SearchSignature> {
         </button>
       {{/if}}
 
-      <m.Dialog class='kolay__search'>
+      <m.Dialog class='kolay__search' closedby='any'>
         <CommandPalette
           @hotkey={{HOTKEY}}
           @onOpen={{m.open}}
@@ -198,7 +198,11 @@ export class Search extends Component<SearchSignature> {
             {{/if}}
           </div>
 
-          <c.List class='kolay__search__results' as |l|>
+          <c.List
+            class='kolay__search__results'
+            data-has-results='{{if this.results.length "true" "false"}}'
+            as |l|
+          >
             {{#each this.results key='path' as |result|}}
               <l.LinkItem class='kolay__search__result' @href={{result.path}}>
                 {{#if (has-block 'result')}}
@@ -217,9 +221,10 @@ export class Search extends Component<SearchSignature> {
 
           <div class='kolay__search__footer'>
             <p class='kolay__search__status' role='status'>{{this.status}}</p>
-            <p class='kolay__search__hint'>press
+            <button type='button' class='kolay__search__close' {{on 'click' m.close}}>
+              Close
               <Key>Esc</Key>
-              to close</p>
+            </button>
           </div>
         </CommandPalette>
       </m.Dialog>
