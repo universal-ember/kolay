@@ -33,6 +33,60 @@ a[data-search-result]:is(:hover, :focus, :active) {
 }
 
 /*
+ * <Search /> in pico's colours. The component brings its own layout; these
+ * are the only values it asks for.
+ */
+:root {
+  --kolay-search-bg: var(--pico-background-color);
+  --kolay-search-fg: var(--pico-color);
+  --kolay-search-muted: var(--pico-muted-color);
+  --kolay-search-border: var(--pico-muted-border-color);
+  --kolay-search-accent: var(--pico-primary);
+  --kolay-search-active: color-mix(in oklab, var(--pico-primary), transparent 88%);
+}
+
+/* the palette's results are anchors too, and pico reaches them the same way */
+a.kolay__search__result,
+a.kolay__search__result:is(:hover, :focus, :active) {
+  --pico-color: inherit;
+  --pico-background-color: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+/*
+ * The palette's input. Pico reaches every text input through a selector that
+ * carries an attribute, which outranks the component's single class, and
+ * gives it a box and a bottom margin the palette does not want.
+ */
+input.kolay__search__input {
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+/* the header's middle column */
+header .kolay__search__trigger {
+  flex: 1;
+  max-width: 24rem;
+}
+
+@media (width < 1000px) {
+  header .kolay__search__trigger {
+    max-width: 18rem;
+  }
+}
+
+@media (width < 600px) {
+  header .kolay__search__trigger {
+    max-width: none;
+  }
+}
+
+/*
  * The shine's colours. Kept as their own names so the sweep can be retuned in
  * one place: the site's primary at the leading edge, running through violet
  * into pink at the trailing one.

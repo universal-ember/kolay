@@ -11,11 +11,11 @@
     "isolatedModules": true,
 
     // @tsconfig/node22
-    "module": "node16",
+    "module": "esnext",
     "target": "es2022",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
 
     // My options
     "rootDir": "./src",
@@ -33,6 +33,6 @@
     "declaration": true,
     // Compat
     "allowSyntheticDefaultImports": true,
-    "types": ["./docs-app/node_modules/ember-source/types/stable", "unplugin", "@glint/ember-tsc"]
+    "types": ["ember-source/types", "unplugin", "@glint/ember-tsc/types"]
   }
 }
