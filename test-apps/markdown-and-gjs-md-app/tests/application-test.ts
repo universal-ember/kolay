@@ -41,6 +41,23 @@ module("Frontmatter", function (hooks) {
   });
 });
 
+module("formatOptions", function (hooks) {
+  setupApplicationTest(hooks);
+
+  test("a per-format owner reaches components rendered by the compiler", async function (assert) {
+    await visit("/my-folder-name/owner-probe.md");
+    await waitUntil(() => !document.querySelector(".loading-page"), { timeout: 5000 });
+    await waitUntil(() => document.querySelector("[data-owner-probe]"), { timeout: 5000 });
+
+    assert
+      .dom("[data-owner-probe]")
+      .hasText(
+        "from-custom-owner",
+        "the snippet's getOwner(...) resolved through the owner passed via formatOptions",
+      );
+  });
+});
+
 module("All Links", function (hooks) {
   setupApplicationTest(hooks);
 
@@ -59,6 +76,7 @@ module("All Links", function (hooks) {
       "/my-folder-name/bar.md",
       "/my-folder-name/baz",
       "/my-folder-name/foo",
+      "/my-folder-name/owner-probe.md",
     ]);
   });
 });

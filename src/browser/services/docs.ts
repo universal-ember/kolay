@@ -43,6 +43,7 @@ export function compilerOptions({
   remarkPlugins,
   rehypePlugins,
   modules,
+  formatOptions,
 }: {
   /**
    * The app's rootURL, so authored root-absolute URLs are rebased onto it.
@@ -54,6 +55,7 @@ export function compilerOptions({
   modules?: ModuleMap;
   remarkPlugins?: unknown[];
   rehypePlugins?: unknown[];
+  formatOptions?: Record<string, Record<string, unknown>>;
 } = {}) {
   const md = {
     /**
@@ -78,15 +80,23 @@ export function compilerOptions({
     ...topLevelScope,
   };
 
+  const { md: userMd, gmd: userGmd, hbs: userHbs, ...otherFormats } = formatOptions ?? {};
+
   return {
     options: {
-      md,
+      ...otherFormats,
+      md: {
+        ...md,
+        ...userMd,
+      },
       gmd: {
         scope,
         ...md,
+        ...userGmd,
       },
       hbs: {
         scope,
+        ...userHbs,
       },
     },
     modules: {
@@ -173,6 +183,18 @@ class DocsService {
      * These can be used to add features syntax-highlighting to pre elements, etc
      */
     rehypePlugins?: unknown[];
+
+    /**
+     * Per-format compiler options, keyed by format (`gjs`, `gmd`, `hbs`, `md`, ...),
+     * forwarded to the underlying compilers. Entries merge over the options kolay
+     * configures for each format, so e.g. `{ gjs: { owner } }` sets the owner that
+     * rendered `gjs` snippets resolve `getOwner(...)` lookups through.
+     *
+     * For adding remark/rehype plugins, prefer the dedicated `remarkPlugins` /
+     * `rehypePlugins` options, which compose with kolay's own plugins instead of
+     * replacing them.
+     */
+    formatOptions?: Record<string, Record<string, unknown>>;
   }) => {
     const [apiDocs, compiledDocs] = await Promise.all([options.apiDocs, options.compiledDocs]);
 
@@ -184,6 +206,7 @@ class DocsService {
       remarkPlugins: options.remarkPlugins ?? [],
       rehypePlugins: options.rehypePlugins ?? [],
       modules: options.modules,
+      formatOptions: options.formatOptions,
     });
 
     setupCompiler(this, optionsForCompiler);
