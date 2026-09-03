@@ -20,11 +20,12 @@ export { searcher } from './services/search.ts';
 export { selected } from './services/selected.ts';
 
 // Utilities
+export { samePagePath } from '../paths.js';
 export { isActive } from './is-active.ts';
+export { getIndexPage, isPageTree, isRedundantWithHeading } from './page-tree.ts';
 export { resolveRedirect } from './redirects.ts';
 export { highlightSearch } from './services/search/highlight.ts';
 export { stripFormatting } from './services/search/strip-formatting.ts';
-export { getIndexPage, isIndex, isPageTree } from './utils.ts';
 
 // Types
 export type { Manifest, Page, PageTree, SearchResult } from '../types.ts';

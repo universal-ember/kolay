@@ -2,6 +2,7 @@ import { service } from '@ember/service';
 
 import { createStore } from 'ember-primitives/store';
 
+import { concatenatePath } from '../../paths.js';
 import { getKey } from './lazy-load.ts';
 import { rankSearch } from './search/rank-search.ts';
 import { stripFrontmatter } from './search/strip-frontmatter.ts';
@@ -52,9 +53,7 @@ export class SearchService {
    * where the manifest put it.
    */
   #sourceUrlFor(entry: SearchEntry): string {
-    const base = this.router.rootURL ?? '/';
-    const path = entry.appRelativePath.replace(/^\//, '');
-    const url = `${base.endsWith('/') ? base : `${base}/`}${path}`;
+    const url = concatenatePath(this.router.rootURL ?? '/', entry.appRelativePath);
 
     return url.endsWith('.md') ? url : `${url}.md`;
   }

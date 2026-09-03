@@ -1,3 +1,8 @@
+import { trimSlashes } from '../paths.js';
+
+import type RouteInfo from '@ember/routing/route-info';
+import type { RouteInfoWithAttributes } from '@ember/routing/route-info';
+
 /**
  * `addRoutes(context, groupName)` binds the wildcard route it creates to a
  * group — the mount then serves that group's docs regardless of the mount's
@@ -45,6 +50,40 @@ export function routeNameForGroup(groupName: string): string | undefined {
   }
 
   return undefined;
+}
+
+export interface MountLocation {
+  wildcardParam: string | undefined;
+  /** Candidates for the group this mount serves. Canonicalize at the callsite. */
+  mountGroupNames: string[];
+}
+
+/**
+ * An index arrival's mount and wildcard segment. The parent differs by
+ * arrival: at the mount's own URL (`/guides`) it is the mount route, below it
+ * (`/guides/foo`) it is the wildcard route.
+ */
+export function mountLocationFor(
+  to: RouteInfo | RouteInfoWithAttributes | null | undefined
+): MountLocation {
+  const parent = to?.parent;
+  const raw = parent?.params?.['page'];
+  const atWildcard = typeof raw === 'string';
+  const wildcardParam = atWildcard ? trimSlashes(raw, { trailing: true }) || undefined : undefined;
+
+  const names = parent
+    ? atWildcard
+      ? [groupNameForRoute(parent.name), parent.parent?.localName]
+      : [groupNameForRoute(scopedRouteNameFor(parent.name)), parent.localName]
+    : [];
+
+  return {
+    wildcardParam,
+    // `application` is ember's root route, never a mount, so it names no group.
+    mountGroupNames: names.filter(
+      (name): name is string => typeof name === 'string' && name !== 'application'
+    ),
+  };
 }
 
 /**

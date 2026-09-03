@@ -137,7 +137,59 @@ This block is named after what you are rendering — a "section" of the nav — 
 
 To assist in this migration, `<PageNav />` will `assert` in development when it is still given a `:collection` block to remind you to migrate to `:section`. The assertion is stripped from production builds.
 
-`getIndexPage` keeps its name (it takes a `PageTree` now), and `Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
+`Node` is `Page | PageTree`. The `Runtime/utilities/collection-utils` page is now `page-tree-utils`, with a redirect from the old URL.
+
+## A folder's index page falls back to its first page
+
+In 5.x a page was only considered a folder's index page if its file was explicitly named `index`. The index page is now the page named `index` _when there is one_, falling back to the folder's first page otherwise.
+
+For example, the `<PageNav>` component's `:section` block still yields `index`, but it is present for every folder now:
+
+```diff
+  <:section as |x|>
+    {{#if x.index}}
+-     <x.index.Link>{{x.index.page.title}}</x.index.Link>
++     <x.index.Link>{{x.section.title}}</x.index.Link>
+    {{else}}
+      {{x.section.title}}
+    {{/if}}
+  </:section>
+```
+
+**Note the change from `x.index.page.title` to `x.section.title`.** Left as `x.index.page.title`, a folder without a page named `index` will show its first page's title where in 5.x it showed the folder's name. The `{{else}}` branch is also unreachable for any folder that has pages.
+
+With no `:section` block of your own, headings render `x.section.title` instead of the index page's `name` — which in 5.x was the literal string `index`.
+
+`getIndexPage(tree)` follows the same change, so it now answers for every folder with pages where it used to answer `undefined`. Two smaller shifts come with it: it can descend into a first child folder, and it matches the page actually named `index` rather than any path ending in `index` — `api-index.md` no longer counts.
+
+`isIndex` is removed. It asked whether a node was named `index`, which on its own does not answer anything a nav needs. If you were using it to decide what a folder's heading links to, that is `getIndexPage(tree)`; to decide whether listing a page repeats its folder's heading, that is `isRedundantWithHeading(folder, page)`.
+
+## Folder and group URLs redirect instead of erroring
+
+`/Group/sub-folder` used to render the error page. It now redirects to that folder's index page, and you call nothing to get it. A group's own URL redirects the same way.
+
+- Anything asserting on the error page for a folder URL needs updating.
+- `handlePotentialIndexVisit` is only needed for the app root (`/`) now. Calling it elsewhere is harmless.
+
+## Page titles honor the page's first heading
+
+A page with no declared `title` was titled by its filename. It is now titled by its first heading, falling back to the filename when it has none — so a page at `ember-resources.md` headed `# cell` reads "cell" in the nav, in search results, and in a folder heading that links to it.
+
+5.x resolved headings only for `.gjs.md` and `.gts.md` pages, whose text the build inlines; plain `.md` pages never got past the filename, and the nav and search disagreed about them. The build now reads every markdown page's headings.
+
+Search scores a page's path as well, so a page stays findable by its filename even when its heading says something else.
+
+Declare `title` in a page's sidecar `.json` to keep the old text.
+
+## `<PageNav />` renders page links by title
+
+The default `:page` block rendered `page.name`, the raw filename, while folder headings render a resolved title. Both are titles now. Pass your own `:page` block to render something else:
+
+```hbs
+<:page as |x|>
+  <x.Link>{{x.page.name}}</x.Link>
+</:page>
+```
 
 ## Removed types
 
