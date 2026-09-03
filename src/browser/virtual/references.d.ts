@@ -39,6 +39,18 @@ declare module 'kolay/setup' {
        * These can be used to add features syntax-highlighting to pre elements, etc
        */
       rehypePlugins?: unknown[];
+
+      /**
+       * Per-format compiler options, keyed by format (`gjs`, `gmd`, `hbs`, `md`, ...),
+       * forwarded to the underlying compilers. Entries merge over the options kolay
+       * configures for each format, so e.g. `{ gjs: { owner } }` sets the owner that
+       * rendered `gjs` snippets resolve `getOwner(...)` lookups through.
+       *
+       * For adding remark/rehype plugins, prefer the dedicated `remarkPlugins` /
+       * `rehypePlugins` options, which compose with kolay's own plugins instead of
+       * replacing them.
+       */
+      formatOptions?: Record<string, Record<string, unknown>>;
     }
   ): Promise<Manifest>;
 }
