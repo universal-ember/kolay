@@ -44,10 +44,10 @@
     "ember-strict-application-resolver": "0.1.1"
   },
   "devDependencies": {
-    "@babel/core": "7.29.6",
-    "@babel/plugin-transform-runtime": "7.29.0",
-    "@babel/plugin-transform-typescript": "7.28.6",
-    "@babel/runtime": "7.28.6",
+    "@babel/core": "8.0.1",
+    "@babel/plugin-transform-runtime": "8.0.1",
+    "@babel/plugin-transform-typescript": "8.0.1",
+    "@babel/runtime": "8.0.0",
     "@ember/app-tsconfig": "2.0.0",
     "@ember/test-helpers": "5.4.3",
     "@ember/test-waiters": "^4.1.2",
@@ -64,7 +64,7 @@
     "concurrently": "10.0.4",
     "ember-qunit": "9.1.0",
     "ember-resources": "^7.1.0",
-    "eslint": "9.39.2",
+    "eslint": "10.9.1",
     "kolay": "workspace:*",
     "prettier": "3.9.6",
     "prettier-plugin-ember-template-tag": "2.1.7",
@@ -72,7 +72,7 @@
     "qunit-dom": "3.6.0",
     "qunit-theme-ember": "1.0.0",
     "testem": "3.20.1",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "vite": "8.2.1"
   },
   "engines": {
