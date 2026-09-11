@@ -1,0 +1,1 @@
+{"version":3,"file":"highlight.d.ts","sourceRoot":"","sources":["../../../../src/browser/services/search/highlight.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,iBAAiB,CAAC;AAWpD,eAAO,MAAM,eAAe,EAAE,YAAY,CAAC;IACzC,OAAO,EAAE,WAAW,CAAC;IACrB,IAAI,EAAE;QACJ,UAAU,EAAE,CAAC,KAAK,EAAE,MAAM,CAAC,CAAC;KAC7B,CAAC;CACH,CAgCC,CAAC"}

@@ -1,0 +1,76 @@
+import type { DocsSourceMeta, Manifest, Page, PageTree, SearchEntry } from '../types.ts';
+import type { ComponentLike } from '@glint/template';
+
+export type { DocsSourceMeta } from '../types.ts';
+
+/**
+ * What each `virtual:kolay/docs/<groupName>` module provides.
+ */
+export interface DocsGroupModule {
+  name: string;
+  /**
+   * The group's own manifest: its pages flat, and the root of its page
+   * tree — a `PageTree` named after the group, whose `pages` are the
+   * folders and pages one level in.
+   */
+  manifest: { name: string; list: Page[]; tree: PageTree };
+  search: () => Promise<SearchEntry[]>;
+  /**
+   * The source's meta: repository URL, repo-relative docs path, and
+   * anything from the source root's `meta.jsonc`.
+   * Composed at runtime runtime `loadCompiledDocs`.
+   */
+  meta: DocsSourceMeta;
+  /**
+   * Similar to import.meta.glob — the group's page loaders, keyed by URL.
+   */
+  pages: Record<string, () => Promise<{ default: string | ComponentLike }>>;
+  /**
+   * Registers the docs routes for this group, scoped to it —
+   * `addRoutes(this)` inside any route brings this group's docs into it.
+   */
+  addRoutes: (context: unknown) => void;
+}
+
+/**
+ * What 'kolay/compiled-docs:virtual' provides: the metamanifest — which
+ * groups exist, and how to load each group's docs module.
+ */
+export interface MetaManifest {
+  base: string;
+  /**
+   * Path redirects from the project's kolay config file — `[]` when
+   * there is no config file (or it has no `redirects`).
+   */
+  redirects: Array<{ from: string; to: string }>;
+  groups: Array<{ name: string; load: () => Promise<DocsGroupModule> }>;
+}
+
+/**
+ * Loads every group's docs module — in parallel, for site speed — and
+ * assembles the combined manifest + page-loader map the docs service
+ * consumes. `setupKolay` does this behind the scenes.
+ */
+export async function loadCompiledDocs(meta: MetaManifest): Promise<{
+  manifest: Manifest;
+  pages: DocsGroupModule['pages'];
+  loadSearchData: () => Promise<SearchEntry[]>;
+}> {
+  const modules = await Promise.all(meta.groups.map((group) => group.load()));
+
+  return {
+    manifest: {
+      base: meta.base,
+      redirects: meta.redirects,
+      groups: modules.map((mod) => ({ ...mod.manifest, meta: mod.meta })),
+    },
+    pages: Object.assign({}, ...modules.map((mod) => mod.pages)) as DocsGroupModule['pages'],
+    loadSearchData: async () => {
+      const searchModules = await Promise.all(
+        meta.groups.map((group) => group.load().then((mod) => mod.search()))
+      );
+
+      return searchModules.flat();
+    },
+  };
+}

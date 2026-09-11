@@ -1,0 +1,3 @@
+{
+  "order": ["is-active", "group-nav", "page-nav", "search", "handle-potential-index-visit"]
+}

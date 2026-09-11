@@ -1,0 +1,295 @@
+/*
+ * <Search /> — the command palette.
+ *
+ * Colors come from these variables, so a host app can theme the palette
+ * without restating its layout. Set them on :root or any ancestor.
+ * Defaults are light-dark() aware.
+ *
+ *   --kolay-search-bg          the palette's surface
+ *   --kolay-search-fg          its text
+ *   --kolay-search-muted       the group label, the excerpt, the status line
+ *   --kolay-search-border      the rules between its parts
+ *   --kolay-search-active      the active result's background
+ *   --kolay-search-accent      the result title, and the query highlight
+ *   --kolay-search-backdrop    behind the modal
+ *   --kolay-search-radius      the palette's corners
+ *   --kolay-search-width       its width, capped to the viewport
+ *
+ * Every rule here is a single class, so overriding one takes a single class
+ * of your own — no specificity ladder to climb.
+ */
+
+.kolay__search {
+  --_bg: var(--kolay-search-bg, light-dark(#fff, #16181d));
+  --_fg: var(--kolay-search-fg, light-dark(#16181d, #f2f3f5));
+  --_muted: var(--kolay-search-muted, light-dark(#5c6370, #9aa1ad));
+  --_border: var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
+  --_active: var(--kolay-search-active, light-dark(#f2f4f7, #23262d));
+  --_accent: var(--kolay-search-accent, light-dark(#0b5fd0, #79b8ff));
+  /* the left edge every column lines up on: the icon, each result, the status */
+  --_inset: 1.15rem;
+
+  width: min(92vw, var(--kolay-search-width, 40rem));
+  /*
+   * A modal `<dialog>` is anchored top and bottom, so an auto height fills the
+   * viewport rather than the content. Releasing the bottom anchor lets the
+   * palette be as tall as its results and no taller, with the margin holding
+   * it below the top of the page.
+   */
+  inset-block-end: auto;
+  max-height: min(70vh, 40rem);
+  margin-block-start: 10vh;
+  margin-inline: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--_border);
+  border-radius: var(--kolay-search-radius, 0.75rem);
+  background: var(--_bg);
+  color: var(--_fg);
+  /* the results scroll, not the palette */
+  display: flex;
+  flex-direction: column;
+  /*
+   * Some CSS frameworks style a bare `dialog` as a full-screen box that
+   * centres an `<article>` card inside it. The palette is the card, so those
+   * rules have to be answered here: `min-width: 100%` outranks any width, and
+   * centring the children squashes the input and the results.
+   */
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.kolay__search::backdrop {
+  background: var(--kolay-search-backdrop, rgb(0 0 0 / 0.45));
+}
+
+/* the query, and the marks <Search /> puts on it inside each excerpt */
+::highlight(search-query) {
+  background: color-mix(in oklab, var(--kolay-search-accent, #79b8ff), transparent 70%);
+  text-decoration: underline;
+}
+
+/*
+ * Qualified by the dialog, not because the class needs it, but because the
+ * `<dialog>` sits wherever it was written -- often inside a header, whose own
+ * descendant rules would otherwise reach in and lay this row out.
+ */
+.kolay__search .kolay__search__field {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 0.85rem var(--_inset);
+  border-block-end: 1px solid var(--_border);
+  color: var(--_muted);
+}
+
+.kolay__search__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+}
+
+.kolay__search__input {
+  width: 100%;
+  min-width: 0;
+  /* frameworks tend to give an input a fixed height; this one is one line */
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--_fg);
+}
+
+/*
+ * No ring on the input. Focus never leaves it while the palette is open, so a
+ * ring is permanent decoration rather than a signal, and the dialog clips it:
+ * the field runs the full width, out to a rounded corner and `overflow:
+ * hidden`. Specific enough to outrank a framework's own input focus styles.
+ */
+.kolay__search input.kolay__search__input:is(:focus, :focus-visible) {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.kolay__search__results {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0.4rem;
+}
+
+/* nothing found, nothing to show: no strip of padding pretending otherwise */
+.kolay__search__results[data-has-results="false"] {
+  padding: 0;
+}
+
+/* the result is the link: one target, and the whole card is it */
+.kolay__search__result {
+  display: block;
+  position: relative;
+  padding: 0.6rem calc(var(--_inset) - 0.4rem);
+  border-radius: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/*
+ * The pointer and the keyboard set the same active result, so this one
+ * selector covers both — and they can never disagree about what Enter does.
+ * Do not add :hover.
+ */
+.kolay__search__result[data-active="true"] {
+  background: var(--_active);
+}
+
+.kolay__search__result__group {
+  margin: 0;
+  color: var(--_muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kolay__search__result__title {
+  margin: 0.15rem 0 0.2rem;
+  color: var(--_accent);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.kolay__search__result[data-active="true"] .kolay__search__result__title {
+  text-decoration: underline;
+}
+
+.kolay__search__result__excerpt {
+  /* the clamp is a maximum; holding it as a minimum too keeps every card the
+     same height, whatever its excerpt turned out to be */
+  display: -webkit-box;
+  overflow: hidden;
+  min-height: 2lh;
+  max-height: 2lh;
+  margin: 0;
+  color: var(--_muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.kolay__search__footer {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  padding: 0.6rem var(--_inset);
+  border-block-start: 1px solid var(--_border);
+  color: var(--_muted);
+  font-size: 0.8rem;
+}
+
+.kolay__search__status {
+  margin: 0;
+}
+
+/* the way out, for the pointer as well as the key it names */
+.kolay__search__close {
+  display: inline-flex;
+  gap: 0.4em;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.15rem 0.4rem;
+  border: none;
+  border-radius: 0.3rem;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.kolay__search__close:hover {
+  background: var(--_active);
+  color: var(--_fg);
+}
+
+/* the pointer's way to clear the query; the keyboard already has one */
+.kolay__search__clear {
+  display: inline-flex;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.2rem;
+  border: none;
+  border-radius: 0.3rem;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.kolay__search__clear:hover {
+  background: var(--_active);
+  color: var(--_fg);
+}
+
+.kolay__search__trigger {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+  padding: 0.4rem 0.5rem 0.4rem 0.7rem;
+  border: 1px solid var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
+  border-radius: 0.5rem;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+/* the label sits at one end of the button and the shortcut at the other */
+.kolay__search__trigger__hint {
+  display: inline-flex;
+  gap: 0.25em;
+  align-items: center;
+  margin-inline-start: auto;
+  padding-inline-start: 0.75em;
+  font-size: 0.8em;
+}
+
+/*
+ * A key, drawn as a key. Frameworks tend to give `kbd` a filled block in the
+ * body's own colour, which is right for a keystroke named in prose and far
+ * too loud for a hint on a button: it doubles the button's height and reads
+ * as the most important thing in the header.
+ */
+.kolay__search__trigger kbd,
+.kolay__search kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--kolay-search-border, light-dark(#e3e5e9, #2b2f37));
+  border-radius: 0.3em;
+  background: var(--kolay-search-active, light-dark(#f2f4f7, #23262d));
+  color: inherit;
+  font: inherit;
+  font-size: 1em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.kolay__search__trigger .kolay__search__icon {
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.7;
+}
