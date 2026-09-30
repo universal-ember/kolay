@@ -1,12 +1,14 @@
 import { join } from 'node:path';
 
+import { titleFor } from '../../../title.js';
+import { isIndexName } from './index-page.js';
 import { parse } from './parse.js';
 import { sortTree } from './sort.js';
 
 /**
  * @typedef {object} ReshapeOptions
  * @property {string[]} paths
- * @property {string[]} configs
+ * @property {Array<{ path: string, config: object }>} configs already-read configs, keyed by their path
  * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
  * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
  * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
@@ -129,6 +131,36 @@ export function getList(tree) {
   flatList.push(flatPages(tree));
 
   return flatList.flat();
+}
+
+/**
+ * A folder's display title, resolved once here rather than in every consumer.
+ *
+ * A folder with its own `index` page is titled by that page: it is the folder's
+ * page, so its sidecar `.json` `title` names the folder. Otherwise the folder is
+ * titled by its cleaned name — a first page standing in for one titles
+ * itself, not its folder.
+ *
+ * Sorting has already run, so an explicit index is the first child when there
+ * is one. Called after page titles are resolved, so a folder inherits its
+ * index page's resolved title rather than only its authored one.
+ *
+ * A folder's own `meta.json` `title` wins over both, the way a page's sidecar
+ * `.json` `title` wins for a page.
+ *
+ * @param {import('./types.ts').Node} tree
+ */
+export function addTitles(tree) {
+  if (!('pages' in tree)) return;
+
+  const [first] = tree.pages;
+  const ownPage = first && !('pages' in first) && isIndexName(first.name) ? first : undefined;
+
+  tree.title =
+    tree.title ??
+    titleFor({ title: ownPage?.title, cleanedName: tree.cleanedName, name: tree.name });
+
+  tree.pages.forEach(addTitles);
 }
 
 /**

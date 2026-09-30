@@ -1,7 +1,6 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
-import type { Page, PageTree } from '../types.ts';
 import type Owner from '@ember/owner';
 
 /**
@@ -11,41 +10,6 @@ import type Owner from '@ember/owner';
  * its nav link is the app's root.
  */
 export const HOME_GROUP = 'Home';
-
-export function isPageTree(x: Page | PageTree): x is PageTree {
-  return 'pages' in x;
-}
-
-export function isIndex(x: Page | PageTree) {
-  if (isPageTree(x)) return false;
-
-  return x.path.replace(/\.md$/, '').endsWith('index');
-}
-
-export function getIndexPage(x: PageTree): Page | undefined {
-  const page = x.pages.find(isIndex);
-
-  if (page && isPageTree(page)) return;
-
-  return page;
-}
-
-/**
- * URLs are conventionally case-insensitive; path/route matching in this
- * library follows that convention rather than treating paths as opaque,
- * case-sensitive strings.
- */
-export function equalsIgnoreCase(a: string, b: string): boolean {
-  return a.toLowerCase() === b.toLowerCase();
-}
-
-/**
- * Whether two paths name the same page: paths with and without the
- * `.md` extension are the same page (both are visitable).
- */
-export function samePagePath(a: string, b: string): boolean {
-  return equalsIgnoreCase(a.replace(/\.md$/i, ''), b.replace(/\.md$/i, ''));
-}
 
 /////////////////////////////////
 // copied from ember-primitives

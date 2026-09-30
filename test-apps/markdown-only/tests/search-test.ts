@@ -13,7 +13,9 @@ module("Search", function (hooks) {
     // isn't enough — the results render once that fetch resolves
     await waitFor(".search-result a", { timeout: 5000 });
 
-    assert.dom(".search-result a").hasText("ember resources");
+    // Found by its filename, which is the only place "resources" appears —
+    // the page is headed `# cell`, and that heading is what titles it.
+    assert.dom(".search-result a").hasText("cell");
   });
 
   test("frontmatter is not searchable", async function (assert) {

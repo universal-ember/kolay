@@ -1,7 +1,12 @@
 import { assert } from '@ember/debug';
 import { getOwner } from '@ember/owner';
 
-import { groupNameForRoute, registerScopedRoute, scopedRouteNameFor } from './scoped-routes.ts';
+import {
+  groupNameForRoute,
+  mountLocationFor,
+  registerScopedRoute,
+  scopedRouteNameFor,
+} from './scoped-routes.ts';
 import { docsManager } from './services/docs.ts';
 
 import type { RouterDSL } from '@ember/-internals/routing';
@@ -80,8 +85,6 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   if (transition.to?.localName !== 'index') return;
 
-  const parent = transition.to.parent;
-
   /**
    * With a top-level addRoutes() mount, visiting `/GroupName` lands on
    * `page.index` with the group name as the wildcard segment.
@@ -95,23 +98,17 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
    * there is no group in the URL, so a scoped top-level mount's group, or
    * the default (first) group, is used.
    */
-  const rawWildcardParam = parent?.params?.page;
-  const wildcardParam =
-    typeof rawWildcardParam === 'string' ? rawWildcardParam.replace(/\/+$/, '') : rawWildcardParam;
+  const { wildcardParam, mountGroupNames } = mountLocationFor(transition.to);
 
   const candidates =
     transition.to.name === 'index'
       ? [groupNameForRoute('page'), docs.availableGroups[0]]
       : [
-          // the mount's own index: the wildcard is a sibling route
-          parent && groupNameForRoute(`${parent.name}.page`),
-          // an empty wildcard visit: the wildcard is the parent itself.
-          // Only when no page was actually requested — every page visit
-          // also lands on the wildcard's index (with the page as the
-          // param), and those must not be redirected.
-          parent && !wildcardParam && groupNameForRoute(parent.name),
+          // Only when no page was actually requested — every page visit also
+          // lands on the wildcard's index (with the page as the param), and
+          // those must not be redirected.
+          ...(wildcardParam ? [] : mountGroupNames),
           wildcardParam,
-          parent?.localName,
         ];
 
   const groupName = candidates
@@ -122,9 +119,7 @@ export function handlePotentialIndexVisit(context: object, transition: Transitio
 
   if (!groupName) return;
 
-  const group = docs.groupFor(groupName);
-
-  const first = group.list[0];
+  const first = docs.indexPageForPath(docs.groupFor(groupName).tree.appRelativePath, groupName);
 
   if (!first) {
     console.warn(`Could not determine first page in group: ${groupName}`);
