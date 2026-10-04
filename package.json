@@ -168,13 +168,13 @@
     "vite": "^8.2.1",
     "vitest": "^4.1.10"
   },
-  "packageManager": "pnpm@10.34.5",
+  "packageManager": "pnpm@10.34.6",
   "engines": {
     "node": ">= 18"
   },
   "volta": {
     "node": "24.21.0",
-    "pnpm": "10.34.5"
+    "pnpm": "10.34.6"
   },
   "publishConfig": {
     "access": "public",
