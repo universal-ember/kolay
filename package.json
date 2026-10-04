@@ -193,7 +193,7 @@
       "@glimmer/component": "^2.0.0",
       "@glimmer/validator": ">= 0.92.0",
       "@glint/template": "1.9.0",
-      "reactiveweb": "1.9.3"
+      "reactiveweb": "1.9.4"
     },
     "packageExtensions": {
       "ember-async-data": {
