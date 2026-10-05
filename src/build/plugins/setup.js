@@ -8,10 +8,12 @@ import { join, relative } from 'node:path';
 import { stripIndent } from 'common-tags';
 import send from 'send';
 
+import { stripGlimmerMarkdownExtension } from '../../paths.js';
+import { headingsIn, titleFor } from '../../title.js';
 import { virtualFile } from './helpers.js';
 import { loadKolayConfig } from './kolay-config.js';
 import { extractFrontmatter } from './markdown-pages/frontmatter.js';
-import { reshape } from './markdown-pages/hydrate.js';
+import { addTitles, reshape } from './markdown-pages/hydrate.js';
 import { readJSONC } from './markdown-pages/parse.js';
 import { sourceMeta } from './source-meta.js';
 import { normalizePath } from './utils.js';
@@ -117,6 +119,12 @@ async function enumerateSource(
   const configs = [];
   const frontmatter = [];
   const sources = new Map();
+  /**
+   * Headings for every markdown page, so a page's first heading can stand in
+   * for a title it does not declare. Separate from `sources`, which is only
+   * the pages whose text is inlined into the manifest.
+   */
+  const headings = new Map();
 
   for await (const entry of entries) {
     if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
@@ -133,7 +141,7 @@ async function enumerateSource(
     }
 
     const name =
-      baseUrl + (urlPrefix ? urlPrefix + '/' : '') + strip(entry).replace(/\.(gjs|gts)\.md$/, '');
+      baseUrl + (urlPrefix ? urlPrefix + '/' : '') + stripGlimmerMarkdownExtension(strip(entry));
     const full = '/@fs' + join(normalizePath(sourceCwd), entry);
 
     let query = '';
@@ -147,13 +155,19 @@ async function enumerateSource(
       }
 
       if (!entry.endsWith('.gjs.md') && !entry.endsWith('.gts.md')) {
-        // Compiled files already remove frontmatter; sources does not need to be reset
+        // Only glimmer pages are inlined. A plain `.md` page's text is fetched
+        // on demand, and putting it here would ship it twice — but every
+        // page's headings are wanted at build time, to resolve its title.
         query = '?raw';
       } else {
         // the frontmatter-stripped content, so search headings/text below
         // stay clean
         sources.set(name, { source: content });
       }
+
+      // Also the stripped content: a YAML comment line starts with `#`, which
+      // would otherwise read as this page's first heading.
+      headings.set(name, headingsIn(content));
     }
 
     loaders[name] = `() => import("${full}${query}")`;
@@ -170,6 +184,16 @@ async function enumerateSource(
     base: baseUrl,
   });
 
+  // Resolve every page's title where the source is in hand, so the first
+  // heading can stand in for a missing one. `found.list` holds the same
+  // objects as the tree, so the tree sees these too — and folder titles are
+  // resolved after, from the results.
+  for (const page of found.list) {
+    page.title = titleFor(page, headings.get(page.path) ?? headings.get(`${page.path}.md`) ?? []);
+  }
+
+  addTitles(found.tree);
+
   const search = found.list.flatMap((page) => {
     const source = sources.get(page.path) ?? sources.get(`${page.path}.md`);
 
@@ -185,30 +209,20 @@ async function enumerateSource(
           path: page.path,
           appRelativePath: page.appRelativePath,
           groupName: displayName,
-          title: page.title ?? page.cleanedName,
+          title: page.title,
           headings: [],
           text: '',
         },
       ];
     }
 
-    // headings are shown as-is (a page's title is usually its first one),
-    // so the source's inline syntax is stripped: emphasis and code marks,
-    // and the `[^label]` a footnote reference leaves behind
-    const headings = [...source.source.matchAll(/^#{1,6}\s+(.+?)\s*#*\s*$/gm)].map(([, heading]) =>
-      heading
-        .replaceAll(/\[\^[^\]]+\]/g, '')
-        .replaceAll(/[`*_]/g, '')
-        .trim()
-    );
-
     return [
       {
         path: page.path,
         appRelativePath: page.appRelativePath,
         groupName: displayName,
-        title: page.title ?? headings[0] ?? page.cleanedName,
-        headings,
+        title: page.title,
+        headings: headings.get(page.path) ?? headings.get(`${page.path}.md`) ?? [],
         text: source.source,
       },
     ];

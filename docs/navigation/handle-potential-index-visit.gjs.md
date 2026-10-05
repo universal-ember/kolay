@@ -1,72 +1,38 @@
 # `handlePotentialIndexVisit`
 
-When using `addRoutes()`, navigating to a group URL (e.g. `/Runtime`) lands on an index route. If that group doesn't have an explicit index page, the user sees a blank page. `handlePotentialIndexVisit` solves this by automatically redirecting to the first page in the group.
+Redirects the app's root (`/`) to the first page of your first docs group.
+
+It exists because `/` is your app's URL, not kolay's. A folder or group URL is unambiguously docs, so kolay redirects those itself; `/` might be a page of your own, so nothing happens there unless you ask for it.
 
 ## Usage
 
-Call it in the `beforeModel` hook of your page route:
+Call it in your top-level `index` route:
 
 ```ts
-// routes/page.ts
-import Route from '@ember/routing/route';
-import { handlePotentialIndexVisit } from 'kolay';
-
-import type RouterService from '@ember/routing/router-service';
-
-type Transition = ReturnType<RouterService['transitionTo']>;
-
-export default class PageRoute extends Route {
-  beforeModel(transition: Transition) {
-    handlePotentialIndexVisit(this, transition);
-  }
-}
-```
-
-This pairs with `addRoutes()` in your router:
-
-```js
-import { addRoutes } from 'kolay';
-
-Router.map(function () {
-  addRoutes(this);
-});
-```
-
-When a user visits `/Runtime` and the `Runtime` group has pages, they'll be redirected to the first page (e.g. `/Runtime/rendering/page.md`) instead of seeing a blank index.
-
-It also handles the app's root: on a visit to `/`, there is no group in the URL, so the user is redirected to the first page of the default (first) group. Give your top-level `index` route the same `beforeModel` (e.g. in `routes/index.ts`) to enable this.
-
-## Nested mounts
-
-`addRoutes()` may also be called inside nested routes, mounting each group as its own route (see [using the docs plugin multiple times](/development/configuring-docs.md)) — optionally scoped to a group via `addRoutes(this, 'group-name')`, in which case the mount's path is free to differ from the group's name. Either way, call `handlePotentialIndexVisit` in the mount route's `beforeModel` — visiting the mount's URL (e.g. `/guides`) lands on the mount's own index:
-
-```ts
-// routes/guides.ts
+// routes/index.ts
 import Route from '@ember/routing/route';
 import { handlePotentialIndexVisit } from 'kolay';
 
 import type Transition from '@ember/routing/transition';
 
-export default class GuidesRoute extends Route {
+export default class IndexRoute extends Route {
   beforeModel(transition: Transition) {
     handlePotentialIndexVisit(this, transition);
   }
 }
 ```
 
-paired with:
+Leave it out and `/` renders whatever your app puts there.
 
-```js
-import { addRoutes as addGuidesRoutes } from 'virtual:kolay/docs/guides';
+## Where it does nothing
 
-Router.map(function () {
-  this.route('guides', function () {
-    addGuidesRoutes(this);
-  });
-});
-```
+Calling it anywhere else is harmless but pointless — these URLs redirect on their own:
 
-The virtual module's `addRoutes` is scoped to its group, so the mount may live anywhere. (An unscoped `addRoutes(this)` from `kolay` works too — its mount's path must then match the group's name.)
+- a wildcard page route (`routes/page.ts`)
+- a mount route (`routes/guides.ts`), whether or not the mount is scoped
+- a group's own URL (`/Runtime`), or a folder's (`/Runtime/rendering`)
+
+A folder or group URL goes to its index page: the page named `index` when there is one, and the first page otherwise. That holds however you arrive, including a click on the group's own nav link from a page already inside it.
 
 ## API Reference
 
