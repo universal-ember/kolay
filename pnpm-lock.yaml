@@ -10,7 +10,7 @@ overrides:
   '@glimmer/component': ^2.0.0
   '@glimmer/validator': '>= 0.92.0'
   '@glint/template': 1.9.0
-  reactiveweb: 1.9.3
+  reactiveweb: 1.9.4
 
 packageExtensionsChecksum: sha256-I4/i17OOf0WifUwpGYE/KCRs9xMfb6hiQlSpKvR/tsk=
 
@@ -50,7 +50,7 @@ importers:
         version: 0.62.0(16bc0951ea3b2694df6bd64c6d661d40)
       ember-repl:
         specifier: ^8.2.3
-        version: 8.2.3(f17179112b5fec0305b6e2ec4a9c3395)
+        version: 8.2.3(d1163f3cc2266c5a3a33c4ca2ba6af98)
       ember-resources:
         specifier: ^7.1.0
         version: 7.1.0(0e4d4fb44a858a03aa96f921f25e8d11)
@@ -67,8 +67,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       reactiveweb:
-        specifier: 1.9.3
-        version: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+        specifier: 1.9.4
+        version: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       rehype-raw:
         specifier: ^7.0.0
         version: 7.0.0
@@ -263,8 +263,8 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0(7fb9f61953e1e3b182f321dab7e3e078)
       reactiveweb:
-        specifier: 1.9.3
-        version: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+        specifier: 1.9.4
+        version: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       shiki:
         specifier: ^3.20.0
         version: 3.23.0
@@ -4765,7 +4765,7 @@ packages:
     peerDependencies:
       '@glint/template': 1.9.0
       ember-source: '*'
-      reactiveweb: 1.9.3
+      reactiveweb: 1.9.4
     peerDependenciesMeta:
       '@glint/template':
         optional: true
@@ -7504,8 +7504,8 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  reactiveweb@1.9.3:
-    resolution: {integrity: sha512-RG7UVwn8EcokVfHFMi4G/v8Zw/ny5Myy/gZ6ywDnChL7gH1wmNuLHxwhps/BHewYz4Rw89rEMUtY21ddipynhQ==}
+  reactiveweb@1.9.4:
+    resolution: {integrity: sha512-t0a4uIDCQ8/Mo+dv48ZLXlH83yDOCz1UaqEjS4kZcaipyLVuxFhDH5ox2s3Q1Mp+BTWoPslsJvSkoOXN8wcSMA==}
     peerDependencies:
       '@ember/test-waiters': ^4.0.0
 
@@ -13801,7 +13801,7 @@ snapshots:
       ember-resources: 7.1.0(0e4d4fb44a858a03aa96f921f25e8d11)
       ember-source: 7.2.0(@glimmer/component@2.1.1)
       form-data-utils: 0.6.0
-      reactiveweb: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+      reactiveweb: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       should-handle-link: 1.3.0
       tabster: 8.8.0
       tracked-built-ins: 4.1.2(@babel/core@7.29.6)
@@ -13827,7 +13827,7 @@ snapshots:
       ember-resources: 7.1.0(0e4d4fb44a858a03aa96f921f25e8d11)
       ember-source: 7.2.0(@glimmer/component@2.1.1)
       form-data-utils: 0.6.0
-      reactiveweb: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+      reactiveweb: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       should-handle-link: 1.3.0
       tabster: 8.8.0
       tracked-built-ins: 4.1.2(@babel/core@7.29.6)
@@ -13853,7 +13853,7 @@ snapshots:
       ember-resources: 7.1.0(0e4d4fb44a858a03aa96f921f25e8d11)
       ember-source: 7.2.0(@glimmer/component@2.1.1)
       form-data-utils: 0.6.0
-      reactiveweb: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+      reactiveweb: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       should-handle-link: 1.3.0
       tabster: 8.8.0
       tracked-built-ins: 4.1.2(@babel/core@7.29.6)
@@ -13879,7 +13879,7 @@ snapshots:
       ember-resources: 7.1.0(0e4d4fb44a858a03aa96f921f25e8d11)
       ember-source: 7.2.0(@glimmer/component@2.1.1)
       form-data-utils: 0.6.0
-      reactiveweb: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+      reactiveweb: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       should-handle-link: 1.3.0
       tabster: 8.8.0
       tracked-built-ins: 4.1.2(@babel/core@7.29.6)
@@ -13901,7 +13901,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-repl@8.2.3(f17179112b5fec0305b6e2ec4a9c3395):
+  ember-repl@8.2.3(d1163f3cc2266c5a3a33c4ca2ba6af98):
     dependencies:
       '@ember/test-helpers': 5.4.3(@babel/core@7.29.6)
       '@ember/test-waiters': 4.1.2
@@ -13912,7 +13912,7 @@ snapshots:
       ember-resolver: 13.2.0
       ember-resources: 7.1.0(0e4d4fb44a858a03aa96f921f25e8d11)
       ember-source: 7.2.0(@glimmer/component@2.1.1)
-      reactiveweb: 1.9.3(f67daca9894f2120c7f9932c47060a47)
+      reactiveweb: 1.9.4(f67daca9894f2120c7f9932c47060a47)
       repl-sdk: 2.0.0(2131498b9766cc22739a0592ff41fd7e)
     optionalDependencies:
       '@glint/template': 1.9.0
@@ -17196,7 +17196,7 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  reactiveweb@1.9.3(f67daca9894f2120c7f9932c47060a47):
+  reactiveweb@1.9.4(f67daca9894f2120c7f9932c47060a47):
     dependencies:
       '@ember/test-waiters': 4.1.2
       '@embroider/addon-shim': 1.10.3
