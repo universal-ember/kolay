@@ -1,0 +1,3 @@
+{
+  "redirects": [{ "from": "in-config-dir/*", "to": "found/*" }]
+}
