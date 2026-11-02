@@ -1,0 +1,134 @@
+import { createUnplugin } from 'unplugin';
+
+import { apiDocs } from './api-docs/index.js';
+import { validatePackages } from './api-docs/validate.js';
+import { demos as demosPlugin, parseDemosArgs } from './demos.js';
+import { parseDocsArgs } from './docs-args.js';
+import { gjsmd } from './gjs-md.js';
+import {
+  importEntrypoints as importEntrypointsPlugin,
+  parseImportEntrypointsArgs,
+} from './import-entrypoints.js';
+import { setup, virtualGuard } from './setup.js';
+import { fixViteForIssue362 } from './vite-issue-362.js';
+
+/**
+ * @typedef {import('./docs-args.js').DocsOptions} DocsOptions
+ */
+
+/**
+ * `docs()` and `apiDocs()` may each be used multiple times in one config,
+ * e.g. for pulling docs from multiple sources with different markdown
+ * processing.
+ *
+ * All usages of a plugin contribute to ONE manifest / one virtual module,
+ * which is served by the first ("primary") usage. Usages discover each
+ * other during vite's `configResolved` (see setup() / apiDocs()), through
+ * this shared, mutable state.
+ *
+ * @param {object} options
+ */
+function createState(options) {
+  return {
+    options,
+    /** all usages' options, in plugin order; replaced during configResolved */
+    usages: [options],
+    /** whether this usage serves the shared virtual modules and assets */
+    isPrimary: true,
+  };
+}
+
+/**
+ * The markdown-docs plugin: slurps up the group's `.md` / `.gjs.md` files,
+ * produces the manifest + page loaders ('kolay/compiled-docs:virtual'),
+ * compiles `.gjs.md` at build time, and serves/emits co-located doc assets.
+ *
+ * One usage per group:
+ * - `docs('guides', { src: import.meta.resolve('./guides') })`
+ * - `docs(import.meta.resolve('./guides'))` — a path or URL: its last
+ *   segment is the group name
+ * - `docs()` — no group; only the co-located pages (app/templates, src/templates)
+ *
+ * @param {string | DocsOptions} [groupName] - the group's name, or a path/URL whose last segment is the group name (the path then also serves as the group's `src`)
+ * @param {DocsOptions} [options]
+ */
+export function docsPlugins(groupName, options) {
+  const state = createState(parseDocsArgs(groupName, options));
+
+  return [setup(state), fixViteForIssue362(), gjsmd(state), virtualGuard(state)].filter(Boolean);
+}
+
+/**
+ * The api-docs plugin: generates typedoc JSON for the given packages
+ * and provides 'kolay/api-docs:virtual' for loading it.
+ *
+ * Receives a string, or an array of strings — package names (which must
+ * be installed / resolvable from your project) and/or relative paths
+ * (which must exist). Every entry is validated up front, and all
+ * problems are reported in one error.
+ *
+ * Requires the `docs()` plugin to also be present.
+ *
+ * @param {string | string[]} input
+ */
+export function apiDocsPlugins(input) {
+  const packages = validatePackages(input, process.cwd());
+
+  return [apiDocs(createState({ packages }))].filter(Boolean);
+}
+
+/**
+ * The demos plugin: aliases a directory of demo components so code
+ * fences can import them — `demos(path, { as: '#demos/foo' })` enables
+ * `import ... from '#demos/foo/<demo>'`. The runtime compiler
+ * learns the aliases automatically through `setupKolay`.
+ *
+ * @param {string} src - where the demos live (a path, or an `import.meta.resolve()`d URL)
+ * @param {{ as: string }} options
+ */
+export function demosPlugins(src, options) {
+  return [demosPlugin(createState(parseDemosArgs(src, options)))].filter(Boolean);
+}
+
+/**
+ * The import-entrypoints plugin: enumerates a package's
+ * package.json#exports and teaches the runtime compiler every
+ * entrypoint, so `.md` fences can import the package with no
+ * `modules` configuration.
+ *
+ * @param {string} input - a package name, or a path to a directory containing a package.json
+ * @param {{ exclude?: string[] }} [options]
+ */
+export function importEntrypointsPlugins(input, options) {
+  return [importEntrypointsPlugin(createState(parseImportEntrypointsArgs(input, options)))].filter(
+    Boolean
+  );
+}
+
+/**
+ * unplugin factories only receive one argument, so the public two-argument
+ * form (see 'kolay/vite') passes `[groupName, options]` as a tuple.
+ */
+export const docs = /* #__PURE__ */ createUnplugin((args) =>
+  Array.isArray(args) ? docsPlugins(...args) : docsPlugins(args)
+);
+
+const apiDocsUnplugin = /* #__PURE__ */ createUnplugin(apiDocsPlugins);
+
+export { apiDocsUnplugin as apiDocs };
+
+/**
+ * unplugin factories only receive one argument, so the public
+ * two-argument form (see 'kolay/vite') passes `[src, options]` as a tuple.
+ */
+export const demos = /* #__PURE__ */ createUnplugin((args) =>
+  Array.isArray(args) ? demosPlugins(...args) : demosPlugins(args)
+);
+
+/**
+ * unplugin factories only receive one argument, so the public
+ * two-argument form (see 'kolay/vite') passes `[input, options]` as a tuple.
+ */
+export const importEntrypoints = /* #__PURE__ */ createUnplugin((args) =>
+  Array.isArray(args) ? importEntrypointsPlugins(...args) : importEntrypointsPlugins(args)
+);

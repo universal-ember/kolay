@@ -1,0 +1,71 @@
+/**
+ * @typedef {object} ReshapeOptions
+ * @property {string[]} paths
+ * @property {string[]} configs
+ * @property {string} cwd path on disk that the paths are relative to - needed for looking up configs
+ * @property {string} prefix app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
+ * @property {string} base the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
+ * @property {Array<{ path: string, data: Record<string, unknown> }>} [frontmatter] per-page frontmatter data, keyed by the same paths as `paths`
+ * @property {import('./populate-manifest-entry.js').PopulateManifestEntry} [populateManifestEntry] finalizes each page or directories manifest entry
+ *
+ * @param {ReshapeOptions} options
+ */
+export function reshape({ paths, configs, cwd, prefix, base, frontmatter, populateManifestEntry, }: ReshapeOptions): Promise<{
+    list: any[];
+    tree: any;
+}>;
+/**
+ * Every item gets two path spaces, computed once here at build time:
+ * - `appRelativePath`: as if the app were deployed at '/' — the space
+ *   `router.currentURL` and `transitionTo` operate in
+ * - `path`: prefixed with the base URL — the space hrefs and the
+ *   compiled-docs module map operate in
+ *
+ * @template {import('#types').Node} Root
+ * @param {Root} tree
+ * @param {string} prefix app-relative group prefix ('/Documentation' or '/')
+ * @param {string} base the app's base URL / rootURL
+ * @param {string | null} [parentAppRelative] the containing folder's appRelativePath (null at the root)
+ */
+export function addPaths<Root extends import("#types").Node>(tree: Root, prefix: string, base: string, parentAppRelative?: string | null): Root;
+/**
+ * This requires that the pages are all sorted correctly, where index is always at the top
+ *
+ * @param {import('./types.ts').Node | Array<import('./types.ts').Node>} tree
+ *
+ * @return {string | undefined}
+ */
+export function addInTheFirstPage(tree: any | Array<any>): string | undefined;
+/**
+ * @param {import('./types.ts').PageTree} tree
+ * @return {import('./types.ts').Page[]}
+ */
+export function getList(tree: any): any[];
+export type ReshapeOptions = {
+    paths: string[];
+    configs: string[];
+    /**
+     * path on disk that the paths are relative to - needed for looking up configs
+     */
+    cwd: string;
+    /**
+     * app-relative group prefix, e.g. '/Documentation' (or '/' for the unnamed group)
+     */
+    prefix: string;
+    /**
+     * the app's base URL / rootURL, e.g. '/my-github-project/' (or '/')
+     */
+    base: string;
+    /**
+     * per-page frontmatter data, keyed by the same paths as `paths`
+     */
+    frontmatter?: {
+        path: string;
+        data: Record<string, unknown>;
+    }[] | undefined;
+    /**
+     * finalizes each page or directories manifest entry
+     */
+    populateManifestEntry?: import("./populate-manifest-entry.js").PopulateManifestEntry | undefined;
+};
+//# sourceMappingURL=hydrate.d.ts.map
