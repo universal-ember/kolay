@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2026-11-02)
+
+* kolay 6.0.1 (patch)
+
+#### :bug: Bug Fix
+* `kolay`
+  * [#396](https://github.com/universal-ember/kolay/pull/396) Use ember-primitives 0.63.1, so Ember 6 apps can build kolay ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
+#### Committers: 1
+- @NullVoxPopuli's reduced-access machine account for AI usage ([@NullVoxPopuli-ai-agent](https://github.com/NullVoxPopuli-ai-agent))
+
 ## Release (2026-10-21)
 
 * kolay 6.0.0 (major)
