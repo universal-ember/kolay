@@ -46,8 +46,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0(@babel/core@7.29.6)
       ember-primitives:
-        specifier: ^0.62.0
-        version: 0.62.0(16bc0951ea3b2694df6bd64c6d661d40)
+        specifier: ^0.63.1
+        version: 0.63.1(16bc0951ea3b2694df6bd64c6d661d40)
       ember-repl:
         specifier: ^8.2.3
         version: 8.2.3(d1163f3cc2266c5a3a33c4ca2ba6af98)
@@ -351,8 +351,8 @@ importers:
         specifier: ^9.0.3
         version: 9.0.3
       ember-primitives:
-        specifier: ^0.62.0
-        version: 0.62.0(16bc0951ea3b2694df6bd64c6d661d40)
+        specifier: ^0.63.1
+        version: 0.63.1(16bc0951ea3b2694df6bd64c6d661d40)
       ember-qunit:
         specifier: ^9.1.0
         version: 9.1.0(4775d7173e4509504349392d113639b7)
@@ -665,8 +665,8 @@ importers:
         specifier: 2.4.0
         version: 2.4.0(@babel/core@7.29.6)
       ember-primitives:
-        specifier: ^0.62.0
-        version: 0.62.0(16bc0951ea3b2694df6bd64c6d661d40)
+        specifier: ^0.63.1
+        version: 0.63.1(16bc0951ea3b2694df6bd64c6d661d40)
       ember-source:
         specifier: 7.2.0
         version: 7.2.0(@glimmer/component@2.1.1)
@@ -4746,8 +4746,8 @@ packages:
       '@glint/template':
         optional: true
 
-  ember-primitives@0.62.0:
-    resolution: {integrity: sha512-olo9BdIyXkKleEKjQGq6Ya94iM7+Dr6TtT4+QLFyAzFQtHTENgy5rbEqFnbjw4qQmnibXR2s+jXxSDyPAQczhA==}
+  ember-primitives@0.63.1:
+    resolution: {integrity: sha512-VxcsWjHnPwtv1CE2Ll5rNgH9HSz4kYVN+5ze2/DP9VhV94pnCC005VcRAwPKxO0bQJkVpkOBuCinfJFkqnJEgA==}
     hasBin: true
     peerDependencies:
       '@ember/test-helpers': '>= 3.2.0'
@@ -8956,6 +8956,9 @@ packages:
 
   which-heading-do-i-need@0.4.1:
     resolution: {integrity: sha512-NUwKC7rjs6hFqdr6Yu+4Hd9muQEL5XW3QvV8hj/uHSBo8o9FRsWOqArgWcL4IIvUDpS+KCoaRW/8+jHhNL8itQ==}
+
+  which-heading-do-i-need@0.4.2:
+    resolution: {integrity: sha512-hKEFGe0I3TdEqFkRNyuMxGBhLt/zWBr1hBRkynJ0bGnbXyUVrvSUPj4SDw0hWhydPey4SHKESaSdvyyZYERhxA==}
 
   which-typed-array@1.1.22:
     resolution: {integrity: sha512-fvO4ExWMFsqyhG3AiPAObMuY1lxaqgYcxbc49CNdWDDECOJNgQyvsOWVwbZc+qf3rzRtxojBK+CMEv0Ld5CYpw==}
@@ -13899,7 +13902,7 @@ snapshots:
       - '@babel/core'
       - supports-color
 
-  ember-primitives@0.62.0(16bc0951ea3b2694df6bd64c6d661d40):
+  ember-primitives@0.63.1(16bc0951ea3b2694df6bd64c6d661d40):
     dependencies:
       '@babel/runtime': 7.28.6
       '@ember/test-waiters': 4.1.2
@@ -13917,7 +13920,7 @@ snapshots:
       tabster: 8.8.0
       tracked-built-ins: 4.1.2(@babel/core@7.29.6)
       tracked-toolbox: 3.0.0(@babel/core@7.29.6)
-      which-heading-do-i-need: 0.4.1
+      which-heading-do-i-need: 0.4.2
     optionalDependencies:
       '@ember/test-helpers': 5.4.3(@babel/core@7.29.6)
       '@glint/template': 1.9.0
@@ -19046,6 +19049,8 @@ snapshots:
   which-heading-do-i-need@0.2.7: {}
 
   which-heading-do-i-need@0.4.1: {}
+
+  which-heading-do-i-need@0.4.2: {}
 
   which-typed-array@1.1.22:
     dependencies:
