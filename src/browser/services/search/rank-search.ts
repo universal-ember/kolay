@@ -14,10 +14,15 @@ export function rankSearch(entries: SearchEntry[], query: string): SearchResult[
         .join(' ')
         .toLocaleLowerCase();
       const text = entry.text.toLocaleLowerCase();
+      // Readers search for what a page is called as often as for what it says,
+      // and a page's title need not resemble its URL — a page at
+      // `ember-resources.md` headed `# cell` is reachable by either word.
+      const path = entry.appRelativePath.toLocaleLowerCase();
       const titleMatches = terms.filter((term) => title.includes(term)).length;
       const headingMatches = terms.filter((term) => headings.includes(term)).length;
+      const pathMatches = terms.filter((term) => path.includes(term)).length;
       const bodyMatches = terms.filter((term) => text.includes(term)).length;
-      const score = titleMatches * 100 + headingMatches * 25 + bodyMatches;
+      const score = titleMatches * 100 + headingMatches * 25 + pathMatches * 10 + bodyMatches;
       const match = entry.title || entry.headings[0] || entry.groupName;
       const firstTerm = terms.find((term) => text.includes(term));
       const excerptRange = excerptRangeFromText(entry.text, firstTerm);

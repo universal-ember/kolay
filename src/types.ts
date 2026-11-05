@@ -83,7 +83,14 @@ export interface PageTree {
    * e.g. '/Documentation/sub-folder'.
    */
   appRelativePath: string;
+  /** The folder's directory segment, e.g. 'sub-folder'. */
   name: string;
+  /**
+   * What to display: the folder's `meta.json` `title`, then its index page's
+   * title, then its `cleanedName` sentence-cased.
+   */
+  title?: string;
+  /** The `path` of this folder's index page, where its own URL goes. */
   first?: string;
   pages: (PageTree | Page)[];
   groupName?: never;
@@ -102,6 +109,7 @@ export interface Page {
    * This is the space `router.currentURL` and `transitionTo` operate in.
    */
   appRelativePath: string;
+  /** The page's basename without its extension, e.g. 'index' or 'x'. */
   name: string;
   /**
    * The cleaned name of the folder the page is in, e.g. 'sub folder'.
@@ -109,11 +117,13 @@ export interface Page {
    * name it after.
    */
   groupName: string;
+  /**
+   * `name` with digits removed and dashes turned into spaces, for display.
+   */
   cleanedName: string;
   /**
-   * The link text to display for this page in navigation, when the
-   * derived `name` isn't right — set via a json file next to the page:
-   * `{ "title": "selected(...)" }`
+   * What to display: the `title` from the json file next to the page, then the
+   * page's first heading, then its `cleanedName` sentence-cased.
    */
   title?: string;
   /**

@@ -196,4 +196,37 @@ describe('rankSearch', () => {
 
     expect(result[0]?.excerptRange).toEqual({ start: 0, end: 59 });
   });
+
+  test('a page is findable by its filename when its title does not say it', () => {
+    const entry = {
+      path: '/docs/ember-resources.md',
+      appRelativePath: '/docs/ember-resources.md',
+      groupName: 'Docs',
+      title: 'cell',
+      headings: [],
+      text: 'boop',
+    };
+
+    // titles honor the page's first heading, so the filename is the only place
+    // 'resources' appears — without scoring the path this page is unreachable
+    expect(rankSearch([entry], 'resources')[0]?.score).toBe(10);
+    expect(rankSearch([entry], 'cell')[0]?.score).toBe(100);
+  });
+
+  test('a path match ranks below a heading match', () => {
+    const base = { groupName: 'Docs', headings: [], text: '' };
+    const byPath = { ...base, path: '/api.md', appRelativePath: '/api.md', title: 'Reference' };
+    const byHeading = {
+      ...base,
+      path: '/z.md',
+      appRelativePath: '/z.md',
+      title: 'Z',
+      headings: ['api'],
+    };
+
+    expect(rankSearch([byPath, byHeading], 'api').map((r) => r.appRelativePath)).toEqual([
+      '/z.md',
+      '/api.md',
+    ]);
+  });
 });

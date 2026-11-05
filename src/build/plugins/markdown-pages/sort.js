@@ -1,3 +1,5 @@
+import { isIndexName } from './index-page.js';
+
 /**
  * @param {unknown[]} arr
  * @returns {unknown[]}
@@ -35,12 +37,12 @@ export function betterSort(property) {
     const aFull = property ? a[property] : a;
     const bFull = property ? b[property] : b;
 
-    if ('path' in a && 'path' in b && typeof a.path === 'string' && typeof b.path === 'string') {
-      if (a.path.endsWith('index.md')) return -1;
-      if (a.path.endsWith('index.gjs.md')) return -1;
-      if (b.path.endsWith('index.md')) return 1;
-      if (b.path.endsWith('index.gjs.md')) return 1;
-    }
+    // Matched on the node's name, so an index sorts first whatever its
+    // extension — `build()` has already stripped `.gjs.md` / `.gts.md` off
+    // `path` by now. Folders sort here too, so one named `index` hoists.
+    if (isIndexName(aFull) && isIndexName(bFull)) return 0;
+    if (isIndexName(aFull)) return -1;
+    if (isIndexName(bFull)) return 1;
 
     const [aNumStr, ...aRest] = aFull.split('-');
     const [bNumStr, ...bRest] = bFull.split('-');
@@ -71,7 +73,7 @@ export function betterSort(property) {
  * @returns {Item[]}
  */
 export function applyPredestinedOrder(list, order, find = (x) => x) {
-  const indexPage = list.find((x) => find(x) === 'index');
+  const indexPage = list.find((x) => isIndexName(find(x)));
   const result = indexPage ? [indexPage] : [];
 
   list = list.filter((a) => a !== indexPage);
@@ -138,6 +140,12 @@ export function sortTree(tree, configs, parents = []) {
     const config = configs
       .filter(Boolean)
       .find((config) => findPathForJsonc(config.path) === subPath)?.config;
+
+    // A folder may title itself, the way a page's sidecar `.json` does. Set
+    // before the order check, since a folder can name itself without ordering.
+    if (typeof config?.title === 'string') {
+      tree.title = config.title;
+    }
 
     if (!config?.order) {
       return tree;

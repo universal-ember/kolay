@@ -25,7 +25,7 @@ function hasReason(error) {
  * only exists in the document while this route is rendered, which is what
  * lets one route restyle the entire site. It has to come second:
  * ember-scoped-css only looks at the template's first <style> for the
- * `scoped` attribute, and silently drops any later scoped block.
+ * `scoped` attribute, and ignores any later scoped block.
  *
  * (Prose typography that must reach the rendered markdown is in app.css,
  *  under `[data-design="runtime"]` — the classes below are scoped to this

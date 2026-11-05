@@ -90,10 +90,10 @@ describe('addInTheFirstPage', () => {
     `);
   });
 
-  test('if there is a path ending in index.md, it must be first', () => {
+  test('an index page must be first', () => {
     const list: Entry[] = [
       { name: 'b', path: '/c/b.md' },
-      { name: 'c', path: '/c/index.md' },
+      { name: 'index', path: '/c/index.md' },
       { name: 'a', path: '/c/a.md' },
     ];
     const sorted = list.sort(betterSort('name'));
@@ -101,7 +101,7 @@ describe('addInTheFirstPage', () => {
     expect(sorted).toMatchInlineSnapshot(`
       [
         {
-          "name": "c",
+          "name": "index",
           "path": "/c/index.md",
         },
         {
@@ -114,6 +114,16 @@ describe('addInTheFirstPage', () => {
         },
       ]
     `);
+  });
+
+  test('a page whose name merely ends in index is not hoisted', () => {
+    const list: Entry[] = [
+      { name: 'apple', path: '/c/apple.md' },
+      { name: 'api-index', path: '/c/api-index.md' },
+    ];
+    const sorted = list.sort(betterSort('name'));
+
+    expect(sorted.map((x) => x.name)).toEqual(['apple', 'api-index']);
   });
 
   describe('From the Tutorial', () => {

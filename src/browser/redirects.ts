@@ -1,4 +1,4 @@
-import { equalsIgnoreCase, samePagePath } from './utils.ts';
+import { equalsIgnoreCase, samePagePath, trimSlashes } from '../paths.js';
 
 import type Transition from '@ember/routing/transition';
 
@@ -74,8 +74,16 @@ export function redirectTargetFor(
 
   if (typeof intent?.url !== 'string') return undefined;
 
-  const [path = ''] = intent.url.split(/[?#]/);
-  const target = resolveRedirect(path.replace(/^\//, ''), redirects);
+  return redirectForUrl(intent.url, redirects);
+}
+
+/** Where a redirect sends this URL, ignoring its query and hash. */
+export function redirectForUrl(
+  url: string,
+  redirects: { from: string; to: string }[]
+): string | undefined {
+  const [path = ''] = url.split(/[?#]/);
+  const target = resolveRedirect(trimSlashes(path, { leading: true }), redirects);
 
   return target === undefined ? undefined : '/' + target;
 }

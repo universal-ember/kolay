@@ -39,6 +39,24 @@ module("Group index redirects under a custom rootURL", function (hooks) {
     );
   });
 
+  // A folder's own URL follows the same rule one level down, and has the
+  // same rootURL-doubling hazard.
+  test("visiting a folder root redirects to its first page without doubling the rootURL", async function (assert) {
+    await visit("/Documentation/sub-folder");
+    assert.strictEqual(
+      currentURL(),
+      "/Documentation/sub-folder/lonely-page.md",
+      "the folder index redirects to its first page (rootURL stripped)",
+    );
+  });
+
+  // The guard that keeps the folder redirect from swallowing ordinary
+  // navigation: a page visit lands on the wildcard's index too.
+  test("visiting a page leaves it where it is", async function (assert) {
+    await visit("/Documentation/sub-folder/ember-primitives.md");
+    assert.strictEqual(currentURL(), "/Documentation/sub-folder/ember-primitives.md");
+  });
+
   test("visiting a group root with different casing still redirects to its first page", async function (assert) {
     await visit("/home");
     assert.strictEqual(
