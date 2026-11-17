@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
-import { join, parse as parsePath } from 'node:path';
+import { parse as parsePath, posix } from 'node:path';
 
 import JSON5 from 'json5';
 
@@ -268,7 +268,8 @@ function stripExt(str) {
   const parsed = parsePath(str);
   const doubleExt = parsePath(parsed.name);
 
-  return join(parsed.dir, doubleExt.name);
+  // posix.join: page names live in URL space, not on disk
+  return posix.join(parsed.dir, doubleExt.name);
 }
 
 /**

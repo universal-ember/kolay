@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -11,6 +12,15 @@ import { packageTypes } from '../helpers.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
+
+/**
+ * typedoc works in "normalized paths": POSIX separators, even on Windows,
+ * and it asserts on anything else (a backslash path isn't absolute to it).
+ * Every path handed to typedoc or written into the tsconfig goes through here.
+ *
+ * @param {string} path
+ */
+const posix = (path) => path.replaceAll('\\', '/');
 
 /**
  * Generates APIDocs / TypeDoc from already built declarations. This is meant to use be very permissive and ignore errors so that likelihood of generating a TypeDoc json document increases.
@@ -37,14 +47,20 @@ export async function generateTypeDocJSON({ packageName }) {
     `Could not find any types for ${packageName}. Make sure that the package.json specifies "types" entries in package.json#exports`
   );
 
+  const packageDir = posix(typeInfo.dir);
   const resolvedEntries = await resolveFiles(typeInfo.dir, entries);
   const absoluteResolved = resolvedEntries
-    .map((entry) => join(typeInfo.dir, entry))
+    .map((entry) => posix(join(typeInfo.dir, entry)))
     .filter((entry) => entry.endsWith('.ts'));
 
   const typedoc = await import('typedoc');
-  const tmpTSConfigPath = `/tmp/kolay-typedoc-${packageName.replace(/^\.\//, '').replaceAll('/', '__').replace('@', 'at__')}.json`;
-  const extendsTsConfig = require.resolve('@ember/app-tsconfig/tsconfig.json');
+  const tmpTSConfigPath = posix(
+    join(
+      tmpdir(),
+      `kolay-typedoc-${packageName.replace(/^\.\//, '').replaceAll('/', '__').replace('@', 'at__')}.json`
+    )
+  );
+  const extendsTsConfig = posix(require.resolve('@ember/app-tsconfig/tsconfig.json'));
 
   // const home = process.cwd();
   // const homeRequire = createRequire(home);
@@ -62,12 +78,12 @@ export async function generateTypeDocJSON({ packageName }) {
       const entries = await packageTypes(t);
 
       if (entries.types[0]) {
-        return join(entries.dir, entries.types[0]).replace('/*', '');
+        return posix(join(entries.dir, entries.types[0])).replace('/*', '');
       }
 
-      return join(process.cwd(), 'node_modules', t);
+      return posix(join(process.cwd(), 'node_modules', t));
     } catch {
-      return join(process.cwd(), 'node_modules', t);
+      return posix(join(process.cwd(), 'node_modules', t));
     }
   }
 
@@ -75,18 +91,18 @@ export async function generateTypeDocJSON({ packageName }) {
     (x) => !!x
   );
 
-  resolvedTypes.push(resolve(__dirname, '..', '..', '..', 'fake-glint-template.d.ts'));
+  resolvedTypes.push(posix(resolve(__dirname, '..', '..', '..', 'fake-glint-template.d.ts')));
 
   // const tsc = resolve('@glint/tsserver-plugin');
 
   const tsConfig = {
     extends: extendsTsConfig,
-    include: [...new Set(absoluteResolved.map((entry) => dirname(entry)))],
+    include: [...new Set(absoluteResolved.map((entry) => posix(dirname(entry))))],
     exclude: ['dne'],
     compilerOptions: {
       allowJs: true,
       preserveSymlinks: false,
-      baseUrl: typeInfo.dir,
+      baseUrl: packageDir,
       noEmitOnError: false,
       types: resolvedTypes,
       // We disable skipLibCheck so that we can slurp up types from
@@ -114,7 +130,7 @@ export async function generateTypeDocJSON({ packageName }) {
       preserveSymlinks: false,
     },
     tsconfig: tmpTSConfigPath,
-    basePath: typeInfo.dir,
+    basePath: packageDir,
     disableGit: true,
     sourceLinkExternal: false,
     disableSources: true,
@@ -137,7 +153,7 @@ export async function generateTypeDocJSON({ packageName }) {
   const project = await typedocApp.convert();
 
   if (project) {
-    const data = typedocApp.serializer.projectToObject(project, typeInfo.dir);
+    const data = typedocApp.serializer.projectToObject(project, packageDir);
 
     return data;
   }

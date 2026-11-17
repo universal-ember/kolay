@@ -20,7 +20,7 @@ export function fixViteForIssue362() {
       const cwd = process.cwd();
       const ember = require.resolve('ember-repl', cwd);
       const sdk = require.resolve('repl-sdk', ember);
-      const manifestPath = sdk.replace(/src\/index.js$/, 'package.json');
+      const manifestPath = sdk.replace(/src[\\/]index\.js$/, 'package.json');
       const contents = readFileSync(manifestPath);
       const manifest = JSON.parse(contents.toString());
 

@@ -118,7 +118,12 @@ async function enumerateSource(
   const frontmatter = [];
   const sources = new Map();
 
-  for await (const entry of entries) {
+  for await (const rawEntry of entries) {
+    // node's glob yields platform separators, so on Windows every entry comes
+    // back with backslashes. Everything downstream (strip(), the split() that
+    // parse() builds the page tree with, the manifest URLs) assumes POSIX.
+    const entry = rawEntry.replaceAll('\\', '/');
+
     if (entry.endsWith('.json') || entry.endsWith('.jsonc')) {
       configs.push({
         path: strip(entry),
@@ -134,7 +139,8 @@ async function enumerateSource(
 
     const name =
       baseUrl + (urlPrefix ? urlPrefix + '/' : '') + strip(entry).replace(/\.(gjs|gts)\.md$/, '');
-    const full = '/@fs' + join(normalizePath(sourceCwd), entry);
+    const full =
+      '/@fs/' + join(normalizePath(sourceCwd), entry).replaceAll('\\', '/').replace(/^\//, '');
 
     let query = '';
 
@@ -166,7 +172,7 @@ async function enumerateSource(
     configs,
     frontmatter,
     populateManifestEntry,
-    prefix: join('/', urlPrefix),
+    prefix: urlPrefix ? `/${urlPrefix}` : '/',
     base: baseUrl,
   });
 
