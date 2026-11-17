@@ -1,4 +1,11 @@
-import { join } from 'node:path';
+import { posix } from 'node:path';
+
+/**
+ * These are URLs, not file paths: they must keep POSIX separators on every
+ * platform, so path.join() (which yields backslashes on Windows) can't be
+ * used to build them.
+ */
+const { join } = posix;
 
 import { parse } from './parse.js';
 import { sortTree } from './sort.js';
